@@ -22,7 +22,7 @@ class Sockets
         if not server?
             logger.error "Expresser", "Sockets.init", "App is not initialized. Abort!"
 
-        @io = require("socket.io").listen server
+        @io = require("socket.io").listen require("http").createServer server
 
         # Set transports.
         @io.set "transports", ["websocket", "xhr-polling", "htmlfile"]

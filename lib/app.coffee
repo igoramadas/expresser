@@ -4,8 +4,12 @@
 
 class App
 
-    # Expose the Express server to external modules.
+    # Expose the Express server to external code.
     server: null
+
+    # Internal modules will be set on `init`.
+    logger = null
+    settings = null
 
 
     # INIT
@@ -50,11 +54,6 @@ class App
         express = require "express"
         @server = express()
 
-        # Require other modules.
-        database = require "./database.coffee"
-        mail = require "./mail.coffee"
-        twitter = require "./twitter.coffee"
-
         # Make it PaaS friendly. Check for environment variables to override specific settings.
         # If no environment variables are found, the app will use whatever is defined on the
         # settings.coffee file.
@@ -87,12 +86,6 @@ class App
         @server.configure =>
             checkCloudEnvironment()
 
-            # Init the logger and other modules.
-            logger.init()
-            database.init()
-            mail.init()
-            twitter.init()
-
             # Set view options, use Jade for HTML templates.
             @server.set "views", settings.Path.viewsDir
             @server.set "view engine", settings.Web.viewEngine
@@ -110,6 +103,12 @@ class App
             ConnectAssets = (require "connect-assets") settings.ConnectAssets
             @server.use ConnectAssets
 
+            # If debug is on, log requests to the console.
+            if settings.General.debug
+                @server.use (req, res, next) ->
+                    console.log "Expresser", "Request", req.method, req.url
+                    next()
+
         # Configure development environment.
         @server.configure "development", =>
             @server.use express.errorHandler settings.ErrorHandling
@@ -125,6 +124,64 @@ class App
             @server.listen settings.Web.port
 
         console.log "Expresser", "App started on port #{settings.Web.port}."
+
+
+    # HELPER AND UTILS
+    # --------------------------------------------------------------------------
+
+    # Helper to render pages. The request, response and view are mandatory,
+    # and the options argument is optional.
+    renderView: (req, res, view, options) =>
+        options = {} if not options?
+        options.device = @getClientDevice req
+        options.title = settings.General.appTitle if not options.title?
+        res.render view, options
+
+    # When the server can't return a valid result, send an error response with status code 500.
+    renderError: (res, message) =>
+        message = JSON.stringify message
+        res.statusCode = 500
+        res.send "Server error: #{message}"
+        logger.error "HTTP Error", message, res
+
+    # Get the client's device identifier string based on the user agent.
+    getClientDevice: (req) =>
+        ua = req.headers["user-agent"]
+
+        # Find desktop browsers.
+        return "chrome" if ua.indexOf("Chrome/") > 0
+        return "firefox" if ua.indexOf("Firefox/") > 0
+        return "safari" if ua.indexOf("Safari/") > 0
+        return "ie-11" if ua.indexOf("MSIE 11") > 0
+        return "ie-10" if ua.indexOf("MSIE 10") > 0
+        return "ie-9" if ua.indexOf("MSIE 9") > 0
+        return "ie" if ua.indexOf("MSIE") > 0
+
+        # Find mobile devices.
+        return "wp-8" if ua.indexOf("Windows Phone 8") > 0
+        return "wp-7" if ua.indexOf("Windows Phone 7") > 0
+        return "wp" if ua.indexOf("Windows Phone") > 0
+        return "iphone-5" if ua.indexOf("iPhone5") > 0
+        return "iphone-4" if ua.indexOf("iPhone4") > 0
+        return "iphone" if ua.indexOf("iPhone") > 0
+        return "android-5" if ua.indexOf("Android 5") > 0
+        return "android-4" if ua.indexOf("Android 4") > 0
+        return "android" if ua.indexOf("Android") > 0
+
+        # Return default desktop value if no specific devices were found on user agent.
+        return "desktop"
+
+    # Get the client / browser IP.
+    getClientIP: (req) =>
+        try
+            xfor = req.header("X-Forwarded-For")
+            if xfor? and xfor isnt ""
+                ip = xfor.split(",")[0]
+            else
+                ip = req.connection.remoteAddress
+        catch ex
+            ip = req.connection.remoteAddress
+        return ip
 
 
 # Singleton implementation

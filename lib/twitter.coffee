@@ -50,6 +50,9 @@ class Twitter
             # Authenticate on Twitter.
             authenticate()
 
+        else if settings.General.debug
+            logger.warn "Expresser", "Twitter.init", "No credentials were set.", "Twitter module won't work."
+
 
     # STATUS
     # --------------------------------------------------------------------------

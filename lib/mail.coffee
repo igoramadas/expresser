@@ -46,7 +46,7 @@ class Mail
         if settings.Email.smtp2.host? and settings.Email.smtp2.host isnt "" and settings.Email.smtp2.port > 0
             smtp2 = createSmtp settings.Email.smtp2
 
-        # Warn if no SMTP is available for sending emails.
+        # Warn if no SMTP is available for sending emails, but only when debug is enabled.
         if not smtp? and not smtp2? and settings.General.debug
             logger.warn "Expresser", "Mail.init", "No main SMTP host/port specified.", "No emails will be sent out!"
 

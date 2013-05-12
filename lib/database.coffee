@@ -63,6 +63,8 @@ class Database
     init: =>
         if settings.Database.connString? and settings.Database.connString isnt ""
             validateConnection()
+        else if settings.General.debug
+            logger.warn "Expresser", "Database.init", "No connection string set.", "Database module won't work."
 
     # LOW LEVEL IMPLEMENTATION
     # -------------------------------------------------------------------------

@@ -11,7 +11,8 @@ class Logger
     # Logging providers will be set on `init`.
     logentries = null
     loggly = null
-    logger = null
+    loggerLogentries = null
+    loggerLoggly = null
 
     # The `serverIP` will be set on init, but only if `settings.Log.sendIP` is true.
     serverIP = null
@@ -23,6 +24,8 @@ class Logger
     # Init the Logger. Verify which service is set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the [settings](settings.html).
     init: =>
+        services = []
+
         if settings.Log.sendIP
             ifaces = require("os").networkInterfaces()
             for i of ifaces
@@ -30,24 +33,29 @@ class Logger
                     if details.family is "IPv4" and not details.internal
                         serverIP = details.address
 
-        if settings.Log.service is "loggly"
-            logentries = null
-            loggly = require "loggly"
-            logger = loggly.createClient {subdomain: settings.Log.Loggly.subdomain, json: true}
-        else
-            loggly = null
+        # Check if Loggly should be used.
+        if settings.Log.Logentries.token? and settings.Log.Logentries.token isnt ""
             logentries = require "node-logentries"
-            logger = logentries.logger {token: settings.Log.Logentries.token, timestamp: settings.Log.sendTimestamp}
+            loggerLogentries = logentries.logger {token: settings.Log.Logentries.token, timestamp: settings.Log.sendTimestamp}
+            services.push "Logentries"
 
+        # Check if Logentries should be used.
+        if settings.Log.Loggly.subdomain? and settings.Log.Loggly.token? and settings.Log.Loggly.token isnt ""
+            loggly = require "loggly"
+            loggerLoggly = loggly.createClient {subdomain: settings.Log.Loggly.subdomain, json: true}
+            services.push "Loggly"
+
+        # Define server IP.
         if serverIP?
             ipInfo = "IP #{serverIP}"
         else
             ipInfo = "No IP set."
 
-        if settings.General.debug
-            @info "LOGGING STARTED! (DEBUG MODE)", ipInfo
+        # Start logging!
+        if not logentries? and not loggly?
+            @warn "Expresser", "Logger.init", "Logentries and Loggly credentials were not set.", "Logger module won't work!"
         else
-            @info "LOGGING STARTED!", ipInfo
+            @info "Expresser", "Logger.init", services.join()
 
 
     # LOG METHODS
@@ -58,40 +66,30 @@ class Logger
         console.info.apply(this, arguments) if settings.General.debug
         msg = @getMessage arguments
 
+        if logentries?
+            loggerLogentries.info.apply this, [msg]
         if loggly?
-            logger.log.apply logger, msg
-        else
-            logger.info.apply logger, msg
+            loggerLoggly.log.apply this, [settings.Log.Loggly.token, msg]
 
     # Log any object to the default transports as `warn`.
     warn: =>
         console.warn.apply(this, arguments) if settings.General.debug
         msg = @getMessage arguments
 
+        if logentries?
+            loggerLogentries.warning.apply this, [msg]
         if loggly?
-            logger.log.apply logger, msg
-        else
-            logger.warning.apply logger, msg
+            loggerLoggly.log.apply this, [settings.Log.Loggly.token, msg]
 
     # Log any object to the default transports as `error`.
     error: =>
         console.error.apply(this, arguments) if settings.General.debug
         msg = @getMessage arguments
 
+        if logentries?
+            loggerLogentries.err.apply this, [msg]
         if loggly?
-            logger.log.apply logger, msg
-        else
-            logger.err.apply logger, msg
-
-    # Log security related info to the default transports as `warn`.
-    security: =>
-        console.warn.apply(this, arguments) if settings.General.debug
-        msg = @getMessage arguments
-
-        if loggly?
-            logger.log.apply logger, msg
-        else
-            logger.warning.apply logger, msg
+            loggerLoggly.log.apply this, [settings.Log.Loggly.token, msg]
 
 
     # HELPER METHODS
@@ -100,7 +98,6 @@ class Logger
     # Serializes the parameters and return a JSON object representing the log message,
     # depending on the service being used.
     getMessage: ->
-        result = []
         separated = []
         args = arguments
         args = args[0] if args.length is 1
@@ -121,14 +118,8 @@ class Logger
         # Append IP address, if `serverIP` is set.
         separated.push "IP #{serverIP}" if serverIP?
 
-        # Loggly needs the token as first argument.
-        if loggly?
-            result.push(settings.Log.Loggly.token)
-            result.push(separated.join " | ")
-        else
-            result.push(separated.join " | ")
-
-        return result
+        # Return single string log message.
+        return separated.join " | "
 
 
 # Singleton implementation
