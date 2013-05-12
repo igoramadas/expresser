@@ -105,8 +105,11 @@ class App
 
             # If debug is on, log requests to the console.
             if settings.General.debug
-                @server.use (req, res, next) ->
-                    console.log "Expresser", "Request", req.method, req.url
+                @server.use (req, res, next) =>
+                    ip = @getClientIP req
+                    method = req.method
+                    url = req.url
+                    console.log "Expresser", "Request from #{ip}", method, url
                     next()
 
         # Configure development environment.
