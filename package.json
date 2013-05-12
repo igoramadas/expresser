@@ -1,17 +1,20 @@
 {
-    "name": "Expresser",
-    "version": "0.5.3",
-    "description": "A platform and template for Node.js web apps, built on top of Express.",
+    "name": "expresser",
+    "version": "0.5.4",
+    "description": "A ready-to-use platform for Node.js web apps, built on top of Express.",
     "homepage": "http://expresser.codeplex.com",
-    "author": "Igor Ramadas, Devv <devv@devv.com>",
+    "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache License 2.0",
-    "private": true,
     "subdomain": "expresser",
+    "main": "index",
     "domains": [
         "expresser.codeplex.com"
     ],
     "engines": {
         "node": ">= 0.8.14"
+    },
+    "scripts": {
+        "prepublish": "npm prune"
     },
 	"dependencies": {
         "coffee-script": ">= 1.6.2",
@@ -32,5 +35,12 @@
     "repository": {
         "type": "git",
         "url": "https://git01.codeplex.com/expresser"
-    }
+    },
+    "keywords": [
+        "expresser",
+        "express",
+        "platform",
+        "framework",
+        "template"
+    ]
 }
