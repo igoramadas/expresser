@@ -1,6 +1,6 @@
 {
     "name": "Expresser",
-    "version": "0.5.0",
+    "version": "0.5.2",
     "description": "A platform and template for Node.js web apps, built on top of Express.",
     "homepage": "http://expresser.codeplex.com",
     "author": "Igor Ramadas, Devv <devv@devv.com>",
@@ -26,6 +26,7 @@
         "nodemailer": ">= 0.4.1",
         "node-logentries": ">= 0.1.0",
         "ntwitter": ">= 0.5.0",
+        "socket.io": ">= 0.9.14",
         "stylus": ">= 0.32.1"
 	},
     "repository": {

@@ -18,16 +18,16 @@ class Database
     # INIT AND MANAGEMENT
     # -------------------------------------------------------------------------
 
-    # Init the databse by testing the connection. If connection fails multiple times in a row,
+    # Helper method to check the DB connection. If connection fails multiple times in a row,
     # switch to the failover DB (specified on the `Database.connString2` setting).
     # You can customize these values on the `Database` [settings](settings.html).
-    init: (retry) =>
+    validateConnection = (retry) ->
         retry = 0 if not retry?
 
         # If connection has failed repeatedly for more than 10 times the `maxRetries` value then
         # stop trying and log an error.
         if retry > settings.Database.maxRetries * 10
-            logger.error "Database.init", "Connection failed #{retry} times.", "Quit trying!"
+            logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Quit trying!"
             return
 
         # First try, use main database.
@@ -40,25 +40,29 @@ class Database
             if settings.Database.connString2? and settings.Database.connString2 isnt ""
                 @failover = true
                 db = mongo.db settings.Database.connString2, settings.Database.options
-                logger.info "Database.init", "Connection failed #{retry} times.", "Switched to failover database."
+                logger.info "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Switched to failover database."
             else
-                logger.error "Database.init", "Connection failed #{retry} times.", "No failover database set, keep trying."
+                logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "No failover database set, keep trying."
 
         # Try to connect to the current database. If it fails, try again in a few seconds.
         db.open (err, result) =>
             if err?
                 if settings.General.debug
-                    logger.warn "Database.init", "Failed to connect.", "Retry #{retry}."
-                setTimeout (() -> @init retry + 1), settings.Database.retryInterval
+                    logger.warn "Expresser", "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
+                setTimeout (() -> validateConnection retry + 1), settings.Database.retryInterval
             else if settings.General.debug
                 # If using the failover database, register a timeout to try
                 # to connect to the main database again.
                 if @failover
-                    setTimeout @init, settings.Database.failoverTimeout * 1000
-                    logger.info "Database.init", "Connected to failover database.", "Try the main again in #{settings.Database.failoverTimeout} settings."
+                    setTimeout validateConnection, settings.Database.failoverTimeout * 1000
+                    logger.info "Expresser", "Database.validateConnection", "Connected to failover database.", "Try the main again in #{settings.Database.failoverTimeout} settings."
                 else
-                    logger.info "Database.init", "Connected to main database."
+                    logger.info "Expresser", "Database.validateConnection", "Connected to main database."
 
+    # Init the databse by testing the connection.
+    init: =>
+        if settings.Database.connString? and settings.Database.connString isnt ""
+            validateConnection()
 
     # LOW LEVEL IMPLEMENTATION
     # -------------------------------------------------------------------------

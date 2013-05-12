@@ -84,7 +84,7 @@ class App
             settings.Log.Loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
         # General configuration of the app (for all environments).
-        @expressApp.configure ->
+        @expressApp.configure =>
             checkCloudEnvironment()
 
             # Init the logger and other modules.
@@ -95,7 +95,7 @@ class App
 
             # Set view options, use Jade for HTML templates.
             @expressApp.set "views", settings.Path.viewsDir
-            @expressApp.set "view engine", "jade"
+            @expressApp.set "view engine", settings.Web.viewEngine
             @expressApp.set "view options", { layout: false }
 
             # Express settings.
@@ -111,11 +111,11 @@ class App
             @expressApp.use ConnectAssets
 
         # Configure development environment.
-        @expressApp.configure "development", ->
+        @expressApp.configure "development", =>
             @expressApp.use express.errorHandler settings.ErrorHandling
 
         # Configure production environment.
-        @expressApp.configure "production", ->
+        @expressApp.configure "production", =>
             @expressApp.use express.errorHandler()
 
         # Start the server.

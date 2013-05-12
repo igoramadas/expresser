@@ -41,6 +41,8 @@ class Settings
         port: 3456
         # Secret key used for session encryption.
         sessionSecret: "ExpresserSession"
+        # The view engine used by Express. Default is jade.
+        viewEngine: "jade"
 
     # CONNECT ASSETS
     # -------------------------------------------------------------------------
@@ -178,6 +180,9 @@ Settings.getInstance = ->
 
         fs = require "fs"
         filename = __dirname + "/settings.json"
+
+        # If settings.json does not exist on root, try on local path.
+        filename = "./settings.json" if not fs.existsSync filename
 
         # Check if there's a `settings.json` file, and overwrite settings if so.
         if fs.existsSync filename
