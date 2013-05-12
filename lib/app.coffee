@@ -126,7 +126,7 @@ class App
         else
             @server.listen settings.Web.port
 
-        console.log "Expresser", "App started on port #{settings.Web.port}."
+        console.log "Expresser", "App '#{settings.General.appTitle}' started on port #{settings.Web.port}."
 
 
     # HELPER AND UTILS

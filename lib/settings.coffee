@@ -178,13 +178,19 @@ Settings.getInstance = ->
         @instance = new Settings()
 
         fs = require "fs"
-        filename = __dirname + "/settings.json"
+        path = require "path"
+        filename =  path.dirname(require.main.filename) + "/settings.json"
 
-        # If settings.json does not exist on root, try on local path.
-        filename = "./settings.json" if not fs.existsSync filename
+        # Check if `settings.json` exists on root folder.
+        hasJson = fs.existsSync filename
+
+        # If `settings.json` does not exist on root, try on local path.
+        if not hasJson
+            filename = __dirname + "/settings.json"
+            hasJson fs.existsSync filename
 
         # Check if there's a `settings.json` file, and overwrite settings if so.
-        if fs.existsSync filename
+        if hasJson
             settingsJson = require filename
 
             # Helper function to overwrite settings.
