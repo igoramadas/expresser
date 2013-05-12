@@ -13,7 +13,7 @@ class Expresser
     database: require "./lib/database.coffee"
     logger: require "./lib/logger.coffee"
     mail: require "./lib/mail.coffee"
-    sockets: require "/lib/sockets.coffee"
+    sockets: require "./lib/sockets.coffee"
     twitter: require "./lib/twitter.coffee"
 
     # Helper to init all modules.

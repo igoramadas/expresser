@@ -5,7 +5,7 @@
 class App
 
     # Expose the Express server to external modules.
-    expressApp: null
+    server: null
 
 
     # INIT
@@ -48,7 +48,7 @@ class App
 
         # Require express and create the app.
         express = require "express"
-        @expressApp = express()
+        @server = express()
 
         # Require other modules.
         database = require "./database.coffee"
@@ -84,7 +84,7 @@ class App
             settings.Log.Loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
         # General configuration of the app (for all environments).
-        @expressApp.configure =>
+        @server.configure =>
             checkCloudEnvironment()
 
             # Init the logger and other modules.
@@ -94,35 +94,35 @@ class App
             twitter.init()
 
             # Set view options, use Jade for HTML templates.
-            @expressApp.set "views", settings.Path.viewsDir
-            @expressApp.set "view engine", settings.Web.viewEngine
-            @expressApp.set "view options", { layout: false }
+            @server.set "views", settings.Path.viewsDir
+            @server.set "view engine", settings.Web.viewEngine
+            @server.set "view options", { layout: false }
 
             # Express settings.
-            @expressApp.use express.bodyParser()
-            @expressApp.use express.cookieParser settings.Web.cookieSecret
-            @expressApp.use express.compress()
-            @expressApp.use express.methodOverride()
-            @expressApp.use express["static"] settings.Path.publicDir
-            @expressApp.use @expressApp.router
+            @server.use express.bodyParser()
+            @server.use express.cookieParser settings.Web.cookieSecret
+            @server.use express.compress()
+            @server.use express.methodOverride()
+            @server.use express["static"] settings.Path.publicDir
+            @server.use @server.router
 
             # Connect assets and dynamic compiling.
             ConnectAssets = (require "connect-assets") settings.ConnectAssets
-            @expressApp.use ConnectAssets
+            @server.use ConnectAssets
 
         # Configure development environment.
-        @expressApp.configure "development", =>
-            @expressApp.use express.errorHandler settings.ErrorHandling
+        @server.configure "development", =>
+            @server.use express.errorHandler settings.ErrorHandling
 
         # Configure production environment.
-        @expressApp.configure "production", =>
-            @expressApp.use express.errorHandler()
+        @server.configure "production", =>
+            @server.use express.errorHandler()
 
         # Start the server.
         if settings.Web.ip? and settings.Web.ip isnt ""
-            @expressApp.listen settings.Web.ip, settings.Web.port
+            @server.listen settings.Web.ip, settings.Web.port
         else
-            @expressApp.listen settings.Web.port
+            @server.listen settings.Web.port
 
         console.log "Expresser", "App started on port #{settings.Web.port}."
 

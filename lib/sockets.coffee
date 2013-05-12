@@ -16,7 +16,7 @@ class Sockets
     # the counter to increase / decrease when users connects or
     # disconnects from the app.
     init: =>
-        server = app.expressApp
+        server = app.server
 
         # If app is not initialized, abort and log an error.
         if not server?
