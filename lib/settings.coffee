@@ -66,7 +66,6 @@ class Settings
     # ----------------------------------------------------------------------
     Database:
         # Connection string to MongoDB, using the format `user:password@hostname/dbname`.
-        # Default is database countingto, running on localhost, with no credentials.
         connString: null
         # In case you don't have failover / sharding in place on the database above
         # using MongoDB built-in features, you can set a failover connection string below.

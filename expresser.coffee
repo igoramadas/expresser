@@ -5,16 +5,25 @@
 
 class Expresser
 
+    # Settings.
+    settings: require "./lib/settings.coffee"
+
+    # Expresser modules.
     app: require "./lib/app.coffee"
     database: require "./lib/database.coffee"
     logger: require "./lib/logger.coffee"
     mail: require "./lib/mail.coffee"
-    settings: require "./lib/settings.coffee"
+    sockets: require "/lib/sockets.coffee"
     twitter: require "./lib/twitter.coffee"
 
     # Helper to init all modules.
-    init: ->
-        settings.init()
+    init: =>
+        @logger.init()
+        @database.init()
+        @mail.init()
+        @twitter.init()
+        @app.init()
+        @sockets.init()
 
 
 # Singleton implementation
