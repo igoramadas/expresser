@@ -1,0 +1,35 @@
+{
+    "name": "Expresser",
+    "version": "0.5.0",
+    "description": "A platform and template for Node.js web apps, built on top of Express.",
+    "homepage": "http://expresser.codeplex.com",
+    "author": "Igor Ramadas, Devv <devv@devv.com>",
+    "license": "Apache License 2.0",
+    "private": true,
+    "subdomain": "expresser",
+    "domains": [
+        "expresser.codeplex.com"
+    ],
+    "engines": {
+        "node": ">= 0.8.14"
+    },
+	"dependencies": {
+        "coffee-script": ">= 1.6.2",
+        "connect-assets": ">= 2.4.1",
+        "express": ">= 3.1.1",
+        "jade": ">= 0.28.2",
+        "lodash": ">= 1.1.1",
+        "loggly": ">= 0.3.11",
+        "moment": ">= 2.0.0",
+        "mongoskin": ">= 0.5.0",
+        "newrelic": ">= 0.9.20",
+        "nodemailer": ">= 0.4.1",
+        "node-logentries": ">= 0.1.0",
+        "ntwitter": ">= 0.5.0",
+        "stylus": ">= 0.32.1"
+	},
+    "repository": {
+        "type": "git",
+        "url": "https://git01.codeplex.com/expresser"
+    }
+}
