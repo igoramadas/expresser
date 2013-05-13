@@ -103,7 +103,7 @@ class Firewall
 
         while p >= 0
             if patterns[module][p].test message
-                @handleAttack "#{module}", p, req, res
+                @handleSocketAttack "#{module}", p, socket, message
                 return
             --p
 
