@@ -118,6 +118,24 @@ class Settings
             # The secondary SMTP auth username.
             user: null
 
+    # FIREWALL
+    # -------------------------------------------------------------------------
+    Firewall:
+        # How long should IP be blacklisted, in seconds.
+        blacklistExpires: 30
+        # How long should IP be blacklisted in case it reaches the "MaxRetries" value
+        # below after being already blacklisted before?
+        blacklistLongExpires: 3600
+        # If a blacklisted IP keeps attacking, how many attacks till its expiry date
+        # extends to the "LongExpires" value above?
+        blacklistMaxRetries: 5
+        # If enabled, all requests will be checked against common attacks.
+        enabled: true
+        # Which HTTP protection patterns should be enabled? Available: lfi, sql, xss
+        httpPatterns: "lfi,sql,xss"
+        # Which Socket protection patterns should be enabled? Available: lfi, sql, xss
+        socketPatterns: "lfi,sql,xss"
+
     # LOGGING
     # -------------------------------------------------------------------------
     # Built-in support for Loggly and Logentries.
@@ -141,7 +159,7 @@ class Settings
             active: false
             token: null
 
-    # LOGGING
+    # NEW RELIC PROFILING
     # -------------------------------------------------------------------------
     # Built-in support for New Relic. Will be used ONLY if the appName and licenseKey
     # settings below are set and valid.

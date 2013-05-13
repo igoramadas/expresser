@@ -8,6 +8,7 @@ class App
     server: null
 
     # Internal modules will be set on `init`.
+    firewall = null
     logger = null
     settings = null
 
@@ -36,7 +37,8 @@ class App
                 console.log "Expresser", "Embeding New Relic agent for #{newRelicAppName}..."
                 require "newrelic"
 
-        # Require the logger module.
+        # Require the firewall and logger modules.
+        firewall = require "./firewall.coffee"
         logger = require "./logger.coffee"
 
         # Log unhandled exceptions. Try using the logger, otherwise log to the console.
@@ -106,7 +108,7 @@ class App
             # If debug is on, log requests to the console.
             if settings.General.debug
                 @server.use (req, res, next) =>
-                    ip = @getClientIP req
+                    ip = firewall.getClientIP req
                     method = req.method
                     url = req.url
                     console.log "Expresser", "Request from #{ip}", method, url
@@ -173,18 +175,6 @@ class App
 
         # Return default desktop value if no specific devices were found on user agent.
         return "desktop"
-
-    # Get the client / browser IP.
-    getClientIP: (req) =>
-        try
-            xfor = req.header("X-Forwarded-For")
-            if xfor? and xfor isnt ""
-                ip = xfor.split(",")[0]
-            else
-                ip = req.connection.remoteAddress
-        catch ex
-            ip = req.connection.remoteAddress
-        return ip
 
 
 # Singleton implementation
