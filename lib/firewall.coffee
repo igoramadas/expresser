@@ -7,7 +7,7 @@ class Firewall
 
     async = require "async"
     lodash = require "lodash"
-    logger = require "logger"
+    logger = require "./logger.coffee"
     moment = require "moment"
     settings = require "./settings.coffee"
     util = require "util"
