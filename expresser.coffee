@@ -11,6 +11,7 @@ class Expresser
     # Expresser modules.
     app: require "./lib/app.coffee"
     database: require "./lib/database.coffee"
+    firewall: require "./lib/firewall.coffee"
     logger: require "./lib/logger.coffee"
     mail: require "./lib/mail.coffee"
     sockets: require "./lib/sockets.coffee"
@@ -23,7 +24,6 @@ class Expresser
         @mail.init()
         @twitter.init()
         @app.init()
-        @sockets.init()
 
 
 # Singleton implementation

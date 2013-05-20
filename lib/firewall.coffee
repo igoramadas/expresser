@@ -1,7 +1,6 @@
-# EXPRESSER LOGGER
+# EXPRESSER FIREWALL
 # -----------------------------------------------------------------------------
-# Handles server logging using Logentries or Loggly. Please make sure to
-# set the correct parameters on the (log settings)[settings.html].
+# Firewall to protect the server against well known http and socket attacks.
 
 class Firewall
 
@@ -10,7 +9,9 @@ class Firewall
     logger = require "./logger.coffee"
     moment = require "moment"
     settings = require "./settings.coffee"
+    sockets = "./sockets.coffee"
     util = require "util"
+    utils = require "./utils.coffee"
 
     # Holds a collection of blacklisted IPs.
     blacklist: {}
@@ -33,10 +34,20 @@ class Firewall
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the Logger. Verify which service is set, and add the necessary transports.
-    # IP address and timestamp will be appended to logs depending on the [settings](settings.html).
-    init: =>
-        logger.info()
+    # Init the firewall. This must be called AFTER the web app has started.
+    init: (server) =>
+        if not server?
+            logger.error "Expresser", "Firewall.init", "App server is not initialized. Abort!"
+            return
+
+        # Bind http protection.
+        if settings.Firewall.httpPatterns isnt ""
+            server.use @checkHttpRequest
+            logger.info "Expresser", "Firewall.init", "Protect HTTP requests."
+
+        # Bind sockets protection.
+        if settings.Firewall.socketPatterns isnt ""
+            logger.info "Expresser", "Firewall.init", "Protect Socket requests."
 
 
     # HTTP PROTECTION
@@ -44,7 +55,7 @@ class Firewall
 
     # Check HTTP requests against common web attacks.
     checkHttpRequest: (req, res, next) =>
-        ip = @getClientIP req
+        ip = utils.getClientIP req
 
         # If IP is blaclisted, end the request immediatelly.
         @sendAccessDenied res if @checkBlacklist ip
@@ -61,7 +72,7 @@ class Firewall
 
     # Test the request against the enabled protection patterns.
     checkHttpPattern: (module, req, res) =>
-        p = @patterns[module].length - 1
+        p = patterns[module].length - 1
 
         while p >= 0
             if patterns[module][p].test req.url
@@ -71,10 +82,10 @@ class Firewall
 
     # Handle attacks.
     handleHttpAttack: (module, pattern, req, res) =>
-        ip = @getClientIP req
+        ip = utils.getClientIP req
         @logAttack module, pattern, req.url, ip
 
-        res.end()
+        @sendAccessDenied res
 
 
     # SOCKETS PROTECTION
@@ -82,7 +93,7 @@ class Firewall
 
     # Check Socket requests against common web attacks.
     checkSocketRequest: (socket, message, next) =>
-        ip = @getClientIP req
+        ip = utils.getClientIP req
 
         # If IP is blaclisted, end the request immediatelly.
         @sendAccessDenied socket if @checkBlacklist ip
@@ -99,7 +110,7 @@ class Firewall
 
     # Test the request against the enabled protection patterns.
     checkSocketPattern: (module, socket, message) =>
-        p = @patterns[module].length - 1
+        p = patterns[module].length - 1
 
         while p >= 0
             if patterns[module][p].test message
@@ -109,7 +120,7 @@ class Firewall
 
     # Handle attacks.
     handleSocketAttack: (module, pattern, socket, message) =>
-        ip = @getClientIP socket
+        ip = utils.getClientIP socket
         @logAttack module, pattern, message, ip
 
 
@@ -156,8 +167,12 @@ class Firewall
     # -------------------------------------------------------------------------
 
     # Send an access denied and end the request in case it wasn't authorized.
-    sendAccessDenied: (obj) =>
-        obj.writeHead 403 if obj.writeHead?
+    sendAccessDenied: (obj, message) =>
+        message = "Request now allowed!" if not message?
+
+        # Set status and message.
+        obj.status(403) if obj.status?
+        obj.send(message) if obj.send?
 
         # Disconnect or end?
         if obj.disconnect?
@@ -168,23 +183,6 @@ class Firewall
     # Log attacks.
     logAttack: (module, pattern, resource, ip) =>
         logger.warn "Expresser", "ATTACK DETECTED!", module, pattern, resource, "From #{ip}"
-
-    # Get the client / browser IP, even when behind proxies. Works for http and socket requests.
-    getClientIP: (reqOrSocket) =>
-        if not reqOrSocket?
-            return null
-
-        # Try getting the xforwarded header first.
-        if reqOrSocket.header?
-            xfor = reqOrSocket.header "X-Forwarded-For"
-            if xfor? and xfor isnt ""
-                return xfor.split(",")[0]
-
-        # Get remote address.
-        if reqOrSocket.connection?
-            return reqOrSocket.connection.remoteAddress
-        else
-            return reqOrSocket.remoteAddress
 
 
 # Singleton implementation

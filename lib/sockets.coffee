@@ -4,7 +4,6 @@
 
 class Sockets
 
-    app = require "./app.coffee"
     logger = require "./logger.coffee"
     settings = require "./settings.coffee"
 
@@ -15,12 +14,10 @@ class Sockets
     # Bind the Socket.IO object to the Express app. This will also set
     # the counter to increase / decrease when users connects or
     # disconnects from the app.
-    init: =>
-        server = app.server
-
-        # If app is not initialized, abort and log an error.
+    init: (server) =>
         if not server?
-            logger.error "Expresser", "Sockets.init", "App is not initialized. Abort!"
+            logger.error "Expresser", "Sockets.init", "App server is not initialized. Abort!"
+            return
 
         @io = require("socket.io").listen require("http").createServer server
 

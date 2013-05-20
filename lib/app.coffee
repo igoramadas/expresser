@@ -11,6 +11,8 @@ class App
     firewall = null
     logger = null
     settings = null
+    sockets = null
+    utils = null
 
 
     # INIT
@@ -22,6 +24,7 @@ class App
         # Require OS to gather system info, and the server settigs.
         os = require "os"
         settings = require "./settings.coffee"
+        utils = require "./utils.coffee"
 
         # Get New Relic environment variables.
         newRelicAppName = process.env.NEW_RELIC_APP_NAME or settings.NewRelic.appName
@@ -37,8 +40,7 @@ class App
                 console.log "Expresser", "Embeding New Relic agent for #{newRelicAppName}..."
                 require "newrelic"
 
-        # Require the firewall and logger modules.
-        firewall = require "./firewall.coffee"
+        # Require logger.
         logger = require "./logger.coffee"
 
         # Log unhandled exceptions. Try using the logger, otherwise log to the console.
@@ -98,6 +100,22 @@ class App
             @server.use express.cookieParser settings.Web.cookieSecret
             @server.use express.compress()
             @server.use express.methodOverride()
+
+            # If debug is on, log requests to the console.
+            if settings.General.debug
+                @server.use (req, res, next) =>
+                    ip = utils.getClientIP req
+                    method = req.method
+                    url = req.url
+                    console.log "Expresser", "Request from #{ip}", method, url
+                    next() if next?
+
+            # Enable firewall?
+            if settings.Firewall.enabled
+                firewall = require "./firewall.coffee"
+                firewall.init @server
+
+            # Set static folder and router.
             @server.use express["static"] settings.Path.publicDir
             @server.use @server.router
 
@@ -105,14 +123,10 @@ class App
             ConnectAssets = (require "connect-assets") settings.ConnectAssets
             @server.use ConnectAssets
 
-            # If debug is on, log requests to the console.
-            if settings.General.debug
-                @server.use (req, res, next) =>
-                    ip = firewall.getClientIP req
-                    method = req.method
-                    url = req.url
-                    console.log "Expresser", "Request from #{ip}", method, url
-                    next()
+            # Enable sockets?
+            if settings.Sockets.enabled
+                sockets = require "./sockets.coffee"
+                sockets.init @server
 
         # Configure development environment.
         @server.configure "development", =>
