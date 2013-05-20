@@ -1,6 +1,6 @@
 # EXPRESSER FIREWALL
 # -----------------------------------------------------------------------------
-# Firewall to protect the server against well known http and socket attacks.
+# Firewall to protect the server against well known HTTP and socket attacks.
 
 class Firewall
 
@@ -14,7 +14,7 @@ class Firewall
     utils = require "./utils.coffee"
 
     # Holds a collection of blacklisted IPs.
-    blacklist: {}
+    blacklist: null
 
 
     # PROTECTION PATTERNS
@@ -40,7 +40,7 @@ class Firewall
             logger.error "Expresser", "Firewall.init", "App server is not initialized. Abort!"
             return
 
-        # Bind http protection.
+        # Bind HTTP protection.
         if settings.Firewall.httpPatterns isnt ""
             server.use @checkHttpRequest
             logger.info "Expresser", "Firewall.init", "Protect HTTP requests."
@@ -48,6 +48,8 @@ class Firewall
         # Bind sockets protection.
         if settings.Firewall.socketPatterns isnt ""
             logger.info "Expresser", "Firewall.init", "Protect Socket requests."
+
+        @blacklist = {}
 
 
     # HTTP PROTECTION
@@ -58,17 +60,20 @@ class Firewall
         ip = utils.getClientIP req
 
         # If IP is blaclisted, end the request immediatelly.
-        @sendAccessDenied res if @checkBlacklist ip
+        if @checkBlacklist ip
+            @sendAccessDenied res, "Blacklisted"
 
-        # Helper method to check patterns.
-        check = (p, call) =>
-            @checkHttpPattern p, req, res
-            call()
+        # Helper method to check HTTP patterns.
+        check = (p) => @checkHttpPattern p, req, res
 
+        # Set valid and checl all enabled patterns.
+        valid = true
         enabledPatterns = settings.Firewall.httpPatterns.split ","
-        async.each enabledPatterns, check, null
+        for pattern in enabledPatterns
+            valid = false if check(pattern)
 
-        next() if next?
+        # Only proceed if request is valid.
+        next() if valid
 
     # Test the request against the enabled protection patterns.
     checkHttpPattern: (module, req, res) =>
@@ -77,14 +82,15 @@ class Firewall
         while p >= 0
             if patterns[module][p].test req.url
                 @handleHttpAttack "#{module}", p, req, res
-                return
+                return true
             --p
+
+        return false
 
     # Handle attacks.
     handleHttpAttack: (module, pattern, req, res) =>
         ip = utils.getClientIP req
         @logAttack module, pattern, req.url, ip
-
         @sendAccessDenied res
 
 
@@ -96,17 +102,20 @@ class Firewall
         ip = utils.getClientIP req
 
         # If IP is blaclisted, end the request immediatelly.
-        @sendAccessDenied socket if @checkBlacklist ip
+        if @checkBlacklist ip
+            @sendAccessDenied socket, "Blacklisted"
 
-        # Helper method to check patterns.
-        check = (p, call) =>
-            @checkSocketPattern p, socket, util.inspect(message)
-            call()
+        # Helper method to check socket patterns.
+        check = (p) => @checkSocketPattern p, socket, util.inspect(message)
 
+        # Set valid and checl all enabled patterns.
+        valid = true
         enabledPatterns = settings.Firewall.socketPatterns.split ","
-        async.each enabledPatterns, check, null
+        for pattern in enabledPatterns
+            valid = false if check(pattern)
 
-        next() if next?
+        # Only proceed if request is valid.
+        next() if valid
 
     # Test the request against the enabled protection patterns.
     checkSocketPattern: (module, socket, message) =>
@@ -122,6 +131,7 @@ class Firewall
     handleSocketAttack: (module, pattern, socket, message) =>
         ip = utils.getClientIP socket
         @logAttack module, pattern, message, ip
+        @sendAccessDenied socket
 
 
     # BLACKLIST METHODS
@@ -168,17 +178,17 @@ class Firewall
 
     # Send an access denied and end the request in case it wasn't authorized.
     sendAccessDenied: (obj, message) =>
-        message = "Request now allowed!" if not message?
+        message = "Access denied" if not message?
 
         # Set status and message.
-        obj.status(403) if obj.status?
+        obj.status(403) if obj.status? and not obj.headerSent
         obj.send(message) if obj.send?
 
         # Disconnect or end?
         if obj.disconnect?
-            obj.disconnect()
+            return obj.disconnect()
         else
-            obj.end()
+            return obj.end()
 
     # Log attacks.
     logAttack: (module, pattern, resource, ip) =>

@@ -58,7 +58,6 @@ class Sockets
     # When user disconnects, emit an event with the new connection count to all clients.
     onDisconnect: =>
         count = @getConnectionCount()
-        @emit "connection-count", count
         if settings.General.debug
             logger.info "Expresser", "Sockets.onDisconnect", "New count: #{count}."
 

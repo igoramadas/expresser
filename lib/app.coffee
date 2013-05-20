@@ -95,12 +95,6 @@ class App
             @server.set "view engine", settings.Web.viewEngine
             @server.set "view options", { layout: false }
 
-            # Express settings.
-            @server.use express.bodyParser()
-            @server.use express.cookieParser settings.Web.cookieSecret
-            @server.use express.compress()
-            @server.use express.methodOverride()
-
             # If debug is on, log requests to the console.
             if settings.General.debug
                 @server.use (req, res, next) =>
@@ -115,7 +109,11 @@ class App
                 firewall = require "./firewall.coffee"
                 firewall.init @server
 
-            # Set static folder and router.
+            # Use Express handlers.
+            @server.use express.bodyParser()
+            @server.use express.cookieParser settings.Web.cookieSecret
+            @server.use express.compress()
+            @server.use express.methodOverride()
             @server.use express["static"] settings.Path.publicDir
             @server.use @server.router
 
