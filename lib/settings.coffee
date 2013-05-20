@@ -125,7 +125,7 @@ class Settings
             password: null
             # The SMTP port to connect to.
             port: null
-            # Connect using SSL? If you're using prt 587 then secure must be set to false in most cases.
+            # Connect using SSL? If you're using port 587 then secure must be set to false in most cases.
             secure: false
             # The SMTP auth username.
             user: null
@@ -137,7 +137,7 @@ class Settings
             password: null
             # The secondary SMTP port to connect to.
             port: null
-            # Connect to secondary using SSL? If you're using prt 587 then secure must be set to false in most cases.
+            # Connect to secondary using SSL? If you're using port 587 then secure must be set to false in most cases.
             secure: false
             # The secondary SMTP auth username.
             user: null
@@ -206,7 +206,10 @@ Settings.getInstance = ->
         filename =  path.dirname(require.main.filename) + "/settings.json"
 
         # Check if `settings.json` exists on root folder.
-        hasJson = fs.existsSync filename
+        if fs.existsSync?
+            hasJson = fs.existsSync filename
+        else
+            hasJson = path.existsSync filename
 
         # If `settings.json` does not exist on root, try on local path.
         if not hasJson

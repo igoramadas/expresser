@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "description": "A ready-to-use platform for Node.js web apps, built on top of Express.",
     "homepage": "http://expresser.codeplex.com",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -11,7 +11,7 @@
         "expresser.codeplex.com"
     ],
     "engines": {
-        "node": ">= 0.8.14"
+        "node": "*"
     },
     "scripts": {
         "prepublish": "npm prune"
