@@ -58,38 +58,9 @@ class App
         express = require "express"
         @server = express()
 
-        # Make it PaaS friendly. Check for environment variables to override specific settings.
-        # If no environment variables are found, the app will use whatever is defined on the
-        # settings.coffee file.
-        checkCloudEnvironment = ->
-            env = process.env
-
-            # Check for web (IP and port) variables.
-            ip = env.OPENSHIFT_INTERNAL_IP or env.OPENSHIFT_NODEJS_IP
-            port = env.OPENSHIFT_INTERNAL_PORT or env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
-            settings.Web.ip = ip if ip? and ip isnt ""
-            settings.Web.port = port if port? and port isnt ""
-
-            # Check for MongoDB variables.
-            vcap = env.VCAP_SERVICES
-            vcap = JSON.parse vcap if vcap?
-            if vcap? and vcap isnt ""
-                mongo = vcap["mongodb-1.8"]
-                mongo = mongo[0]["credentials"] if mongo?
-                if mongo?
-                    settings.Database.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
-
-            # Check for logging variables.
-            logentriesToken = env.LOGENTRIES_TOKEN
-            logglyToken = env.LOGGLY_TOKEN
-            logglySubdomain = env.LOGGLY_SUBDOMAIN
-            settings.Log.Logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
-            settings.Log.Loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
-            settings.Log.Loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
-
         # General configuration of the app (for all environments).
         @server.configure =>
-            checkCloudEnvironment()
+            utils.updateSettingsFromPaaS() if settings.Web.paas
 
             # Set view options, use Jade for HTML templates.
             @server.set "views", settings.Path.viewsDir

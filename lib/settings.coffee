@@ -36,6 +36,9 @@ class Settings
         # Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
         # This value might be overriden by PaaS environmental values.
         ip: null
+        # If paas is true, Expresser will figure out some settings out of environment variables
+        # like IP, ports and tokens. Leave true if you're deploying to AppFog, Heroku, OpenShift etc.
+        paas: true
         # Node.js server port. Please note that this value might be overriden by PaaS
         # environmental values (like in AppFog or OpenShift).
         port: 8080
