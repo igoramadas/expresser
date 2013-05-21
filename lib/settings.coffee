@@ -38,7 +38,7 @@ class Settings
         ip: null
         # Node.js server port. Please note that this value might be overriden by PaaS
         # environmental values (like in AppFog or OpenShift).
-        port: 3456
+        port: 8080
         # Secret key used for session encryption.
         sessionSecret: "ExpresserSession"
         # The view engine used by Express. Default is jade.
