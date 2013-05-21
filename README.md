@@ -31,3 +31,13 @@ Manages socket connections using Socket.IO.
 
 #### Twitter
 Helper to interact with Twitter.
+
+### Supported PaaS
+
+Deploying your Expresser based app to AppFog, Heroku, OpenShift and possibly any other PaaS is dead simple!
+No need to configure anything - just leave the "paas" setting on, and it will automatically get settings
+from environment variables. Right now the following add-ons will be automatically identified:
+
+Database: AppFog built-in MongoDB, MongoLab, MongoHQ
+Email: SendGrid, Mandrill, Mailgun
+Logging: Loggly, Logentries

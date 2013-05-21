@@ -92,27 +92,27 @@ class Settings
     # DATABASE
     # ----------------------------------------------------------------------
     Database:
-    # Connection string to MongoDB, using the format `user:password@hostname/dbname`.
+        # Connection string to MongoDB, using the format `user:password@hostname/dbname`.
         connString: null
-    # In case you don't have failover / sharding in place on the database above
-    # using MongoDB built-in features, you can set a failover connection string below.
-    # It will be used ONLY if connection to the main database fails repeatedly.
+        # In case you don't have failover / sharding in place on the database above
+        # using MongoDB built-in features, you can set a failover connection string below.
+        # It will be used ONLY if connection to the main database fails repeatedly.
         connString2: null
-    # How long to wait before trying to connect to the main database again (in seconds).
+        # How long to wait before trying to connect to the main database again (in seconds).
         failoverTimeout: 300
-    # How many retries before switching to the failover database or aborting a database operation.
+        # How many retries before switching to the failover database or aborting a database operation.
         maxRetries: 3
-    # Normalize documents ID (replace _id with id)?
+        # Normalize documents ID (replace _id with id)?
         normalizeId: true
-    # How long between connection retries, in milliseconds. Default is 5 seconds.
+        # How long between connection retries, in milliseconds. Default is 5 seconds.
         retryInterval: 5000
-    # Database connection options.
+        # Database connection options.
         options:
-        # Auto recconect if connection is lost?
+            # Auto recconect if connection is lost?
             autoReconnect: true
-        # Default pool size for connections.
+            # Default pool size for connections.
             poolSize: 8
-        # Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.
+            # Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.
             safe: false
 
     # EMAIL
