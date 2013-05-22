@@ -1,6 +1,7 @@
 # EXPRESSER APP
 # -----------------------------------------------------------------------------
 # The Express app server.
+# Parameters on settings.coffee: Settings.App
 
 class App
 
@@ -60,11 +61,11 @@ class App
 
         # General configuration of the app (for all environments).
         @server.configure =>
-            utils.updateSettingsFromPaaS() if settings.Web.paas
+            utils.updateSettingsFromPaaS() if settings.App.paas
 
             # Set view options, use Jade for HTML templates.
             @server.set "views", settings.Path.viewsDir
-            @server.set "view engine", settings.Web.viewEngine
+            @server.set "view engine", settings.App.viewEngine
             @server.set "view options", { layout: false }
 
             # If debug is on, log requests to the console.
@@ -83,7 +84,7 @@ class App
 
             # Use Express handlers.
             @server.use express.bodyParser()
-            @server.use express.cookieParser settings.Web.cookieSecret
+            @server.use express.cookieParser settings.App.cookieSecret
             @server.use express.compress()
             @server.use express.methodOverride()
             @server.use express["static"] settings.Path.publicDir
@@ -107,12 +108,12 @@ class App
             @server.use express.errorHandler()
 
         # Start the server.
-        if settings.Web.ip? and settings.Web.ip isnt ""
-            @server.listen settings.Web.ip, settings.Web.port
+        if settings.App.ip? and settings.App.ip isnt ""
+            @server.listen settings.App.ip, settings.App.port
         else
-            @server.listen settings.Web.port
+            @server.listen settings.App.port
 
-        console.log "Expresser", "App '#{settings.General.appTitle}' started on port #{settings.Web.port}."
+        console.log "Expresser", "App '#{settings.General.appTitle}' started on port #{settings.App.port}."
 
 
     # HELPER AND UTILS

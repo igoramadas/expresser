@@ -1,6 +1,7 @@
 # EXPRESSER DATABASE
 # -----------------------------------------------------------------------------
 # Handle the MongoDB database interactions on the app.
+# Parameters on settings.coffee: Settings.Database
 
 class Database
 
@@ -11,11 +12,11 @@ class Database
     # Database object, will be set during `init`.
     db = null
 
-    # When using the failover databse, `failover` will be set to true.
+    # When using the failover/secondary databse, `failover` will be set to true.
     failover: false
 
 
-    # INIT AND MANAGEMENT
+    # INTERNAL FEATURES
     # -------------------------------------------------------------------------
 
     # Helper method to check the DB connection. If connection fails multiple times in a row,
@@ -24,10 +25,10 @@ class Database
     validateConnection = (retry) ->
         retry = 0 if not retry?
 
-        # If connection has failed repeatedly for more than 10 times the `maxRetries` value then
+        # If connection has failed repeatedly for more than 3 times the `maxRetries` value then
         # stop trying and log an error.
-        if retry > settings.Database.maxRetries * 10
-            logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Quit trying!"
+        if retry > settings.Database.maxRetries * 3
+            logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Abort!"
             return
 
         # First try, use main database.
@@ -59,6 +60,10 @@ class Database
                 else
                     logger.info "Expresser", "Database.validateConnection", "Connected to main database."
 
+
+    # INIT
+    # -------------------------------------------------------------------------
+
     # Init the databse by testing the connection.
     init: =>
         if settings.Database.connString? and settings.Database.connString isnt ""
@@ -73,13 +78,13 @@ class Database
     # The `options` and `callback` are optional.
     get: (collection, options, callback) =>
         if not callback?
-            logger.warn "Database.get", "No callback specified. Abort!", collection, options
+            logger.warn "Expresser", "Database.get", "No callback specified. Abort!", collection, options
             return
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId result if settings.Database.normalizeId
+                result = @normalizeId(result) if settings.Database.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -96,20 +101,20 @@ class Database
 
         # Log if debug is true.
         if settings.General.debug
-            logger.info "Database.get", collection, options
+            logger.info "Expresser", "Database.get", collection, options
 
     # Insert or update an object on the database.
     set: (collection, obj, callback) =>
         if not obj?
             msg = "The obj argument is null or empty."
             callback msg, null
-            logger.warn "Database.set", msg
+            logger.warn "Expresser", "Database.set", msg
             return
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId result if settings.Database.normalizeId
+                result = @normalizeId(result) if settings.Database.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -119,11 +124,11 @@ class Database
         if obj.id?
             dbCollection.updateById obj.id, {$set: obj.attributes}, dbCallback
             if settings.General.debug
-                logger.info "Database.set", "Update", collection, obj.id, obj.attributes
+                logger.info "Expresser", "Database.set", "Update", collection, obj.id, obj.attributes
         else
             dbCollection.insert obj.attributes, {"new": true}, dbCallback
             if settings.General.debug
-                logger.info "Database.set", "Insert", collection, obj.attributes
+                logger.info "Expresser", "Database.set", "Insert", collection, obj.attributes
 
 
     # Delete an object from the database. The `obj` argument can be either the object
@@ -132,7 +137,7 @@ class Database
         if not obj?
             msg = "The obj argument is null or empty."
             callback msg, null
-            logger.warn "Database.del", msg
+            logger.warn "Expresser", "Database.del", msg
             return
 
         # Check it the `obj` is the model itself, or only the ID string / number.
@@ -144,7 +149,7 @@ class Database
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId result if settings.Database.normalizeId
+                result = @normalizeId(result) if settings.Database.normalizeId
                 callback err, result
 
         # Set collection object and remove specified document from the database.
@@ -153,14 +158,14 @@ class Database
 
         # Log if debug is true.
         if settings.General.debug
-            logger.warn "Database.del", collection, obj.id, obj.attributes
+            logger.warn "Expresser", "Database.del", collection, obj.id, obj.attributes
 
     # Count data from the database. A `collection` must be specified.
     # If no `options` is passed (null or undefined) then count all documents.
     # The callback is mandatory.
     count: (collection, options, callback) =>
         if not callback?
-            logger.warn "Database.count", "No callback specified. Abort!", collection, options
+            logger.warn "Expresser", "Database.count", "No callback specified. Abort!", collection, options
             return
 
         # Create the DB callback helper.
@@ -168,7 +173,7 @@ class Database
             if callback?
                 callback err, result
                 if settings.General.debug
-                    logger.info "Database.count", collection, options, result
+                    logger.info "Expresser", "Database.count", collection, options, result
 
         # MongoDB has a built-in count, so use it.
         dbCollection = db.collection collection
@@ -178,11 +183,10 @@ class Database
     # HELPER METHODS
     # -------------------------------------------------------------------------
 
-    # Make sure that we transform MongoDB "_id" to "id".
+    # Helper to transform MongoDB document "_id" to "id".
     normalizeId: (result) =>
-        if not result?
-            return
-
+        return if not result?
+            
         if result.length?
             for obj in result
                 obj["id"] = obj["_id"].toString()

@@ -1,7 +1,8 @@
-# EXPRSSER MAIL
+# EXPRESSER MAIL
 # --------------------------------------------------------------------------
 # Sends and manages emails, supports templates. When parsing templates, the
-# tags should be wrapped with brackets {}.
+# tags should be wrapped with normal brackets {}. Example: {contents}
+# Parameters on settings.coffee: Settings.Mail
 
 class Mail
 
@@ -41,10 +42,10 @@ class Mail
 
     # Init the SMTP transport objects.
     init: =>
-        if settings.Email.smtp.host? and settings.Email.smtp.host isnt "" and settings.Email.smtp.port > 0
-            smtp = createSmtp settings.Email.smtp
-        if settings.Email.smtp2.host? and settings.Email.smtp2.host isnt "" and settings.Email.smtp2.port > 0
-            smtp2 = createSmtp settings.Email.smtp2
+        if settings.Mail.smtp.host? and settings.Mail.smtp.host isnt "" and settings.Mail.smtp.port > 0
+            smtp = createSmtp settings.Mail.smtp
+        if settings.Mail.smtp2.host? and settings.Mail.smtp2.host isnt "" and settings.Mail.smtp2.port > 0
+            smtp2 = createSmtp settings.Mail.smtp2
 
         # Warn if no SMTP is available for sending emails, but only when debug is enabled.
         if not smtp? and not smtp2? and settings.General.debug
@@ -75,7 +76,7 @@ class Mail
             return
 
         # Set from to default address if no `fromAddress` was set and create the options object.
-        fromAddress = "#{settings.General.appTitle} <#{settings.Email.from}>" if not fromAddress?
+        fromAddress = "#{settings.General.appTitle} <#{settings.Mail.from}>" if not fromAddress?
         options = {}
 
         if toAddress.indexOf("<") < 3

@@ -1,6 +1,7 @@
 # EXPRESSER FIREWALL
 # -----------------------------------------------------------------------------
 # Firewall to protect the server against well known HTTP and socket attacks.
+# Parameters on settings.coffee: Settings.Firewall
 
 class Firewall
 

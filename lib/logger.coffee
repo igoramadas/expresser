@@ -1,7 +1,7 @@
 # EXPRESSER LOGGER
 # --------------------------------------------------------------------------
-# Handles server logging using Logentries or Loggly. Please make sure to
-# set the correct parameters on the (log settings)[settings.html].
+# Handles server logging using Logentries or Loggly.
+# Parameters on settings.coffee: Settings.Log
 
 class Logger
 
@@ -14,19 +14,19 @@ class Logger
     loggerLogentries = null
     loggerLoggly = null
 
-    # The `serverIP` will be set on init, but only if `settings.Log.sendIP` is true.
+    # The `serverIP` will be set on init, but only if `settings.Logger.sendIP` is true.
     serverIP = null
 
 
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Logger. Verify which service is set, and add the necessary transports.
-    # IP address and timestamp will be appended to logs depending on the [settings](settings.html).
+    # Init the Logger. Verify which services are set, and add the necessary transports.
+    # IP address and timestamp will be appended to logs depending on the settings.
     init: =>
         services = []
 
-        if settings.Log.sendIP
+        if settings.Logger.sendIP
             ifaces = require("os").networkInterfaces()
             for i of ifaces
                 ifaces[i].forEach (details) ->
@@ -34,15 +34,15 @@ class Logger
                         serverIP = details.address
 
         # Check if Loggly should be used.
-        if settings.Log.Logentries.token? and settings.Log.Logentries.token isnt ""
+        if settings.Logger.Logentries.token? and settings.Logger.Logentries.token isnt ""
             logentries = require "node-logentries"
-            loggerLogentries = logentries.logger {token: settings.Log.Logentries.token, timestamp: settings.Log.sendTimestamp}
+            loggerLogentries = logentries.logger {token: settings.Logger.Logentries.token, timestamp: settings.Logger.sendTimestamp}
             services.push "Logentries"
 
         # Check if Logentries should be used.
-        if settings.Log.Loggly.subdomain? and settings.Log.Loggly.token? and settings.Log.Loggly.token isnt ""
+        if settings.Logger.Loggly.subdomain? and settings.Logger.Loggly.token? and settings.Logger.Loggly.token isnt ""
             loggly = require "loggly"
-            loggerLoggly = loggly.createClient {subdomain: settings.Log.Loggly.subdomain, json: true}
+            loggerLoggly = loggly.createClient {subdomain: settings.Logger.Loggly.subdomain, json: true}
             services.push "Loggly"
 
         # Define server IP.
@@ -69,7 +69,7 @@ class Logger
         if logentries?
             loggerLogentries.info.apply this, [msg]
         if loggly?
-            loggerLoggly.log.apply this, [settings.Log.Loggly.token, msg]
+            loggerLoggly.log.apply this, [settings.Logger.Loggly.token, msg]
 
     # Log any object to the default transports as `warn`.
     warn: =>
@@ -79,7 +79,7 @@ class Logger
         if logentries?
             loggerLogentries.warning.apply this, [msg]
         if loggly?
-            loggerLoggly.log.apply this, [settings.Log.Loggly.token, msg]
+            loggerLoggly.log.apply this, [settings.Logger.Loggly.token, msg]
 
     # Log any object to the default transports as `error`.
     error: =>
@@ -89,7 +89,7 @@ class Logger
         if logentries?
             loggerLogentries.err.apply this, [msg]
         if loggly?
-            loggerLoggly.log.apply this, [settings.Log.Loggly.token, msg]
+            loggerLoggly.log.apply this, [settings.Logger.Loggly.token, msg]
 
 
     # HELPER METHODS

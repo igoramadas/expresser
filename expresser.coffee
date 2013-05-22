@@ -23,6 +23,8 @@ class Expresser
         @database.init()
         @mail.init()
         @twitter.init()
+
+        # App must be the last thing to be started!
         @app.init()
 
 

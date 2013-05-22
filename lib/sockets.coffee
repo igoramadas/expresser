@@ -1,6 +1,7 @@
 # EXPRESSER SOCKETS
 # --------------------------------------------------------------------------
 # Handles sockets communication using the module Socket.IO.
+# Parameters on settings.coffee: Settings.Sockets
 
 class Sockets
 

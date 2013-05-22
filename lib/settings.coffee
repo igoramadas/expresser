@@ -1,7 +1,17 @@
 # EXPRESSER SETTINGS
 # -----------------------------------------------------------------------------
 # All server settings for the app are set on this file. Settings can be overriden
-# by creating a settings.json file with the specified keys and values.
+# by creating a settings.json file with the specified keys and values, for example:
+# {
+#   "General": {
+#     "debug": true,
+#     "appTitle": "A Super Cool App"
+#   },
+#   "Firewall" {
+#     "enabled": false
+#   }
+# }
+# Please note that the settings.json must ne located on the root of your app!
 
 class Settings
 
@@ -30,7 +40,7 @@ class Settings
 
     # WEB
     # -------------------------------------------------------------------------
-    Web:
+    App:
         # Secret key used for cookie encryption.
         cookieSecret: "ExpresserCookie"
         # Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
@@ -102,7 +112,7 @@ class Settings
         failoverTimeout: 300
         # How many retries before switching to the failover database or aborting a database operation.
         maxRetries: 3
-        # Normalize documents ID (replace _id with id)?
+        # Normalize documents ID (replace _id with id when returning documents)?
         normalizeId: true
         # How long between connection retries, in milliseconds. Default is 5 seconds.
         retryInterval: 5000
@@ -117,7 +127,7 @@ class Settings
 
     # EMAIL
     # -------------------------------------------------------------------------
-    Email:
+    Mail:
         # Default `from` email address.
         from: null
         # Main SMTP server.
@@ -148,7 +158,7 @@ class Settings
     # LOGGING
     # -------------------------------------------------------------------------
     # Built-in support for Loggly and Logentries.
-    Log:
+    Logger:
         # If `sendIP` is true, the IP address of the machine will be added to logs events.
         # Useful when you have different instances of the app running on different services.
         sendIP: true
