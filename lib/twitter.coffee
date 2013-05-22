@@ -17,8 +17,8 @@ class Twitter
     auth = false
 
 
-    # INIT
-    # --------------------------------------------------------------------------
+    # INTERNAL FEATURES
+    # -------------------------------------------------------------------------
 
     # Helper to authenticate on Twitter, with limited retries.
     authenticate = (retry) ->
@@ -34,6 +34,10 @@ class Twitter
             else
                 logger.info "Expresser", "Twitter.init", "Authorized with ID #{data.id}."
                 auth = true
+
+
+    # INIT
+    # --------------------------------------------------------------------------
 
     # Init the Twitter handler, but only if the consumer and access keys were
     # properly set on the [settings](settings.html).

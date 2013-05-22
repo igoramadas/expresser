@@ -3,6 +3,10 @@
 # Handles sockets communication using the module Socket.IO.
 # Parameters on settings.coffee: Settings.Sockets
 
+# ATTENTION!
+# The Sockets module is started automatically by the App module. If you wish to
+# disable it, set `Settings.Sockets.enabled` to false.
+
 class Sockets
 
     logger = require "./logger.coffee"
@@ -17,7 +21,7 @@ class Sockets
     # disconnects from the app.
     init: (server) =>
         if not server?
-            logger.error "Expresser", "Sockets.init", "App server is not initialized. Abort!"
+            logger.error "Expresser", "Sockets.init", "App server is invalid. Abort!"
             return
 
         @io = require("socket.io").listen require("http").createServer server

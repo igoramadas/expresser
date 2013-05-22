@@ -20,8 +20,8 @@ class Mail
     templateCache = {}
 
 
-    # INIT
-    # --------------------------------------------------------------------------
+    # INTERNAL FEATURES
+    # -------------------------------------------------------------------------
 
     # Helper to set the SMTP objects.
     createSmtp = (opt) ->
@@ -40,6 +40,19 @@ class Mail
         # Create and return SMTP object.
         return mailer.createTransport "SMTP", options
 
+    # Helper to send emails using the specified transport and options.
+    doSend = (transport, options, callback) ->
+        transport.sendMail options, (err, result) ->
+            if err?
+                logger.error "Expresser", "Mail.send", "Could not send message: #{options.subject} to #{options.to}.", err, transport.host
+            else if settings.General.debug
+                logger.info "Mail.send", subject, "to #{toAddress}", "from #{fromAddress}.", transport.host
+            callback err, result
+
+
+    # INIT
+    # --------------------------------------------------------------------------
+
     # Init the SMTP transport objects.
     init: =>
         if settings.Mail.smtp.host? and settings.Mail.smtp.host isnt "" and settings.Mail.smtp.port > 0
@@ -54,15 +67,6 @@ class Mail
 
     # OUTBOUND
     # --------------------------------------------------------------------------
-
-    # Helper to send emails using the specified transport and options.
-    doSend = (transport, options, callback) ->
-        transport.sendMail options, (err, result) ->
-            if err?
-                logger.error "Expresser", "Mail.send", "Could not send message: #{options.subject} to #{options.to}.", err, transport.host
-            else if settings.General.debug
-                logger.info "Mail.send", subject, "to #{toAddress}", "from #{fromAddress}.", transport.host
-            callback err, result
 
     # Sends an email to the specified address. The `obj` will be parsed and transformed
     # to a HTML formatted message. A callback can be specified, having (err, result).

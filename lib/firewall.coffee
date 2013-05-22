@@ -3,6 +3,10 @@
 # Firewall to protect the server against well known HTTP and socket attacks.
 # Parameters on settings.coffee: Settings.Firewall
 
+# ATTENTION!
+# The Firewall module is started automatically by the App module. If you wish to
+# disable it, set `Settings.Firewall.enabled` to false.
+
 class Firewall
 
     async = require "async"
@@ -38,7 +42,7 @@ class Firewall
     # Init the firewall. This must be called AFTER the web app has started.
     init: (server) =>
         if not server?
-            logger.error "Expresser", "Firewall.init", "App server is not initialized. Abort!"
+            logger.error "Expresser", "Firewall.init", "App server is invalid. Abort!"
             return
 
         # Bind HTTP protection.

@@ -55,7 +55,7 @@ class Logger
         if not logentries? and not loggly?
             @warn "Expresser", "Logger.init", "Logentries and Loggly credentials were not set.", "Logger module won't work!"
         else
-            @info "Expresser", "Logger.init", services.join()
+            @info "Expresser", "Logger.init", services.join(), ipInfo
 
 
     # LOG METHODS
