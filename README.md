@@ -39,6 +39,9 @@ you'll have to implement this feature yourself - we suggest using background wor
 *   Automatic IP blacklisting.
 *   Works on HTTP and Socket connections.
 
+The Firewall module is handled automatically by the App module. If you want to disable it,
+set the `Settings.Firewall.enabled` settings to false.
+
 ### Logger
 *   Suppports logging to Logentries (http://logentries.com) and Loggly (http://loggly.com).
 
@@ -52,12 +55,18 @@ for Logentries and Loggly, the Logger module will log to the console only.
 ### Sockets
 *   Wrapper for the Socket.IO module
 
+The Sockets module is handled automatically by the App module. If you want to disable it,
+set the `Settings.Sockets.enabled` settings to false.
+
 ### Twitter
 *   Supports updating status and reading direct messages from Twitter.
 
+### Utils
+*   General utilities and helper methods.
+
 ## Running on PaaS
 
-Deploying your Expresser based app to AppFog, Heroku, OpenShift and possibly any other PaaS is dead simple!
+Deploying your Expresser based app to AppFog, Heroku, OpenShift and possibly any other PaaS is dead simple.
 No need to configure anything - just leave the "paas" setting on, and it will automatically get settings
 from environment variables. Right now the following add-ons will be automatically identified:
 
