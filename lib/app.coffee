@@ -44,12 +44,14 @@ class App
         # Require logger.
         logger = require "./logger.coffee"
 
-        # Log unhandled exceptions. Try using the logger, otherwise log to the console.
-        process.on "uncaughtException", (err) ->
-            try
-                logger.error "Unhandled exception!", err.stack
-            catch ex
-                console.error "Unhandled exception!", Date(Date.now()), err.stack
+        # Check if uncaught exceptions should be logged. If so, try logging unhandled
+        # exceptions using the logger, otherwise log to the console.
+        if settings.Logger.uncaughtException
+            process.on "uncaughtException", (err) ->
+                try
+                    logger.error "Expresser", "Unhandled exception!", err.stack
+                catch ex
+                    console.error "Expresser", "Unhandled exception!", Date(Date.now()), err.stack
 
         # Log proccess termination to the console.
         process.on "exit", (sig) ->

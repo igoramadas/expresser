@@ -159,6 +159,9 @@ class Settings
     # -------------------------------------------------------------------------
     # Built-in support for Loggly and Logentries.
     Logger:
+        # Set `uncaughtException` to true to bind the logger to the `uncaughtException`
+        # event on the process and log all uncaught expcetions as errors.
+        uncaughtException: true
         # If `sendIP` is true, the IP address of the machine will be added to logs events.
         # Useful when you have different instances of the app running on different services.
         sendIP: true
@@ -237,6 +240,7 @@ Settings.getInstance = ->
             xtend = (source, target) ->
                 for prop, value of source
                     if value?.constructor is Object
+                        target[prop] = {} if not target[prop]?
                         xtend source[prop], target[prop]
                     else
                         target[prop] = source[prop]

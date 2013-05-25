@@ -17,6 +17,9 @@ class Logger
     # The `serverIP` will be set on init, but only if `settings.Logger.sendIP` is true.
     serverIP = null
 
+    # Holds a list of current active logging services.
+    activeServices = []
+
 
     # INIT
     # --------------------------------------------------------------------------
@@ -24,8 +27,6 @@ class Logger
     # Init the Logger. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
     init: =>
-        services = []
-
         if settings.Logger.sendIP
             ifaces = require("os").networkInterfaces()
             for i of ifaces
@@ -37,13 +38,13 @@ class Logger
         if settings.Logger.Logentries.token? and settings.Logger.Logentries.token isnt ""
             logentries = require "node-logentries"
             loggerLogentries = logentries.logger {token: settings.Logger.Logentries.token, timestamp: settings.Logger.sendTimestamp}
-            services.push "Logentries"
+            activeServices.push "Logentries"
 
         # Check if Logentries should be used.
         if settings.Logger.Loggly.subdomain? and settings.Logger.Loggly.token? and settings.Logger.Loggly.token isnt ""
             loggly = require "loggly"
             loggerLoggly = loggly.createClient {subdomain: settings.Logger.Loggly.subdomain, json: true}
-            services.push "Loggly"
+            activeServices.push "Loggly"
 
         # Define server IP.
         if serverIP?
@@ -55,7 +56,7 @@ class Logger
         if not logentries? and not loggly?
             @warn "Expresser", "Logger.init", "Logentries and Loggly credentials were not set.", "Logger module won't work!"
         else
-            @info "Expresser", "Logger.init", services.join(), ipInfo
+            @info "Expresser", "Logger.init", activeServices.join(), ipInfo
 
 
     # LOG METHODS
@@ -63,7 +64,7 @@ class Logger
 
     # Log any object to the default transports as `log`.
     info: =>
-        console.info.apply(this, arguments) if settings.General.debug
+        console.info.apply(this, arguments) if settings.General.debug or activeServices.length < 1
         msg = @getMessage arguments
 
         if logentries?
@@ -73,7 +74,7 @@ class Logger
 
     # Log any object to the default transports as `warn`.
     warn: =>
-        console.warn.apply(this, arguments) if settings.General.debug
+        console.warn.apply(this, arguments) if settings.General.debug or activeServices.length < 1
         msg = @getMessage arguments
 
         if logentries?
@@ -83,7 +84,7 @@ class Logger
 
     # Log any object to the default transports as `error`.
     error: =>
-        console.error.apply(this, arguments) if settings.General.debug
+        console.error.apply(this, arguments) if settings.General.debug or activeServices.length < 1
         msg = @getMessage arguments
 
         if logentries?
