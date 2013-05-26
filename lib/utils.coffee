@@ -11,7 +11,7 @@ class Utils
         env = process.env
 
         # Temporary variables with current values.
-        currentSmtpHost = settings.Email.smtp.host?.toLowerCase()
+        currentSmtpHost = settings.Mail.smtp.host?.toLowerCase()
 
         # Check for web (IP and port) variables.
         ip = env.OPENSHIFT_INTERNAL_IP or env.OPENSHIFT_NODEJS_IP or env.IP
@@ -48,25 +48,25 @@ class Utils
         smtpUser = env.SENDGRID_USERNAME
         smtpPassword = env.SENDGRID_PASSWORD
         if currentSmtpHost?.indexOf("sendgrid") > 0
-            settings.Email.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
-            settings.Email.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
+            settings.Mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
+            settings.Mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
 
         # Check for Mandrill (email) variables.
         smtpUser = env.MANDRILL_USERNAME
         smtpPassword = env.MANDRILL_APIKEY
         if currentSmtpHost?.indexOf("mandrill") > 0
-            settings.Email.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
-            settings.Email.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
+            settings.Mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
+            settings.Mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
 
         # Check for Mailgun (email) variables.
         smtpHost = env.MAILGUN_SMTP_SERVER
         smtpPort = env.MAILGUN_SMTP_PORT
         smtpUser = env.MAILGUN_SMTP_LOGIN
         smtpPassword = env.MAILGUN_SMTP_PASSWORD
-        settings.Email.smtp.host = smtpHost if smtpHost? and smtpHost isnt ""
-        settings.Email.smtp.port = smtpPort if smtpPort? and smtpPort isnt ""
-        settings.Email.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
-        settings.Email.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
+        settings.Mail.smtp.host = smtpHost if smtpHost? and smtpHost isnt ""
+        settings.Mail.smtp.port = smtpPort if smtpPort? and smtpPort isnt ""
+        settings.Mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
+        settings.Mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
 
     # Get the client / browser IP, even when behind proxies. Works for http and socket requests.
     getClientIP: (reqOrSocket) =>

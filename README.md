@@ -70,9 +70,9 @@ Deploying your Expresser based app to AppFog, Heroku, OpenShift and possibly any
 No need to configure anything - just leave the "paas" setting on, and it will automatically get settings
 from environment variables. Right now the following add-ons will be automatically identified:
 
-Database: AppFog, MongoLab, MongoHQ
-Logging: Loggly, Logentries
-Mail: SendGrid, Mandrill, Mailgun
+*   Database: AppFog, MongoLab, MongoHQ
+*   Logging: Loggly, Logentries
+*   Mail: SendGrid, Mandrill, Mailgun
 
 ## Common questions and answers
 
