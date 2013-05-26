@@ -230,7 +230,7 @@ Settings.getInstance = ->
         # If `settings.json` does not exist on root, try on local path.
         if not hasJson
             filename = __dirname + "/settings.json"
-            hasJson fs.existsSync filename
+            hasJson = fs.existsSync filename
 
         # Check if there's a `settings.json` file, and overwrite settings if so.
         if hasJson
