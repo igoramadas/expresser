@@ -14,10 +14,10 @@ class Utils
         currentSmtpHost = settings.Mail.smtp.host?.toLowerCase()
 
         # Check for web (IP and port) variables.
-        ip = env.OPENSHIFT_INTERNAL_IP or env.OPENSHIFT_NODEJS_IP or env.IP
-        port = env.OPENSHIFT_INTERNAL_PORT or env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
-        settings.Web.ip = ip if ip? and ip isnt ""
-        settings.Web.port = port if port? and port isnt ""
+        ip = env.OPENSHIFT_NODEJS_IP or env.OPENSHIFT_INTERNAL_IP or env.IP
+        port = env.OPENSHIFT_NODEJS_PORT or env.OPENSHIFT_INTERNAL_PORT or env.VCAP_APP_PORT or env.PORT
+        settings.App.ip = ip if ip? and ip isnt ""
+        settings.App.port = port if port? and port isnt ""
 
         # Check for MongoDB on AppFog variables.
         vcap = env.VCAP_SERVICES
@@ -40,9 +40,9 @@ class Utils
         logentriesToken = env.LOGENTRIES_TOKEN
         logglyToken = env.LOGGLY_TOKEN
         logglySubdomain = env.LOGGLY_SUBDOMAIN
-        settings.Log.Logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
-        settings.Log.Loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
-        settings.Log.Loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
+        settings.Logger.Logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
+        settings.Logger.Loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
+        settings.Logger.Loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
         # Check for SendGrid (email) variables.
         smtpUser = env.SENDGRID_USERNAME
