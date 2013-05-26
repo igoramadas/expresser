@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "0.7.1",
+    "version": "0.7.2",
     "description": "A ready-to-use platform for Node.js web apps, built on top of Express.",
     "homepage": "http://expresser.codeplex.com",
     "author": "Igor Ramadas <igor@devv.com>",
