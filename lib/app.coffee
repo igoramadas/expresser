@@ -112,10 +112,10 @@ class App
         # Start the server.
         if settings.App.ip? and settings.App.ip isnt ""
             @server.listen settings.App.ip, settings.App.port
+            console.log "Expresser", "App #{settings.General.appTitle} started!", settings.App.ip, settings.App.port
         else
             @server.listen settings.App.port
-
-        console.log "Expresser", "App '#{settings.General.appTitle}' started on port #{settings.App.port}."
+            console.log "Expresser", "App #{settings.General.appTitle} started!", settings.App.port
 
 
     # HELPER AND UTILS

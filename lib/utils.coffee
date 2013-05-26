@@ -4,11 +4,13 @@
 
 class Utils
 
+    logger = require "./logger.coffee"
     settings = require "./settings.coffee"
 
     # Update settings based on Cloud Environmental variables.
     updateSettingsFromPaaS: =>
         env = process.env
+        logger.info "Expresser", "Utils.updateSettingsFromPaaS", env
 
         # Temporary variables with current values.
         currentSmtpHost = settings.Mail.smtp.host?.toLowerCase()
