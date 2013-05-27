@@ -27,6 +27,7 @@ class Expresser
         @twitter.init()
 
         # App must be the last thing to be started!
+        # The Firewall and Sockets modules are initiated inside the App module.
         @app.init()
 
 

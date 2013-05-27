@@ -17,24 +17,30 @@ and values. Detailed instructions are available on the top / header of the `sett
 
 ## Modules
 
-Below you'll find important information about each of Expresser modules.
+Below you'll find important information about each of Expresser modules. Detailed documentation is extracted from
+the source code and available under the `/docs/` folder.
 
 ### App
-*   Ready to run on most PaaS providers.
-*   Built-in support for New Relic (http://newrelic.com)
+*   Pre-configured Express server ready to run on most PaaS providers.
+*   Built-in support and automatic setup of New Relic (http://newrelic.com)  agent.
+
+**Before you start** make sure to enable the `Settings.App.paas` option in case you're deploying to
+AppFog, Heroku, OpenShift or any other PaaS provider. By doing this the App will get IP, ports and
+other modules settings based on the process environment variables.
 
 The App is the main module of Expresser. It creates a new Express server and set all default options like
 session and cookie secrets, paths to static resources, assets bindings etc.
 
-By Default the App will use Jade as the default template parser. The jade files should be inside the `/views/`
+By default it will use Jade as the default template parser. The jade files should be inside the `/views/`
 folder on the root of your app.  It will also use Connect Assets and serve all static files from `/public/`.
-To change these paths, please edit the `Settings.Path` keys and values.
+To change these paths, please edit the `Settings.Path` keys and values. The client-side JavaScript or CoffeeScript
+should be inside the `/assets/js/` folder, and CSS or Stylus should be in `/assets/css/`.
 
-The Express server is exposed via the `App.server` property.
+The Express server is exposed via the `server` property on the App module.
 
 To enable New Relic on the server, set the `Settings.NewRelic.appName` and `settings.NewRelic.licenseKey` values
 or the `NEW_RELIC_APP_NAME` and `NEW_RELIC_LICENSE_KEY` environment variables. Detailed info can be found
-inside the App module source code itself.
+inside the App module source code.
 
 ### Database
 *   Supports reading, updating and deleting documents on MongoDB servers.
@@ -43,7 +49,7 @@ inside the App module source code itself.
 Expresser provides a super simple failover mechanism that will switch to a backup database in case the main
 database fails repeatedly. This will be activated only if you set the `Settings.Database.connString2` value.
 Please note that Expresser won't keep the main and backup database in sync! If you wish to keep them in sync
-you'll have to implement this feature yourself - we suggest using background workers at http://iron.io.
+you'll have to implement this feature yourself - we suggest using background workers with IronWorker: http://iron.io.
 
 If the `Settings.App.paas` setting is enabled, the Database module will automatically figure out the connection details for
 the following MongoDB services: AppFog, MongoLab, MongoHQ.
