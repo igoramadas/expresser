@@ -33,6 +33,8 @@ class Settings
     Path:
         # Path to the email templates folder.
         emailTemplatesDir: "./emailtemplates/"
+        # Path to local logs folder.
+        logsDir: "./logs/"
         # Path to the public folder used by Express.
         publicDir: "./public/"
         # Path where the .jade views are stored.
@@ -159,9 +161,6 @@ class Settings
     # -------------------------------------------------------------------------
     # Built-in support for Loggly and Logentries.
     Logger:
-        # Set `uncaughtException` to true to bind the logger to the `uncaughtException`
-        # event on the process and log all uncaught expcetions as errors.
-        uncaughtException: true
         # If `sendIP` is true, the IP address of the machine will be added to logs events.
         # Useful when you have different instances of the app running on different services.
         sendIP: true
@@ -169,16 +168,22 @@ class Settings
         # Please note that Loggly and Logentries already have a timestamp, so in most
         # cases you can leave this value set to false.
         sendTimestamp: false
+        # Set `uncaughtException` to true to bind the logger to the `uncaughtException`
+        # event on the process and log all uncaught expcetions as errors.
+        uncaughtException: true
+        # Save logs locally? The path to the logs folder is set above under the `Settings.Path.logsDir` key.
+        Local:
+            active: false
+        # Please inform your Logentries token. Logentries will be used ONLY if
+        # the active setting below  is true.
+        Logentries:
+            active: false
+            token: null
         # Inform your Loggly subdomain and token. Loggly will be used ONLY if
         # the active setting below  is true.
         Loggly:
             active: false
             subdomain: null
-            token: null
-        # Please inform your Logentries token. Logentries will be used ONLY if
-        # the active setting below  is true.
-        Logentries:
-            active: false
             token: null
 
     # NEW RELIC PROFILING

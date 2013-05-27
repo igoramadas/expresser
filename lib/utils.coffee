@@ -10,7 +10,6 @@ class Utils
     # Update settings based on Cloud Environmental variables.
     updateSettingsFromPaaS: =>
         env = process.env
-        logger.info "Expresser", "Utils.updateSettingsFromPaaS", env
 
         # Temporary variables with current values.
         currentSmtpHost = settings.Mail.smtp.host?.toLowerCase()
@@ -69,6 +68,9 @@ class Utils
         settings.Mail.smtp.port = smtpPort if smtpPort? and smtpPort isnt ""
         settings.Mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
         settings.Mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
+
+        # Log updates.
+        logger.info "Expresser", "Utils.updateSettingsFromPaaS", "Settings updated."
 
     # Get the client / browser IP, even when behind proxies. Works for http and socket requests.
     getClientIP: (reqOrSocket) =>
