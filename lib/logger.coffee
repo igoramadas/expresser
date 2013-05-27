@@ -52,7 +52,7 @@ class Logger
 
         # Check if logs should be saved locally. If so, create the logs buffer and a timer to
         # flush logs to disk every X milliseconds.
-        if settings.Logger.Local.active
+        if settings.Logger.Local.enabled
             if not fs.existsSync settings.Path.logsDir
                 fs.mkdirSync settings.Path.logsDir
             localBuffer = {info: [], warn: [], error: []}
@@ -60,13 +60,13 @@ class Logger
             activeServices.push "Local"
 
         # Check if Logentries should be used, and create the Logentries objects.
-        if settings.Logger.Logentries.active and settings.Logger.Logentries.token? and settings.Logger.Logentries.token isnt ""
+        if settings.Logger.Logentries.enabled and settings.Logger.Logentries.token? and settings.Logger.Logentries.token isnt ""
             logentries = require "node-logentries"
             loggerLogentries = logentries.logger {token: settings.Logger.Logentries.token, timestamp: settings.Logger.sendTimestamp}
             activeServices.push "Logentries"
 
         # Check if Loggly should be used, and create the Loggly objects.
-        if settings.Logger.Loggly.active and settings.Logger.Loggly.subdomain? and settings.Logger.Loggly.token? and settings.Logger.Loggly.token isnt ""
+        if settings.Logger.Loggly.enabled and settings.Logger.Loggly.subdomain? and settings.Logger.Loggly.token? and settings.Logger.Loggly.token isnt ""
             loggly = require "loggly"
             loggerLoggly = loggly.createClient {subdomain: settings.Logger.Loggly.subdomain, json: true}
             activeServices.push "Loggly"

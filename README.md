@@ -21,9 +21,18 @@ and values. Detailed instructions are available on the top / header of the `sett
 *   Ready to run on most PaaS providers.
 *   Built-in support for New Relic (http://newrelic.com)
 
+The App is the main module of Expresser. It creates a new Express server and set all default options like
+session and cookie secrets, paths to static resources, assets bindings etc.
+
 By Default the App will use Jade as the default template parser. The jade files should be inside the `/views/`
 folder on the root of your app.  It will also use Connect Assets and serve all static files from `/public/`.
 To change these paths, please edit the `Settings.Path` keys and values.
+
+The Express server is exposed via the `App.server` property.
+
+To enable New Relic on the server, set the `Settings.NewRelic.appName` and `settings.NewRelic.licenseKey` values
+or the `NEW_RELIC_APP_NAME` and `NEW_RELIC_LICENSE_KEY` environment variables. Detailed info can be found
+inside the App module source code itself.
 
 ### Database
 *   Supports reading, updating and deleting documents on MongoDB servers.
@@ -42,11 +51,23 @@ you'll have to implement this feature yourself - we suggest using background wor
 The Firewall module is handled automatically by the App module. If you want to disable it,
 set the `Settings.Firewall.enabled` settings to false.
 
-### Logger
-*   Suppports logging to Logentries (http://logentries.com) and Loggly (http://loggly.com).
+### Imaging
+*   Wrapper for imagemagick.
+*   Easy conversion between multiple image types.
 
-To enable a logging service, simply set its settings on `Settings.Logger`. If you don't set any settings
-for Logentries and Loggly, the Logger module will log to the console only.
+The Imaging module depends on ImageMagick so please make sure you have it installed on your server
+before using this module.
+
+### Logger
+*   Simple info, warn and error logging methods.
+*   Suppports logging to local files, Logentries (http://logentries.com) and Loggly (http://loggly.com).
+
+By default no transports are enabled, so the Logger will log to the console only. To enable logging to local files,
+set `Settings.Logger.Local.enabled` to true and make sure to have write access to the path set on
+the `Settings.Path.logsDir`.
+
+To enable a remote logging service, simply set its token and access keys on `Settings.Logger` settings
+and set `enabled` to true.
 
 ### Mail
 *   Supports sending emails via SMTP using optional authentication and SSL/TLS.
@@ -77,6 +98,10 @@ from environment variables. Right now the following add-ons will be automaticall
 ## Common questions and answers
 
 #### How to use New Relic on Expresser?
+
 The App will first try to use the `NEW_RELIC_APP_NAME` and `NEW_RELIC_LICENSE_KEY` environment variables.
 If not found, it will use the values defined on `Settings.NewRelic` settings. If you don'w want to use
-New Relic just set the appName and licenseKey to an empty string.
+New Relic just leave `appName` and `licenseKey` settings empty.
+
+Please note that New Relic will NOT be enabled under localhost and .local hostnames.
+

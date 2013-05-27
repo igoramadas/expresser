@@ -173,20 +173,20 @@ class Settings
         uncaughtException: true
         # Save logs locally? The path to the logs folder is set above under the `Settings.Path.logsDir` key.
         Local:
-            active: false
+            enabled: false
             # The bufferInterval defines the delay in between disk saves, in milliseconds.
             bufferInterval: 10000
             # The maxAge sets the max age of log files, in days.
             maxAge: 30
         # Please inform your Logentries token. Logentries will be used ONLY if
-        # the active setting below  is true.
+        # the enabled setting below  is true.
         Logentries:
-            active: false
+            enabled: false
             token: null
         # Inform your Loggly subdomain and token. Loggly will be used ONLY if
-        # the active setting below  is true.
+        # the enabled setting below  is true.
         Loggly:
-            active: false
+            enabled: false
             subdomain: null
             token: null
 

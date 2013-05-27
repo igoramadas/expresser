@@ -19,7 +19,7 @@ class App
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Node app.
+    # Init the Express server.
     init: =>
 
         # Require OS to gather system info, and the server settigs.
@@ -27,7 +27,7 @@ class App
         settings = require "./settings.coffee"
         utils = require "./utils.coffee"
 
-        # Get New Relic environment variables.
+        # Get New Relic environment variables or settings.
         newRelicAppName = process.env.NEW_RELIC_APP_NAME or settings.NewRelic.appName
         newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY or settings.NewRelic.licenseKey
 
