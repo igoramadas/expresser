@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>utils.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>utils.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="expresser.html">
+                    expresser.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mail.html">
+                    mail.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="twitter.html">
+                    twitter.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2>EXPRESSER UTILS</h2>
+
+        
+      
+        
+        <p>General network, IO and other utilities.</p>
+
+        
+          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Utils</span></span>
+
+    os = require <span class="string">"os"</span>
+    settings = require <span class="string">"./settings.coffee"</span></pre></div>
+        
+      
+        
+        <h2>SETTINGS UTILS</h2>
+
+        
+      
+        
+        <p>Update settings based on Cloud Environmental variables.</p>
+
+        
+          <div class='highlight'><pre>    updateSettingsFromPaaS: =&gt;
+        env = process.env</pre></div>
+        
+      
+        
+        <p>Temporary variables with current values.</p>
+
+        
+          <div class='highlight'><pre>        currentSmtpHost = settings.Mail.smtp.host?.toLowerCase()</pre></div>
+        
+      
+        
+        <p>Check for web (IP and port) variables.</p>
+
+        
+          <div class='highlight'><pre>        ip = env.OPENSHIFT_NODEJS_IP <span class="keyword">or</span> env.OPENSHIFT_INTERNAL_IP <span class="keyword">or</span> env.IP
+        port = env.OPENSHIFT_NODEJS_PORT <span class="keyword">or</span> env.OPENSHIFT_INTERNAL_PORT <span class="keyword">or</span> env.VCAP_APP_PORT <span class="keyword">or</span> env.PORT
+        settings.App.ip = ip <span class="keyword">if</span> ip? <span class="keyword">and</span> ip <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.App.port = port <span class="keyword">if</span> port? <span class="keyword">and</span> port <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        
+      
+        
+        <p>Check for MongoDB on AppFog variables.</p>
+
+        
+          <div class='highlight'><pre>        vcap = env.VCAP_SERVICES
+        vcap = JSON.parse vcap <span class="keyword">if</span> vcap?
+        <span class="keyword">if</span> vcap? <span class="keyword">and</span> vcap <span class="keyword">isnt</span> <span class="string">""</span>
+            mongo = vcap[<span class="string">"mongodb-1.8"</span>]
+            mongo = mongo[<span class="number">0</span>][<span class="string">"credentials"</span>] <span class="keyword">if</span> mongo?
+            <span class="keyword">if</span> mongo?
+                settings.Database.connString = <span class="string">"mongodb://<span class="subst">#{mongo.hostname}</span>:<span class="subst">#{mongo.port}</span>/<span class="subst">#{mongo.db}</span>"</span></pre></div>
+        
+      
+        
+        <p>Check for MongoLab variables.</p>
+
+        
+          <div class='highlight'><pre>        mongoLab = env.MONGOLAB_URI
+        settings.Database.connString = mongoLab <span class="keyword">if</span> mongoLab? <span class="keyword">and</span> mongoLab <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        
+      
+        
+        <p>Check for MongoHQ variables.</p>
+
+        
+          <div class='highlight'><pre>        mongoHq = env.MONGOHQ_URL
+        settings.Database.connString = mongoHq <span class="keyword">if</span> mongoHq? <span class="keyword">and</span> mongoHq <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        
+      
+        
+        <p>Check for Logentries and Loggly variables.</p>
+
+        
+          <div class='highlight'><pre>        logentriesToken = env.LOGENTRIES_TOKEN
+        logglyToken = env.LOGGLY_TOKEN
+        logglySubdomain = env.LOGGLY_SUBDOMAIN
+        settings.Logger.Logentries.token = logentriesToken <span class="keyword">if</span> logentriesToken? <span class="keyword">and</span> logentriesToken <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.Logger.Loggly.token = logglyToken <span class="keyword">if</span> logglyToken? <span class="keyword">and</span> logglyToken <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.Logger.Loggly.subdomain = logglySubdomain <span class="keyword">if</span> logglySubdomain? <span class="keyword">and</span> logglySubdomain <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        
+      
+        
+        <p>Check for SendGrid (email) variables.</p>
+
+        
+          <div class='highlight'><pre>        smtpUser = env.SENDGRID_USERNAME
+        smtpPassword = env.SENDGRID_PASSWORD
+        <span class="keyword">if</span> currentSmtpHost?.indexOf(<span class="string">"sendgrid"</span>) &gt; <span class="number">0</span>
+            settings.Mail.smtp.user = smtpUser <span class="keyword">if</span> smtpUser? <span class="keyword">and</span> smtpUser <span class="keyword">isnt</span> <span class="string">""</span>
+            settings.Mail.smtp.password = smtpPassword <span class="keyword">if</span> smtpPassword? <span class="keyword">and</span> smtpPassword <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        
+      
+        
+        <p>Check for Mandrill (email) variables.</p>
+
+        
+          <div class='highlight'><pre>        smtpUser = env.MANDRILL_USERNAME
+        smtpPassword = env.MANDRILL_APIKEY
+        <span class="keyword">if</span> currentSmtpHost?.indexOf(<span class="string">"mandrill"</span>) &gt; <span class="number">0</span>
+            settings.Mail.smtp.user = smtpUser <span class="keyword">if</span> smtpUser? <span class="keyword">and</span> smtpUser <span class="keyword">isnt</span> <span class="string">""</span>
+            settings.Mail.smtp.password = smtpPassword <span class="keyword">if</span> smtpPassword? <span class="keyword">and</span> smtpPassword <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        
+      
+        
+        <p>Check for Mailgun (email) variables.</p>
+
+        
+          <div class='highlight'><pre>        smtpHost = env.MAILGUN_SMTP_SERVER
+        smtpPort = env.MAILGUN_SMTP_PORT
+        smtpUser = env.MAILGUN_SMTP_LOGIN
+        smtpPassword = env.MAILGUN_SMTP_PASSWORD
+        settings.Mail.smtp.host = smtpHost <span class="keyword">if</span> smtpHost? <span class="keyword">and</span> smtpHost <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.Mail.smtp.port = smtpPort <span class="keyword">if</span> smtpPort? <span class="keyword">and</span> smtpPort <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.Mail.smtp.user = smtpUser <span class="keyword">if</span> smtpUser? <span class="keyword">and</span> smtpUser <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.Mail.smtp.password = smtpPassword <span class="keyword">if</span> smtpPassword? <span class="keyword">and</span> smtpPassword <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        
+      
+        
+        <h2>SERVER INFO UTILS</h2>
+
+        
+      
+        
+        <p>Return the first valid server IPv4 address.</p>
+
+        
+          <div class='highlight'><pre>    getServerIP: =&gt;
+        ifaces = os.networkInterfaces()
+        result = <span class="string">""</span></pre></div>
+        
+      
+        
+        <p>Parse network interfaces and try getting the server IPv4 address.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">for</span> i <span class="keyword">of</span> ifaces
+            ifaces[i].forEach (details) -&gt;
+                <span class="keyword">if</span> details.family <span class="keyword">is</span> <span class="string">"IPv4"</span> <span class="keyword">and</span> <span class="keyword">not</span> details.internal
+                    result = details.address
+
+        <span class="keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>Return an object with general information about the server.</p>
+
+        
+          <div class='highlight'><pre>    getServerInfo: =&gt;
+        result = {}</pre></div>
+        
+      
+        
+        <p>Parse server info.</p>
+
+        
+          <div class='highlight'><pre>        pid = process.pid + <span class="string">" "</span> + process.title
+        platform = process.platform + <span class="string">" "</span> + process.arch + <span class="string">", v"</span> + process.version
+        memUsage = process.memoryUsage()
+        memUsage = Math.round(memUsage.headUsed / <span class="number">1000</span>) + <span class="string">" / "</span> + Math.round(memUsage.heapTotal / <span class="number">1000</span>) + <span class="string">" MB"</span>
+        uptime = moment.duration(process.uptime, <span class="string">"s"</span>).humanize()</pre></div>
+        
+      
+        
+        <p>Save parsed info to the result object.</p>
+
+        
+          <div class='highlight'><pre>        result.pid = pid
+        result.platform = platform
+        result.memoryUsage = memUsage
+        result.uptime = uptime
+        result.ip = <span class="property">@getServerIP</span>()
+
+        <span class="keyword">return</span> result</pre></div>
+        
+      
+        
+        <h2>CLIENT INFO UTILS</h2>
+
+        
+      
+        
+        <p>Get the client / browser IP, even when behind proxies. Works for http and socket requests.</p>
+
+        
+          <div class='highlight'><pre>    getClientIP: (reqOrSocket) =&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> reqOrSocket?
+            <span class="keyword">return</span> <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Try getting the xforwarded header first.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> reqOrSocket.header?
+            xfor = reqOrSocket.header <span class="string">"X-Forwarded-For"</span>
+            <span class="keyword">if</span> xfor? <span class="keyword">and</span> xfor <span class="keyword">isnt</span> <span class="string">""</span>
+                <span class="keyword">return</span> xfor.split(<span class="string">","</span>)[<span class="number">0</span>]</pre></div>
+        
+      
+        
+        <p>Get remote address.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> reqOrSocket.connection?
+            <span class="keyword">return</span> reqOrSocket.connection.remoteAddress
+        <span class="keyword">else</span>
+            <span class="keyword">return</span> reqOrSocket.remoteAddress</pre></div>
+        
+      
+        
+        <p>Get the client&#39;s device identifier string based on the user agent.</p>
+
+        
+          <div class='highlight'><pre>    getClientDevice: (req) =&gt;
+        ua = req.headers[<span class="string">"user-agent"</span>]</pre></div>
+        
+      
+        
+        <p>Find desktop browsers.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">return</span> <span class="string">"chrome"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Chrome/"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"firefox"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Firefox/"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"safari"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Safari/"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"ie-11"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE 11"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"ie-10"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE 10"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"ie-9"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE 9"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"ie"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE"</span>) &gt; <span class="number">0</span></pre></div>
+        
+      
+        
+        <p>Find mobile devices.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">return</span> <span class="string">"wp-8"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Windows Phone 8"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"wp-7"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Windows Phone 7"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"wp"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Windows Phone"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"iphone-5"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"iPhone5"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"iphone-4"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"iPhone4"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"iphone"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"iPhone"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"android-5"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Android 5"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"android-4"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Android 4"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"android"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Android"</span>) &gt; <span class="number">0</span></pre></div>
+        
+      
+        
+        <p>Return default desktop value if no specific devices were found on user agent.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">return</span> <span class="string">"desktop"</span></pre></div>
+        
+      
+        
+        <h2>Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Utils.<span class="function"><span class="title">getInstance</span></span> = -&gt;
+    <span class="property">@instance</span> = <span class="keyword">new</span> Utils() <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
+    <span class="keyword">return</span> <span class="property">@instance</span>
+
+module.exports = exports = Utils.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

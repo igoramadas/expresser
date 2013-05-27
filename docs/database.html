@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>database.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>database.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="expresser.html">
+                    expresser.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mail.html">
+                    mail.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="twitter.html">
+                    twitter.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2>EXPRESSER DATABASE</h2>
+
+        
+      
+        
+        <p>Handle the MongoDB database interactions on the app.
+Parameters on settings.coffee: Settings.Database</p>
+
+        
+          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Database</span></span>
+
+    logger = require <span class="string">"./logger.coffee"</span>
+    settings = require <span class="string">"./settings.coffee"</span>
+    mongo = require <span class="string">"mongoskin"</span></pre></div>
+        
+      
+        
+        <p>Database object, will be set during <code>init</code>.</p>
+
+        
+          <div class='highlight'><pre>    db = <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>When using the failover/secondary databse, <code>failover</code> will be set to true.</p>
+
+        
+          <div class='highlight'><pre>    failover: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <h2>INTERNAL FEATURES</h2>
+
+        
+      
+        
+        <p>Helper method to check the DB connection. If connection fails multiple times in a row,
+switch to the failover DB (specified on the <code>Database.connString2</code> setting).
+You can customize these values on the <code>Database</code> <a href="settings.html">settings</a>.</p>
+
+        
+          <div class='highlight'><pre>    <span class="function"><span class="title">validateConnection</span></span> = (retry) -&gt;
+        retry = <span class="number">0</span> <span class="keyword">if</span> <span class="keyword">not</span> retry?</pre></div>
+        
+      
+        
+        <p>If connection has failed repeatedly for more than 3 times the <code>maxRetries</code> value then
+stop trying and log an error.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> retry &gt; settings.Database.maxRetries * <span class="number">3</span>
+            logger.error <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Connection failed <span class="subst">#{retry}</span> times."</span>, <span class="string">"Abort!"</span>
+            <span class="keyword">return</span></pre></div>
+        
+      
+        
+        <p>First try, use main database.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> retry &lt; <span class="number">1</span>
+            db = mongo.db settings.Database.connString, settings.Database.options
+            <span class="property">@failover</span> = <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>Reached max retries? Try connecting to the failover database, if there&#39;s one specified.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> retry <span class="keyword">is</span> settings.Database.maxRetries
+            <span class="keyword">if</span> settings.Database.connString2? <span class="keyword">and</span> settings.Database.connString2 <span class="keyword">isnt</span> <span class="string">""</span>
+                <span class="property">@failover</span> = <span class="literal">true</span>
+                db = mongo.db settings.Database.connString2, settings.Database.options
+                logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Connection failed <span class="subst">#{retry}</span> times."</span>, <span class="string">"Switched to failover database."</span>
+            <span class="keyword">else</span>
+                logger.error <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Connection failed <span class="subst">#{retry}</span> times."</span>, <span class="string">"No failover database set, keep trying."</span></pre></div>
+        
+      
+        
+        <p>Try to connect to the current database. If it fails, try again in a few seconds.</p>
+
+        
+          <div class='highlight'><pre>        db.open (err, result) =&gt;
+            <span class="keyword">if</span> err?
+                <span class="keyword">if</span> settings.General.debug
+                    logger.warn <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Failed to connect."</span>, <span class="string">"Retry <span class="subst">#{retry}</span>."</span>
+                setTimeout (() -&gt; validateConnection retry + <span class="number">1</span>), settings.Database.retryInterval
+            <span class="keyword">else</span> <span class="keyword">if</span> settings.General.debug</pre></div>
+        
+      
+        
+        <p>If using the failover database, register a timeout to try
+to connect to the main database again.</p>
+
+        
+          <div class='highlight'><pre>                <span class="keyword">if</span> <span class="property">@failover</span>
+                    setTimeout validateConnection, settings.Database.failoverTimeout * <span class="number">1000</span>
+                    logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Connected to failover database."</span>, <span class="string">"Try the main again in <span class="subst">#{settings.Database.failoverTimeout}</span> settings."</span>
+                <span class="keyword">else</span>
+                    logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Connected to main database."</span></pre></div>
+        
+      
+        
+        <h2>INIT</h2>
+
+        
+      
+        
+        <p>Init the databse by testing the connection.</p>
+
+        
+          <div class='highlight'><pre>    init: =&gt;
+        <span class="keyword">if</span> settings.Database.connString? <span class="keyword">and</span> settings.Database.connString <span class="keyword">isnt</span> <span class="string">""</span>
+            validateConnection()
+        <span class="keyword">else</span> <span class="keyword">if</span> settings.General.debug
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Database.init"</span>, <span class="string">"No connection string set."</span>, <span class="string">"Database module won't work."</span></pre></div>
+        
+      
+        
+        <h2>LOW LEVEL IMPLEMENTATION</h2>
+
+        
+      
+        
+        <p>Get data from the database. A <code>collection</code> must be specified.
+The <code>options</code> and <code>callback</code> are optional.</p>
+
+        
+          <div class='highlight'><pre>    get: (collection, options, callback) =&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> callback?
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Database.get"</span>, <span class="string">"No callback specified. Abort!"</span>, collection, options
+            <span class="keyword">return</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre>        <span class="function"><span class="title">dbCallback</span></span> = (err, result) =&gt;
+            <span class="keyword">if</span> callback?
+                result = <span class="property">@normalizeId</span>(result) <span class="keyword">if</span> settings.Database.normalizeId
+                callback err, result</pre></div>
+        
+      
+        
+        <p>Set collection object.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = db.collection collection</pre></div>
+        
+      
+        
+        <p>Find documents depending on the options.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> options?
+            <span class="keyword">if</span> options.id?
+                dbCollection.findById options.id, dbCallback
+            <span class="keyword">else</span>
+                dbCollection.find(options).toArray dbCallback
+        <span class="keyword">else</span>
+            dbCollection.find().toArray dbCallback</pre></div>
+        
+      
+        
+        <p>Log if debug is true.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.General.debug
+            logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.get"</span>, collection, options</pre></div>
+        
+      
+        
+        <p>Insert or update an object on the database.</p>
+
+        
+          <div class='highlight'><pre>    set: (collection, obj, callback) =&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> obj?
+            msg = <span class="string">"The obj argument is null or empty."</span>
+            callback msg, <span class="literal">null</span>
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Database.set"</span>, msg
+            <span class="keyword">return</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre>        <span class="function"><span class="title">dbCallback</span></span> = (err, result) =&gt;
+            <span class="keyword">if</span> callback?
+                result = <span class="property">@normalizeId</span>(result) <span class="keyword">if</span> settings.Database.normalizeId
+                callback err, result</pre></div>
+        
+      
+        
+        <p>Set collection object.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = db.collection collection</pre></div>
+        
+      
+        
+        <p>If object already has an ID, update it otherwise insert a new one.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> obj.id?
+            dbCollection.updateById obj.id, {$set: obj.attributes}, dbCallback
+            <span class="keyword">if</span> settings.General.debug
+                logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.set"</span>, <span class="string">"Update"</span>, collection, obj.id, obj.attributes
+        <span class="keyword">else</span>
+            dbCollection.insert obj.attributes, {<span class="string">"new"</span>: <span class="literal">true</span>}, dbCallback
+            <span class="keyword">if</span> settings.General.debug
+                logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.set"</span>, <span class="string">"Insert"</span>, collection, obj.attributes</pre></div>
+        
+      
+        
+        <p>Delete an object from the database. The <code>obj</code> argument can be either the object
+itself, or its integer/string ID.</p>
+
+        
+          <div class='highlight'><pre>    del: (collection, obj, callback) =&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> obj?
+            msg = <span class="string">"The obj argument is null or empty."</span>
+            callback msg, <span class="literal">null</span>
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Database.del"</span>, msg
+            <span class="keyword">return</span></pre></div>
+        
+      
+        
+        <p>Check it the <code>obj</code> is the model itself, or only the ID string / number.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> obj.id?
+            id = obj.id
+        <span class="keyword">else</span>
+            id = obj</pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre>        <span class="function"><span class="title">dbCallback</span></span> = (err, result) =&gt;
+            <span class="keyword">if</span> callback?
+                result = <span class="property">@normalizeId</span>(result) <span class="keyword">if</span> settings.Database.normalizeId
+                callback err, result</pre></div>
+        
+      
+        
+        <p>Set collection object and remove specified document from the database.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = db.collection collection
+        dbCollection.removeById id, dbCallback</pre></div>
+        
+      
+        
+        <p>Log if debug is true.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.General.debug
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Database.del"</span>, collection, obj.id, obj.attributes</pre></div>
+        
+      
+        
+        <p>Count data from the database. A <code>collection</code> must be specified.
+If no <code>options</code> is passed (null or undefined) then count all documents.
+The callback is mandatory.</p>
+
+        
+          <div class='highlight'><pre>    count: (collection, options, callback) =&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> callback?
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Database.count"</span>, <span class="string">"No callback specified. Abort!"</span>, collection, options
+            <span class="keyword">return</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre>        <span class="function"><span class="title">dbCallback</span></span> = (err, result) =&gt;
+            <span class="keyword">if</span> callback?
+                callback err, result
+                <span class="keyword">if</span> settings.General.debug
+                    logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.count"</span>, collection, options, result</pre></div>
+        
+      
+        
+        <p>MongoDB has a built-in count, so use it.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = db.collection collection
+        dbCollection.count options, dbCallback</pre></div>
+        
+      
+        
+        <h2>HELPER METHODS</h2>
+
+        
+      
+        
+        <p>Helper to transform MongoDB document &quot;_id&quot; to &quot;id&quot;.</p>
+
+        
+          <div class='highlight'><pre>    normalizeId: (result) =&gt;
+        <span class="keyword">return</span> <span class="keyword">if</span> <span class="keyword">not</span> result?
+            
+        <span class="keyword">if</span> result.length?
+            <span class="keyword">for</span> obj <span class="keyword">in</span> result
+                obj[<span class="string">"id"</span>] = obj[<span class="string">"_id"</span>].toString()
+                <span class="keyword">delete</span> obj[<span class="string">"_id"</span>]
+        <span class="keyword">else</span>
+            result[<span class="string">"id"</span>] = result[<span class="string">"_id"</span>].toString()
+            <span class="keyword">delete</span> result[<span class="string">"_id"</span>]
+
+        <span class="keyword">return</span> result</pre></div>
+        
+      
+        
+        <h2>Singleton implementation.</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Database.<span class="function"><span class="title">getInstance</span></span> = -&gt;
+    <span class="property">@instance</span> = <span class="keyword">new</span> Database() <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
+    <span class="keyword">return</span> <span class="property">@instance</span>
+
+module.exports = exports = Database.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

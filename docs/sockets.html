@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>sockets.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>sockets.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="expresser.html">
+                    expresser.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mail.html">
+                    mail.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="twitter.html">
+                    twitter.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2>EXPRESSER SOCKETS</h2>
+
+        
+      
+        
+        <p>Handles sockets communication using the module Socket.IO.
+Parameters on settings.coffee: Settings.Sockets</p>
+<p>ATTENTION!
+The Sockets module is started automatically by the App module. If you wish to
+disable it, set <code>Settings.Sockets.enabled</code> to false.</p>
+
+        
+          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Sockets</span></span>
+
+    logger = require <span class="string">"./logger.coffee"</span>
+    settings = require <span class="string">"./settings.coffee"</span></pre></div>
+        
+      
+        
+        <h2>INIT</h2>
+
+        
+      
+        
+        <p>Bind the Socket.IO object to the Express app. This will also set
+the counter to increase / decrease when users connects or
+disconnects from the app.</p>
+
+        
+          <div class='highlight'><pre>    init: (server) =&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> server?
+            logger.error <span class="string">"Expresser"</span>, <span class="string">"Sockets.init"</span>, <span class="string">"App server is invalid. Abort!"</span>
+            <span class="keyword">return</span>
+
+        <span class="property">@io</span> = require(<span class="string">"socket.io"</span>).listen require(<span class="string">"http"</span>).createServer server</pre></div>
+        
+      
+        
+        <p>Set transports.</p>
+
+        
+          <div class='highlight'><pre>        <span class="property">@io</span>.set <span class="string">"transports"</span>, [<span class="string">"websocket"</span>, <span class="string">"xhr-polling"</span>, <span class="string">"htmlfile"</span>]</pre></div>
+        
+      
+        
+        <p>On production, log only critical errors. On development, log almost everything.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.General.debug
+            <span class="property">@io</span>.set <span class="string">"log level"</span>, <span class="number">2</span>
+        <span class="keyword">else</span>
+            <span class="property">@io</span>.set <span class="string">"log level"</span>, <span class="number">1</span>
+            <span class="property">@io</span>.set <span class="string">"browser client minification"</span>
+            <span class="property">@io</span>.set <span class="string">"browser client etag"</span>
+            <span class="property">@io</span>.set <span class="string">"browser client gzip"</span></pre></div>
+        
+      
+        
+        <p>Listen to user connection count updates.</p>
+
+        
+          <div class='highlight'><pre>        <span class="property">@io</span>.sockets.<span class="literal">on</span> <span class="string">"connection"</span>, (socket) =&gt;
+            <span class="property">@io</span>.sockets.emit <span class="string">"connection-count"</span>, <span class="property">@getConnectionCount</span>()
+            socket.<span class="literal">on</span> <span class="string">"disconnect"</span>, <span class="property">@onDisconnect</span></pre></div>
+        
+      
+        
+        <h2>EVENTS</h2>
+
+        
+      
+        
+        <p>Emit the specified key / data to clients.</p>
+
+        
+          <div class='highlight'><pre>    emit: (key, data) =&gt;
+        <span class="property">@io</span>.sockets.emit key, data</pre></div>
+        
+      
+        
+        <h2>HELPERS</h2>
+
+        
+      
+        
+        <p>Helper to get how many users are currenly connected to the app.</p>
+
+        
+          <div class='highlight'><pre>    getConnectionCount: =&gt;
+        count = Object.keys(<span class="property">@io</span>.sockets.manager.open).length
+        <span class="keyword">return</span> count</pre></div>
+        
+      
+        
+        <p>When user disconnects, emit an event with the new connection count to all clients.</p>
+
+        
+          <div class='highlight'><pre>    onDisconnect: =&gt;
+        count = <span class="property">@getConnectionCount</span>()
+        <span class="keyword">if</span> settings.General.debug
+            logger.info <span class="string">"Expresser"</span>, <span class="string">"Sockets.onDisconnect"</span>, <span class="string">"New count: <span class="subst">#{count}</span>."</span></pre></div>
+        
+      
+        
+        <h2>Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Sockets.<span class="function"><span class="title">getInstance</span></span> = -&gt;
+    <span class="property">@instance</span> = <span class="keyword">new</span> Sockets() <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
+    <span class="keyword">return</span> <span class="property">@instance</span>
+
+module.exports = exports = Sockets.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

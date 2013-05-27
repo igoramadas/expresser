@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>mail.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>mail.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="expresser.html">
+                    expresser.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mail.html">
+                    mail.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="twitter.html">
+                    twitter.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2>EXPRESSER MAIL</h2>
+
+        
+      
+        
+        <p>Sends and manages emails, supports templates. When parsing templates, the
+tags should be wrapped with normal brackets {}. Example: {contents}
+Parameters on settings.coffee: Settings.Mail</p>
+
+        
+          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Mail</span></span>
+
+    fs = require <span class="string">"fs"</span>
+    logger = require <span class="string">"./logger.coffee"</span>
+    mailer = require <span class="string">"nodemailer"</span>
+    moment = require <span class="string">"moment"</span>
+    path = require <span class="string">"path"</span>
+    settings = require <span class="string">"./settings.coffee"</span></pre></div>
+        
+      
+        
+        <p>SMTP objects will be instantiated on <code>init</code>.</p>
+
+        
+          <div class='highlight'><pre>    smtp = <span class="literal">null</span>
+    smtp2 = <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Templates cache to avoid disk reads.</p>
+
+        
+          <div class='highlight'><pre>    templateCache = {}</pre></div>
+        
+      
+        
+        <h2>INTERNAL FEATURES</h2>
+
+        
+      
+        
+        <p>Helper to set the SMTP objects.</p>
+
+        
+          <div class='highlight'><pre>    <span class="function"><span class="title">createSmtp</span></span> = (opt) -&gt;
+        options =
+            debug: settings.General.debug,
+            host: opt.host,
+            port: opt.port,
+            secureConnection: opt.secure,
+            auth:
+                user: opt.user,
+                pass: opt.password</pre></div>
+        
+      
+        
+        <p>Log SMTP creation.</p>
+
+        
+          <div class='highlight'><pre>        logger.info <span class="string">"Expresser"</span>, <span class="string">"Mail.createSmtp"</span>, options.host, options.port, options.secureConnection</pre></div>
+        
+      
+        
+        <p>Create and return SMTP object.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">return</span> mailer.createTransport <span class="string">"SMTP"</span>, options</pre></div>
+        
+      
+        
+        <p>Helper to send emails using the specified transport and options.</p>
+
+        
+          <div class='highlight'><pre>    <span class="function"><span class="title">smtpSend</span></span> = (transport, options, callback) -&gt;
+        transport.sendMail options, (err, result) -&gt;
+            <span class="keyword">if</span> err?
+                logger.error <span class="string">"Expresser"</span>, <span class="string">"Mail.smtpSend"</span>, transport.host, <span class="string">"Could not send: <span class="subst">#{options.subject}</span> to <span class="subst">#{options.to}</span>."</span>, err
+            <span class="keyword">else</span> <span class="keyword">if</span> settings.General.debug
+                logger.info <span class="string">"Mail.smtpSend"</span>, transport.host, options.subject, <span class="string">"to <span class="subst">#{options.to}</span>"</span>, <span class="string">"from <span class="subst">#{options.from}</span>."</span>
+            callback err, result</pre></div>
+        
+      
+        
+        <h2>INIT</h2>
+
+        
+      
+        
+        <p>Init the SMTP transport objects.</p>
+
+        
+          <div class='highlight'><pre>    init: =&gt;
+        <span class="keyword">if</span> settings.Mail.smtp.host? <span class="keyword">and</span> settings.Mail.smtp.host <span class="keyword">isnt</span> <span class="string">""</span> <span class="keyword">and</span> settings.Mail.smtp.port &gt; <span class="number">0</span>
+            smtp = createSmtp settings.Mail.smtp
+        <span class="keyword">if</span> settings.Mail.smtp2.host? <span class="keyword">and</span> settings.Mail.smtp2.host <span class="keyword">isnt</span> <span class="string">""</span> <span class="keyword">and</span> settings.Mail.smtp2.port &gt; <span class="number">0</span>
+            smtp2 = createSmtp settings.Mail.smtp2</pre></div>
+        
+      
+        
+        <p>Warn if no SMTP is available for sending emails, but only when debug is enabled.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> smtp? <span class="keyword">and</span> <span class="keyword">not</span> smtp2? <span class="keyword">and</span> settings.General.debug
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Mail.init"</span>, <span class="string">"No main SMTP host/port specified."</span>, <span class="string">"No emails will be sent out!"</span></pre></div>
+        
+      
+        
+        <h2>OUTBOUND</h2>
+
+        
+      
+        
+        <p>Sends an email to the specified address. The <code>obj</code> will be parsed and transformed
+to a HTML formatted message. A callback can be specified, having (err, result).</p>
+
+        
+          <div class='highlight'><pre>    send: (message, subject, toAddress, fromAddress, callback) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> smtp? <span class="keyword">and</span> <span class="keyword">not</span> smtp2?
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Mail.send"</span>, <span class="string">"SMTP transport wasn't initiated. Abort!"</span>, subject, <span class="string">"to <span class="subst">#{toAddress}</span>"</span>
+            <span class="keyword">return</span>
+
+        <span class="keyword">if</span> <span class="keyword">not</span> message? <span class="keyword">or</span> message <span class="keyword">is</span> <span class="string">""</span>
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Mail.send"</span>, <span class="string">"Message is not valid. Abort!"</span>, subject, <span class="string">"to <span class="subst">#{toAddress}</span>"</span>
+            <span class="keyword">return</span></pre></div>
+        
+      
+        
+        <p>Set from to default address if no <code>fromAddress</code> was set and create the options object.</p>
+
+        
+          <div class='highlight'><pre>        fromAddress = <span class="string">"<span class="subst">#{settings.General.appTitle}</span> &lt;<span class="subst">#{settings.Mail.from}</span>&gt;"</span> <span class="keyword">if</span> <span class="keyword">not</span> fromAddress?
+        options = {}</pre></div>
+        
+      
+        
+        <p>Properly format the &quot;to&quot; address.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> toAddress.indexOf(<span class="string">"&lt;"</span>) &lt; <span class="number">3</span>
+            toName = toAddress
+        <span class="keyword">else</span>
+            toName = toAddress.substring <span class="number">0</span>, toAddress.indexOf(<span class="string">"&lt;"</span>) - <span class="number">1</span></pre></div>
+        
+      
+        
+        <p>Replace common keywords.</p>
+
+        
+          <div class='highlight'><pre>        html = <span class="property">@parseTemplate</span> message.toString(), {to: toName, appTitle: settings.General.appTitle}</pre></div>
+        
+      
+        
+        <p>Set the message options.</p>
+
+        
+          <div class='highlight'><pre>        options.from = fromAddress
+        options.to = toAddress
+        options.subject = subject
+        options.html = html</pre></div>
+        
+      
+        
+        <p>Send using the main SMTP. If failed and a secondary is also set, try using the secondary.</p>
+
+        
+          <div class='highlight'><pre>        smtpSend smtp, options, (err, result) -&gt;
+            <span class="keyword">if</span> err?
+                <span class="keyword">if</span> smtp2?
+                    smtpSend smtp2, options, (err2, result2) -&gt; callback err2, result2
+                <span class="keyword">else</span>
+                    callback err, result
+            <span class="keyword">else</span>
+                callback err, result</pre></div>
+        
+      
+        
+        <h2>TEMPLATES</h2>
+
+        
+      
+        
+        <p>Load the specified template from the cache or from the disk if it wasn&#39;t loaded yet.
+Templates are stored inside the <code>/emailtemplates</code> folder by default and should
+have a .html extension. The contents will be inserted on the {contents} tag.</p>
+
+        
+          <div class='highlight'><pre>    getTemplate: (name) =&gt;
+        cached = templateCache[name]
+        <span class="keyword">if</span> cached? <span class="keyword">and</span> cached.expires &gt; moment()
+            <span class="keyword">return</span> templateCache[name].template</pre></div>
+        
+      
+        
+        <p>Read base and <code>name</code> template and merge them together.</p>
+
+        
+          <div class='highlight'><pre>        base = fs.readFileSync path.join(settings.Path.emailTemplatesDir, <span class="string">"base.html"</span>)
+        template = fs.readFileSync path.join(settings.Path.emailTemplatesDir, <span class="string">"<span class="subst">#{name}</span>.html"</span>)
+        result = base.toString().replace <span class="string">"{contents}"</span>, template.toString()</pre></div>
+        
+      
+        
+        <p>Save to cache.</p>
+
+        
+          <div class='highlight'><pre>        templateCache[name] = {}
+        templateCache[name].template = result
+        templateCache[name].expires = moment().add <span class="string">"s"</span>, settings.General.ioCacheTimeout
+
+        <span class="keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>Parse the specified template and replace <code>keywords</code> with the correspondent values of
+the <code>obj</code> argument. For example if keywords is <code>{id: 1, friendlyUrl: &quot;abc&quot;}</code> then the tags
+<code>{id}</code> and <code>{friendlyUrl}</code> will be replaced with the values 1 and abc.</p>
+
+        
+          <div class='highlight'><pre>    parseTemplate: (template, keywords) =&gt;
+        template = template.toString()
+
+        <span class="keyword">for</span> key, value <span class="keyword">of</span> keywords
+            template = template.replace <span class="keyword">new</span> RegExp(<span class="string">"\\{<span class="subst">#{key}</span>\\}"</span>, <span class="string">"gi"</span>), value
+
+        <span class="keyword">return</span> template</pre></div>
+        
+      
+        
+        <h2>HELPER METHODS</h2>
+
+        
+      
+        
+        <p>Force clear the templates cache.</p>
+
+        
+          <div class='highlight'><pre>    clearCache: =&gt;
+        count = Object.keys(templateCache).length
+        templateCache = {}
+        logger.info <span class="string">"Expresser"</span>, <span class="string">"Mail.clearCache"</span>, <span class="string">"Cleared <span class="subst">#{count}</span> templates."</span></pre></div>
+        
+      
+        
+        <h2>Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Mail.<span class="function"><span class="title">getInstance</span></span> = -&gt;
+    <span class="property">@instance</span> = <span class="keyword">new</span> Mail() <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
+    <span class="keyword">return</span> <span class="property">@instance</span>
+
+module.exports = exports = Mail.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>app.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>app.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="expresser.html">
+                    expresser.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mail.html">
+                    mail.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="twitter.html">
+                    twitter.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2>EXPRESSER APP</h2>
+
+        
+      
+        
+        <p>The Express app server.
+Parameters on settings.coffee: Settings.App</p>
+
+        
+          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">App</span></span></pre></div>
+        
+      
+        
+        <p>Expose the Express server to external code.</p>
+
+        
+          <div class='highlight'><pre>    server: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Internal modules will be set on <code>init</code>.</p>
+
+        
+          <div class='highlight'><pre>    firewall = <span class="literal">null</span>
+    logger = <span class="literal">null</span>
+    settings = <span class="literal">null</span>
+    sockets = <span class="literal">null</span>
+    utils = <span class="literal">null</span></pre></div>
+        
+      
+        
+        <h2>INIT</h2>
+
+        
+      
+        
+        <p>Init the Express server.</p>
+
+        
+          <div class='highlight'><pre>    init: =&gt;</pre></div>
+        
+      
+        
+        <p>Require OS to gather system info, and the server settigs.</p>
+
+        
+          <div class='highlight'><pre>        os = require <span class="string">"os"</span>
+        settings = require <span class="string">"./settings.coffee"</span>
+        utils = require <span class="string">"./utils.coffee"</span></pre></div>
+        
+      
+        
+        <p>Get New Relic environment variables or settings.</p>
+
+        
+          <div class='highlight'><pre>        newRelicAppName = process.env.NEW_RELIC_APP_NAME <span class="keyword">or</span> settings.NewRelic.appName
+        newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY <span class="keyword">or</span> settings.NewRelic.licenseKey</pre></div>
+        
+      
+        
+        <p>Check if New Relic settings are available, and if so, start the
+New Relic agent but ONLY if not running under localhost.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> newRelicAppName? <span class="keyword">and</span> newRelicAppName <span class="keyword">isnt</span> <span class="string">""</span> <span class="keyword">and</span> newRelicLicenseKey? <span class="keyword">and</span> newRelicLicenseKey <span class="keyword">isnt</span> <span class="string">""</span>
+            hostname = os.hostname()
+            <span class="keyword">if</span> hostname <span class="keyword">is</span> <span class="string">"localhost"</span> <span class="keyword">or</span> hostname.indexOf(<span class="string">".local"</span>) &gt; <span class="number">0</span>
+                console.log <span class="string">"Expresser"</span>, <span class="string">"New Relic <span class="subst">#{newRelicAppName}</span> won't be embedded because it's running in localhost!"</span>, hostname
+            <span class="keyword">else</span>
+                console.log <span class="string">"Expresser"</span>, <span class="string">"Embeding New Relic agent for <span class="subst">#{newRelicAppName}</span>..."</span>
+                require <span class="string">"newrelic"</span></pre></div>
+        
+      
+        
+        <p>Require logger.</p>
+
+        
+          <div class='highlight'><pre>        logger = require <span class="string">"./logger.coffee"</span></pre></div>
+        
+      
+        
+        <p>Check if uncaught exceptions should be logged. If so, try logging unhandled
+exceptions using the logger, otherwise log to the console.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Logger.uncaughtException
+            process.<span class="literal">on</span> <span class="string">"uncaughtException"</span>, (err) -&gt;
+                <span class="keyword">try</span>
+                    logger.error <span class="string">"Expresser"</span>, <span class="string">"Unhandled exception!"</span>, err.stack
+                <span class="keyword">catch</span> ex
+                    console.error <span class="string">"Expresser"</span>, <span class="string">"Unhandled exception!"</span>, Date(Date.now()), err.stack, ex</pre></div>
+        
+      
+        
+        <p>Log proccess termination to the console. This will force flush any buffered logs to disk.</p>
+
+        
+          <div class='highlight'><pre>        process.<span class="literal">on</span> <span class="string">"exit"</span>, (sig) -&gt;
+            console.warn <span class="string">"Expresser"</span>, <span class="string">"Terminating Expresser app..."</span>, Date(Date.now()), sig
+
+            <span class="keyword">try</span>
+                logger.flushLocal()
+            <span class="keyword">catch</span> err
+                console.warn <span class="string">"Expresser"</span>, <span class="string">"Could not flush buffered logs to disk."</span></pre></div>
+        
+      
+        
+        <p>Require express and create the app.</p>
+
+        
+          <div class='highlight'><pre>        express = require <span class="string">"express"</span>
+        <span class="property">@server</span> = express()</pre></div>
+        
+      
+        
+        <p>General configuration of the app (for all environments).</p>
+
+        
+          <div class='highlight'><pre>        <span class="property">@server</span>.configure =&gt;
+            utils.updateSettingsFromPaaS() <span class="keyword">if</span> settings.App.paas</pre></div>
+        
+      
+        
+        <p>Set view options, use Jade for HTML templates.</p>
+
+        
+          <div class='highlight'><pre>            <span class="property">@server</span>.set <span class="string">"views"</span>, settings.Path.viewsDir
+            <span class="property">@server</span>.set <span class="string">"view engine"</span>, settings.App.viewEngine
+            <span class="property">@server</span>.set <span class="string">"view options"</span>, { layout: <span class="literal">false</span> }</pre></div>
+        
+      
+        
+        <p>If debug is on, log requests to the console.</p>
+
+        
+          <div class='highlight'><pre>            <span class="keyword">if</span> settings.General.debug
+                <span class="property">@server</span>.use (req, res, next) =&gt;
+                    ip = utils.getClientIP req
+                    method = req.method
+                    url = req.url
+                    console.log <span class="string">"Expresser"</span>, <span class="string">"Request from <span class="subst">#{ip}</span>"</span>, method, url
+                    next() <span class="keyword">if</span> next?</pre></div>
+        
+      
+        
+        <p>Enable firewall?</p>
+
+        
+          <div class='highlight'><pre>            <span class="keyword">if</span> settings.Firewall.enabled
+                firewall = require <span class="string">"./firewall.coffee"</span>
+                firewall.init <span class="property">@server</span></pre></div>
+        
+      
+        
+        <p>Use Express handlers.</p>
+
+        
+          <div class='highlight'><pre>            <span class="property">@server</span>.use express.bodyParser()
+            <span class="property">@server</span>.use express.cookieParser settings.App.cookieSecret
+            <span class="property">@server</span>.use express.compress()
+            <span class="property">@server</span>.use express.methodOverride()
+            <span class="property">@server</span>.use express[<span class="string">"static"</span>] settings.Path.publicDir
+            <span class="property">@server</span>.use <span class="property">@server</span>.router</pre></div>
+        
+      
+        
+        <p>Connect assets and dynamic compiling.</p>
+
+        
+          <div class='highlight'><pre>            ConnectAssets = (require <span class="string">"connect-assets"</span>) settings.ConnectAssets
+            <span class="property">@server</span>.use ConnectAssets</pre></div>
+        
+      
+        
+        <p>Enable sockets?</p>
+
+        
+          <div class='highlight'><pre>            <span class="keyword">if</span> settings.Sockets.enabled
+                sockets = require <span class="string">"./sockets.coffee"</span>
+                sockets.init <span class="property">@server</span></pre></div>
+        
+      
+        
+        <p>Configure development environment.</p>
+
+        
+          <div class='highlight'><pre>        <span class="property">@server</span>.configure <span class="string">"development"</span>, =&gt;
+            <span class="property">@server</span>.use express.errorHandler settings.ErrorHandling</pre></div>
+        
+      
+        
+        <p>Configure production environment.</p>
+
+        
+          <div class='highlight'><pre>        <span class="property">@server</span>.configure <span class="string">"production"</span>, =&gt;
+            <span class="property">@server</span>.use express.errorHandler()</pre></div>
+        
+      
+        
+        <p>Start the server.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.App.ip? <span class="keyword">and</span> settings.App.ip <span class="keyword">isnt</span> <span class="string">""</span>
+            <span class="property">@server</span>.listen settings.App.ip, settings.App.port
+            logger.info <span class="string">"Expresser"</span>, <span class="string">"App <span class="subst">#{settings.General.appTitle}</span> started!"</span>, settings.App.ip, settings.App.port
+        <span class="keyword">else</span>
+            <span class="property">@server</span>.listen settings.App.port
+            logger.info <span class="string">"Expresser"</span>, <span class="string">"App <span class="subst">#{settings.General.appTitle}</span> started!"</span>, settings.App.port</pre></div>
+        
+      
+        
+        <h2>HELPER AND UTILS</h2>
+
+        
+      
+        
+        <p>Helper to render pages. The request, response and view are mandatory,
+and the options argument is optional.</p>
+
+        
+          <div class='highlight'><pre>    renderView: (req, res, view, options) =&gt;
+        options = {} <span class="keyword">if</span> <span class="keyword">not</span> options?
+        options.device = utils.getClientDevice req
+        options.title = settings.General.appTitle <span class="keyword">if</span> <span class="keyword">not</span> options.title?
+        res.render view, options</pre></div>
+        
+      
+        
+        <p>When the server can&#39;t return a valid result, send an error response with status code 500.</p>
+
+        
+          <div class='highlight'><pre>    renderError: (res, message) =&gt;
+        message = JSON.stringify message
+        res.statusCode = <span class="number">500</span>
+        res.send <span class="string">"Server error: <span class="subst">#{message}</span>"</span>
+        logger.error <span class="string">"HTTP Error"</span>, message, res</pre></div>
+        
+      
+        
+        <h2>Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>App.<span class="function"><span class="title">getInstance</span></span> = -&gt;
+    <span class="property">@instance</span> = <span class="keyword">new</span> App() <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
+    <span class="keyword">return</span> <span class="property">@instance</span>
+
+module.exports = exports = App.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

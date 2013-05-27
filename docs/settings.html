@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>settings.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>settings.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="expresser.html">
+                    expresser.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mail.html">
+                    mail.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="twitter.html">
+                    twitter.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2>EXPRESSER SETTINGS</h2>
+
+        
+      
+        
+        <p>All server settings for the app are set on this file. Settings can be overriden
+by creating a settings.json file with the specified keys and values, for example:
+{
+  &quot;General&quot;: {
+    &quot;debug&quot;: true,
+    &quot;appTitle&quot;: &quot;A Super Cool App&quot;
+  },
+  &quot;Firewall&quot; {
+    &quot;enabled&quot;: false
+  }
+}
+Please note that the settings.json must ne located on the root of your app!</p>
+
+        
+          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Settings</span></span></pre></div>
+        
+      
+        
+        <h2>GENERAL</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>    General:</pre></div>
+        
+      
+        
+        <p>Enable or disable debugging messages. Should be false on production environments.
+If null, debug will be set automatically based on the NODE_ENV variable.</p>
+
+        
+          <div class='highlight'><pre>        debug: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The app title. This MUST be set.</p>
+
+        
+          <div class='highlight'><pre>        appTitle: <span class="string">"Expresser"</span></pre></div>
+        
+      
+        
+        <p>The app&#39;s base URL, including http://. This MUST be set.</p>
+
+        
+          <div class='highlight'><pre>        appUrl: <span class="string">"http://expresser.codeplex.com"</span></pre></div>
+        
+      
+        
+        <p>How long (seconds) should files read from disk (email templates for example) stay in cache?</p>
+
+        
+          <div class='highlight'><pre>        ioCacheTimeout: <span class="number">60</span></pre></div>
+        
+      
+        
+        <h2>PATHS</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>    Path:</pre></div>
+        
+      
+        
+        <p>Path to the email templates folder.</p>
+
+        
+          <div class='highlight'><pre>        emailTemplatesDir: <span class="string">"./emailtemplates/"</span></pre></div>
+        
+      
+        
+        <p>Path to local logs folder.</p>
+
+        
+          <div class='highlight'><pre>        logsDir: <span class="string">"./logs/"</span></pre></div>
+        
+      
+        
+        <p>Path to the public folder used by Express.</p>
+
+        
+          <div class='highlight'><pre>        publicDir: <span class="string">"./public/"</span></pre></div>
+        
+      
+        
+        <p>Path where the .jade views are stored.</p>
+
+        
+          <div class='highlight'><pre>        viewsDir: <span class="string">"./views/"</span></pre></div>
+        
+      
+        
+        <h2>WEB</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>    App:</pre></div>
+        
+      
+        
+        <p>Secret key used for cookie encryption.</p>
+
+        
+          <div class='highlight'><pre>        cookieSecret: <span class="string">"ExpresserCookie"</span></pre></div>
+        
+      
+        
+        <p>Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
+This value might be overriden by PaaS environmental values.</p>
+
+        
+          <div class='highlight'><pre>        ip: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>If paas is true, Expresser will figure out some settings out of environment variables
+like IP, ports and tokens. Leave true if you&#39;re deploying to AppFog, Heroku, OpenShift etc.</p>
+
+        
+          <div class='highlight'><pre>        paas: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <p>Node.js server port. Please note that this value might be overriden by PaaS
+environmental values (like in AppFog or OpenShift).</p>
+
+        
+          <div class='highlight'><pre>        port: <span class="number">8080</span></pre></div>
+        
+      
+        
+        <p>Secret key used for session encryption.</p>
+
+        
+          <div class='highlight'><pre>        sessionSecret: <span class="string">"ExpresserSession"</span></pre></div>
+        
+      
+        
+        <p>The view engine used by Express. Default is jade.</p>
+
+        
+          <div class='highlight'><pre>        viewEngine: <span class="string">"jade"</span></pre></div>
+        
+      
+        
+        <h2>CONNECT ASSETS</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>    ConnectAssets:</pre></div>
+        
+      
+        
+        <p>Build single assets?</p>
+
+        
+          <div class='highlight'><pre>        build: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <p>Build directories?</p>
+
+        
+          <div class='highlight'><pre>        buildDir: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>Minify JS and CSS builds?</p>
+
+        
+          <div class='highlight'><pre>        minifyBuilds: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <h2>SOCKETS</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>    Sockets:</pre></div>
+        
+      
+        
+        <p>Enable the sockets helper?</p>
+
+        
+          <div class='highlight'><pre>        enabled: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <h2>FIREWALL</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>    Firewall:</pre></div>
+        
+      
+        
+        <p>How long should IP be blacklisted, in seconds.</p>
+
+        
+          <div class='highlight'><pre>        blacklistExpires: <span class="number">30</span></pre></div>
+        
+      
+        
+        <p>How long should IP be blacklisted in case it reaches the &quot;MaxRetries&quot; value
+below after being already blacklisted before?</p>
+
+        
+          <div class='highlight'><pre>        blacklistLongExpires: <span class="number">3600</span></pre></div>
+        
+      
+        
+        <p>If a blacklisted IP keeps attacking, how many attacks till its expiry date
+extends to the &quot;LongExpires&quot; value above?</p>
+
+        
+          <div class='highlight'><pre>        blacklistMaxRetries: <span class="number">5</span></pre></div>
+        
+      
+        
+        <p>If enabled, all requests will be checked against common attacks.</p>
+
+        
+          <div class='highlight'><pre>        enabled: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <p>Which HTTP protection patterns should be enabled? Available: lfi, sql, xss</p>
+
+        
+          <div class='highlight'><pre>        httpPatterns: <span class="string">"lfi,sql,xss"</span></pre></div>
+        
+      
+        
+        <p>Which Socket protection patterns should be enabled? Available: lfi, sql, xss</p>
+
+        
+          <div class='highlight'><pre>        socketPatterns: <span class="string">"lfi,sql,xss"</span></pre></div>
+        
+      
+        
+        <h2>ERROR HANDLING</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>    ErrorHandling:</pre></div>
+        
+      
+        
+        <p>Dump exceptions? On production environments we recommend setting this to false.</p>
+
+        
+          <div class='highlight'><pre>        dumpExceptions: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>Show stack trace? On production environments we recommend setting this to false.</p>
+
+        
+          <div class='highlight'><pre>        showStack: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <h2>DATABASE</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>    Database:</pre></div>
+        
+      
+        
+        <p>Connection string to MongoDB, using the format <code>user:password@hostname/dbname</code>.</p>
+
+        
+          <div class='highlight'><pre>        connString: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>In case you don&#39;t have failover / sharding in place on the database above
+using MongoDB built-in features, you can set a failover connection string below.
+It will be used ONLY if connection to the main database fails repeatedly.</p>
+
+        
+          <div class='highlight'><pre>        connString2: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>How long to wait before trying to connect to the main database again (in seconds).</p>
+
+        
+          <div class='highlight'><pre>        failoverTimeout: <span class="number">300</span></pre></div>
+        
+      
+        
+        <p>How many retries before switching to the failover database or aborting a database operation.</p>
+
+        
+          <div class='highlight'><pre>        maxRetries: <span class="number">3</span></pre></div>
+        
+      
+        
+        <p>Normalize documents ID (replace _id with id when returning documents)?</p>
+
+        
+          <div class='highlight'><pre>        normalizeId: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <p>How long between connection retries, in milliseconds. Default is 5 seconds.</p>
+
+        
+          <div class='highlight'><pre>        retryInterval: <span class="number">5000</span></pre></div>
+        
+      
+        
+        <p>Database connection options.</p>
+
+        
+          <div class='highlight'><pre>        options:</pre></div>
+        
+      
+        
+        <p>Auto recconect if connection is lost?</p>
+
+        
+          <div class='highlight'><pre>            autoReconnect: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <p>Default pool size for connections.</p>
+
+        
+          <div class='highlight'><pre>            poolSize: <span class="number">8</span></pre></div>
+        
+      
+        
+        <p>Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.</p>
+
+        
+          <div class='highlight'><pre>            safe: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <h2>EMAIL</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>    Mail:</pre></div>
+        
+      
+        
+        <p>Default <code>from</code> email address.</p>
+
+        
+          <div class='highlight'><pre>        from: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Main SMTP server.</p>
+
+        
+          <div class='highlight'><pre>        smtp:</pre></div>
+        
+      
+        
+        <p>The SMTP host. If set to null or blank, no emails will be sent out.</p>
+
+        
+          <div class='highlight'><pre>            host: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The SMTP auth password.</p>
+
+        
+          <div class='highlight'><pre>            password: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The SMTP port to connect to.</p>
+
+        
+          <div class='highlight'><pre>            port: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Connect using SSL? If you&#39;re using port 587 then secure must be set to false in most cases.</p>
+
+        
+          <div class='highlight'><pre>            secure: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>The SMTP auth username.</p>
+
+        
+          <div class='highlight'><pre>            user: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Secondary SMTP server. Will be used only if the main SMTP fails.</p>
+
+        
+          <div class='highlight'><pre>        smtp2:</pre></div>
+        
+      
+        
+        <p>The secondary SMTP host. If set to null or blank, no emails will be sent out.</p>
+
+        
+          <div class='highlight'><pre>            host: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The secondary SMTP auth password.</p>
+
+        
+          <div class='highlight'><pre>            password: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The secondary SMTP port to connect to.</p>
+
+        
+          <div class='highlight'><pre>            port: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Connect to secondary using SSL? If you&#39;re using port 587 then secure must be set to false in most cases.</p>
+
+        
+          <div class='highlight'><pre>            secure: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>The secondary SMTP auth username.</p>
+
+        
+          <div class='highlight'><pre>            user: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <h2>LOGGING</h2>
+
+        
+      
+        
+        <p>Built-in support for Loggly and Logentries.</p>
+
+        
+          <div class='highlight'><pre>    Logger:</pre></div>
+        
+      
+        
+        <p>If <code>sendIP</code> is true, the IP address of the machine will be added to logs events.
+Useful when you have different instances of the app running on different services.</p>
+
+        
+          <div class='highlight'><pre>        sendIP: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <p>If <code>sendTimestamp</code> is true, a timestamp will be added to logs events.
+Please note that Loggly and Logentries already have a timestamp, so in most
+cases you can leave this value set to false.</p>
+
+        
+          <div class='highlight'><pre>        sendTimestamp: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>Set <code>uncaughtException</code> to true to bind the logger to the <code>uncaughtException</code>
+event on the process and log all uncaught expcetions as errors.</p>
+
+        
+          <div class='highlight'><pre>        uncaughtException: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <p>Save logs locally? The path to the logs folder is set above under the <code>Settings.Path.logsDir</code> key.</p>
+
+        
+          <div class='highlight'><pre>        Local:
+            enabled: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>The bufferInterval defines the delay in between disk saves, in milliseconds.</p>
+
+        
+          <div class='highlight'><pre>            bufferInterval: <span class="number">10000</span></pre></div>
+        
+      
+        
+        <p>The maxAge sets the max age of log files, in days.</p>
+
+        
+          <div class='highlight'><pre>            maxAge: <span class="number">30</span></pre></div>
+        
+      
+        
+        <p>Please inform your Logentries token. Logentries will be used ONLY if
+the enabled setting below  is true.</p>
+
+        
+          <div class='highlight'><pre>        Logentries:
+            enabled: <span class="literal">false</span>
+            token: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Inform your Loggly subdomain and token. Loggly will be used ONLY if
+the enabled setting below  is true.</p>
+
+        
+          <div class='highlight'><pre>        Loggly:
+            enabled: <span class="literal">false</span>
+            subdomain: <span class="literal">null</span>
+            token: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <h2>NEW RELIC PROFILING</h2>
+
+        
+      
+        
+        <p>Built-in support for New Relic. Will be used ONLY if the appName and licenseKey
+settings below are set and valid.</p>
+
+        
+          <div class='highlight'><pre>    NewRelic:</pre></div>
+        
+      
+        
+        <p>The App Name on New Relic.</p>
+
+        
+          <div class='highlight'><pre>        appName: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The License Key on New Relic.</p>
+
+        
+          <div class='highlight'><pre>        licenseKey: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <h2>TWITTER</h2>
+
+        
+      
+        
+        <p>If you want to integrate with Twitter, you&#39;ll need to register an application
+at <a href="http://dev.twitter.com">http://dev.twitter.com</a> and set the properties below.</p>
+
+        
+          <div class='highlight'><pre>    Twitter:</pre></div>
+        
+      
+        
+        <p>Your OAuth access secret. This can be generated automatically for your
+account on you application details page.</p>
+
+        
+          <div class='highlight'><pre>        accessSecret: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Your OAuth access token. This can be generated automatically for your
+account on you application details page.</p>
+
+        
+          <div class='highlight'><pre>        accessToken: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The Twitter app consumer key.</p>
+
+        
+          <div class='highlight'><pre>        consumerKey: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The Twitter app consumer secret.</p>
+
+        
+          <div class='highlight'><pre>        consumerSecret: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>How long to wait before trying to authenticate on Twitter again (in seconds),
+in case the authentication fails.</p>
+
+        
+          <div class='highlight'><pre>        retryInterval: <span class="number">600</span></pre></div>
+        
+      
+        
+        <h2>Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Settings.<span class="function"><span class="title">getInstance</span></span> = -&gt;
+    <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
+        <span class="property">@instance</span> = <span class="keyword">new</span> Settings()
+
+        fs = require <span class="string">"fs"</span>
+        path = require <span class="string">"path"</span>
+        filename =  path.dirname(require.main.filename) + <span class="string">"/settings.json"</span></pre></div>
+        
+      
+        
+        <p>Check if <code>settings.json</code> exists on root folder.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> fs.existsSync?
+            hasJson = fs.existsSync filename
+        <span class="keyword">else</span>
+            hasJson = path.existsSync filename</pre></div>
+        
+      
+        
+        <p>If <code>settings.json</code> does not exist on root, try on local path.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> hasJson
+            filename = __dirname + <span class="string">"/settings.json"</span>
+            hasJson = fs.existsSync filename</pre></div>
+        
+      
+        
+        <p>Check if there&#39;s a <code>settings.json</code> file, and overwrite settings if so.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> hasJson
+            settingsJson = require filename</pre></div>
+        
+      
+        
+        <p>Helper function to overwrite settings.</p>
+
+        
+          <div class='highlight'><pre>            <span class="function"><span class="title">xtend</span></span> = (source, target) -&gt;
+                <span class="keyword">for</span> prop, value <span class="keyword">of</span> source
+                    <span class="keyword">if</span> value?.constructor <span class="keyword">is</span> Object
+                        target[prop] = {} <span class="keyword">if</span> <span class="keyword">not</span> target[prop]?
+                        xtend source[prop], target[prop]
+                    <span class="keyword">else</span>
+                        target[prop] = source[prop]
+
+            xtend settingsJson, <span class="property">@instance</span></pre></div>
+        
+      
+        
+        <p>Set debug in case it has not been set.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>.General.debug?
+            <span class="keyword">if</span> process.env.NODE_ENV <span class="keyword">is</span> <span class="string">"production"</span>
+                <span class="property">@instance</span>.General.debug = <span class="literal">false</span>
+            <span class="keyword">else</span>
+                <span class="property">@instance</span>.General.debug = <span class="literal">true</span>
+
+    <span class="keyword">return</span> <span class="property">@instance</span>
+
+module.exports = exports = Settings.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

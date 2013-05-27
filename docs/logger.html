@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>logger.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>logger.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="expresser.html">
+                    expresser.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mail.html">
+                    mail.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="twitter.html">
+                    twitter.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2>EXPRESSER LOGGER</h2>
+
+        
+      
+        
+        <p>Handles server logging using local files, Logentries or Loggly.
+Multiple services can be enabled at the same time.
+Parameters on settings.coffee: Settings.Logger</p>
+
+        
+          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Logger</span></span>
+
+    fs = require <span class="string">"fs"</span>
+    lodash = require <span class="string">"lodash"</span>
+    path = require <span class="string">"path"</span>
+    settings = require <span class="string">"./settings.coffee"</span>
+    utils = require <span class="string">"./utils.coffee"</span></pre></div>
+        
+      
+        
+        <p>Local logging objects will be set on <code>init</code>.</p>
+
+        
+          <div class='highlight'><pre>    bufferDispatcher = <span class="literal">null</span>
+    localBuffer = <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Remote logging providers will be set on <code>init</code>.</p>
+
+        
+          <div class='highlight'><pre>    logentries = <span class="literal">null</span>
+    loggly = <span class="literal">null</span>
+    loggerLogentries = <span class="literal">null</span>
+    loggerLoggly = <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The <code>serverIP</code> will be set on init, but only if <code>settings.Logger.sendIP</code> is true.</p>
+
+        
+          <div class='highlight'><pre>    serverIP = <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Holds a list of current active logging services.</p>
+
+        
+          <div class='highlight'><pre>    activeServices = []</pre></div>
+        
+      
+        
+        <h2>INIT</h2>
+
+        
+      
+        
+        <p>Init the Logger. Verify which services are set, and add the necessary transports.
+IP address and timestamp will be appended to logs depending on the settings.</p>
+
+        
+          <div class='highlight'><pre>    init: =&gt;
+        <span class="keyword">if</span> bufferDispatcher?
+            <span class="property">@flushLocal</span>()
+            clearInterval bufferDispatcher
+
+        bufferDispatcher = <span class="literal">null</span>
+        localBuffer = <span class="literal">null</span>
+        logentries = <span class="literal">null</span>
+        loggly = <span class="literal">null</span>
+        serverIP = <span class="literal">null</span>
+        activeServices = []</pre></div>
+        
+      
+        
+        <p>Get a valid server IP to be appended to logs.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Logger.sendIP
+            serverIP = utils.getServerIP()</pre></div>
+        
+      
+        
+        <p>Check if logs should be saved locally. If so, create the logs buffer and a timer to
+flush logs to disk every X milliseconds.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Logger.Local.enabled
+            <span class="keyword">if</span> <span class="keyword">not</span> fs.existsSync settings.Path.logsDir
+                fs.mkdirSync settings.Path.logsDir
+            localBuffer = {info: [], warn: [], error: []}
+            bufferDispatcher = setInterval <span class="property">@flushLocal</span>, settings.Logger.bufferInterval
+            activeServices.push <span class="string">"Local"</span></pre></div>
+        
+      
+        
+        <p>Check if Logentries should be used, and create the Logentries objects.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Logger.Logentries.enabled <span class="keyword">and</span> settings.Logger.Logentries.token? <span class="keyword">and</span> settings.Logger.Logentries.token <span class="keyword">isnt</span> <span class="string">""</span>
+            logentries = require <span class="string">"node-logentries"</span>
+            loggerLogentries = logentries.logger {token: settings.Logger.Logentries.token, timestamp: settings.Logger.sendTimestamp}
+            activeServices.push <span class="string">"Logentries"</span></pre></div>
+        
+      
+        
+        <p>Check if Loggly should be used, and create the Loggly objects.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Logger.Loggly.enabled <span class="keyword">and</span> settings.Logger.Loggly.subdomain? <span class="keyword">and</span> settings.Logger.Loggly.token? <span class="keyword">and</span> settings.Logger.Loggly.token <span class="keyword">isnt</span> <span class="string">""</span>
+            loggly = require <span class="string">"loggly"</span>
+            loggerLoggly = loggly.createClient {subdomain: settings.Logger.Loggly.subdomain, json: <span class="literal">true</span>}
+            activeServices.push <span class="string">"Loggly"</span></pre></div>
+        
+      
+        
+        <p>Define server IP.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> serverIP?
+            ipInfo = <span class="string">"IP <span class="subst">#{serverIP}</span>"</span>
+        <span class="keyword">else</span>
+            ipInfo = <span class="string">"No server IP set."</span></pre></div>
+        
+      
+        
+        <p>Start logging!</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> local <span class="keyword">and</span> <span class="keyword">not</span> logentries? <span class="keyword">and</span> <span class="keyword">not</span> loggly?
+            <span class="property">@warn</span> <span class="string">"Expresser"</span>, <span class="string">"Logger.init"</span>, <span class="string">"Local, Logentries and Loggly are not enabled."</span>, <span class="string">"Logger module will only log to the console!"</span>
+        <span class="keyword">else</span>
+            <span class="property">@info</span> <span class="string">"Expresser"</span>, <span class="string">"Logger.init"</span>, activeServices.join(), ipInfo</pre></div>
+        
+      
+        
+        <h2>LOG METHODS</h2>
+
+        
+      
+        
+        <p>Log any object to the default transports as <code>log</code>.</p>
+
+        
+          <div class='highlight'><pre>    info: =&gt;
+        console.info.apply(<span class="keyword">this</span>, arguments) <span class="keyword">if</span> settings.General.debug <span class="keyword">or</span> activeServices.length &lt; <span class="number">1</span>
+        msg = <span class="property">@getMessage</span> arguments
+
+        <span class="keyword">if</span> localBuffer?
+            <span class="property">@logLocal</span> <span class="string">"info"</span>, msg
+        <span class="keyword">if</span> logentries?
+            loggerLogentries.info.apply <span class="keyword">this</span>, [msg]
+        <span class="keyword">if</span> loggly?
+            loggerLoggly.log.apply <span class="keyword">this</span>, [settings.Logger.Loggly.token, msg]</pre></div>
+        
+      
+        
+        <p>Log any object to the default transports as <code>warn</code>.</p>
+
+        
+          <div class='highlight'><pre>    warn: =&gt;
+        console.warn.apply(<span class="keyword">this</span>, arguments) <span class="keyword">if</span> settings.General.debug <span class="keyword">or</span> activeServices.length &lt; <span class="number">1</span>
+        msg = <span class="property">@getMessage</span> arguments
+
+        <span class="keyword">if</span> localBuffer?
+            <span class="property">@logLocal</span> <span class="string">"warn"</span>, msg
+        <span class="keyword">if</span> logentries?
+            loggerLogentries.warning.apply <span class="keyword">this</span>, [msg]
+        <span class="keyword">if</span> loggly?
+            loggerLoggly.log.apply <span class="keyword">this</span>, [settings.Logger.Loggly.token, msg]</pre></div>
+        
+      
+        
+        <p>Log any object to the default transports as <code>error</code>.</p>
+
+        
+          <div class='highlight'><pre>    error: =&gt;
+        console.error.apply(<span class="keyword">this</span>, arguments) <span class="keyword">if</span> settings.General.debug <span class="keyword">or</span> activeServices.length &lt; <span class="number">1</span>
+        msg = <span class="property">@getMessage</span> arguments
+
+        <span class="keyword">if</span> localBuffer?
+            <span class="property">@logLocal</span> <span class="string">"error"</span>, msg
+        <span class="keyword">if</span> logentries?
+            loggerLogentries.err.apply <span class="keyword">this</span>, [msg]
+        <span class="keyword">if</span> loggly?
+            loggerLoggly.log.apply <span class="keyword">this</span>, [settings.Logger.Loggly.token, msg]</pre></div>
+        
+      
+        
+        <h2>LOCAL LOGGING</h2>
+
+        
+      
+        
+        <p>Log locally. The path is defined on <code>Settings.Path.logsDir</code>.</p>
+
+        
+          <div class='highlight'><pre>    logLocal: (logType, message) -&gt;
+        now = moment()
+        message = now.format(<span class="string">"HH:mm:ss.SSS"</span>) + <span class="string">" - "</span> + message
+        localBuffer[logType] = [] <span class="keyword">if</span> <span class="keyword">not</span> localBuffer[logType]?
+        localBuffer[logType].push message</pre></div>
+        
+      
+        
+        <p>Flush all local buffered log messages to disk. This is usually called by the <code>bufferDispatcher</code> timer.</p>
+
+        
+          <div class='highlight'><pre>    flushLocal: -&gt;
+        now = moment()
+        date = now.format <span class="string">"yyyyMMdd"</span></pre></div>
+        
+      
+        
+        <p>Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
+can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
+Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">for</span> key, logs <span class="keyword">of</span> localBuffer
+            filePath = path.join settings.Path.logsDir, <span class="string">"<span class="subst">#{key}</span>.<span class="subst">#{date}</span>.log"</span>
+            fs.appendFile filePath, logs.join(<span class="string">"\n"</span>), (err) -&gt;
+                console.error(<span class="string">"Expresser"</span>, <span class="string">"Logger.flushLocal"</span>, err) <span class="keyword">if</span> err?</pre></div>
+        
+      
+        
+        <p>Delete old log files.</p>
+
+        
+          <div class='highlight'><pre>    cleanLocal: -&gt;
+        maxDate = moment().subtract <span class="string">"d"</span>, settings.Logger.Local.maxAge
+
+        fs.readdir settings.Path.logsDir, (err, files) -&gt;
+            <span class="keyword">if</span> err?
+                console.error <span class="string">"Expresser"</span>, <span class="string">"Logger.cleanLocal"</span>, err
+            <span class="keyword">else</span>
+                <span class="keyword">for</span> f <span class="keyword">in</span> files
+                    date = moment f.split(<span class="string">"."</span>)[<span class="number">1</span>], <span class="string">"yyyyMMdd"</span>
+                    <span class="keyword">if</span> date.isBefore maxDate
+                        fs.unlink path.join(settings.Path.logsDir, f), (err) -&gt;
+                            console.error(<span class="string">"Expresser"</span>, <span class="string">"Logger.cleanLocal"</span>, err) <span class="keyword">if</span> err?</pre></div>
+        
+      
+        
+        <h2>HELPER METHODS</h2>
+
+        
+      
+        
+        <p>Serializes the parameters and return a JSON object representing the log message,
+depending on the service being used.</p>
+
+        
+          <div class='highlight'><pre>    getMessage: -&gt;
+        separated = []
+        args = arguments
+        args = args[<span class="number">0</span>] <span class="keyword">if</span> args.length <span class="keyword">is</span> <span class="number">1</span></pre></div>
+        
+      
+        
+        <p>Parse all arguments and stringify objects.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">for</span> a <span class="keyword">in</span> args
+            <span class="keyword">if</span> lodash.isArray a
+                <span class="keyword">for</span> b <span class="keyword">in</span> a
+                    separated.push b
+            <span class="keyword">else</span> <span class="keyword">if</span> lodash.isObject a
+                <span class="keyword">try</span>
+                    separated.push JSON.stringify a
+                <span class="keyword">catch</span> ex
+                    separated.push a
+            <span class="keyword">else</span>
+                separated.push a</pre></div>
+        
+      
+        
+        <p>Append IP address, if <code>serverIP</code> is set.</p>
+
+        
+          <div class='highlight'><pre>        separated.push <span class="string">"IP <span class="subst">#{serverIP}</span>"</span> <span class="keyword">if</span> serverIP?</pre></div>
+        
+      
+        
+        <p>Return single string log message.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">return</span> separated.join <span class="string">" | "</span></pre></div>
+        
+      
+        
+        <h2>Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Logger.<span class="function"><span class="title">getInstance</span></span> = -&gt;
+    <span class="property">@instance</span> = <span class="keyword">new</span> Logger() <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
+    <span class="keyword">return</span> <span class="property">@instance</span>
+
+module.exports = exports = Logger.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
