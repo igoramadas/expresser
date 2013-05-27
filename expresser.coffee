@@ -12,6 +12,7 @@ class Expresser
     app: require "./lib/app.coffee"
     database: require "./lib/database.coffee"
     firewall: require "./lib/firewall.coffee"
+    imaging: require "./lib/imaging.coffee"
     logger: require "./lib/logger.coffee"
     mail: require "./lib/mail.coffee"
     sockets: require "./lib/sockets.coffee"
@@ -21,6 +22,7 @@ class Expresser
     init: =>
         @logger.init()
         @database.init()
+        @imaging.init()
         @mail.init()
         @twitter.init()
 

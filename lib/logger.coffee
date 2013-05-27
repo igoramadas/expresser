@@ -127,7 +127,7 @@ class Logger
             loggerLoggly.log.apply this, [settings.Logger.Loggly.token, msg]
 
 
-    # HELPER METHODS
+    # LOCAL LOGGING
     # --------------------------------------------------------------------------
 
     # Log locally. The path is defined on `Settings.Path.logsDir`.
@@ -147,7 +147,26 @@ class Logger
         # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
         for key, logs of localBuffer
             filePath = path.join settings.Path.logsDir, "#{key}.#{date}.log"
-            fs.appendFile filePath, logs.join("\n"), (err) -> console.error("Expresser", "Logger.flushLocal", err) if err?
+            fs.appendFile filePath, logs.join("\n"), (err) ->
+                console.error("Expresser", "Logger.flushLocal", err) if err?
+
+    # Delete old log files.
+    cleanLocal: ->
+        maxDate = moment().subtract "d", settings.Logger.Local.maxAge
+
+        fs.readdir settings.Path.logsDir, (err, files) ->
+            if err?
+                console.error "Expresser", "Logger.cleanLocal", err
+            else
+                for f in files
+                    date = moment f.split(".")[1], "yyyyMMdd"
+                    if date.isBefore maxDate
+                        fs.unlink path.join(settings.Path.logsDir, f), (err) ->
+                            console.error("Expresser", "Logger.cleanLocal", err) if err?
+
+
+    # HELPER METHODS
+    # --------------------------------------------------------------------------
 
     # Serializes the parameters and return a JSON object representing the log message,
     # depending on the service being used.
