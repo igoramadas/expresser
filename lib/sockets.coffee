@@ -9,8 +9,12 @@
 
 class Sockets
 
+    lodash = require "lodash"
     logger = require "./logger.coffee"
     settings = require "./settings.coffee"
+
+    # Holds a list of current event listeners.
+    currentListeners: null
 
 
     # INIT
@@ -20,6 +24,8 @@ class Sockets
     # the counter to increase / decrease when users connects or
     # disconnects from the app.
     init: (server) =>
+        @currentListeners = []
+
         if not server?
             logger.error "Expresser", "Sockets.init", "App server is invalid. Abort!"
             return
@@ -43,6 +49,10 @@ class Sockets
             @io.sockets.emit "connection-count", @getConnectionCount()
             socket.on "disconnect", @onDisconnect
 
+            # Bind all current event listeners.
+            for listener in @currentListeners
+                socket.on(listener.key, listener.callback) if listener?
+
 
     # EVENTS
     # ----------------------------------------------------------------------
@@ -50,6 +60,32 @@ class Sockets
     # Emit the specified key / data to clients.
     emit: (key, data) =>
         @io.sockets.emit key, data
+
+    # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
+    # event from currently connected clients.
+    listenTo: (key, callback, onlyNewClients) =>
+        onlyNewClients = false if not onlyNewClients?
+        @currentListeners.push {key: key, callback: callback}
+
+        if not onlyNewClients
+            for socketKey, socket of @io.sockets.manager.open
+                socket.on key, callback
+
+    # Stops listening to the specified event key.
+    stopListening: (key, callback) =>
+        for socketKey, socket of @io.sockets.manager.open
+            if callback?
+                socket.removeListener key, callback
+            else
+                socket.removeAllListeners key
+
+        for listener in @currentListeners
+            if listener.key is key and listener.callback is callback
+                listener = null
+
+    # Remove invalid and expired event listeners.
+    compact: =>
+        @currentListeners = lodash.compact @currentListeners
 
 
     # HELPERS

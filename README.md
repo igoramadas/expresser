@@ -172,6 +172,11 @@ address will be the default "from" address set on the settings.
 The Sockets module is handled automatically by the App module. If you want to disable it, set
 the `Settings.Sockets.enabled` setting to false.
 
+The sample below shows how to emit a test message to all clients, and listen to a "button:click" event.
+
+    var expresser = require("expresser");
+    expresser.sockets.emit("myevent", {message: "This is a test"});
+
 
 ### Twitter
 *   Supports updating status and reading direct messages from Twitter.
