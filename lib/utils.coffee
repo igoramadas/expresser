@@ -7,6 +7,10 @@ class Utils
     logger = require "./logger.coffee"
     settings = require "./settings.coffee"
 
+
+    # SETTINGS UTILS
+    # --------------------------------------------------------------------------
+
     # Update settings based on Cloud Environmental variables.
     updateSettingsFromPaaS: =>
         env = process.env
@@ -71,6 +75,31 @@ class Utils
 
         # Log updates.
         logger.info "Expresser", "Utils.updateSettingsFromPaaS", "Settings updated."
+
+
+    # SERVER INFO UTILS
+    # --------------------------------------------------------------------------
+
+    # Return an object with general information about the server.
+    getServerInfo: =>
+        result = {}
+
+        pid = process.pid + " " + process.title
+        platform = process.platform + " " + process.arch + ", v" + process.version
+        memUsage = process.memoryUsage()
+        memUsage = Math.round(memUsage.headUsed / 1000) + " / " + Math.round(memUsage.heapTotal / 1000) + " MB"
+        uptime = moment.duration(process.uptime, "s").humanize()
+
+        result.pid = pid
+        result.platform = platform
+        result.memoryUsage = memUsage
+        result.uptime = uptime
+
+        return result
+
+
+    # CLIENT INFO UTILS
+    # --------------------------------------------------------------------------
 
     # Get the client / browser IP, even when behind proxies. Works for http and socket requests.
     getClientIP: (reqOrSocket) =>
