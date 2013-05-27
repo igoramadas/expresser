@@ -8,10 +8,14 @@ class Logger
 
     fs = require "fs"
     lodash = require "lodash"
+    path = require "path"
     settings = require "./settings.coffee"
 
-    # Logging providers will be set on `init`.
-    local = null
+    # Local logging objects will be set on `init`.
+    bufferDispatcher = null
+    localBuffer = null
+
+    # Remote logging providers will be set on `init`.
     logentries = null
     loggly = null
     loggerLogentries = null
@@ -30,7 +34,12 @@ class Logger
     # Init the Logger. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
     init: =>
-        local = null
+        if bufferDispatcher?
+            @flushLocal()
+            clearInterval bufferDispatcher
+
+        bufferDispatcher = null
+        localBuffer = null
         logentries = null
         loggly = null
         serverIP = null
@@ -44,20 +53,22 @@ class Logger
                     if details.family is "IPv4" and not details.internal
                         serverIP = details.address
 
-        # Check if logs should be saved locally.
+        # Check if logs should be saved locally. If so, create the logs buffer and a timer to
+        # flush logs to disk every X milliseconds.
         if settings.Logger.Local.active
             if not fs.existsSync settings.Path.logsDir
                 fs.mkdirSync settings.Path.logsDir
-            local = true
+            localBuffer = {info: [], warn: [], error: []}
+            bufferDispatcher = setInterval @flushLocal, settings.Logger.bufferInterval
             activeServices.push "Local"
 
-        # Check if Loggly should be used.
+        # Check if Logentries should be used, and create the Logentries objects.
         if settings.Logger.Logentries.active and settings.Logger.Logentries.token? and settings.Logger.Logentries.token isnt ""
             logentries = require "node-logentries"
             loggerLogentries = logentries.logger {token: settings.Logger.Logentries.token, timestamp: settings.Logger.sendTimestamp}
             activeServices.push "Logentries"
 
-        # Check if Logentries should be used.
+        # Check if Loggly should be used, and create the Loggly objects.
         if settings.Logger.Loggly.active and settings.Logger.Loggly.subdomain? and settings.Logger.Loggly.token? and settings.Logger.Loggly.token isnt ""
             loggly = require "loggly"
             loggerLoggly = loggly.createClient {subdomain: settings.Logger.Loggly.subdomain, json: true}
@@ -84,7 +95,7 @@ class Logger
         console.info.apply(this, arguments) if settings.General.debug or activeServices.length < 1
         msg = @getMessage arguments
 
-        if local
+        if localBuffer?
             @logLocal "info", msg
         if logentries?
             loggerLogentries.info.apply this, [msg]
@@ -96,7 +107,7 @@ class Logger
         console.warn.apply(this, arguments) if settings.General.debug or activeServices.length < 1
         msg = @getMessage arguments
 
-        if local
+        if localBuffer?
             @logLocal "warn", msg
         if logentries?
             loggerLogentries.warning.apply this, [msg]
@@ -108,7 +119,7 @@ class Logger
         console.error.apply(this, arguments) if settings.General.debug or activeServices.length < 1
         msg = @getMessage arguments
 
-        if local
+        if localBuffer?
             @logLocal "error", msg
         if logentries?
             loggerLogentries.err.apply this, [msg]
@@ -121,7 +132,22 @@ class Logger
 
     # Log locally. The path is defined on `Settings.Path.logsDir`.
     logLocal: (logType, message) ->
+        now = moment()
+        message = now.format("HH:mm:ss.SSS") + " - " + message
+        localBuffer[logType] = [] if not localBuffer[logType]?
+        localBuffer[logType].push message
 
+    # Flush all local buffered log messages to disk. This is usually called by the `bufferDispatcher` timer.
+    flushLocal: ->
+        now = moment()
+        date = now.format "yyyyMMdd"
+
+        # Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
+        # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
+        # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
+        for key, logs of localBuffer
+            filePath = path.join settings.Path.logsDir, "#{key}.#{date}.log"
+            fs.appendFile filePath, logs.join("\n"), (err) -> console.error("Expresser", "Logger.flushLocal", err) if err?
 
     # Serializes the parameters and return a JSON object representing the log message,
     # depending on the service being used.

@@ -172,8 +172,10 @@ class Settings
         # event on the process and log all uncaught expcetions as errors.
         uncaughtException: true
         # Save logs locally? The path to the logs folder is set above under the `Settings.Path.logsDir` key.
+        # The bufferInterval defines the delay in between disk saves, in milliseconds.
         Local:
             active: false
+            bufferInterval: 10000
         # Please inform your Logentries token. Logentries will be used ONLY if
         # the active setting below  is true.
         Logentries:

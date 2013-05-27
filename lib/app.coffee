@@ -53,9 +53,15 @@ class App
                 catch ex
                     console.error "Expresser", "Unhandled exception!", Date(Date.now()), err.stack
 
-        # Log proccess termination to the console.
+        # Log proccess termination to the console. This will force flush any buffered logs to disk.
         process.on "exit", (sig) ->
-            console.warn "Terminating Expresser app...", Date(Date.now()), sig
+            console.warn "Expresser", "Terminating Expresser app...", Date(Date.now()), sig
+
+            try
+                logger.flushLocal()
+            catch err
+                console.warn "Expresser", "Could not flush buffered logs to disk."
+
 
         # Require express and create the app.
         express = require "express"
