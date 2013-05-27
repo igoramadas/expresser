@@ -1,7 +1,7 @@
 # EXPRESSER DATABASE
 # -----------------------------------------------------------------------------
 # Handle the MongoDB database interactions on the app.
-# Parameters on settings.coffee: Settings.Database
+# Parameters on [settings.html](settings.coffee): Settings.Database
 
 class Database
 
@@ -41,9 +41,9 @@ class Database
             if settings.Database.connString2? and settings.Database.connString2 isnt ""
                 @failover = true
                 db = mongo.db settings.Database.connString2, settings.Database.options
-                logger.info "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Switched to failover database."
+                logger.info "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Switched to failover DB."
             else
-                logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "No failover database set, keep trying."
+                logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "No failover DB set, keep trying."
 
         # Try to connect to the current database. If it fails, try again in a few seconds.
         db.open (err, result) =>
@@ -56,9 +56,9 @@ class Database
                 # to connect to the main database again.
                 if @failover
                     setTimeout validateConnection, settings.Database.failoverTimeout * 1000
-                    logger.info "Expresser", "Database.validateConnection", "Connected to failover database.", "Try the main again in #{settings.Database.failoverTimeout} settings."
+                    logger.info "Expresser", "Database.validateConnection", "Connected to failover DB.", "Try main DB again in #{settings.Database.failoverTimeout} settings."
                 else
-                    logger.info "Expresser", "Database.validateConnection", "Connected to main database."
+                    logger.info "Expresser", "Database.validateConnection", "Connected to main DB."
 
 
     # INIT
@@ -70,6 +70,7 @@ class Database
             validateConnection()
         else if settings.General.debug
             logger.warn "Expresser", "Database.init", "No connection string set.", "Database module won't work."
+
 
     # LOW LEVEL IMPLEMENTATION
     # -------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 # EXPRESSER APP
 # -----------------------------------------------------------------------------
 # The Express app server.
-# Parameters on settings.coffee: Settings.App
+# Parameters on [settings.html](settings.coffee): Settings.App
 
 class App
 

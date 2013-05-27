@@ -110,7 +110,8 @@ class Settings
         # using MongoDB built-in features, you can set a failover connection string below.
         # It will be used ONLY if connection to the main database fails repeatedly.
         connString2: null
-        # How long to wait before trying to connect to the main database again (in seconds).
+        # How long to wait before trying to connect to the main database again (in seconds) in case
+        # the module switches to the secondary one.
         failoverTimeout: 300
         # How many retries before switching to the failover database or aborting a database operation.
         maxRetries: 3

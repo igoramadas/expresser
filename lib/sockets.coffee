@@ -1,7 +1,7 @@
 # EXPRESSER SOCKETS
 # --------------------------------------------------------------------------
 # Handles sockets communication using the module Socket.IO.
-# Parameters on settings.coffee: Settings.Sockets
+# Parameters on [settings.html](settings.coffee): Settings.Sockets
 
 # ATTENTION!
 # The Sockets module is started automatically by the App module. If you wish to

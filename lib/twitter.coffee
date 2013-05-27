@@ -1,7 +1,7 @@
 # EXPRESSER TWITTER
 # --------------------------------------------------------------------------
 # Handles communications with Twitter.
-# Parameters on settings.coffee: Settings.Twitter
+# Parameters on [settings.html](settings.coffee): Settings.Twitter
 
 class Twitter
 

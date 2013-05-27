@@ -1,7 +1,7 @@
 # EXPRESSER FIREWALL
 # -----------------------------------------------------------------------------
 # Firewall to protect the server against well known HTTP and socket attacks.
-# Parameters on settings.coffee: Settings.Firewall
+# Parameters on [settings.html](settings.coffee): Settings.Firewall
 
 # ATTENTION!
 # The Firewall module is started automatically by the App module. If you wish to

@@ -1,6 +1,6 @@
 # EXPRESSER UTILS
 # -----------------------------------------------------------------------------
-# General network, IO and other utilities.
+# General network, IO, client and server utilities.
 
 class Utils
 

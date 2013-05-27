@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------------
 # Sends and manages emails, supports templates. When parsing templates, the
 # tags should be wrapped with normal brackets {}. Example: {contents}
-# Parameters on settings.coffee: Settings.Mail
+# Parameters on [settings.html](settings.coffee): Settings.Mail
 
 class Mail
 
