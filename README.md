@@ -17,6 +17,8 @@ and values. Detailed instructions are available on the top / header of the `sett
 
 ## Modules
 
+Below you'll find important information about each of Expresser modules.
+
 ### App
 *   Ready to run on most PaaS providers.
 *   Built-in support for New Relic (http://newrelic.com)
@@ -43,6 +45,9 @@ database fails repeatedly. This will be activated only if you set the `Settings.
 Please note that Expresser won't keep the main and backup database in sync! If you wish to keep them in sync
 you'll have to implement this feature yourself - we suggest using background workers at http://iron.io.
 
+If the `Settings.App.paas` setting is enabled, the Database module will automatically figure out the connection details for
+the following MongoDB services: AppFog, MongoLab, MongoHQ.
+
 ### Firewall
 *   Automatic protection against SQLi, CSS and LFI attacks.
 *   Automatic IP blacklisting.
@@ -52,7 +57,7 @@ The Firewall module is handled automatically by the App module. If you want to d
 set the `Settings.Firewall.enabled` settings to false.
 
 ### Imaging
-*   Wrapper for imagemagick.
+*   Wrapper for ImageMagick.
 *   Easy conversion between multiple image types.
 
 The Imaging module depends on ImageMagick so please make sure you have it installed on your server
@@ -62,16 +67,28 @@ before using this module.
 *   Simple info, warn and error logging methods.
 *   Suppports logging to local files, Logentries (http://logentries.com) and Loggly (http://loggly.com).
 
-By default no transports are enabled, so the Logger will log to the console only. To enable logging to local files,
-set `Settings.Logger.Local.enabled` to true and make sure to have write access to the path set on
-the `Settings.Path.logsDir`.
+**Before you start** make sure you have enabled and set your desired transports on `Settings.Logger`.
+By default no transports are enabled, so the Logger will log to the console only
+
+To enable logging to local files, set `Settings.Logger.Local.enabled` to true and make sure to have write
+access to the path set on the `Settings.Path.logsDir`.
 
 To enable a remote logging service, simply set its token and access keys on `Settings.Logger` settings
-and set `enabled` to true.
+and set `enabled` to true. At the moment the Logger supports Logentries and Loggly.
 
 ### Mail
 *   Supports sending emails via SMTP using optional authentication and SSL/TLS.
+*   Supports email templates and keywords.
 *   Automatic switching to a failover SMTP server in case the main one fails to send.
+
+**Before you start** make sure you have set the main SMTP server details on `Settings.Mail.smtp`. An optional
+secondary can be also set on `Settings.Mail.smtp2`, and will be used only in case the main server fails.
+
+The email templates folder is set on `Settings.Path.emailTemplatesDir`. The template handler expects a base
+template called "base.html", with a keyword "{contents}" where the email contents should go.
+
+If the `Settings.App.paas` setting is enabled, the Mail module will automatically figure out the SMTP details for
+the following email services: SendGrid, Mandrill, Mailgun.
 
 ### Sockets
 *   Wrapper for the Socket.IO module
@@ -82,8 +99,13 @@ set the `Settings.Sockets.enabled` settings to false.
 ### Twitter
 *   Supports updating status and reading direct messages from Twitter.
 
+**Before you start** make sure you have set the access tokens and secrets on `Settings.Twitter`. These values
+will be validated when `init` is called.
+
 ### Utils
 *   General utilities and helper methods.
+
+The Utils module provides a few methods to handle settings and get information about the server and clients.
 
 ## Running on PaaS
 

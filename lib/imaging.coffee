@@ -24,7 +24,7 @@ class Imaging
     # --------------------------------------------------------------------------
 
     # Internal method to convert image filetypes. Image will also be resized and scale to the specified
-    # dimensions (width and height). A callback (err, result) can be passed as well.
+    # dimensions (width and height). A callback (err, stdout) can be passed as well.
     convert = (source, filetype, options, callback) =>
         fs.exists source, (exists) ->
             if exists
@@ -77,8 +77,12 @@ class Imaging
 
                 # Source file does not exist, so log the warning and trigger
                 # the `callback` if one was passed.
-                logger.warn "Expresser", "Imaging.svgToPng", "Abort, source file does not exist.", source
+                logger.warn "Expresser", "Imaging.convert", "Abort, source file does not exist.", source
                 callback("Source file does not exist.", false) if callback?
+
+    # Converts the specified image to GIF, with optional options and callback.
+    toGif: (source, options, callback) =>
+        convert source, ".gif", options, callback
 
     # Converts the specified image to JPG, with optional options and callback.
     toJpg: (source, options, callback) =>

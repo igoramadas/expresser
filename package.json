@@ -43,8 +43,13 @@
     "keywords": [
         "expresser",
         "express",
-        "platform",
+        "app",
+        "imagemagick",
         "framework",
-        "template"
+        "logger",
+        "mongo",
+        "platform",
+        "sockets",
+        "twitter"
     ]
 }

@@ -10,6 +10,7 @@ class Mail
     logger = require "./logger.coffee"
     mailer = require "nodemailer"
     moment = require "moment"
+    path = require "path"
     settings = require "./settings.coffee"
 
     # SMTP objects will be instantiated on `init`.
@@ -41,12 +42,12 @@ class Mail
         return mailer.createTransport "SMTP", options
 
     # Helper to send emails using the specified transport and options.
-    doSend = (transport, options, callback) ->
+    smtpSend = (transport, options, callback) ->
         transport.sendMail options, (err, result) ->
             if err?
-                logger.error "Expresser", "Mail.send", "Could not send message: #{options.subject} to #{options.to}.", err, transport.host
+                logger.error "Expresser", "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
             else if settings.General.debug
-                logger.info "Mail.send", subject, "to #{toAddress}", "from #{fromAddress}.", transport.host
+                logger.info "Mail.smtpSend", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
             callback err, result
 
 
@@ -76,13 +77,14 @@ class Mail
             return
 
         if not message? or message is ""
-            logger.warn "Expresser", "Mail.send", "Parameter obj is not valid. Abort!", subject, "to #{toAddress}"
+            logger.warn "Expresser", "Mail.send", "Message is not valid. Abort!", subject, "to #{toAddress}"
             return
 
         # Set from to default address if no `fromAddress` was set and create the options object.
         fromAddress = "#{settings.General.appTitle} <#{settings.Mail.from}>" if not fromAddress?
         options = {}
 
+        # Properly format the "to" address.
         if toAddress.indexOf("<") < 3
             toName = toAddress
         else
@@ -97,11 +99,11 @@ class Mail
         options.subject = subject
         options.html = html
 
-        # Send using the main SMTP. If failed and a secondary is also set, use the secondary.
-        doSend smtp, options, (err, result) ->
+        # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.
+        smtpSend smtp, options, (err, result) ->
             if err?
                 if smtp2?
-                    doSend smtp2, options, (err2, result2) -> callback err2, result2
+                    smtpSend smtp2, options, (err2, result2) -> callback err2, result2
                 else
                     callback err, result
             else
@@ -120,8 +122,8 @@ class Mail
             return templateCache[name].template
 
         # Read base and `name` template and merge them together.
-        base = fs.readFileSync "#{settings.Path.emailTemplatesDir}base.html"
-        template = fs.readFileSync "#{settings.Path.emailTemplatesDir}#{name}.html"
+        base = fs.readFileSync path.join(settings.Path.emailTemplatesDir, "base.html")
+        template = fs.readFileSync path.join(settings.Path.emailTemplatesDir, "#{name}.html")
         result = base.toString().replace "{contents}", template.toString()
 
         # Save to cache.
