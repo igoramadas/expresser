@@ -10,6 +10,7 @@ class Logger
     lodash = require "lodash"
     path = require "path"
     settings = require "./settings.coffee"
+    utils = require "./utils.coffee"
 
     # Local logging objects will be set on `init`.
     bufferDispatcher = null
@@ -47,11 +48,7 @@ class Logger
 
         # Get a valid server IP to be appended to logs.
         if settings.Logger.sendIP
-            ifaces = require("os").networkInterfaces()
-            for i of ifaces
-                ifaces[i].forEach (details) ->
-                    if details.family is "IPv4" and not details.internal
-                        serverIP = details.address
+            serverIP = utils.getServerIP()
 
         # Check if logs should be saved locally. If so, create the logs buffer and a timer to
         # flush logs to disk every X milliseconds.

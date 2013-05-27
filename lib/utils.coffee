@@ -4,7 +4,7 @@
 
 class Utils
 
-    logger = require "./logger.coffee"
+    os = require "os"
     settings = require "./settings.coffee"
 
 
@@ -73,27 +73,40 @@ class Utils
         settings.Mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
         settings.Mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
 
-        # Log updates.
-        logger.info "Expresser", "Utils.updateSettingsFromPaaS", "Settings updated."
-
 
     # SERVER INFO UTILS
     # --------------------------------------------------------------------------
+
+    # Return the first valid server IPv4 address.
+    getServerIP: =>
+        ifaces = os.networkInterfaces()
+        result = ""
+
+        # Parse network interfaces and try getting the server IPv4 address.
+        for i of ifaces
+            ifaces[i].forEach (details) ->
+                if details.family is "IPv4" and not details.internal
+                    result = details.address
+
+        return result
 
     # Return an object with general information about the server.
     getServerInfo: =>
         result = {}
 
+        # Parse server info.
         pid = process.pid + " " + process.title
         platform = process.platform + " " + process.arch + ", v" + process.version
         memUsage = process.memoryUsage()
         memUsage = Math.round(memUsage.headUsed / 1000) + " / " + Math.round(memUsage.heapTotal / 1000) + " MB"
         uptime = moment.duration(process.uptime, "s").humanize()
 
+        # Save parsed info to the result object.
         result.pid = pid
         result.platform = platform
         result.memoryUsage = memUsage
         result.uptime = uptime
+        result.ip = @getServerIP()
 
         return result
 
