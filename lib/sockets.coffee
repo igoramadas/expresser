@@ -60,6 +60,8 @@ class Sockets
     # Emit the specified key / data to clients.
     emit: (key, data) =>
         @io.sockets.emit key, data
+        if settings.General.debug
+            logger.info "Expresser", "Sockets.emit", key, data
 
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.
@@ -71,17 +73,30 @@ class Sockets
             for socketKey, socket of @io.sockets.manager.open
                 socket.on key, callback
 
+        if settings.General.debug
+            logger.info "Expresser", "Sockets.listenTo", key, callback.caller.name
+
     # Stops listening to the specified event key.
     stopListening: (key, callback) =>
+        if callback?
+            callbackName = callback.caller.name
+        else
+            callbackName = "ALL"
+
+        # Remove binding from current clients.
         for socketKey, socket of @io.sockets.manager.open
             if callback?
                 socket.removeListener key, callback
             else
                 socket.removeAllListeners key
 
+        # Remove binding from the currentListeners collection.
         for listener in @currentListeners
             if listener.key is key and listener.callback is callback
                 listener = null
+
+        if settings.General.debug
+            logger.info "Expresser", "Sockets.stopListening", key, callbackName
 
     # Remove invalid and expired event listeners.
     compact: =>

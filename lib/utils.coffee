@@ -135,25 +135,26 @@ class Utils
     getClientDevice: (req) =>
         ua = req.headers["user-agent"]
 
-        # Find desktop browsers.
-        return "chrome" if ua.indexOf("Chrome/") > 0
-        return "firefox" if ua.indexOf("Firefox/") > 0
-        return "safari" if ua.indexOf("Safari/") > 0
-        return "ie-11" if ua.indexOf("MSIE 11") > 0
-        return "ie-10" if ua.indexOf("MSIE 10") > 0
-        return "ie-9" if ua.indexOf("MSIE 9") > 0
-        return "ie" if ua.indexOf("MSIE") > 0
-
         # Find mobile devices.
-        return "wp-8" if ua.indexOf("Windows Phone 8") > 0
-        return "wp-7" if ua.indexOf("Windows Phone 7") > 0
-        return "wp" if ua.indexOf("Windows Phone") > 0
-        return "iphone-5" if ua.indexOf("iPhone5") > 0
-        return "iphone-4" if ua.indexOf("iPhone4") > 0
-        return "iphone" if ua.indexOf("iPhone") > 0
-        return "android-5" if ua.indexOf("Android 5") > 0
-        return "android-4" if ua.indexOf("Android 4") > 0
-        return "android" if ua.indexOf("Android") > 0
+        return "mobile-wp-8" if ua.indexOf("Windows Phone 8") > 0
+        return "mobile-wp-7" if ua.indexOf("Windows Phone 7") > 0
+        return "mobile-wp" if ua.indexOf("Windows Phone") > 0
+        return "mobile-iphone-5" if ua.indexOf("iPhone5") > 0
+        return "mobile-iphone-4" if ua.indexOf("iPhone4") > 0
+        return "mobile-iphone" if ua.indexOf("iPhone") > 0
+        return "mobile-android-5" if ua.indexOf("Android 5") > 0
+        return "mobile-android-4" if ua.indexOf("Android 4") > 0
+        return "mobile-android" if ua.indexOf("Android") > 0
+
+        # Find desktop browsers.
+        return "desktop-chrome" if ua.indexOf("Chrome/") > 0
+        return "desktop-firefox" if ua.indexOf("Firefox/") > 0
+        return "desktop-safari" if ua.indexOf("Safari/") > 0
+        return "desktop-opera" if ua.indexOf("Opera/") > 0
+        return "desktop-ie-11" if ua.indexOf("MSIE 11") > 0
+        return "desktop-ie-10" if ua.indexOf("MSIE 10") > 0
+        return "desktop-ie-9" if ua.indexOf("MSIE 9") > 0
+        return "desktop-ie" if ua.indexOf("MSIE") > 0
 
         # Return default desktop value if no specific devices were found on user agent.
         return "desktop"
