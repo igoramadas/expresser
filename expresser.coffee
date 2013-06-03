@@ -17,6 +17,7 @@ class Expresser
     mail: require "./lib/mail.coffee"
     sockets: require "./lib/sockets.coffee"
     twitter: require "./lib/twitter.coffee"
+    utils: require "./lib/utils.coffee"
 
     # Helper to init all modules.
     init: =>

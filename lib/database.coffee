@@ -10,7 +10,7 @@ class Database
     mongo = require "mongoskin"
 
     # Database object, will be set during `init`.
-    db = null
+    db: null
 
     # When using the failover/secondary databse, `failover` will be set to true.
     failover: false
@@ -22,7 +22,7 @@ class Database
     # Helper method to check the DB connection. If connection fails multiple times in a row,
     # switch to the failover DB (specified on the `Database.connString2` setting).
     # You can customize these values on the `Database` [settings](settings.html).
-    validateConnection = (retry) ->
+    validateConnection = (retry) =>
         retry = 0 if not retry?
 
         # If connection has failed repeatedly for more than 3 times the `maxRetries` value then
@@ -33,20 +33,20 @@ class Database
 
         # First try, use main database.
         if retry < 1
-            db = mongo.db settings.Database.connString, settings.Database.options
+            @db = mongo.db settings.Database.connString, settings.Database.options
             @failover = false
 
         # Reached max retries? Try connecting to the failover database, if there's one specified.
         if retry is settings.Database.maxRetries
             if settings.Database.connString2? and settings.Database.connString2 isnt ""
                 @failover = true
-                db = mongo.db settings.Database.connString2, settings.Database.options
+                @db = mongo.db settings.Database.connString2, settings.Database.options
                 logger.info "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Switched to failover DB."
             else
                 logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "No failover DB set, keep trying."
 
         # Try to connect to the current database. If it fails, try again in a few seconds.
-        db.open (err, result) =>
+        @db.open (err, result) =>
             if err?
                 if settings.General.debug
                     logger.warn "Expresser", "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
@@ -89,7 +89,7 @@ class Database
                 callback err, result
 
         # Set collection object.
-        dbCollection = db.collection collection
+        dbCollection = @db.collection collection
 
         # Find documents depending on the options.
         if options?
@@ -119,7 +119,7 @@ class Database
                 callback err, result
 
         # Set collection object.
-        dbCollection = db.collection collection
+        dbCollection = @db.collection collection
 
         # If object already has an ID, update it otherwise insert a new one.
         if obj.id?
@@ -154,7 +154,7 @@ class Database
                 callback err, result
 
         # Set collection object and remove specified document from the database.
-        dbCollection = db.collection collection
+        dbCollection = @db.collection collection
         dbCollection.removeById id, dbCallback
 
         # Log if debug is true.
@@ -177,7 +177,7 @@ class Database
                     logger.info "Expresser", "Database.count", collection, options, result
 
         # MongoDB has a built-in count, so use it.
-        dbCollection = db.collection collection
+        dbCollection = @db.collection collection
         dbCollection.count options, dbCallback
 
 
