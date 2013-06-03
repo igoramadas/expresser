@@ -19,11 +19,11 @@ class Expresser
     twitter: require "./lib/twitter.coffee"
     utils: require "./lib/utils.coffee"
 
-    # Helper to init all modules.
+    # Helper to init all modules. Logger first, then general modules, and finally the App.
     init: =>
         @logger.init()
+
         @database.init()
-        @imaging.init()
         @mail.init()
         @twitter.init()
 

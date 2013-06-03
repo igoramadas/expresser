@@ -12,13 +12,6 @@ class Imaging
     path = require "path"
     settings = require "./settings.coffee"
 
-    # INIT
-    # --------------------------------------------------------------------------
-
-    # Init the Imaging module.
-    init: =>
-
-
 
     # IMAGE METHODS
     # --------------------------------------------------------------------------

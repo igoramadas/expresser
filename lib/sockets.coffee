@@ -16,6 +16,9 @@ class Sockets
     # Holds a list of current event listeners.
     currentListeners: null
 
+    # Exposes the Socket.IO to external modules.
+    io: null
+
 
     # INIT
     # --------------------------------------------------------------------------
@@ -66,6 +69,8 @@ class Sockets
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.
     listenTo: (key, callback, onlyNewClients) =>
+        return if not callback?
+
         onlyNewClients = false if not onlyNewClients?
         @currentListeners.push {key: key, callback: callback}
 
@@ -74,16 +79,10 @@ class Sockets
                 socket.on key, callback
 
         if settings.General.debug
-            logger.info "Expresser", "Sockets.listenTo", key, callback.caller.name
+            logger.info "Expresser", "Sockets.listenTo", key
 
     # Stops listening to the specified event key.
     stopListening: (key, callback) =>
-        if callback?
-            callbackName = callback.caller.name
-        else
-            callbackName = "ALL"
-
-        # Remove binding from current clients.
         for socketKey, socket of @io.sockets.manager.open
             if callback?
                 socket.removeListener key, callback
@@ -92,11 +91,11 @@ class Sockets
 
         # Remove binding from the currentListeners collection.
         for listener in @currentListeners
-            if listener.key is key and listener.callback is callback
+            if listener.key is key and (listener.callback is callback or not callback?)
                 listener = null
 
         if settings.General.debug
-            logger.info "Expresser", "Sockets.stopListening", key, callbackName
+            logger.info "Expresser", "Sockets.stopListening", key
 
     # Remove invalid and expired event listeners.
     compact: =>
@@ -108,8 +107,7 @@ class Sockets
 
     # Helper to get how many users are currenly connected to the app.
     getConnectionCount: =>
-        count = Object.keys(@io.sockets.manager.open).length
-        return count
+        return Object.keys(@io.sockets.manager.open).length
 
     # When user disconnects, emit an event with the new connection count to all clients.
     onDisconnect: =>

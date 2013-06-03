@@ -78,7 +78,7 @@ class Logger
             ipInfo = "No server IP set."
 
         # Start logging!
-        if not local and not logentries? and not loggly?
+        if not localBuffer? and not logentries? and not loggly?
             @warn "Expresser", "Logger.init", "Local, Logentries and Loggly are not enabled.", "Logger module will only log to the console!"
         else
             @info "Expresser", "Logger.init", activeServices.join(), ipInfo

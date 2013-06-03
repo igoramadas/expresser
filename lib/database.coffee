@@ -5,6 +5,7 @@
 
 class Database
 
+    lodash = require "lodash"
     logger = require "./logger.coffee"
     settings = require "./settings.coffee"
     mongo = require "mongoskin"
@@ -22,7 +23,7 @@ class Database
     # Helper method to check the DB connection. If connection fails multiple times in a row,
     # switch to the failover DB (specified on the `Database.connString2` setting).
     # You can customize these values on the `Database` [settings](settings.html).
-    validateConnection = (retry) =>
+    validateConnection: (retry) =>
         retry = 0 if not retry?
 
         # If connection has failed repeatedly for more than 3 times the `maxRetries` value then
@@ -50,12 +51,12 @@ class Database
             if err?
                 if settings.General.debug
                     logger.warn "Expresser", "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
-                setTimeout (() -> validateConnection retry + 1), settings.Database.retryInterval
+                setTimeout (() => @validateConnection retry + 1), settings.Database.retryInterval
             else if settings.General.debug
                 # If using the failover database, register a timeout to try
                 # to connect to the main database again.
                 if @failover
-                    setTimeout validateConnection, settings.Database.failoverTimeout * 1000
+                    setTimeout @validateConnection, settings.Database.failoverTimeout * 1000
                     logger.info "Expresser", "Database.validateConnection", "Connected to failover DB.", "Try main DB again in #{settings.Database.failoverTimeout} settings."
                 else
                     logger.info "Expresser", "Database.validateConnection", "Connected to main DB."
@@ -67,7 +68,7 @@ class Database
     # Init the databse by testing the connection.
     init: =>
         if settings.Database.connString? and settings.Database.connString isnt ""
-            validateConnection()
+            @validateConnection()
         else if settings.General.debug
             logger.warn "Expresser", "Database.init", "No connection string set.", "Database module won't work."
 
@@ -78,6 +79,10 @@ class Database
     # Get data from the database. A `collection` must be specified.
     # The `options` and `callback` are optional.
     get: (collection, options, callback) =>
+        if not @db?
+            logger.warn "Expresser", "Database.get", "The db is null / was not initialized. Abort!"
+            return
+
         if not callback?
             logger.warn "Expresser", "Database.get", "No callback specified. Abort!", collection, options
             return
@@ -91,12 +96,19 @@ class Database
         # Set collection object.
         dbCollection = @db.collection collection
 
-        # Find documents depending on the options.
+        # Parse ID depending on `options`.
         if options?
             if options.id?
-                dbCollection.findById options.id, dbCallback
+                id = options.id
             else
-                dbCollection.find(options).toArray dbCallback
+                t = typeof options
+                id = options if t is "string" or t is "integer"
+
+        # Find documents depending on the parsed `options`.
+        if id?
+            dbCollection.findById id, dbCallback
+        else if options?
+             dbCollection.find(options).toArray dbCallback
         else
             dbCollection.find().toArray dbCallback
 
@@ -105,12 +117,20 @@ class Database
             logger.info "Expresser", "Database.get", collection, options
 
     # Insert or update an object on the database.
-    set: (collection, obj, callback) =>
+    set: (collection, obj, options, callback) =>
+        if not @db?
+            logger.warn "Expresser", "Database.set", "The db is null / was not initialized. Abort!"
+            return
+
         if not obj?
             msg = "The obj argument is null or empty."
             callback msg, null
             logger.warn "Expresser", "Database.set", msg
             return
+
+        # Check if callback was passed as options.
+        if not callback? and lodash.isFunction options
+            callback = options
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -135,6 +155,10 @@ class Database
     # Delete an object from the database. The `obj` argument can be either the object
     # itself, or its integer/string ID.
     del: (collection, obj, callback) =>
+        if not @db?
+            logger.warn "Expresser", "Database.del", "The db is null / was not initialized. Abort!"
+            return
+
         if not obj?
             msg = "The obj argument is null or empty."
             callback msg, null

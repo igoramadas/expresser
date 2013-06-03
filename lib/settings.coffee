@@ -13,6 +13,9 @@
 # }
 # Please note that the settings.json must ne located on the root of your app!
 
+fs = require "fs"
+path = require "path"
+
 class Settings
 
     # GENERAL
@@ -68,6 +71,12 @@ class Settings
         buildDir: false
         # Minify JS and CSS builds?
         minifyBuilds: true
+
+    # PASSPORT MODULE
+    # -------------------------------------------------------------------------
+    Passport:
+        # Enable passport module on the App?
+        enabled: false
 
     # SOCKETS
     # -------------------------------------------------------------------------
@@ -221,17 +230,33 @@ class Settings
         retryInterval: 600
 
 
+    # SETTINGS.JSON
+    # -------------------------------------------------------------------------
+
+    # Helper to load values from the specified settings.json file.
+    loadFromJson: (filename) =>
+        settingsJson = require filename
+
+        # Helper function to overwrite settings.
+        xtend = (source, target) ->
+            for prop, value of source
+                if value?.constructor is Object
+                    target[prop] = {} if not target[prop]?
+                    xtend source[prop], target[prop]
+                else
+                    target[prop] = source[prop]
+
+        xtend settingsJson, this
+
+
 # Singleton implementation
 # -----------------------------------------------------------------------------
 Settings.getInstance = ->
     if not @instance?
         @instance = new Settings()
 
-        fs = require "fs"
-        path = require "path"
+        # Load from server root.
         filename =  path.dirname(require.main.filename) + "/settings.json"
-
-        # Check if `settings.json` exists on root folder.
         if fs.existsSync?
             hasJson = fs.existsSync filename
         else
@@ -240,22 +265,14 @@ Settings.getInstance = ->
         # If `settings.json` does not exist on root, try on local path.
         if not hasJson
             filename = __dirname + "/settings.json"
+        if fs.existsSync?
             hasJson = fs.existsSync filename
+        else
+            hasJson = path.existsSync filename
 
-        # Check if there's a `settings.json` file, and overwrite settings if so.
+        # Has json? Load it.
         if hasJson
-            settingsJson = require filename
-
-            # Helper function to overwrite settings.
-            xtend = (source, target) ->
-                for prop, value of source
-                    if value?.constructor is Object
-                        target[prop] = {} if not target[prop]?
-                        xtend source[prop], target[prop]
-                    else
-                        target[prop] = source[prop]
-
-            xtend settingsJson, @instance
+            @instance.loadFromJson filename
 
         # Set debug in case it has not been set.
         if not @instance.General.debug?

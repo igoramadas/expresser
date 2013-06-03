@@ -90,11 +90,20 @@ class App
                 firewall = require "./firewall.coffee"
                 firewall.init @server
 
-            # Use Express handlers.
+            # Use Express basic handlers.
             @server.use express.bodyParser()
             @server.use express.cookieParser settings.App.cookieSecret
+            @server.use express.cookieSession {secret: settings.App.sessionSecret}
             @server.use express.compress()
             @server.use express.methodOverride()
+
+            # Use passport?
+            if settings.Passport.enabled
+                passport = require "passport"
+                @server.use passport.initialize()
+                @server.use passport.session()
+
+            # Use static handler and router.
             @server.use express["static"] settings.Path.publicDir
             @server.use @server.router
 
