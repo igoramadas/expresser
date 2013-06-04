@@ -8,8 +8,10 @@ class App
     # Expose the Express server to external code.
     server: null
 
-    # Expose the Passport module to external code.
+    # Expose the Passport module to external code. The `passportCallback` must be set by your application
+    # with the signature (username, password, callback), having callback = (err, result).
     passport: null
+    passportAuthenticate: null
 
     # Internal modules will be set on `init`.
     firewall = null
@@ -31,8 +33,8 @@ class App
         utils = require "./utils.coffee"
 
         # Get New Relic environment variables or settings.
-        newRelicAppName = process.env.NEW_RELIC_APP_NAME or settings.NewRelic.appName
-        newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY or settings.NewRelic.licenseKey
+        newRelicAppName = process.env.NEW_RELIC_APP_NAME or settings.newRelic.appName
+        newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY or settings.newRelic.licenseKey
 
         # Check if New Relic settings are available, and if so, start the
         # New Relic agent but ONLY if not running under localhost.
@@ -99,23 +101,33 @@ class App
             @server.use express.session {secret: settings.app.sessionSecret}
             @server.use express.compress()
             @server.use express.methodOverride()
-
-            # Use static handler and router.
             @server.use express["static"] settings.path.publicDir
-            @server.use @server.router
 
             # Connect assets and dynamic compiling.
             ConnectAssets = (require "connect-assets") settings.app.connectAssets
             @server.use ConnectAssets
 
             # Use passport?
-            if settings.Passport.enabled
+            if settings.passport.enabled
                 @passport = require "passport"
+
+                # Enable basic HTTP authentication.
+                if settings.passport.basic.enabled
+                    @passport.use new (require "passport-http").BasicStrategy (username, password, callback) =>
+                        if not @passportAuthenticate?
+                            logger.warn "Expresser", "App.passportAuthenticate is not set.", "Abort basic authentication."
+                        else
+                            @passportAuthenticate username, password, callback
+
+                # Init passport.
                 @server.use @passport.initialize()
                 @server.use @passport.session()
 
+            # Set Express router.
+            @server.use @server.router
+
             # Enable sockets?
-            if settings.Sockets.enabled
+            if settings.sockets.enabled
                 sockets = require "./sockets.coffee"
                 sockets.init @server
 

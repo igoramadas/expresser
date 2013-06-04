@@ -136,7 +136,7 @@ class Settings
 
     # EMAIL
     # -------------------------------------------------------------------------
-    Mail:
+    mail:
         # Default `from` email address.
         from: null
         # Main SMTP server.
@@ -272,11 +272,11 @@ Settings.getInstance = ->
             @instance.loadFromJson filename
 
         # Set debug in case it has not been set.
-        if not @instance.General.debug?
+        if not @instance.general.debug?
             if process.env.NODE_ENV is "production"
-                @instance.General.debug = false
+                @instance.general.debug = false
             else
-                @instance.General.debug = true
+                @instance.general.debug = true
 
     return @instance
 
