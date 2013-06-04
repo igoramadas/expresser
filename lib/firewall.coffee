@@ -46,12 +46,12 @@ class Firewall
             return
 
         # Bind HTTP protection.
-        if settings.Firewall.httpPatterns isnt ""
+        if settings.firewall.httpPatterns isnt ""
             server.use @checkHttpRequest
             logger.info "Expresser", "Firewall.init", "Protect HTTP requests."
 
         # Bind sockets protection.
-        if settings.Firewall.socketPatterns isnt ""
+        if settings.firewall.socketPatterns isnt ""
             logger.info "Expresser", "Firewall.init", "Protect Socket requests."
 
         @blacklist = {}
@@ -73,7 +73,7 @@ class Firewall
 
         # Set valid and checl all enabled patterns.
         valid = true
-        enabledPatterns = settings.Firewall.httpPatterns.split ","
+        enabledPatterns = settings.firewall.httpPatterns.split ","
         for pattern in enabledPatterns
             valid = false if check(pattern)
 
@@ -115,7 +115,7 @@ class Firewall
 
         # Set valid and checl all enabled patterns.
         valid = true
-        enabledPatterns = settings.Firewall.socketPatterns.split ","
+        enabledPatterns = settings.firewall.socketPatterns.split ","
         for pattern in enabledPatterns
             valid = false if check(pattern)
 
@@ -161,8 +161,8 @@ class Firewall
         # Increase the blacklist count, and increase the expiry date in case
         # it has reached the max retries.
         bl.count = bl.count + 1
-        if bl.count >= settings.Firewall.blacklistMaxRetries
-            bl.expires = moment().add "s", settings.Firewall.blacklistLongExpires
+        if bl.count >= settings.firewall.blacklistMaxRetries
+            bl.expires = moment().add "s", settings.firewall.blacklistLongExpires
 
         return true
 
@@ -172,7 +172,7 @@ class Firewall
         bl = {} if not bl?
 
         # Set blacklist object.
-        bl.expires = moment().add "s", settings.Firewall.blacklistExpires
+        bl.expires = moment().add "s", settings.firewall.blacklistExpires
         bl.count = 1
 
         @blacklist[ip] = bl

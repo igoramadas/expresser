@@ -22,7 +22,7 @@ class Logger
     loggerLogentries = null
     loggerLoggly = null
 
-    # The `serverIP` will be set on init, but only if `settings.Logger.sendIP` is true.
+    # The `serverIP` will be set on init, but only if `settings.logger.sendIP` is true.
     serverIP = null
 
     # Holds a list of current active logging services.
@@ -47,28 +47,28 @@ class Logger
         activeServices = []
 
         # Get a valid server IP to be appended to logs.
-        if settings.Logger.sendIP
+        if settings.logger.sendIP
             serverIP = utils.getServerIP()
 
         # Check if logs should be saved locally. If so, create the logs buffer and a timer to
         # flush logs to disk every X milliseconds.
-        if settings.Logger.Local.enabled
-            if not fs.existsSync settings.Path.logsDir
-                fs.mkdirSync settings.Path.logsDir
+        if settings.logger.local.enabled
+            if not fs.existsSync settings.path.logsDir
+                fs.mkdirSync settings.path.logsDir
             localBuffer = {info: [], warn: [], error: []}
-            bufferDispatcher = setInterval @flushLocal, settings.Logger.bufferInterval
+            bufferDispatcher = setInterval @flushLocal, settings.logger.bufferInterval
             activeServices.push "Local"
 
         # Check if Logentries should be used, and create the Logentries objects.
-        if settings.Logger.Logentries.enabled and settings.Logger.Logentries.token? and settings.Logger.Logentries.token isnt ""
+        if settings.logger.logentries.enabled and settings.logger.logentries.token? and settings.logger.logentries.token isnt ""
             logentries = require "node-logentries"
-            loggerLogentries = logentries.logger {token: settings.Logger.Logentries.token, timestamp: settings.Logger.sendTimestamp}
+            loggerLogentries = logentries.logger {token: settings.logger.logentries.token, timestamp: settings.logger.sendTimestamp}
             activeServices.push "Logentries"
 
         # Check if Loggly should be used, and create the Loggly objects.
-        if settings.Logger.Loggly.enabled and settings.Logger.Loggly.subdomain? and settings.Logger.Loggly.token? and settings.Logger.Loggly.token isnt ""
+        if settings.logger.loggly.enabled and settings.logger.loggly.subdomain? and settings.logger.loggly.token? and settings.logger.loggly.token isnt ""
             loggly = require "loggly"
-            loggerLoggly = loggly.createClient {subdomain: settings.Logger.Loggly.subdomain, json: true}
+            loggerLoggly = loggly.createClient {subdomain: settings.logger.loggly.subdomain, json: true}
             activeServices.push "Loggly"
 
         # Define server IP.
@@ -89,7 +89,7 @@ class Logger
 
     # Log any object to the default transports as `log`.
     info: =>
-        console.info.apply(this, arguments) if settings.General.debug or activeServices.length < 1
+        console.info.apply(this, arguments) if settings.general.debug or activeServices.length < 1
         msg = @getMessage arguments
 
         if localBuffer?
@@ -97,11 +97,11 @@ class Logger
         if logentries?
             loggerLogentries.info.apply this, [msg]
         if loggly?
-            loggerLoggly.log.apply this, [settings.Logger.Loggly.token, msg]
+            loggerLoggly.log.apply this, [settings.logger.loggly.token, msg]
 
     # Log any object to the default transports as `warn`.
     warn: =>
-        console.warn.apply(this, arguments) if settings.General.debug or activeServices.length < 1
+        console.warn.apply(this, arguments) if settings.general.debug or activeServices.length < 1
         msg = @getMessage arguments
 
         if localBuffer?
@@ -109,11 +109,11 @@ class Logger
         if logentries?
             loggerLogentries.warning.apply this, [msg]
         if loggly?
-            loggerLoggly.log.apply this, [settings.Logger.Loggly.token, msg]
+            loggerLoggly.log.apply this, [settings.logger.loggly.token, msg]
 
     # Log any object to the default transports as `error`.
     error: =>
-        console.error.apply(this, arguments) if settings.General.debug or activeServices.length < 1
+        console.error.apply(this, arguments) if settings.general.debug or activeServices.length < 1
         msg = @getMessage arguments
 
         if localBuffer?
@@ -121,7 +121,7 @@ class Logger
         if logentries?
             loggerLogentries.err.apply this, [msg]
         if loggly?
-            loggerLoggly.log.apply this, [settings.Logger.Loggly.token, msg]
+            loggerLoggly.log.apply this, [settings.logger.loggly.token, msg]
 
 
     # LOCAL LOGGING
@@ -143,22 +143,22 @@ class Logger
         # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
         # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
         for key, logs of localBuffer
-            filePath = path.join settings.Path.logsDir, "#{key}.#{date}.log"
+            filePath = path.join settings.path.logsDir, "#{key}.#{date}.log"
             fs.appendFile filePath, logs.join("\n"), (err) ->
                 console.error("Expresser", "Logger.flushLocal", err) if err?
 
     # Delete old log files.
     cleanLocal: ->
-        maxDate = moment().subtract "d", settings.Logger.Local.maxAge
+        maxDate = moment().subtract "d", settings.logger.local.maxAge
 
-        fs.readdir settings.Path.logsDir, (err, files) ->
+        fs.readdir settings.path.logsDir, (err, files) ->
             if err?
                 console.error "Expresser", "Logger.cleanLocal", err
             else
                 for f in files
                     date = moment f.split(".")[1], "yyyyMMdd"
                     if date.isBefore maxDate
-                        fs.unlink path.join(settings.Path.logsDir, f), (err) ->
+                        fs.unlink path.join(settings.path.logsDir, f), (err) ->
                             console.error("Expresser", "Logger.cleanLocal", err) if err?
 
 

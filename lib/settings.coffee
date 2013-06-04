@@ -20,7 +20,7 @@ class Settings
 
     # GENERAL
     # -------------------------------------------------------------------------
-    General:
+    general:
         # Enable or disable debugging messages. Should be false on production environments.
         # If null, debug will be set automatically based on the NODE_ENV variable.
         debug: null
@@ -33,7 +33,7 @@ class Settings
 
     # PATHS
     # -------------------------------------------------------------------------
-    Path:
+    path:
         # Path to the email templates folder.
         emailTemplatesDir: "./emailtemplates/"
         # Path to local logs folder.
@@ -45,7 +45,7 @@ class Settings
 
     # WEB
     # -------------------------------------------------------------------------
-    App:
+    app:
         # Secret key used for cookie encryption.
         cookieSecret: "ExpresserCookie"
         # Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
@@ -61,32 +61,37 @@ class Settings
         sessionSecret: "ExpresserSession"
         # The view engine used by Express. Default is jade.
         viewEngine: "jade"
-
-    # CONNECT ASSETS
-    # -------------------------------------------------------------------------
-    ConnectAssets:
-        # Build single assets?
-        build: true
-        # Build directories?
-        buildDir: false
-        # Minify JS and CSS builds?
-        minifyBuilds: true
+        # Connect Assets options.
+        connectAssets:
+            # Build single assets?
+            build: true
+            # Build directories?
+            buildDir: false
+            # Minify JS and CSS builds?
+            minifyBuilds: true
 
     # PASSPORT MODULE
     # -------------------------------------------------------------------------
-    Passport:
+    passport:
         # Enable passport module on the App?
         enabled: false
+        # Basic HTTP Auth strategy.
+        basic:
+            enabled: false
+        # LDAP authentication strategy.
+        ldap:
+            enabled: false
+
 
     # SOCKETS
     # -------------------------------------------------------------------------
-    Sockets:
+    sockets:
         # Enable the sockets helper?
         enabled: true
 
     # FIREWALL
     # -------------------------------------------------------------------------
-    Firewall:
+    firewall:
         # How long should IP be blacklisted, in seconds.
         blacklistExpires: 30
         # How long should IP be blacklisted in case it reaches the "MaxRetries" value
@@ -102,17 +107,9 @@ class Settings
         # Which Socket protection patterns should be enabled? Available: lfi, sql, xss
         socketPatterns: "lfi,sql,xss"
 
-    # ERROR HANDLING
-    # -------------------------------------------------------------------------
-    ErrorHandling:
-        # Dump exceptions? On production environments we recommend setting this to false.
-        dumpExceptions: false
-        # Show stack trace? On production environments we recommend setting this to false.
-        showStack: false
-
     # DATABASE
     # ----------------------------------------------------------------------
-    Database:
+    database:
         # Connection string to MongoDB, using the format `user:password@hostname/dbname`.
         connString: null
         # In case you don't have failover / sharding in place on the database above
@@ -170,7 +167,7 @@ class Settings
     # LOGGING
     # -------------------------------------------------------------------------
     # Built-in support for Loggly and Logentries.
-    Logger:
+    logger:
         # If `sendIP` is true, the IP address of the machine will be added to logs events.
         # Useful when you have different instances of the app running on different services.
         sendIP: true
@@ -182,7 +179,7 @@ class Settings
         # event on the process and log all uncaught expcetions as errors.
         uncaughtException: true
         # Save logs locally? The path to the logs folder is set above under the `Settings.Path.logsDir` key.
-        Local:
+        local:
             enabled: false
             # The bufferInterval defines the delay in between disk saves, in milliseconds.
             bufferInterval: 10000
@@ -190,12 +187,12 @@ class Settings
             maxAge: 30
         # Please inform your Logentries token. Logentries will be used ONLY if
         # the enabled setting below  is true.
-        Logentries:
+        logentries:
             enabled: false
             token: null
         # Inform your Loggly subdomain and token. Loggly will be used ONLY if
         # the enabled setting below  is true.
-        Loggly:
+        loggly:
             enabled: false
             subdomain: null
             token: null
@@ -204,7 +201,7 @@ class Settings
     # -------------------------------------------------------------------------
     # Built-in support for New Relic. Will be used ONLY if the appName and licenseKey
     # settings below are set and valid.
-    NewRelic:
+    newRelic:
         # The App Name on New Relic.
         appName: null
         # The License Key on New Relic.
@@ -214,7 +211,7 @@ class Settings
     # -------------------------------------------------------------------------
     # If you want to integrate with Twitter, you'll need to register an application
     # at http://dev.twitter.com and set the properties below.
-    Twitter:
+    twitter:
         # Your OAuth access secret. This can be generated automatically for your
         # account on you application details page.
         accessSecret: null

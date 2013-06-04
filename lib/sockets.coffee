@@ -39,7 +39,7 @@ class Sockets
         @io.set "transports", ["websocket", "xhr-polling", "htmlfile"]
 
         # On production, log only critical errors. On development, log almost everything.
-        if settings.General.debug
+        if settings.general.debug
             @io.set "log level", 2
         else
             @io.set "log level", 1
@@ -63,7 +63,7 @@ class Sockets
     # Emit the specified key / data to clients.
     emit: (key, data) =>
         @io.sockets.emit key, data
-        if settings.General.debug
+        if settings.general.debug
             logger.info "Expresser", "Sockets.emit", key, data
 
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
@@ -78,7 +78,7 @@ class Sockets
             for socketKey, socket of @io.sockets.manager.open
                 socket.on key, callback
 
-        if settings.General.debug
+        if settings.general.debug
             logger.info "Expresser", "Sockets.listenTo", key
 
     # Stops listening to the specified event key.
@@ -94,7 +94,7 @@ class Sockets
             if listener.key is key and (listener.callback is callback or not callback?)
                 listener = null
 
-        if settings.General.debug
+        if settings.general.debug
             logger.info "Expresser", "Sockets.stopListening", key
 
     # Remove invalid and expired event listeners.
@@ -112,7 +112,7 @@ class Sockets
     # When user disconnects, emit an event with the new connection count to all clients.
     onDisconnect: =>
         count = @getConnectionCount()
-        if settings.General.debug
+        if settings.general.debug
             logger.info "Expresser", "Sockets.onDisconnect", "New count: #{count}."
 
 

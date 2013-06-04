@@ -27,7 +27,7 @@ class Mail
     # Helper to set the SMTP objects.
     createSmtp = (opt) ->
         options =
-            debug: settings.General.debug,
+            debug: settings.general.debug,
             host: opt.host,
             port: opt.port,
             secureConnection: opt.secure,
@@ -46,7 +46,7 @@ class Mail
         transport.sendMail options, (err, result) ->
             if err?
                 logger.error "Expresser", "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
-            else if settings.General.debug
+            else if settings.general.debug
                 logger.info "Mail.smtpSend", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
             callback err, result
 
@@ -56,13 +56,13 @@ class Mail
 
     # Init the SMTP transport objects.
     init: =>
-        if settings.Mail.smtp.host? and settings.Mail.smtp.host isnt "" and settings.Mail.smtp.port > 0
-            smtp = createSmtp settings.Mail.smtp
-        if settings.Mail.smtp2.host? and settings.Mail.smtp2.host isnt "" and settings.Mail.smtp2.port > 0
-            smtp2 = createSmtp settings.Mail.smtp2
+        if settings.mail.smtp.host? and settings.mail.smtp.host isnt "" and settings.mail.smtp.port > 0
+            smtp = createSmtp settings.mail.smtp
+        if settings.mail.smtp2.host? and settings.mail.smtp2.host isnt "" and settings.mail.smtp2.port > 0
+            smtp2 = createSmtp settings.mail.smtp2
 
         # Warn if no SMTP is available for sending emails, but only when debug is enabled.
-        if not smtp? and not smtp2? and settings.General.debug
+        if not smtp? and not smtp2? and settings.general.debug
             logger.warn "Expresser", "Mail.init", "No main SMTP host/port specified.", "No emails will be sent out!"
 
 
@@ -81,7 +81,7 @@ class Mail
             return
 
         # Set from to default address if no `fromAddress` was set and create the options object.
-        fromAddress = "#{settings.General.appTitle} <#{settings.Mail.from}>" if not fromAddress?
+        fromAddress = "#{settings.general.appTitle} <#{settings.mail.from}>" if not fromAddress?
         options = {}
 
         # Properly format the "to" address.
@@ -91,7 +91,7 @@ class Mail
             toName = toAddress.substring 0, toAddress.indexOf("<") - 1
 
         # Replace common keywords.
-        html = @parseTemplate message.toString(), {to: toName, appTitle: settings.General.appTitle}
+        html = @parseTemplate message.toString(), {to: toName, appTitle: settings.general.appTitle}
 
         # Set the message options.
         options.from = fromAddress
@@ -122,14 +122,14 @@ class Mail
             return templateCache[name].template
 
         # Read base and `name` template and merge them together.
-        base = fs.readFileSync path.join(settings.Path.emailTemplatesDir, "base.html")
-        template = fs.readFileSync path.join(settings.Path.emailTemplatesDir, "#{name}.html")
+        base = fs.readFileSync path.join(settings.path.emailTemplatesDir, "base.html")
+        template = fs.readFileSync path.join(settings.path.emailTemplatesDir, "#{name}.html")
         result = base.toString().replace "{contents}", template.toString()
 
         # Save to cache.
         templateCache[name] = {}
         templateCache[name].template = result
-        templateCache[name].expires = moment().add "s", settings.General.ioCacheTimeout
+        templateCache[name].expires = moment().add "s", settings.general.ioCacheTimeout
 
         return result
 

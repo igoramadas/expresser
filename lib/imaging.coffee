@@ -58,7 +58,7 @@ class Imaging
                     im.convert args, (err, stdout) -> callback(err, stdout) if callback?
 
                     # Log convert action if debug is enabled.
-                    if settings.General.debug
+                    if settings.general.debug
                         logger.info "Expresser", "Imaging.convert", source, options
 
                 # In case of exception, log it and pass to the `callback`.

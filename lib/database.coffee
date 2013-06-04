@@ -28,20 +28,20 @@ class Database
 
         # If connection has failed repeatedly for more than 3 times the `maxRetries` value then
         # stop trying and log an error.
-        if retry > settings.Database.maxRetries * 3
+        if retry > settings.database.maxRetries * 3
             logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Abort!"
             return
 
         # First try, use main database.
         if retry < 1
-            @db = mongo.db settings.Database.connString, settings.Database.options
+            @db = mongo.db settings.database.connString, settings.database.options
             @failover = false
 
         # Reached max retries? Try connecting to the failover database, if there's one specified.
-        if retry is settings.Database.maxRetries
-            if settings.Database.connString2? and settings.Database.connString2 isnt ""
+        if retry is settings.database.maxRetries
+            if settings.database.connString2? and settings.database.connString2 isnt ""
                 @failover = true
-                @db = mongo.db settings.Database.connString2, settings.Database.options
+                @db = mongo.db settings.database.connString2, settings.database.options
                 logger.info "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Switched to failover DB."
             else
                 logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "No failover DB set, keep trying."
@@ -49,15 +49,15 @@ class Database
         # Try to connect to the current database. If it fails, try again in a few seconds.
         @db.open (err, result) =>
             if err?
-                if settings.General.debug
+                if settings.general.debug
                     logger.warn "Expresser", "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
-                setTimeout (() => @validateConnection retry + 1), settings.Database.retryInterval
-            else if settings.General.debug
+                setTimeout (() => @validateConnection retry + 1), settings.database.retryInterval
+            else if settings.general.debug
                 # If using the failover database, register a timeout to try
                 # to connect to the main database again.
                 if @failover
-                    setTimeout @validateConnection, settings.Database.failoverTimeout * 1000
-                    logger.info "Expresser", "Database.validateConnection", "Connected to failover DB.", "Try main DB again in #{settings.Database.failoverTimeout} settings."
+                    setTimeout @validateConnection, settings.database.failoverTimeout * 1000
+                    logger.info "Expresser", "Database.validateConnection", "Connected to failover DB.", "Try main DB again in #{settings.database.failoverTimeout} settings."
                 else
                     logger.info "Expresser", "Database.validateConnection", "Connected to main DB."
 
@@ -67,9 +67,9 @@ class Database
 
     # Init the databse by testing the connection.
     init: =>
-        if settings.Database.connString? and settings.Database.connString isnt ""
+        if settings.database.connString? and settings.database.connString isnt ""
             @validateConnection()
-        else if settings.General.debug
+        else if settings.general.debug
             logger.warn "Expresser", "Database.init", "No connection string set.", "Database module won't work."
 
 
@@ -90,7 +90,7 @@ class Database
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId(result) if settings.Database.normalizeId
+                result = @normalizeId(result) if settings.database.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -113,7 +113,7 @@ class Database
             dbCollection.find().toArray dbCallback
 
         # Log if debug is true.
-        if settings.General.debug
+        if settings.general.debug
             logger.info "Expresser", "Database.get", collection, options
 
     # Insert or update an object on the database.
@@ -135,7 +135,7 @@ class Database
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId(result) if settings.Database.normalizeId
+                result = @normalizeId(result) if settings.database.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -144,11 +144,11 @@ class Database
         # If object already has an ID, update it otherwise insert a new one.
         if obj.id?
             dbCollection.updateById obj.id, {$set: obj.attributes}, dbCallback
-            if settings.General.debug
+            if settings.general.debug
                 logger.info "Expresser", "Database.set", "Update", collection, obj.id, obj.attributes
         else
             dbCollection.insert obj.attributes, {"new": true}, dbCallback
-            if settings.General.debug
+            if settings.general.debug
                 logger.info "Expresser", "Database.set", "Insert", collection, obj.attributes
 
 
@@ -174,7 +174,7 @@ class Database
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId(result) if settings.Database.normalizeId
+                result = @normalizeId(result) if settings.database.normalizeId
                 callback err, result
 
         # Set collection object and remove specified document from the database.
@@ -182,7 +182,7 @@ class Database
         dbCollection.removeById id, dbCallback
 
         # Log if debug is true.
-        if settings.General.debug
+        if settings.general.debug
             logger.warn "Expresser", "Database.del", collection, obj.id, obj.attributes
 
     # Count data from the database. A `collection` must be specified.
@@ -197,7 +197,7 @@ class Database
         dbCallback = (err, result) =>
             if callback?
                 callback err, result
-                if settings.General.debug
+                if settings.general.debug
                     logger.info "Expresser", "Database.count", collection, options, result
 
         # MongoDB has a built-in count, so use it.

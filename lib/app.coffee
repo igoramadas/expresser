@@ -8,6 +8,9 @@ class App
     # Expose the Express server to external code.
     server: null
 
+    # Expose the Passport module to external code.
+    passport: null
+
     # Internal modules will be set on `init`.
     firewall = null
     logger = null
@@ -46,7 +49,7 @@ class App
 
         # Check if uncaught exceptions should be logged. If so, try logging unhandled
         # exceptions using the logger, otherwise log to the console.
-        if settings.Logger.uncaughtException
+        if settings.logger.uncaughtException
             process.on "uncaughtException", (err) ->
                 try
                     logger.error "Expresser", "Unhandled exception!", err.stack
@@ -69,15 +72,15 @@ class App
 
         # General configuration of the app (for all environments).
         @server.configure =>
-            utils.updateSettingsFromPaaS() if settings.App.paas
+            utils.updateSettingsFromPaaS() if settings.app.paas
 
             # Set view options, use Jade for HTML templates.
-            @server.set "views", settings.Path.viewsDir
-            @server.set "view engine", settings.App.viewEngine
+            @server.set "views", settings.path.viewsDir
+            @server.set "view engine", settings.app.viewEngine
             @server.set "view options", { layout: false }
 
             # If debug is on, log requests to the console.
-            if settings.General.debug
+            if settings.general.debug
                 @server.use (req, res, next) =>
                     ip = utils.getClientIP req
                     method = req.method
@@ -86,30 +89,30 @@ class App
                     next() if next?
 
             # Enable firewall?
-            if settings.Firewall.enabled
+            if settings.firewall.enabled
                 firewall = require "./firewall.coffee"
                 firewall.init @server
 
             # Use Express basic handlers.
             @server.use express.bodyParser()
-            @server.use express.cookieParser settings.App.cookieSecret
-            @server.use express.cookieSession {secret: settings.App.sessionSecret}
+            @server.use express.cookieParser settings.app.cookieSecret
+            @server.use express.session {secret: settings.app.sessionSecret}
             @server.use express.compress()
             @server.use express.methodOverride()
 
-            # Use passport?
-            if settings.Passport.enabled
-                passport = require "passport"
-                @server.use passport.initialize()
-                @server.use passport.session()
-
             # Use static handler and router.
-            @server.use express["static"] settings.Path.publicDir
+            @server.use express["static"] settings.path.publicDir
             @server.use @server.router
 
             # Connect assets and dynamic compiling.
-            ConnectAssets = (require "connect-assets") settings.ConnectAssets
+            ConnectAssets = (require "connect-assets") settings.app.connectAssets
             @server.use ConnectAssets
+
+            # Use passport?
+            if settings.Passport.enabled
+                @passport = require "passport"
+                @server.use @passport.initialize()
+                @server.use @passport.session()
 
             # Enable sockets?
             if settings.Sockets.enabled
@@ -118,19 +121,19 @@ class App
 
         # Configure development environment.
         @server.configure "development", =>
-            @server.use express.errorHandler settings.ErrorHandling
+            @server.use express.errorHandler {dumpExceptions: false, showStack: false}
 
         # Configure production environment.
         @server.configure "production", =>
             @server.use express.errorHandler()
 
         # Start the server.
-        if settings.App.ip? and settings.App.ip isnt ""
-            @server.listen settings.App.ip, settings.App.port
-            logger.info "Expresser", "App #{settings.General.appTitle} started!", settings.App.ip, settings.App.port
+        if settings.app.ip? and settings.app.ip isnt ""
+            @server.listen settings.app.ip, settings.app.port
+            logger.info "Expresser", "App #{settings.general.appTitle} started!", settings.app.ip, settings.app.port
         else
-            @server.listen settings.App.port
-            logger.info "Expresser", "App #{settings.General.appTitle} started!", settings.App.port
+            @server.listen settings.app.port
+            logger.info "Expresser", "App #{settings.general.appTitle} started!", settings.app.port
 
 
     # HELPER AND UTILS
@@ -141,7 +144,7 @@ class App
     renderView: (req, res, view, options) =>
         options = {} if not options?
         options.device = utils.getClientDevice req
-        options.title = settings.General.appTitle if not options.title?
+        options.title = settings.general.appTitle if not options.title?
         res.render view, options
 
     # When the server can't return a valid result, send an error response with status code 500.

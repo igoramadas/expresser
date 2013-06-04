@@ -30,7 +30,7 @@ class Twitter
             if err?
                 logger.warn "Expresser", "Twitter.init", "Can't verify credentials.", err
                 auth = false
-                setTimeout (() -> authenticate retry + 1), settings.Twitter.retryInterval * 1000
+                setTimeout (() -> authenticate retry + 1), settings.twitter.retryInterval * 1000
             else
                 logger.info "Expresser", "Twitter.init", "Authorized with ID #{data.id}."
                 auth = true
@@ -42,12 +42,12 @@ class Twitter
     # Init the Twitter handler, but only if the consumer and access keys were
     # properly set on the [settings](settings.html).
     init: =>
-        if settings.Twitter.consumerSecret? and settings.Twitter.accessSecret? and settings.Twitter.accessSecret isnt ""
+        if settings.twitter.consumerSecret? and settings.twitter.accessSecret? and settings.twitter.accessSecret isnt ""
             keys =
-                consumer_key: settings.Twitter.consumerKey,
-                consumer_secret: settings.Twitter.consumerSecret,
-                access_token_key: settings.Twitter.accessToken,
-                access_token_secret: settings.Twitter.accessSecret
+                consumer_key: settings.twitter.consumerKey,
+                consumer_secret: settings.twitter.consumerSecret,
+                access_token_key: settings.twitter.accessToken,
+                access_token_secret: settings.twitter.accessSecret
 
             # Create the ntwitter object.
             twit = new twitter keys
@@ -55,7 +55,7 @@ class Twitter
             # Authenticate on Twitter.
             authenticate()
 
-        else if settings.General.debug
+        else if settings.general.debug
             logger.warn "Expresser", "Twitter.init", "No credentials were set.", "Twitter module won't work."
 
 
@@ -73,7 +73,7 @@ class Twitter
         twit.updateStatus message, (err, data) =>
             if err?
                 logger.error "Expresser", "Twitter.postStatus", "Failed: #{message}", err
-            else if settings.General.debug
+            else if settings.general.debug
                 logger.info "Expresser", "Twitter.postStatus", "Posted, ID #{data.id}: #{message}"
 
 
@@ -94,7 +94,7 @@ class Twitter
                 logger.error "Expresser", "Twitter.sendMessage", "Send to #{user} FAILED.", message, err
             else
                 callback data.id if callback?
-                if settings.General.debug
+                if settings.general.debug
                     logger.info "Expresser", "Twitter.sendMessage", "Sent to #{user}.", message
 
     # Destroy the specified direct message. If a `callback` is specified, it will
@@ -111,7 +111,7 @@ class Twitter
                 logger.error "Expresser", "Twitter.destroyMessage", "#{id} FAILED.", err
             else
                 callback true if callback?
-                if settings.General.debug
+                if settings.general.debug
                     logger.info "Expresser", "Twitter.destroyMessage", "#{id} SUCCESS."
 
     # Returns a list of recent direct messages based on the optional `filter`, and process them
@@ -135,7 +135,7 @@ class Twitter
                 logger.error "Expresser", "Twitter.getMessages", "Could NOT retrieve direct messages.", err
             else
                 callback null, result if callback?
-                if settings.General.debug
+                if settings.general.debug
                     logger.info "Expresser", "Twitter.getMessages", "Retrieved #{data.length} messages."
 
 
@@ -144,7 +144,7 @@ class Twitter
 
     # If `auth` is false and a request is made, log a warning saying it can't proceed.
     logNoAuth: (title, msg) =>
-        if settings.General.debug
+        if settings.general.debug
             logger.warn "Expresser", title, "Not authenticated!", msg
             return
 
