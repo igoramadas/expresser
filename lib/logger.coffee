@@ -57,7 +57,7 @@ class Logger
             if not fs.existsSync settings.path.logsDir
                 fs.mkdirSync settings.path.logsDir
             localBuffer = {info: [], warn: [], error: []}
-            bufferDispatcher = setInterval @flushLocal, settings.logger.bufferInterval
+            bufferDispatcher = setInterval @flushLocal, settings.logger.local.bufferInterval
             activeServices.push "Local"
 
         # Check if Logentries should be used, and create the Logentries objects.
@@ -138,15 +138,16 @@ class Logger
     # Flush all local buffered log messages to disk. This is usually called by the `bufferDispatcher` timer.
     flushLocal: ->
         now = moment()
-        date = now.format "yyyyMMdd"
+        date = now.format "YYYYMMDD"
 
         # Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
         # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
         # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
         for key, logs of localBuffer
-            filePath = path.join settings.path.logsDir, "#{key}.#{date}.log"
-            fs.appendFile filePath, logs.join("\n"), (err) ->
-                console.error("Expresser", "Logger.flushLocal", err) if err?
+            if logs.length > 0
+                filePath = path.join settings.path.logsDir, "#{date}.#{key}.log"
+                fs.appendFile filePath, logs.join("\n"), (err) ->
+                    console.error("Expresser", "Logger.flushLocal", err) if err?
 
     # Delete old log files.
     cleanLocal: ->
