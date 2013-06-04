@@ -33,7 +33,7 @@ class Sockets
             logger.error "Expresser", "Sockets.init", "App server is invalid. Abort!"
             return
 
-        @io = require("socket.io").listen require("http").createServer server
+        @io = require("socket.io").listen server
 
         # Set transports.
         @io.set "transports", ["websocket", "xhr-polling", "htmlfile"]

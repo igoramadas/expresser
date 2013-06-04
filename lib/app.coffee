@@ -9,7 +9,8 @@ class App
     server: null
 
     # Expose the Passport module to external code. The `passportCallback` must be set by your application
-    # with the signature (username, password, callback), having callback = (err, result).
+    # with the signature (username, password, callback) for Basic HTTP, or (profile, callback) for LDAP.
+    # The `callback` has the signature (err, result).
     passport: null
     passportAuthenticate: null
 
@@ -28,6 +29,7 @@ class App
     init: =>
 
         # Require OS to gather system info, and the server settigs.
+        http = require "http"
         os = require "os"
         settings = require "./settings.coffee"
         utils = require "./utils.coffee"
@@ -68,9 +70,10 @@ class App
                 console.warn "Expresser", "Could not flush buffered logs to disk."
 
 
-        # Require express and create the app.
+        # Require express and create the app server.
         express = require "express"
         @server = express()
+        httpServer = http.createServer @server
 
         # General configuration of the app (for all environments).
         @server.configure =>
@@ -111,13 +114,32 @@ class App
             if settings.passport.enabled
                 @passport = require "passport"
 
-                # Enable basic HTTP authentication.
+                # Enable basic HTTP authentication?
                 if settings.passport.basic.enabled
                     @passport.use new (require "passport-http").BasicStrategy (username, password, callback) =>
                         if not @passportAuthenticate?
-                            logger.warn "Expresser", "App.passportAuthenticate is not set.", "Abort basic authentication."
+                            logger.warn "Expresser", "App.passportAuthenticate not set.", "Abort basic HTTP authentication."
                         else
                             @passportAuthenticate username, password, callback
+
+                    if settings.general.debug
+                        logger.info "Expresser", "App.configure", "Passport: using basic HTTP authentication."
+
+                # Enable LDAP authentication?
+                if settings.passport.ldap.enabled
+                    ldapOptions =
+                        server: {url: settings.passport.ldap.server}
+                        base: settings.passport.ldap.base
+                        search: {filter: settings.passport.ldap.filter}
+
+                    @passport.use new (require "passport-ldap").LDAPStrategy ldapOptions, (profile, callback) =>
+                        if not @passportAuthenticate?
+                            logger.warn "Expresser", "App.passportAuthenticate not set.", "Abort LDAP authentication."
+                        else
+                            @passportAuthenticate profile, callback
+
+                    if settings.general.debug
+                        logger.info "Expresser", "App.configure", "Passport: using LDAP authentication."
 
                 # Init passport.
                 @server.use @passport.initialize()
@@ -129,7 +151,7 @@ class App
             # Enable sockets?
             if settings.sockets.enabled
                 sockets = require "./sockets.coffee"
-                sockets.init @server
+                sockets.init httpServer
 
         # Configure development environment.
         @server.configure "development", =>
@@ -141,10 +163,10 @@ class App
 
         # Start the server.
         if settings.app.ip? and settings.app.ip isnt ""
-            @server.listen settings.app.ip, settings.app.port
+            httpServer.listen settings.app.ip, settings.app.port
             logger.info "Expresser", "App #{settings.general.appTitle} started!", settings.app.ip, settings.app.port
         else
-            @server.listen settings.app.port
+            httpServer.listen settings.app.port
             logger.info "Expresser", "App #{settings.general.appTitle} started!", settings.app.port
 
 
