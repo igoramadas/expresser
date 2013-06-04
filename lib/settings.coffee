@@ -176,6 +176,9 @@ class Settings
     # -------------------------------------------------------------------------
     # Built-in support for Loggly and Logentries.
     logger:
+        # List will all field / property names to be removed from logs.
+        # Default list is "Password, password, passwordHash and passwordEncrypted".
+        removeFields: "Password,password,passwordHash,passwordEncrypted"
         # If `sendIP` is true, the IP address of the machine will be added to logs events.
         # Useful when you have different instances of the app running on different services.
         sendIP: true
@@ -188,7 +191,7 @@ class Settings
         uncaughtException: true
         # Save logs locally? The path to the logs folder is set above under the `Settings.Path.logsDir` key.
         local:
-            enabled: false
+            enabled: true
             # The bufferInterval defines the delay in between disk saves, in milliseconds.
             bufferInterval: 10000
             # The maxAge sets the max age of log files, in days.

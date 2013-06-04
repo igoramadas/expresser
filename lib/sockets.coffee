@@ -63,8 +63,9 @@ class Sockets
     # Emit the specified key / data to clients.
     emit: (key, data) =>
         @io.sockets.emit key, data
+
         if settings.general.debug
-            logger.info "Expresser", "Sockets.emit", key, data
+            logger.info "Expresser", "Sockets.emit", key, JSON.stringify(data).length + " bytes"
 
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.

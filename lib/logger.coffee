@@ -8,6 +8,7 @@ class Logger
 
     fs = require "fs"
     lodash = require "lodash"
+    moment = require "moment"
     path = require "path"
     settings = require "./settings.coffee"
     utils = require "./utils.coffee"
@@ -172,18 +173,20 @@ class Logger
         args = arguments
         args = args[0] if args.length is 1
 
-        # Parse all arguments and stringify objects.
+        # Parse all arguments and stringify objects. Please note that fields defined
+        # on the `Settings.logger.removeFields` won't be added to the message.
         for a in args
-            if lodash.isArray a
-                for b in a
-                    separated.push b
-            else if lodash.isObject a
-                try
-                    separated.push JSON.stringify a
-                catch ex
+            if settings.logger.removeFields.indexOf(a) < 0
+                if lodash.isArray a
+                    for b in a
+                        separated.push b if settings.logger.removeFields.indexOf(b) < 0
+                else if lodash.isObject a
+                    try
+                        separated.push JSON.stringify a
+                    catch ex
+                        separated.push a
+                else
                     separated.push a
-            else
-                separated.push a
 
         # Append IP address, if `serverIP` is set.
         separated.push "IP #{serverIP}" if serverIP?
