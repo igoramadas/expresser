@@ -164,7 +164,10 @@ class Database
 
         # Log if debug is true.
         if settings.general.debug
-            logger.info "Expresser", "Database.set", collection, obj
+            if id?
+                logger.info "Expresser", "Database.set", collection, "ID: #{id}"
+            else
+                logger.info "Expresser", "Database.set", collection, "New document."
 
 
     # Delete an object from the database. The `obj` argument can be either the object
@@ -206,26 +209,31 @@ class Database
 
         # Log if debug is true.
         if settings.general.debug
-            logger.warn "Expresser", "Database.del", collection, obj.id, obj.attributes
+            logger.warn "Expresser", "Database.del", collection, filter
 
     # Count data from the database. A `collection` must be specified.
-    # If no `options` is passed (null or undefined) then count all documents.
-    # The callback is mandatory.
-    count: (collection, options, callback) =>
+    # If no `filter` is passed (null or undefined) then count all documents.
+    # The `callback` is mandatory.
+    count: (collection, filter, callback) =>
         if not callback?
             logger.warn "Expresser", "Database.count", "No callback specified. Abort!", collection, options
             return
+
+        # Check if callback was passed as options.
+        if not callback? and lodash.isFunction filter
+            callback = filter
+            filter = {}
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
                 callback err, result
                 if settings.general.debug
-                    logger.info "Expresser", "Database.count", collection, options, result
+                    logger.info "Expresser", "Database.count", collection, filter, "Result #{result}"
 
-        # MongoDB has a built-in count, so use it.
+        # MongoDB has a built-in count so use it.
         dbCollection = @db.collection collection
-        dbCollection.count options, dbCallback
+        dbCollection.count filter, dbCallback
 
 
     # HELPER METHODS
@@ -234,8 +242,11 @@ class Database
     # Helper to transform MongoDB document "_id" to "id".
     normalizeId: (result) =>
         return if not result?
-            
-        if result.length?
+
+        isArray = lodash.isArray result or lodash.isArguments result
+
+        # Check if result is a collection / array or a single document.
+        if isArray
             for obj in result
                 obj["id"] = obj["_id"].toString()
                 delete obj["_id"]
