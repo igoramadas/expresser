@@ -112,13 +112,14 @@
         
         <p>Handles server logging using local files, Logentries or Loggly.
 Multiple services can be enabled at the same time.
-Parameters on settings.coffee: Settings.Logger</p>
+Parameters on <a href="settings.coffee">settings.html</a>: Settings.Logger</p>
 
         
           <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Logger</span></span>
 
     fs = require <span class="string">"fs"</span>
     lodash = require <span class="string">"lodash"</span>
+    moment = require <span class="string">"moment"</span>
     path = require <span class="string">"path"</span>
     settings = require <span class="string">"./settings.coffee"</span>
     utils = require <span class="string">"./utils.coffee"</span></pre></div>
@@ -143,7 +144,7 @@ Parameters on settings.coffee: Settings.Logger</p>
         
       
         
-        <p>The <code>serverIP</code> will be set on init, but only if <code>settings.Logger.sendIP</code> is true.</p>
+        <p>The <code>serverIP</code> will be set on init, but only if <code>settings.logger.sendIP</code> is true.</p>
 
         
           <div class='highlight'><pre>    serverIP = <span class="literal">null</span></pre></div>
@@ -183,7 +184,7 @@ IP address and timestamp will be appended to logs depending on the settings.</p>
         <p>Get a valid server IP to be appended to logs.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Logger.sendIP
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.logger.sendIP
             serverIP = utils.getServerIP()</pre></div>
         
       
@@ -192,11 +193,11 @@ IP address and timestamp will be appended to logs depending on the settings.</p>
 flush logs to disk every X milliseconds.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Logger.Local.enabled
-            <span class="keyword">if</span> <span class="keyword">not</span> fs.existsSync settings.Path.logsDir
-                fs.mkdirSync settings.Path.logsDir
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.logger.local.enabled
+            <span class="keyword">if</span> <span class="keyword">not</span> fs.existsSync settings.path.logsDir
+                fs.mkdirSync settings.path.logsDir
             localBuffer = {info: [], warn: [], error: []}
-            bufferDispatcher = setInterval <span class="property">@flushLocal</span>, settings.Logger.bufferInterval
+            bufferDispatcher = setInterval <span class="property">@flushLocal</span>, settings.logger.local.bufferInterval
             activeServices.push <span class="string">"Local"</span></pre></div>
         
       
@@ -204,9 +205,9 @@ flush logs to disk every X milliseconds.</p>
         <p>Check if Logentries should be used, and create the Logentries objects.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Logger.Logentries.enabled <span class="keyword">and</span> settings.Logger.Logentries.token? <span class="keyword">and</span> settings.Logger.Logentries.token <span class="keyword">isnt</span> <span class="string">""</span>
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.logger.logentries.enabled <span class="keyword">and</span> settings.logger.logentries.token? <span class="keyword">and</span> settings.logger.logentries.token <span class="keyword">isnt</span> <span class="string">""</span>
             logentries = require <span class="string">"node-logentries"</span>
-            loggerLogentries = logentries.logger {token: settings.Logger.Logentries.token, timestamp: settings.Logger.sendTimestamp}
+            loggerLogentries = logentries.logger {token: settings.logger.logentries.token, timestamp: settings.logger.sendTimestamp}
             activeServices.push <span class="string">"Logentries"</span></pre></div>
         
       
@@ -214,9 +215,9 @@ flush logs to disk every X milliseconds.</p>
         <p>Check if Loggly should be used, and create the Loggly objects.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Logger.Loggly.enabled <span class="keyword">and</span> settings.Logger.Loggly.subdomain? <span class="keyword">and</span> settings.Logger.Loggly.token? <span class="keyword">and</span> settings.Logger.Loggly.token <span class="keyword">isnt</span> <span class="string">""</span>
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.logger.loggly.enabled <span class="keyword">and</span> settings.logger.loggly.subdomain? <span class="keyword">and</span> settings.logger.loggly.token? <span class="keyword">and</span> settings.logger.loggly.token <span class="keyword">isnt</span> <span class="string">""</span>
             loggly = require <span class="string">"loggly"</span>
-            loggerLoggly = loggly.createClient {subdomain: settings.Logger.Loggly.subdomain, json: <span class="literal">true</span>}
+            loggerLoggly = loggly.createClient {subdomain: settings.logger.loggly.subdomain, json: <span class="literal">true</span>}
             activeServices.push <span class="string">"Loggly"</span></pre></div>
         
       
@@ -234,7 +235,7 @@ flush logs to disk every X milliseconds.</p>
         <p>Start logging!</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> local <span class="keyword">and</span> <span class="keyword">not</span> logentries? <span class="keyword">and</span> <span class="keyword">not</span> loggly?
+          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> localBuffer? <span class="keyword">and</span> <span class="keyword">not</span> logentries? <span class="keyword">and</span> <span class="keyword">not</span> loggly?
             <span class="property">@warn</span> <span class="string">"Expresser"</span>, <span class="string">"Logger.init"</span>, <span class="string">"Local, Logentries and Loggly are not enabled."</span>, <span class="string">"Logger module will only log to the console!"</span>
         <span class="keyword">else</span>
             <span class="property">@info</span> <span class="string">"Expresser"</span>, <span class="string">"Logger.init"</span>, activeServices.join(), ipInfo</pre></div>
@@ -250,7 +251,7 @@ flush logs to disk every X milliseconds.</p>
 
         
           <div class='highlight'><pre>    info: =&gt;
-        console.info.apply(<span class="keyword">this</span>, arguments) <span class="keyword">if</span> settings.General.debug <span class="keyword">or</span> activeServices.length &lt; <span class="number">1</span>
+        console.info.apply(<span class="keyword">this</span>, arguments) <span class="keyword">if</span> settings.general.debug <span class="keyword">or</span> activeServices.length &lt; <span class="number">1</span>
         msg = <span class="property">@getMessage</span> arguments
 
         <span class="keyword">if</span> localBuffer?
@@ -258,7 +259,7 @@ flush logs to disk every X milliseconds.</p>
         <span class="keyword">if</span> logentries?
             loggerLogentries.info.apply <span class="keyword">this</span>, [msg]
         <span class="keyword">if</span> loggly?
-            loggerLoggly.log.apply <span class="keyword">this</span>, [settings.Logger.Loggly.token, msg]</pre></div>
+            loggerLoggly.log.apply <span class="keyword">this</span>, [settings.logger.loggly.token, msg]</pre></div>
         
       
         
@@ -266,7 +267,7 @@ flush logs to disk every X milliseconds.</p>
 
         
           <div class='highlight'><pre>    warn: =&gt;
-        console.warn.apply(<span class="keyword">this</span>, arguments) <span class="keyword">if</span> settings.General.debug <span class="keyword">or</span> activeServices.length &lt; <span class="number">1</span>
+        console.warn.apply(<span class="keyword">this</span>, arguments) <span class="keyword">if</span> settings.general.debug <span class="keyword">or</span> activeServices.length &lt; <span class="number">1</span>
         msg = <span class="property">@getMessage</span> arguments
 
         <span class="keyword">if</span> localBuffer?
@@ -274,7 +275,7 @@ flush logs to disk every X milliseconds.</p>
         <span class="keyword">if</span> logentries?
             loggerLogentries.warning.apply <span class="keyword">this</span>, [msg]
         <span class="keyword">if</span> loggly?
-            loggerLoggly.log.apply <span class="keyword">this</span>, [settings.Logger.Loggly.token, msg]</pre></div>
+            loggerLoggly.log.apply <span class="keyword">this</span>, [settings.logger.loggly.token, msg]</pre></div>
         
       
         
@@ -282,7 +283,7 @@ flush logs to disk every X milliseconds.</p>
 
         
           <div class='highlight'><pre>    error: =&gt;
-        console.error.apply(<span class="keyword">this</span>, arguments) <span class="keyword">if</span> settings.General.debug <span class="keyword">or</span> activeServices.length &lt; <span class="number">1</span>
+        console.error.apply(<span class="keyword">this</span>, arguments) <span class="keyword">if</span> settings.general.debug <span class="keyword">or</span> activeServices.length &lt; <span class="number">1</span>
         msg = <span class="property">@getMessage</span> arguments
 
         <span class="keyword">if</span> localBuffer?
@@ -290,7 +291,7 @@ flush logs to disk every X milliseconds.</p>
         <span class="keyword">if</span> logentries?
             loggerLogentries.err.apply <span class="keyword">this</span>, [msg]
         <span class="keyword">if</span> loggly?
-            loggerLoggly.log.apply <span class="keyword">this</span>, [settings.Logger.Loggly.token, msg]</pre></div>
+            loggerLoggly.log.apply <span class="keyword">this</span>, [settings.logger.loggly.token, msg]</pre></div>
         
       
         
@@ -315,7 +316,7 @@ flush logs to disk every X milliseconds.</p>
         
           <div class='highlight'><pre>    flushLocal: -&gt;
         now = moment()
-        date = now.format <span class="string">"yyyyMMdd"</span></pre></div>
+        date = now.format <span class="string">"YYYYMMDD"</span></pre></div>
         
       
         
@@ -325,9 +326,11 @@ Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on
 
         
           <div class='highlight'><pre>        <span class="keyword">for</span> key, logs <span class="keyword">of</span> localBuffer
-            filePath = path.join settings.Path.logsDir, <span class="string">"<span class="subst">#{key}</span>.<span class="subst">#{date}</span>.log"</span>
-            fs.appendFile filePath, logs.join(<span class="string">"\n"</span>), (err) -&gt;
-                console.error(<span class="string">"Expresser"</span>, <span class="string">"Logger.flushLocal"</span>, err) <span class="keyword">if</span> err?</pre></div>
+            <span class="keyword">if</span> logs.length &gt; <span class="number">0</span>
+                writeData = logs.join(<span class="string">"\n"</span>)
+                localBuffer[key] = []
+                filePath = path.join settings.path.logsDir, <span class="string">"<span class="subst">#{date}</span>.<span class="subst">#{key}</span>.log"</span>
+                fs.appendFile filePath, writeData, (err) -&gt; console.error(<span class="string">"Expresser"</span>, <span class="string">"Logger.flushLocal"</span>, err) <span class="keyword">if</span> err?</pre></div>
         
       
         
@@ -335,16 +338,16 @@ Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on
 
         
           <div class='highlight'><pre>    cleanLocal: -&gt;
-        maxDate = moment().subtract <span class="string">"d"</span>, settings.Logger.Local.maxAge
+        maxDate = moment().subtract <span class="string">"d"</span>, settings.logger.local.maxAge
 
-        fs.readdir settings.Path.logsDir, (err, files) -&gt;
+        fs.readdir settings.path.logsDir, (err, files) -&gt;
             <span class="keyword">if</span> err?
                 console.error <span class="string">"Expresser"</span>, <span class="string">"Logger.cleanLocal"</span>, err
             <span class="keyword">else</span>
                 <span class="keyword">for</span> f <span class="keyword">in</span> files
                     date = moment f.split(<span class="string">"."</span>)[<span class="number">1</span>], <span class="string">"yyyyMMdd"</span>
                     <span class="keyword">if</span> date.isBefore maxDate
-                        fs.unlink path.join(settings.Path.logsDir, f), (err) -&gt;
+                        fs.unlink path.join(settings.path.logsDir, f), (err) -&gt;
                             console.error(<span class="string">"Expresser"</span>, <span class="string">"Logger.cleanLocal"</span>, err) <span class="keyword">if</span> err?</pre></div>
         
       
@@ -365,20 +368,22 @@ depending on the service being used.</p>
         
       
         
-        <p>Parse all arguments and stringify objects.</p>
+        <p>Parse all arguments and stringify objects. Please note that fields defined
+on the <code>Settings.logger.removeFields</code> won&#39;t be added to the message.</p>
 
         
           <div class='highlight'><pre>        <span class="keyword">for</span> a <span class="keyword">in</span> args
-            <span class="keyword">if</span> lodash.isArray a
-                <span class="keyword">for</span> b <span class="keyword">in</span> a
-                    separated.push b
-            <span class="keyword">else</span> <span class="keyword">if</span> lodash.isObject a
-                <span class="keyword">try</span>
-                    separated.push JSON.stringify a
-                <span class="keyword">catch</span> ex
-                    separated.push a
-            <span class="keyword">else</span>
-                separated.push a</pre></div>
+            <span class="keyword">if</span> settings.logger.removeFields.indexOf(a) &lt; <span class="number">0</span>
+                <span class="keyword">if</span> lodash.isArray a
+                    <span class="keyword">for</span> b <span class="keyword">in</span> a
+                        separated.push b <span class="keyword">if</span> settings.logger.removeFields.indexOf(b) &lt; <span class="number">0</span>
+                <span class="keyword">else</span> <span class="keyword">if</span> lodash.isObject a
+                    <span class="keyword">try</span>
+                        separated.push JSON.stringify a
+                    <span class="keyword">catch</span> ex
+                        separated.push a
+                <span class="keyword">else</span>
+                    separated.push a</pre></div>
         
       
         

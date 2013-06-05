@@ -111,7 +111,7 @@
       
         
         <p>Firewall to protect the server against well known HTTP and socket attacks.
-Parameters on settings.coffee: Settings.Firewall</p>
+Parameters on <a href="settings.coffee">settings.html</a>: Settings.Firewall</p>
 <p>ATTENTION!
 The Firewall module is started automatically by the App module. If you wish to
 disable it, set <code>Settings.Firewall.enabled</code> to false.</p>
@@ -175,7 +175,7 @@ disable it, set <code>Settings.Firewall.enabled</code> to false.</p>
         <p>Bind HTTP protection.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Firewall.httpPatterns <span class="keyword">isnt</span> <span class="string">""</span>
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.firewall.httpPatterns <span class="keyword">isnt</span> <span class="string">""</span>
             server.use <span class="property">@checkHttpRequest</span>
             logger.info <span class="string">"Expresser"</span>, <span class="string">"Firewall.init"</span>, <span class="string">"Protect HTTP requests."</span></pre></div>
         
@@ -184,7 +184,7 @@ disable it, set <code>Settings.Firewall.enabled</code> to false.</p>
         <p>Bind sockets protection.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> settings.Firewall.socketPatterns <span class="keyword">isnt</span> <span class="string">""</span>
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.firewall.socketPatterns <span class="keyword">isnt</span> <span class="string">""</span>
             logger.info <span class="string">"Expresser"</span>, <span class="string">"Firewall.init"</span>, <span class="string">"Protect Socket requests."</span>
 
         <span class="property">@blacklist</span> = {}</pre></div>
@@ -223,7 +223,7 @@ disable it, set <code>Settings.Firewall.enabled</code> to false.</p>
 
         
           <div class='highlight'><pre>        valid = <span class="literal">true</span>
-        enabledPatterns = settings.Firewall.httpPatterns.split <span class="string">","</span>
+        enabledPatterns = settings.firewall.httpPatterns.split <span class="string">","</span>
         <span class="keyword">for</span> pattern <span class="keyword">in</span> enabledPatterns
             valid = <span class="literal">false</span> <span class="keyword">if</span> check(pattern)</pre></div>
         
@@ -294,7 +294,7 @@ disable it, set <code>Settings.Firewall.enabled</code> to false.</p>
 
         
           <div class='highlight'><pre>        valid = <span class="literal">true</span>
-        enabledPatterns = settings.Firewall.socketPatterns.split <span class="string">","</span>
+        enabledPatterns = settings.firewall.socketPatterns.split <span class="string">","</span>
         <span class="keyword">for</span> pattern <span class="keyword">in</span> enabledPatterns
             valid = <span class="literal">false</span> <span class="keyword">if</span> check(pattern)</pre></div>
         
@@ -369,8 +369,8 @@ it has reached the max retries.</p>
 
         
           <div class='highlight'><pre>        bl.count = bl.count + <span class="number">1</span>
-        <span class="keyword">if</span> bl.count &gt;= settings.Firewall.blacklistMaxRetries
-            bl.expires = moment().add <span class="string">"s"</span>, settings.Firewall.blacklistLongExpires
+        <span class="keyword">if</span> bl.count &gt;= settings.firewall.blacklistMaxRetries
+            bl.expires = moment().add <span class="string">"s"</span>, settings.firewall.blacklistLongExpires
 
         <span class="keyword">return</span> <span class="literal">true</span></pre></div>
         
@@ -388,7 +388,7 @@ it has reached the max retries.</p>
         <p>Set blacklist object.</p>
 
         
-          <div class='highlight'><pre>        bl.expires = moment().add <span class="string">"s"</span>, settings.Firewall.blacklistExpires
+          <div class='highlight'><pre>        bl.expires = moment().add <span class="string">"s"</span>, settings.firewall.blacklistExpires
         bl.count = <span class="number">1</span>
 
         <span class="property">@blacklist</span>[ip] = bl</pre></div>

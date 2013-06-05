@@ -124,7 +124,10 @@ by creating a settings.json file with the specified keys and values, for example
 Please note that the settings.json must ne located on the root of your app!</p>
 
         
-          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Settings</span></span></pre></div>
+          <div class='highlight'><pre>fs = require <span class="string">"fs"</span>
+path = require <span class="string">"path"</span>
+
+<span class="class"><span class="keyword">class</span> <span class="title">Settings</span></span></pre></div>
         
       
         
@@ -135,7 +138,7 @@ Please note that the settings.json must ne located on the root of your app!</p>
         
         
         
-          <div class='highlight'><pre>    General:</pre></div>
+          <div class='highlight'><pre>    general:</pre></div>
         
       
         
@@ -175,7 +178,7 @@ If null, debug will be set automatically based on the NODE_ENV variable.</p>
         
         
         
-          <div class='highlight'><pre>    Path:</pre></div>
+          <div class='highlight'><pre>    path:</pre></div>
         
       
         
@@ -214,7 +217,7 @@ If null, debug will be set automatically based on the NODE_ENV variable.</p>
         
         
         
-          <div class='highlight'><pre>    App:</pre></div>
+          <div class='highlight'><pre>    app:</pre></div>
         
       
         
@@ -263,35 +266,98 @@ environmental values (like in AppFog or OpenShift).</p>
         
       
         
-        <h2>CONNECT ASSETS</h2>
+        <p>Connect Assets options.</p>
 
         
-      
-        
-        
-        
-          <div class='highlight'><pre>    ConnectAssets:</pre></div>
+          <div class='highlight'><pre>        connectAssets:</pre></div>
         
       
         
         <p>Build single assets?</p>
 
         
-          <div class='highlight'><pre>        build: <span class="literal">true</span></pre></div>
+          <div class='highlight'><pre>            build: <span class="literal">true</span></pre></div>
         
       
         
         <p>Build directories?</p>
 
         
-          <div class='highlight'><pre>        buildDir: <span class="literal">false</span></pre></div>
+          <div class='highlight'><pre>            buildDir: <span class="literal">false</span></pre></div>
         
       
         
         <p>Minify JS and CSS builds?</p>
 
         
-          <div class='highlight'><pre>        minifyBuilds: <span class="literal">true</span></pre></div>
+          <div class='highlight'><pre>            minifyBuilds: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <h2>PASSPORT MODULE</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>    passport:</pre></div>
+        
+      
+        
+        <p>Enable passport module on the App?</p>
+
+        
+          <div class='highlight'><pre>        enabled: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>Basic HTTP Auth strategy settings.</p>
+
+        
+          <div class='highlight'><pre>        basic:</pre></div>
+        
+      
+        
+        <p>Enable basic HTTP authentication?</p>
+
+        
+          <div class='highlight'><pre>            enabled: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>LDAP authentication strategy settings.</p>
+
+        
+          <div class='highlight'><pre>        ldap:</pre></div>
+        
+      
+        
+        <p>Enable LDAP authentication?</p>
+
+        
+          <div class='highlight'><pre>            enabled: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>The LDAP base. Example: cn=users,dc=local.</p>
+
+        
+          <div class='highlight'><pre>            base: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The LDAP search filter. Example: (&amp;(l=Berlin)(email=*@zalando.de)).</p>
+
+        
+          <div class='highlight'><pre>            filter: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>The LDAP server full address with hostname and port. Example: ldap://127.0.0.1:1390.</p>
+
+        
+          <div class='highlight'><pre>            server: <span class="literal">null</span></pre></div>
         
       
         
@@ -302,7 +368,7 @@ environmental values (like in AppFog or OpenShift).</p>
         
         
         
-          <div class='highlight'><pre>    Sockets:</pre></div>
+          <div class='highlight'><pre>    sockets:</pre></div>
         
       
         
@@ -320,7 +386,7 @@ environmental values (like in AppFog or OpenShift).</p>
         
         
         
-          <div class='highlight'><pre>    Firewall:</pre></div>
+          <div class='highlight'><pre>    firewall:</pre></div>
         
       
         
@@ -368,31 +434,6 @@ extends to the &quot;LongExpires&quot; value above?</p>
         
       
         
-        <h2>ERROR HANDLING</h2>
-
-        
-      
-        
-        
-        
-          <div class='highlight'><pre>    ErrorHandling:</pre></div>
-        
-      
-        
-        <p>Dump exceptions? On production environments we recommend setting this to false.</p>
-
-        
-          <div class='highlight'><pre>        dumpExceptions: <span class="literal">false</span></pre></div>
-        
-      
-        
-        <p>Show stack trace? On production environments we recommend setting this to false.</p>
-
-        
-          <div class='highlight'><pre>        showStack: <span class="literal">false</span></pre></div>
-        
-      
-        
         <h2>DATABASE</h2>
 
         
@@ -400,7 +441,7 @@ extends to the &quot;LongExpires&quot; value above?</p>
         
         
         
-          <div class='highlight'><pre>    Database:</pre></div>
+          <div class='highlight'><pre>    database:</pre></div>
         
       
         
@@ -420,7 +461,8 @@ It will be used ONLY if connection to the main database fails repeatedly.</p>
         
       
         
-        <p>How long to wait before trying to connect to the main database again (in seconds).</p>
+        <p>How long to wait before trying to connect to the main database again (in seconds) in case
+the module switches to the secondary one.</p>
 
         
           <div class='highlight'><pre>        failoverTimeout: <span class="number">300</span></pre></div>
@@ -483,7 +525,7 @@ It will be used ONLY if connection to the main database fails repeatedly.</p>
         
         
         
-          <div class='highlight'><pre>    Mail:</pre></div>
+          <div class='highlight'><pre>    mail:</pre></div>
         
       
         
@@ -586,7 +628,15 @@ It will be used ONLY if connection to the main database fails repeatedly.</p>
         <p>Built-in support for Loggly and Logentries.</p>
 
         
-          <div class='highlight'><pre>    Logger:</pre></div>
+          <div class='highlight'><pre>    logger:</pre></div>
+        
+      
+        
+        <p>List will all field / property names to be removed from logs.
+Default list is &quot;Password, password, passwordHash and passwordEncrypted&quot;.</p>
+
+        
+          <div class='highlight'><pre>        removeFields: <span class="string">"Password,password,passwordHash,passwordEncrypted"</span></pre></div>
         
       
         
@@ -618,19 +668,19 @@ event on the process and log all uncaught expcetions as errors.</p>
         <p>Save logs locally? The path to the logs folder is set above under the <code>Settings.Path.logsDir</code> key.</p>
 
         
-          <div class='highlight'><pre>        Local:
-            enabled: <span class="literal">false</span></pre></div>
+          <div class='highlight'><pre>        local:
+            enabled: <span class="literal">true</span></pre></div>
         
       
         
         <p>The bufferInterval defines the delay in between disk saves, in milliseconds.</p>
 
         
-          <div class='highlight'><pre>            bufferInterval: <span class="number">10000</span></pre></div>
+          <div class='highlight'><pre>            bufferInterval: <span class="number">6000</span></pre></div>
         
       
         
-        <p>The maxAge sets the max age of log files, in days.</p>
+        <p>Sets the max age of log files, in days.</p>
 
         
           <div class='highlight'><pre>            maxAge: <span class="number">30</span></pre></div>
@@ -641,7 +691,7 @@ event on the process and log all uncaught expcetions as errors.</p>
 the enabled setting below  is true.</p>
 
         
-          <div class='highlight'><pre>        Logentries:
+          <div class='highlight'><pre>        logentries:
             enabled: <span class="literal">false</span>
             token: <span class="literal">null</span></pre></div>
         
@@ -651,7 +701,7 @@ the enabled setting below  is true.</p>
 the enabled setting below  is true.</p>
 
         
-          <div class='highlight'><pre>        Loggly:
+          <div class='highlight'><pre>        loggly:
             enabled: <span class="literal">false</span>
             subdomain: <span class="literal">null</span>
             token: <span class="literal">null</span></pre></div>
@@ -667,7 +717,7 @@ the enabled setting below  is true.</p>
 settings below are set and valid.</p>
 
         
-          <div class='highlight'><pre>    NewRelic:</pre></div>
+          <div class='highlight'><pre>    newRelic:</pre></div>
         
       
         
@@ -694,7 +744,7 @@ settings below are set and valid.</p>
 at <a href="http://dev.twitter.com">http://dev.twitter.com</a> and set the properties below.</p>
 
         
-          <div class='highlight'><pre>    Twitter:</pre></div>
+          <div class='highlight'><pre>    twitter:</pre></div>
         
       
         
@@ -736,6 +786,34 @@ in case the authentication fails.</p>
         
       
         
+        <h2>SETTINGS.JSON</h2>
+
+        
+      
+        
+        <p>Helper to load values from the specified settings.json file.</p>
+
+        
+          <div class='highlight'><pre>    loadFromJson: (filename) =&gt;
+        settingsJson = require filename</pre></div>
+        
+      
+        
+        <p>Helper function to overwrite settings.</p>
+
+        
+          <div class='highlight'><pre>        <span class="function"><span class="title">xtend</span></span> = (source, target) -&gt;
+            <span class="keyword">for</span> prop, value <span class="keyword">of</span> source
+                <span class="keyword">if</span> value?.constructor <span class="keyword">is</span> Object
+                    target[prop] = {} <span class="keyword">if</span> <span class="keyword">not</span> target[prop]?
+                    xtend source[prop], target[prop]
+                <span class="keyword">else</span>
+                    target[prop] = source[prop]
+
+        xtend settingsJson, <span class="keyword">this</span></pre></div>
+        
+      
+        
         <h2>Singleton implementation</h2>
 
         
@@ -745,18 +823,15 @@ in case the authentication fails.</p>
         
           <div class='highlight'><pre>Settings.<span class="function"><span class="title">getInstance</span></span> = -&gt;
     <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
-        <span class="property">@instance</span> = <span class="keyword">new</span> Settings()
-
-        fs = require <span class="string">"fs"</span>
-        path = require <span class="string">"path"</span>
-        filename =  path.dirname(require.main.filename) + <span class="string">"/settings.json"</span></pre></div>
+        <span class="property">@instance</span> = <span class="keyword">new</span> Settings()</pre></div>
         
       
         
-        <p>Check if <code>settings.json</code> exists on root folder.</p>
+        <p>Load from server root.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> fs.existsSync?
+          <div class='highlight'><pre>        filename =  path.dirname(require.main.filename) + <span class="string">"/settings.json"</span>
+        <span class="keyword">if</span> fs.existsSync?
             hasJson = fs.existsSync filename
         <span class="keyword">else</span>
             hasJson = path.existsSync filename</pre></div>
@@ -768,41 +843,29 @@ in case the authentication fails.</p>
         
           <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> hasJson
             filename = __dirname + <span class="string">"/settings.json"</span>
-            hasJson = fs.existsSync filename</pre></div>
+        <span class="keyword">if</span> fs.existsSync?
+            hasJson = fs.existsSync filename
+        <span class="keyword">else</span>
+            hasJson = path.existsSync filename</pre></div>
         
       
         
-        <p>Check if there&#39;s a <code>settings.json</code> file, and overwrite settings if so.</p>
+        <p>Has json? Load it.</p>
 
         
           <div class='highlight'><pre>        <span class="keyword">if</span> hasJson
-            settingsJson = require filename</pre></div>
-        
-      
-        
-        <p>Helper function to overwrite settings.</p>
-
-        
-          <div class='highlight'><pre>            <span class="function"><span class="title">xtend</span></span> = (source, target) -&gt;
-                <span class="keyword">for</span> prop, value <span class="keyword">of</span> source
-                    <span class="keyword">if</span> value?.constructor <span class="keyword">is</span> Object
-                        target[prop] = {} <span class="keyword">if</span> <span class="keyword">not</span> target[prop]?
-                        xtend source[prop], target[prop]
-                    <span class="keyword">else</span>
-                        target[prop] = source[prop]
-
-            xtend settingsJson, <span class="property">@instance</span></pre></div>
+            <span class="property">@instance</span>.loadFromJson filename</pre></div>
         
       
         
         <p>Set debug in case it has not been set.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>.General.debug?
+          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>.general.debug?
             <span class="keyword">if</span> process.env.NODE_ENV <span class="keyword">is</span> <span class="string">"production"</span>
-                <span class="property">@instance</span>.General.debug = <span class="literal">false</span>
+                <span class="property">@instance</span>.general.debug = <span class="literal">false</span>
             <span class="keyword">else</span>
-                <span class="property">@instance</span>.General.debug = <span class="literal">true</span>
+                <span class="property">@instance</span>.general.debug = <span class="literal">true</span>
 
     <span class="keyword">return</span> <span class="property">@instance</span>
 

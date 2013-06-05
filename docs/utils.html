@@ -110,7 +110,7 @@
         
       
         
-        <p>General network, IO and other utilities.</p>
+        <p>General network, IO, client and server utilities.</p>
 
         
           <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Utils</span></span>
@@ -136,7 +136,7 @@
         <p>Temporary variables with current values.</p>
 
         
-          <div class='highlight'><pre>        currentSmtpHost = settings.Mail.smtp.host?.toLowerCase()</pre></div>
+          <div class='highlight'><pre>        currentSmtpHost = settings.mail.smtp.host?.toLowerCase()</pre></div>
         
       
         
@@ -145,8 +145,8 @@
         
           <div class='highlight'><pre>        ip = env.OPENSHIFT_NODEJS_IP <span class="keyword">or</span> env.OPENSHIFT_INTERNAL_IP <span class="keyword">or</span> env.IP
         port = env.OPENSHIFT_NODEJS_PORT <span class="keyword">or</span> env.OPENSHIFT_INTERNAL_PORT <span class="keyword">or</span> env.VCAP_APP_PORT <span class="keyword">or</span> env.PORT
-        settings.App.ip = ip <span class="keyword">if</span> ip? <span class="keyword">and</span> ip <span class="keyword">isnt</span> <span class="string">""</span>
-        settings.App.port = port <span class="keyword">if</span> port? <span class="keyword">and</span> port <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        settings.app.ip = ip <span class="keyword">if</span> ip? <span class="keyword">and</span> ip <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.app.port = port <span class="keyword">if</span> port? <span class="keyword">and</span> port <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
         
       
         
@@ -159,7 +159,7 @@
             mongo = vcap[<span class="string">"mongodb-1.8"</span>]
             mongo = mongo[<span class="number">0</span>][<span class="string">"credentials"</span>] <span class="keyword">if</span> mongo?
             <span class="keyword">if</span> mongo?
-                settings.Database.connString = <span class="string">"mongodb://<span class="subst">#{mongo.hostname}</span>:<span class="subst">#{mongo.port}</span>/<span class="subst">#{mongo.db}</span>"</span></pre></div>
+                settings.database.connString = <span class="string">"mongodb://<span class="subst">#{mongo.hostname}</span>:<span class="subst">#{mongo.port}</span>/<span class="subst">#{mongo.db}</span>"</span></pre></div>
         
       
         
@@ -167,7 +167,7 @@
 
         
           <div class='highlight'><pre>        mongoLab = env.MONGOLAB_URI
-        settings.Database.connString = mongoLab <span class="keyword">if</span> mongoLab? <span class="keyword">and</span> mongoLab <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        settings.database.connString = mongoLab <span class="keyword">if</span> mongoLab? <span class="keyword">and</span> mongoLab <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
         
       
         
@@ -175,7 +175,7 @@
 
         
           <div class='highlight'><pre>        mongoHq = env.MONGOHQ_URL
-        settings.Database.connString = mongoHq <span class="keyword">if</span> mongoHq? <span class="keyword">and</span> mongoHq <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        settings.database.connString = mongoHq <span class="keyword">if</span> mongoHq? <span class="keyword">and</span> mongoHq <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
         
       
         
@@ -185,9 +185,9 @@
           <div class='highlight'><pre>        logentriesToken = env.LOGENTRIES_TOKEN
         logglyToken = env.LOGGLY_TOKEN
         logglySubdomain = env.LOGGLY_SUBDOMAIN
-        settings.Logger.Logentries.token = logentriesToken <span class="keyword">if</span> logentriesToken? <span class="keyword">and</span> logentriesToken <span class="keyword">isnt</span> <span class="string">""</span>
-        settings.Logger.Loggly.token = logglyToken <span class="keyword">if</span> logglyToken? <span class="keyword">and</span> logglyToken <span class="keyword">isnt</span> <span class="string">""</span>
-        settings.Logger.Loggly.subdomain = logglySubdomain <span class="keyword">if</span> logglySubdomain? <span class="keyword">and</span> logglySubdomain <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        settings.logger.Logentries.token = logentriesToken <span class="keyword">if</span> logentriesToken? <span class="keyword">and</span> logentriesToken <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.logger.Loggly.token = logglyToken <span class="keyword">if</span> logglyToken? <span class="keyword">and</span> logglyToken <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.logger.Loggly.subdomain = logglySubdomain <span class="keyword">if</span> logglySubdomain? <span class="keyword">and</span> logglySubdomain <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
         
       
         
@@ -197,8 +197,8 @@
           <div class='highlight'><pre>        smtpUser = env.SENDGRID_USERNAME
         smtpPassword = env.SENDGRID_PASSWORD
         <span class="keyword">if</span> currentSmtpHost?.indexOf(<span class="string">"sendgrid"</span>) &gt; <span class="number">0</span>
-            settings.Mail.smtp.user = smtpUser <span class="keyword">if</span> smtpUser? <span class="keyword">and</span> smtpUser <span class="keyword">isnt</span> <span class="string">""</span>
-            settings.Mail.smtp.password = smtpPassword <span class="keyword">if</span> smtpPassword? <span class="keyword">and</span> smtpPassword <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+            settings.mail.smtp.user = smtpUser <span class="keyword">if</span> smtpUser? <span class="keyword">and</span> smtpUser <span class="keyword">isnt</span> <span class="string">""</span>
+            settings.mail.smtp.password = smtpPassword <span class="keyword">if</span> smtpPassword? <span class="keyword">and</span> smtpPassword <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
         
       
         
@@ -208,8 +208,8 @@
           <div class='highlight'><pre>        smtpUser = env.MANDRILL_USERNAME
         smtpPassword = env.MANDRILL_APIKEY
         <span class="keyword">if</span> currentSmtpHost?.indexOf(<span class="string">"mandrill"</span>) &gt; <span class="number">0</span>
-            settings.Mail.smtp.user = smtpUser <span class="keyword">if</span> smtpUser? <span class="keyword">and</span> smtpUser <span class="keyword">isnt</span> <span class="string">""</span>
-            settings.Mail.smtp.password = smtpPassword <span class="keyword">if</span> smtpPassword? <span class="keyword">and</span> smtpPassword <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+            settings.mail.smtp.user = smtpUser <span class="keyword">if</span> smtpUser? <span class="keyword">and</span> smtpUser <span class="keyword">isnt</span> <span class="string">""</span>
+            settings.mail.smtp.password = smtpPassword <span class="keyword">if</span> smtpPassword? <span class="keyword">and</span> smtpPassword <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
         
       
         
@@ -220,10 +220,10 @@
         smtpPort = env.MAILGUN_SMTP_PORT
         smtpUser = env.MAILGUN_SMTP_LOGIN
         smtpPassword = env.MAILGUN_SMTP_PASSWORD
-        settings.Mail.smtp.host = smtpHost <span class="keyword">if</span> smtpHost? <span class="keyword">and</span> smtpHost <span class="keyword">isnt</span> <span class="string">""</span>
-        settings.Mail.smtp.port = smtpPort <span class="keyword">if</span> smtpPort? <span class="keyword">and</span> smtpPort <span class="keyword">isnt</span> <span class="string">""</span>
-        settings.Mail.smtp.user = smtpUser <span class="keyword">if</span> smtpUser? <span class="keyword">and</span> smtpUser <span class="keyword">isnt</span> <span class="string">""</span>
-        settings.Mail.smtp.password = smtpPassword <span class="keyword">if</span> smtpPassword? <span class="keyword">and</span> smtpPassword <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        settings.mail.smtp.host = smtpHost <span class="keyword">if</span> smtpHost? <span class="keyword">and</span> smtpHost <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.mail.smtp.port = smtpPort <span class="keyword">if</span> smtpPort? <span class="keyword">and</span> smtpPort <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.mail.smtp.user = smtpUser <span class="keyword">if</span> smtpUser? <span class="keyword">and</span> smtpUser <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.mail.smtp.password = smtpPassword <span class="keyword">if</span> smtpPassword? <span class="keyword">and</span> smtpPassword <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
         
       
         
@@ -327,31 +327,32 @@
         
       
         
-        <p>Find desktop browsers.</p>
-
-        
-          <div class='highlight'><pre>        <span class="keyword">return</span> <span class="string">"chrome"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Chrome/"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"firefox"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Firefox/"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"safari"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Safari/"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"ie-11"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE 11"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"ie-10"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE 10"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"ie-9"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE 9"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"ie"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE"</span>) &gt; <span class="number">0</span></pre></div>
-        
-      
-        
         <p>Find mobile devices.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">return</span> <span class="string">"wp-8"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Windows Phone 8"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"wp-7"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Windows Phone 7"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"wp"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Windows Phone"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"iphone-5"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"iPhone5"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"iphone-4"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"iPhone4"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"iphone"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"iPhone"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"android-5"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Android 5"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"android-4"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Android 4"</span>) &gt; <span class="number">0</span>
-        <span class="keyword">return</span> <span class="string">"android"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Android"</span>) &gt; <span class="number">0</span></pre></div>
+          <div class='highlight'><pre>        <span class="keyword">return</span> <span class="string">"mobile-wp-8"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Windows Phone 8"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"mobile-wp-7"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Windows Phone 7"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"mobile-wp"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Windows Phone"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"mobile-iphone-5"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"iPhone5"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"mobile-iphone-4"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"iPhone4"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"mobile-iphone"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"iPhone"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"mobile-android-5"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Android 5"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"mobile-android-4"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Android 4"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"mobile-android"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Android"</span>) &gt; <span class="number">0</span></pre></div>
+        
+      
+        
+        <p>Find desktop browsers.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">return</span> <span class="string">"desktop-chrome"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Chrome/"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"desktop-firefox"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Firefox/"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"desktop-safari"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Safari/"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"desktop-opera"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"Opera/"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"desktop-ie-11"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE 11"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"desktop-ie-10"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE 10"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"desktop-ie-9"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE 9"</span>) &gt; <span class="number">0</span>
+        <span class="keyword">return</span> <span class="string">"desktop-ie"</span> <span class="keyword">if</span> ua.indexOf(<span class="string">"MSIE"</span>) &gt; <span class="number">0</span></pre></div>
         
       
         
