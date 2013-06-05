@@ -122,7 +122,10 @@ class Database
 
         # Log if debug is true.
         if settings.general.debug
-            logger.info "Expresser", "Database.get", collection, filter
+            if filter?
+                logger.info "Expresser", "Database.get", collection, filter
+            else
+                logger.info "Expresser", "Database.get", collection, "No filter."
 
     # Insert or update an object on the database.
     set: (collection, obj, options, callback) =>

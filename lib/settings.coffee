@@ -193,7 +193,7 @@ class Settings
             enabled: true
             # The bufferInterval defines the delay in between disk saves, in milliseconds.
             bufferInterval: 6000
-            # The maxAge sets the max age of log files, in days.
+            # Sets the max age of log files, in days.
             maxAge: 30
         # Please inform your Logentries token. Logentries will be used ONLY if
         # the enabled setting below  is true.

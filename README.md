@@ -180,6 +180,7 @@ The sample below shows how to emit a test message to all clients, and listen to 
 
 ### Twitter
 *   Supports updating status and reading direct messages from Twitter.
+*   The Twitter module is not fully functional yet!!!
 
 **Before you start** make sure you have set the access tokens and secrets on `Settings.Twitter`. These values
 will be validated when `init` is called.
