@@ -116,7 +116,9 @@ class App
 
                 # Enable basic HTTP authentication?
                 if settings.passport.basic.enabled
-                    @passport.use new (require "passport-http").BasicStrategy (username, password, callback) =>
+                    httpStrategy = (require "passport-http").BasicStrategy
+
+                    @passport.use new httpStrategy (username, password, callback) =>
                         if not @passportAuthenticate?
                             logger.warn "Expresser", "App.passportAuthenticate not set.", "Abort basic HTTP authentication."
                         else
@@ -127,12 +129,14 @@ class App
 
                 # Enable LDAP authentication?
                 if settings.passport.ldap.enabled
+                    ldapStrategy = (require "passport-ldap").Strategy
+
                     ldapOptions =
-                        server: {url: settings.passport.ldap.server}
                         base: settings.passport.ldap.base
                         search: {filter: settings.passport.ldap.filter}
+                        server: {url: settings.passport.ldap.server}
 
-                    @passport.use new (require "passport-ldap").LDAPStrategy ldapOptions, (profile, callback) =>
+                    @passport.use new ldapStrategy ldapOptions, (profile, callback) =>
                         if not @passportAuthenticate?
                             logger.warn "Expresser", "App.passportAuthenticate not set.", "Abort LDAP authentication."
                         else

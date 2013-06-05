@@ -76,13 +76,19 @@ class Database
     # LOW LEVEL IMPLEMENTATION
     # -------------------------------------------------------------------------
 
-    # Get data from the database. A `collection` must be specified.
-    # The `options` and `callback` are optional.
-    get: (collection, options, callback) =>
+    # Get data from the database. A `collection` and `callback` must be specified. The `filter` is optional.
+    # Please note that if filter has an _id or id field, or if it's a plain string or number, it will be used
+    # to return documents by ID. Otherwise it's used as keys-values object for filtering.
+    get: (collection, filter, callback) =>
         if not @db?
             logger.warn "Expresser", "Database.get", "The db is null / was not initialized. Abort!"
             return
 
+        # Check if only collection and callback were passed.
+        if not callback and lodash.isFunction filter
+            callback = filter
+
+        # Callback is mandatory!
         if not callback?
             logger.warn "Expresser", "Database.get", "No callback specified. Abort!", collection, options
             return
@@ -96,25 +102,27 @@ class Database
         # Set collection object.
         dbCollection = @db.collection collection
 
-        # Parse ID depending on `options`.
-        if options?
-            if options.id?
-                id = options.id
+        # Parse ID depending on `filter`.
+        if filter?
+            if filter._id?
+                id = filter._id
+            else if filter.id? and settings.database.normalizeId
+                id = filter.id
             else
-                t = typeof options
-                id = options if t is "string" or t is "integer"
+                t = typeof filter
+                id = filter if t is "string" or t is "integer"
 
-        # Find documents depending on the parsed `options`.
+        # Find documents depending on the parsed `filter`.
         if id?
             dbCollection.findById id, dbCallback
         else if options?
-             dbCollection.find(options).toArray dbCallback
+             dbCollection.find(filter).toArray dbCallback
         else
             dbCollection.find().toArray dbCallback
 
         # Log if debug is true.
         if settings.general.debug
-            logger.info "Expresser", "Database.get", collection, options
+            logger.info "Expresser", "Database.get", collection, filter
 
     # Insert or update an object on the database.
     set: (collection, obj, options, callback) =>
@@ -122,6 +130,7 @@ class Database
             logger.warn "Expresser", "Database.set", "The db is null / was not initialized. Abort!"
             return
 
+        # Obj is mandatory!
         if not obj?
             msg = "The obj argument is null or empty."
             callback msg, null
@@ -141,35 +150,44 @@ class Database
         # Set collection object.
         dbCollection = @db.collection collection
 
-        # If object already has an ID, update it otherwise insert a new one.
-        if obj.id?
-            dbCollection.updateById obj.id, {$set: obj.attributes}, dbCallback
-            if settings.general.debug
-                logger.info "Expresser", "Database.set", "Update", collection, obj.id, obj.attributes
+        # Make sure the ID is converted to ObjectID.
+        if obj._id?
+            id = mongo.ObjectID.createFromHexString obj._id.toString()
+        else if obj.id? and settings.database.normalizeId
+            id = mongo.ObjectID.createFromHexString obj.id.toString()
+
+        # If options patch is set, replace specified document properties only instead of replacing the whole document.
+        if options?.patch
+            dbCollection.findAndModify {"_id": id}, {"sort": "_id"}, {$set: obj}, {"new": true}, dbCallback
         else
-            dbCollection.insert obj.attributes, {"new": true}, dbCallback
-            if settings.general.debug
-                logger.info "Expresser", "Database.set", "Insert", collection, obj.attributes
+            dbCollection.findAndModify {"_id": id}, {"sort": "_id"}, obj, {"new": true, "upsert": true}, dbCallback
+
+        # Log if debug is true.
+        if settings.general.debug
+            logger.info "Expresser", "Database.set", collection, obj
 
 
     # Delete an object from the database. The `obj` argument can be either the object
     # itself, or its integer/string ID.
-    del: (collection, obj, callback) =>
+    del: (collection, filter, callback) =>
         if not @db?
             logger.warn "Expresser", "Database.del", "The db is null / was not initialized. Abort!"
             return
 
-        if not obj?
-            msg = "The obj argument is null or empty."
+        if not filter?
+            msg = "The filter argument is null or empty."
             callback msg, null
             logger.warn "Expresser", "Database.del", msg
             return
 
         # Check it the `obj` is the model itself, or only the ID string / number.
-        if obj.id?
-            id = obj.id
+        if filter._id?
+            id = filter._id
+        else if filter.id and settings.database.normalizeId
+            id = filter.id
         else
-            id = obj
+            t = typeof filter
+            id = filter if t is "string" or t is "integer"
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -179,7 +197,12 @@ class Database
 
         # Set collection object and remove specified document from the database.
         dbCollection = @db.collection collection
-        dbCollection.removeById id, dbCallback
+
+        # Remove document by ID or filter.
+        if id? and id isnt ""
+            dbCollection.removeById id, dbCallback
+        else
+            dbCollection.remove filter, dbCallback
 
         # Log if debug is true.
         if settings.general.debug

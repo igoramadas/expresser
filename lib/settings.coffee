@@ -83,13 +83,12 @@ class Settings
         ldap:
             # Enable LDAP authentication?
             enabled: false
-            # The LDAP server full address with hostname and port. Example: ldap://127.0.0.1:1390.
-            server: null
             # The LDAP base. Example: cn=users,dc=local.
             base: null
             # The LDAP search filter. Example: (&(l=Berlin)(email=*@zalando.de)).
             filter: null
-
+            # The LDAP server full address with hostname and port. Example: ldap://127.0.0.1:1390.
+            server: null
 
     # SOCKETS
     # -------------------------------------------------------------------------
