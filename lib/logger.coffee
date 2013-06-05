@@ -145,9 +145,10 @@ class Logger
         # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
         for key, logs of localBuffer
             if logs.length > 0
+                writeData = logs.join("\n")
+                localBuffer[key] = []
                 filePath = path.join settings.path.logsDir, "#{date}.#{key}.log"
-                fs.appendFile filePath, logs.join("\n"), (err) ->
-                    console.error("Expresser", "Logger.flushLocal", err) if err?
+                fs.appendFile filePath, writeData, (err) -> console.error("Expresser", "Logger.flushLocal", err) if err?
 
     # Delete old log files.
     cleanLocal: ->
