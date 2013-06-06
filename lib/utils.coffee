@@ -4,6 +4,7 @@
 
 class Utils
 
+    moment = require "moment"
     os = require "os"
     settings = require "./settings.coffee"
 
@@ -12,7 +13,7 @@ class Utils
     # --------------------------------------------------------------------------
 
     # Update settings based on Cloud Environmental variables.
-    updateSettingsFromPaaS: =>
+    updateSettingsFromPaaS: ->
         env = process.env
 
         # Temporary variables with current values.
@@ -78,7 +79,7 @@ class Utils
     # --------------------------------------------------------------------------
 
     # Return the first valid server IPv4 address.
-    getServerIP: =>
+    getServerIP: ->
         ifaces = os.networkInterfaces()
         result = ""
 
@@ -115,7 +116,7 @@ class Utils
     # --------------------------------------------------------------------------
 
     # Get the client / browser IP, even when behind proxies. Works for http and socket requests.
-    getClientIP: (reqOrSocket) =>
+    getClientIP: (reqOrSocket) ->
         if not reqOrSocket?
             return null
 
@@ -132,7 +133,7 @@ class Utils
             return reqOrSocket.remoteAddress
 
     # Get the client's device identifier string based on the user agent.
-    getClientDevice: (req) =>
+    getClientDevice: (req) ->
         ua = req.headers["user-agent"]
 
         # Find mobile devices.
@@ -158,6 +159,80 @@ class Utils
 
         # Return default desktop value if no specific devices were found on user agent.
         return "desktop"
+
+
+    # DATA UTILS
+    # --------------------------------------------------------------------------
+
+    # Minify the passed JSON value by removing comments, unecessary white spaces etc.
+    minifyJson: (source) ->
+        source = JSON.stringify source if typeof source is "object"
+        index = 0
+        length = source.length
+        result = ""
+        symbol = undefined
+        position = undefined
+
+        # Main iterator.
+        while index < length
+
+            symbol = source.charAt(index)
+            switch symbol
+
+            # Ignore whitespace tokens. According to ES 5.1 section 15.12.1.1,
+            # whitespace tokens include tabs, carriage returns, line feeds, and
+            # space characters.
+                when "\t", "\r"
+                , "\n"
+                , " "
+                    index += 1
+
+            # Ignore line and block comments.
+                when "/"
+                    symbol = source.charAt(index += 1)
+                    switch symbol
+
+                    # Line comments.
+                        when "/"
+                            position = source.indexOf("\n", index)
+
+                            # Check for CR-style line endings.
+                            position = source.indexOf("\r", index)  if position < 0
+                            index = (if position > -1 then position else length)
+
+                    # Block comments.
+                        when "*"
+                            position = source.indexOf("*/", index)
+                            if position > -1
+
+                                # Advance the scanner's position past the end of the comment.
+                                index = position += 2
+                                break
+                            throw SyntaxError("Unterminated block comment.")
+                        else
+                            throw SyntaxError("Invalid comment.")
+
+            # Parse strings separately to ensure that any whitespace characters and
+            # JavaScript-style comments within them are preserved.
+                when "\""
+                    position = index
+                    while index < length
+                        symbol = source.charAt(index += 1)
+                        if symbol is "\\"
+
+                            # Skip past escaped characters.
+                            index += 1
+                        else break  if symbol is "\""
+                    if source.charAt(index) is "\""
+                        result += source.slice(position, index += 1)
+                        break
+                    throw SyntaxError("Unterminated string.")
+
+            # Preserve all other characters.
+                else
+                    result += symbol
+                    index += 1
+        return result
 
 
 # Singleton implementation
