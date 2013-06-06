@@ -222,6 +222,8 @@ class Settings
     # If you want to integrate with Twitter, you'll need to register an application
     # at http://dev.twitter.com and set the properties below.
     twitter:
+        # Enable the Twitter module?
+        enabled: true
         # Your OAuth access secret. This can be generated automatically for your
         # account on you application details page.
         accessSecret: null

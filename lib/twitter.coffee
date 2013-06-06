@@ -35,6 +35,19 @@ class Twitter
                 logger.info "Expresser", "Twitter.init", "Authorized with ID #{data.id}."
                 auth = true
 
+    # Helper to check and log when the module hasn't authenticated or is not enabled.
+    # This is called before any Twitter interaction.
+    checkAuth = (title, msg) ->
+        if not settings.twitter.enabled
+            logger.warn "Expresser", title, "The Twitter module is not enabled!"
+            return false
+        if not auth
+            logger.warn "Expresser", title, "Not authenticated!", msg
+            return false
+
+        # Enabled and authenticated, so return true.
+        return true
+
 
     # INIT
     # --------------------------------------------------------------------------
@@ -42,21 +55,26 @@ class Twitter
     # Init the Twitter handler, but only if the consumer and access keys were
     # properly set on the [settings](settings.html).
     init: =>
-        if settings.twitter.consumerSecret? and settings.twitter.accessSecret? and settings.twitter.accessSecret isnt ""
-            keys =
-                consumer_key: settings.twitter.consumerKey,
-                consumer_secret: settings.twitter.consumerSecret,
-                access_token_key: settings.twitter.accessToken,
-                access_token_secret: settings.twitter.accessSecret
+        if settings.twitter.enabled
 
-            # Create the ntwitter object.
-            twit = new twitter keys
+            consumerOk = settings.twitter.consumerKey? and settings.twitter.consumerSecret? and settings.twitter.consumerSecret isnt ""
+            accessOk = settings.twitter.accessToken? and settings.twitter.accessSecret? and settings.twitter.accessSecret isnt ""
 
-            # Authenticate on Twitter.
-            authenticate()
+            if consumerOk and accessOk
+                keys =
+                    consumer_key: settings.twitter.consumerKey,
+                    consumer_secret: settings.twitter.consumerSecret,
+                    access_token_key: settings.twitter.accessToken,
+                    access_token_secret: settings.twitter.accessSecret
 
-        else if settings.general.debug
-            logger.warn "Expresser", "Twitter.init", "No credentials were set.", "Twitter module won't work."
+                # Create the ntwitter object.
+                twit = new twitter keys
+
+                # Authenticate on Twitter.
+                authenticate()
+
+            else if settings.general.debug
+                logger.warn "Expresser", "Twitter.init", "No credentials were set.", "Twitter module won't work."
 
 
     # STATUS
@@ -65,8 +83,7 @@ class Twitter
     # Post a status to the Twitter timeline. If a callback is passed,
     # it will get triggered with the corresponding status ID, or null if failed.
     postStatus: (message, callback) =>
-        if not auth
-            @logNoAuth "Twitter.postStatus", "Will NOT post status to Twitter."
+        if not checkAuth "Twitter.postStatus", "Will NOT post status to Twitter."
             return
 
         # Update status on Twitter.
@@ -83,8 +100,7 @@ class Twitter
     # Send a direct message to the specified user on Twitter. If a `callback` is
     # specified, it will get triggered passing the sent message ID, or null if failed.
     sendMessage: (message, user, callback) =>
-        if not auth
-            @logNoAuth "Twitter.sendMessage", "Will NOT send message to #{user}."
+        if not checkAuth "Twitter.sendMessage", "Will NOT send message to #{user}."
             return
 
         # Send the message to the user.
@@ -100,8 +116,7 @@ class Twitter
     # Destroy the specified direct message. If a `callback` is specified, it will
     # get triggered passing true or false.
     destroyMessage: (id, callback) =>
-        if not auth
-            @logNoAuth "Twitter.destroyMessage", "Will NOT destroy message #{id}."
+        if not checkAuth "Twitter.destroyMessage", "Will NOT destroy message #{id}."
             return
 
         # Make a request to destroy the specified message.
@@ -118,8 +133,7 @@ class Twitter
     # to generate new countdown models. A callback can be passed and will return an error
     # object (if any) and the messages result.
     getMessages: (filter, callback) =>
-        if not auth
-            @logNoAuth "Twitter.getMessages", "Will NOT get recent messages."
+        if not checkAuth "Twitter.getMessages", "Will NOT get recent messages."
             return
 
         # If only one arguments is passed and it's a function, assume it's the callback.
@@ -137,16 +151,6 @@ class Twitter
                 callback null, result if callback?
                 if settings.general.debug
                     logger.info "Expresser", "Twitter.getMessages", "Retrieved #{data.length} messages."
-
-
-    # HELPER METHODS
-    # --------------------------------------------------------------------------
-
-    # If `auth` is false and a request is made, log a warning saying it can't proceed.
-    logNoAuth: (title, msg) =>
-        if settings.general.debug
-            logger.warn "Expresser", title, "Not authenticated!", msg
-            return
 
 
 # Singleton implementation
