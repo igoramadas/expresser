@@ -4,16 +4,59 @@
 
 class Utils
 
+    fs = require "fs"
     moment = require "moment"
     os = require "os"
+    path = require "path"
     settings = require "./settings.coffee"
 
 
     # SETTINGS UTILS
     # --------------------------------------------------------------------------
 
+    # Helper to load values from the specified settings.json file. If no `filename` is passed,
+    # it will try loading a `settings.json` file from the local folder, then the root folder.
+    loadSettingsFromJson: (filename) =>
+        if not filename? or filename is ""
+            filename =  path.dirname(require.main.filename) + "/settings.json"
+            loadDefault = true
+        else
+            loadDefault = false
+
+        # Check if file exists.
+        if fs.existsSync?
+            hasJson = fs.existsSync filename
+        else
+            hasJson = path.existsSync filename
+
+        # If `settings.json` does not exist on root, try on local path.
+        if not hasJson and loadDefault
+            filename = __dirname + "/settings.json"
+
+            if fs.existsSync?
+                hasJson = fs.existsSync filename
+            else
+                hasJson = path.existsSync filename
+
+        # Has json? Load it.
+        if hasJson
+            settingsJson = fs.readFileSync filename, {encoding: "utf8"}
+            settingsJson = @minifyJson settingsJson
+            settingsJson = JSON.parse settingsJson
+
+            # Helper function to overwrite settings.
+            xtend = (source, target) ->
+                for prop, value of source
+                    if value?.constructor is Object
+                        target[prop] = {} if not target[prop]?
+                        xtend source[prop], target[prop]
+                    else
+                        target[prop] = source[prop]
+
+            xtend settingsJson, settings
+
     # Update settings based on Cloud Environmental variables.
-    updateSettingsFromPaaS: ->
+    updateSettingsFromPaaS: =>
         env = process.env
 
         # Temporary variables with current values.

@@ -3,20 +3,19 @@
 # All server settings for the app are set on this file. Settings can be overriden
 # by creating a settings.json file with the specified keys and values, for example:
 # {
-#   "General": {
+#   "general": {
 #     "debug": true,
 #     "appTitle": "A Super Cool App"
 #   },
-#   "Firewall" {
+#   "firewall" {
 #     "enabled": false
 #   }
 # }
 # Please note that the settings.json must ne located on the root of your app!
 
-fs = require "fs"
-path = require "path"
-
 class Settings
+
+    fs = require "fs"
 
     # GENERAL
     # -------------------------------------------------------------------------
@@ -188,7 +187,7 @@ class Settings
         # Set `uncaughtException` to true to bind the logger to the `uncaughtException`
         # event on the process and log all uncaught expcetions as errors.
         uncaughtException: true
-        # Save logs locally? The path to the logs folder is set above under the `Settings.Path.logsDir` key.
+        # Save logs locally? The path to the logs folder is set above under the `path.logsDir` key.
         local:
             enabled: true
             # The bufferInterval defines the delay in between disk saves, in milliseconds.
@@ -239,49 +238,11 @@ class Settings
         retryInterval: 600
 
 
-    # SETTINGS.JSON
-    # -------------------------------------------------------------------------
-
-    # Helper to load values from the specified settings.json file.
-    loadFromJson: (filename) =>
-        settingsJson = require filename
-
-        # Helper function to overwrite settings.
-        xtend = (source, target) ->
-            for prop, value of source
-                if value?.constructor is Object
-                    target[prop] = {} if not target[prop]?
-                    xtend source[prop], target[prop]
-                else
-                    target[prop] = source[prop]
-
-        xtend settingsJson, this
-
-
 # Singleton implementation
 # -----------------------------------------------------------------------------
 Settings.getInstance = ->
     if not @instance?
         @instance = new Settings()
-
-        # Load from server root.
-        filename =  path.dirname(require.main.filename) + "/settings.json"
-        if fs.existsSync?
-            hasJson = fs.existsSync filename
-        else
-            hasJson = path.existsSync filename
-
-        # If `settings.json` does not exist on root, try on local path.
-        if not hasJson
-            filename = __dirname + "/settings.json"
-        if fs.existsSync?
-            hasJson = fs.existsSync filename
-        else
-            hasJson = path.existsSync filename
-
-        # Has json? Load it.
-        if hasJson
-            @instance.loadFromJson filename
 
         # Set debug in case it has not been set.
         if not @instance.general.debug?
