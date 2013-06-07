@@ -40,10 +40,16 @@ class Utils
 
         # Has json? Load it. Try using UTF8 first, if failed, use ASCII.
         if hasJson
-            try
-                settingsJson = fs.readFileSync filename, {encoding: "utf8"}
-            catch ex
-                settingsJson = fs.readFileSync filename, {encoding: "ascii"}
+            if process.versions.node.indexOf(".10.") > 0
+                try
+                    settingsJson = fs.readFileSync filename, {encoding: "utf8"}
+                catch ex
+                    settingsJson = fs.readFileSync filename, {encoding: "ascii"}
+            else
+                try
+                    settingsJson = fs.readFileSync filename, "utf8"
+                catch ex
+                    settingsJson = fs.readFileSync filename, "ascii"
 
             # Parse the JSON file.
             settingsJson = @minifyJson settingsJson

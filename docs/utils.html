@@ -164,12 +164,21 @@ it will try loading a <code>settings.json</code> file from the local folder, the
         
       
         
-        <p>Has json? Load it.</p>
+        <p>Has json? Load it. Try using UTF8 first, if failed, use ASCII.</p>
 
         
           <div class='highlight'><pre>        <span class="keyword">if</span> hasJson
-            settingsJson = fs.readFileSync filename, {encoding: <span class="string">"utf8"</span>}
-            settingsJson = <span class="property">@minifyJson</span> settingsJson
+            <span class="keyword">try</span>
+                settingsJson = fs.readFileSync filename, {encoding: <span class="string">"utf8"</span>}
+            <span class="keyword">catch</span> ex
+                settingsJson = fs.readFileSync filename, {encoding: <span class="string">"ascii"</span>}</pre></div>
+        
+      
+        
+        <p>Parse the JSON file.</p>
+
+        
+          <div class='highlight'><pre>            settingsJson = <span class="property">@minifyJson</span> settingsJson
             settingsJson = JSON.parse settingsJson</pre></div>
         
       
