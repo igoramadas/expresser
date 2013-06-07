@@ -197,19 +197,6 @@ New Relic agent but ONLY if not running under localhost.</p>
         
       
         
-        <p>Check if uncaught exceptions should be logged. If so, try logging unhandled
-exceptions using the logger, otherwise log to the console.</p>
-
-        
-          <div class='highlight'><pre>        <span class="keyword">if</span> settings.logger.uncaughtException
-            process.<span class="literal">on</span> <span class="string">"uncaughtException"</span>, (err) -&gt;
-                <span class="keyword">try</span>
-                    logger.error <span class="string">"Expresser"</span>, <span class="string">"Unhandled exception!"</span>, err.stack
-                <span class="keyword">catch</span> ex
-                    console.error <span class="string">"Expresser"</span>, <span class="string">"Unhandled exception!"</span>, Date(Date.now()), err.stack, ex</pre></div>
-        
-      
-        
         <p>Log proccess termination to the console. This will force flush any buffered logs to disk.</p>
 
         
