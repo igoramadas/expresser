@@ -38,9 +38,14 @@ class Utils
             else
                 hasJson = path.existsSync filename
 
-        # Has json? Load it.
+        # Has json? Load it. Try using UTF8 first, if failed, use ASCII.
         if hasJson
-            settingsJson = fs.readFileSync filename, {encoding: "utf8"}
+            try
+                settingsJson = fs.readFileSync filename, {encoding: "utf8"}
+            catch ex
+                settingsJson = fs.readFileSync filename, {encoding: "ascii"}
+
+            # Parse the JSON file.
             settingsJson = @minifyJson settingsJson
             settingsJson = JSON.parse settingsJson
 
