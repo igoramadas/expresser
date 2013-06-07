@@ -115,13 +115,77 @@
         
           <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Utils</span></span>
 
+    fs = require <span class="string">"fs"</span>
+    moment = require <span class="string">"moment"</span>
     os = require <span class="string">"os"</span>
+    path = require <span class="string">"path"</span>
     settings = require <span class="string">"./settings.coffee"</span></pre></div>
         
       
         
         <h2>SETTINGS UTILS</h2>
 
+        
+      
+        
+        <p>Helper to load values from the specified settings.json file. If no <code>filename</code> is passed,
+it will try loading a <code>settings.json</code> file from the local folder, then the root folder.</p>
+
+        
+          <div class='highlight'><pre>    loadSettingsFromJson: (filename) =&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> filename? <span class="keyword">or</span> filename <span class="keyword">is</span> <span class="string">""</span>
+            filename =  path.dirname(require.main.filename) + <span class="string">"/settings.json"</span>
+            loadDefault = <span class="literal">true</span>
+        <span class="keyword">else</span>
+            loadDefault = <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>Check if file exists.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> fs.existsSync?
+            hasJson = fs.existsSync filename
+        <span class="keyword">else</span>
+            hasJson = path.existsSync filename</pre></div>
+        
+      
+        
+        <p>If <code>settings.json</code> does not exist on root, try on local path.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> hasJson <span class="keyword">and</span> loadDefault
+            filename = __dirname + <span class="string">"/settings.json"</span>
+
+            <span class="keyword">if</span> fs.existsSync?
+                hasJson = fs.existsSync filename
+            <span class="keyword">else</span>
+                hasJson = path.existsSync filename</pre></div>
+        
+      
+        
+        <p>Has json? Load it.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> hasJson
+            settingsJson = fs.readFileSync filename, {encoding: <span class="string">"utf8"</span>}
+            settingsJson = <span class="property">@minifyJson</span> settingsJson
+            settingsJson = JSON.parse settingsJson</pre></div>
+        
+      
+        
+        <p>Helper function to overwrite settings.</p>
+
+        
+          <div class='highlight'><pre>            <span class="function"><span class="title">xtend</span></span> = (source, target) -&gt;
+                <span class="keyword">for</span> prop, value <span class="keyword">of</span> source
+                    <span class="keyword">if</span> value?.constructor <span class="keyword">is</span> Object
+                        target[prop] = {} <span class="keyword">if</span> <span class="keyword">not</span> target[prop]?
+                        xtend source[prop], target[prop]
+                    <span class="keyword">else</span>
+                        target[prop] = source[prop]
+
+            xtend settingsJson, settings</pre></div>
         
       
         
@@ -235,7 +299,7 @@
         <p>Return the first valid server IPv4 address.</p>
 
         
-          <div class='highlight'><pre>    getServerIP: =&gt;
+          <div class='highlight'><pre>    getServerIP: -&gt;
         ifaces = os.networkInterfaces()
         result = <span class="string">""</span></pre></div>
         
@@ -293,7 +357,7 @@
         <p>Get the client / browser IP, even when behind proxies. Works for http and socket requests.</p>
 
         
-          <div class='highlight'><pre>    getClientIP: (reqOrSocket) =&gt;
+          <div class='highlight'><pre>    getClientIP: (reqOrSocket) -&gt;
         <span class="keyword">if</span> <span class="keyword">not</span> reqOrSocket?
             <span class="keyword">return</span> <span class="literal">null</span></pre></div>
         
@@ -322,7 +386,7 @@
         <p>Get the client&#39;s device identifier string based on the user agent.</p>
 
         
-          <div class='highlight'><pre>    getClientDevice: (req) =&gt;
+          <div class='highlight'><pre>    getClientDevice: (req) -&gt;
         ua = req.headers[<span class="string">"user-agent"</span>]</pre></div>
         
       
@@ -360,6 +424,125 @@
 
         
           <div class='highlight'><pre>        <span class="keyword">return</span> <span class="string">"desktop"</span></pre></div>
+        
+      
+        
+        <h2>DATA UTILS</h2>
+
+        
+      
+        
+        <p>Minify the passed JSON value by removing comments, unecessary white spaces etc.</p>
+
+        
+          <div class='highlight'><pre>    minifyJson: (source) -&gt;
+        source = JSON.stringify source <span class="keyword">if</span> <span class="keyword">typeof</span> source <span class="keyword">is</span> <span class="string">"object"</span>
+        index = <span class="number">0</span>
+        length = source.length
+        result = <span class="string">""</span>
+        symbol = <span class="literal">undefined</span>
+        position = <span class="literal">undefined</span></pre></div>
+        
+      
+        
+        <p>Main iterator.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">while</span> index &lt; length
+
+            symbol = source.charAt(index)
+            <span class="keyword">switch</span> symbol</pre></div>
+        
+      
+        
+        <p>Ignore whitespace tokens. According to ES 5.1 section 15.12.1.1,
+whitespace tokens include tabs, carriage returns, line feeds, and
+space characters.</p>
+
+        
+          <div class='highlight'><pre>                <span class="keyword">when</span> <span class="string">"\t"</span>, <span class="string">"\r"</span>
+                , <span class="string">"\n"</span>
+                , <span class="string">" "</span>
+                    index += <span class="number">1</span></pre></div>
+        
+      
+        
+        <p>Ignore line and block comments.</p>
+
+        
+          <div class='highlight'><pre>                <span class="keyword">when</span> <span class="string">"/"</span>
+                    symbol = source.charAt(index += <span class="number">1</span>)
+                    <span class="keyword">switch</span> symbol</pre></div>
+        
+      
+        
+        <p>Line comments.</p>
+
+        
+          <div class='highlight'><pre>                        <span class="keyword">when</span> <span class="string">"/"</span>
+                            position = source.indexOf(<span class="string">"\n"</span>, index)</pre></div>
+        
+      
+        
+        <p>Check for CR-style line endings.</p>
+
+        
+          <div class='highlight'><pre>                            position = source.indexOf(<span class="string">"\r"</span>, index)  <span class="keyword">if</span> position &lt; <span class="number">0</span>
+                            index = (<span class="keyword">if</span> position &gt; -<span class="number">1</span> <span class="keyword">then</span> position <span class="keyword">else</span> length)</pre></div>
+        
+      
+        
+        <p>Block comments.</p>
+
+        
+          <div class='highlight'><pre>                        <span class="keyword">when</span> <span class="string">"*"</span>
+                            position = source.indexOf(<span class="string">"*/"</span>, index)
+                            <span class="keyword">if</span> position &gt; -<span class="number">1</span></pre></div>
+        
+      
+        
+        <p>Advance the scanner&#39;s position past the end of the comment.</p>
+
+        
+          <div class='highlight'><pre>                                index = position += <span class="number">2</span>
+                                <span class="keyword">break</span>
+                            <span class="keyword">throw</span> SyntaxError(<span class="string">"Unterminated block comment."</span>)
+                        <span class="keyword">else</span>
+                            <span class="keyword">throw</span> SyntaxError(<span class="string">"Invalid comment."</span>)</pre></div>
+        
+      
+        
+        <p>Parse strings separately to ensure that any whitespace characters and
+JavaScript-style comments within them are preserved.</p>
+
+        
+          <div class='highlight'><pre>                <span class="keyword">when</span> <span class="string">"\""</span>
+                    position = index
+                    <span class="keyword">while</span> index &lt; length
+                        symbol = source.charAt(index += <span class="number">1</span>)
+                        <span class="keyword">if</span> symbol <span class="keyword">is</span> <span class="string">"\\"</span></pre></div>
+        
+      
+        
+        <p>Skip past escaped characters.</p>
+
+        
+          <div class='highlight'><pre>                            index += <span class="number">1</span>
+                        <span class="keyword">else</span> <span class="keyword">break</span>  <span class="keyword">if</span> symbol <span class="keyword">is</span> <span class="string">"\""</span>
+                    <span class="keyword">if</span> source.charAt(index) <span class="keyword">is</span> <span class="string">"\""</span>
+                        result += source.slice(position, index += <span class="number">1</span>)
+                        <span class="keyword">break</span>
+                    <span class="keyword">throw</span> SyntaxError(<span class="string">"Unterminated string."</span>)</pre></div>
+        
+      
+        
+        <p>Preserve all other characters.</p>
+
+        
+          <div class='highlight'><pre>                <span class="keyword">else</span>
+                    result += symbol
+                    index += <span class="number">1</span>
+        <span class="keyword">return</span> result</pre></div>
         
       
         

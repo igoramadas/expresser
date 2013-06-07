@@ -113,21 +113,20 @@
         <p>All server settings for the app are set on this file. Settings can be overriden
 by creating a settings.json file with the specified keys and values, for example:
 {
-  &quot;General&quot;: {
+  &quot;general&quot;: {
     &quot;debug&quot;: true,
     &quot;appTitle&quot;: &quot;A Super Cool App&quot;
   },
-  &quot;Firewall&quot; {
+  &quot;firewall&quot; {
     &quot;enabled&quot;: false
   }
 }
 Please note that the settings.json must ne located on the root of your app!</p>
 
         
-          <div class='highlight'><pre>fs = require <span class="string">"fs"</span>
-path = require <span class="string">"path"</span>
+          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Settings</span></span>
 
-<span class="class"><span class="keyword">class</span> <span class="title">Settings</span></span></pre></div>
+    fs = require <span class="string">"fs"</span></pre></div>
         
       
         
@@ -665,7 +664,7 @@ event on the process and log all uncaught expcetions as errors.</p>
         
       
         
-        <p>Save logs locally? The path to the logs folder is set above under the <code>Settings.Path.logsDir</code> key.</p>
+        <p>Save logs locally? The path to the logs folder is set above under the <code>path.logsDir</code> key.</p>
 
         
           <div class='highlight'><pre>        local:
@@ -748,6 +747,13 @@ at <a href="http://dev.twitter.com">http://dev.twitter.com</a> and set the prope
         
       
         
+        <p>Enable the Twitter module?</p>
+
+        
+          <div class='highlight'><pre>        enabled: <span class="literal">true</span></pre></div>
+        
+      
+        
         <p>Your OAuth access secret. This can be generated automatically for your
 account on you application details page.</p>
 
@@ -786,34 +792,6 @@ in case the authentication fails.</p>
         
       
         
-        <h2>SETTINGS.JSON</h2>
-
-        
-      
-        
-        <p>Helper to load values from the specified settings.json file.</p>
-
-        
-          <div class='highlight'><pre>    loadFromJson: (filename) =&gt;
-        settingsJson = require filename</pre></div>
-        
-      
-        
-        <p>Helper function to overwrite settings.</p>
-
-        
-          <div class='highlight'><pre>        <span class="function"><span class="title">xtend</span></span> = (source, target) -&gt;
-            <span class="keyword">for</span> prop, value <span class="keyword">of</span> source
-                <span class="keyword">if</span> value?.constructor <span class="keyword">is</span> Object
-                    target[prop] = {} <span class="keyword">if</span> <span class="keyword">not</span> target[prop]?
-                    xtend source[prop], target[prop]
-                <span class="keyword">else</span>
-                    target[prop] = source[prop]
-
-        xtend settingsJson, <span class="keyword">this</span></pre></div>
-        
-      
-        
         <h2>Singleton implementation</h2>
 
         
@@ -824,37 +802,6 @@ in case the authentication fails.</p>
           <div class='highlight'><pre>Settings.<span class="function"><span class="title">getInstance</span></span> = -&gt;
     <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
         <span class="property">@instance</span> = <span class="keyword">new</span> Settings()</pre></div>
-        
-      
-        
-        <p>Load from server root.</p>
-
-        
-          <div class='highlight'><pre>        filename =  path.dirname(require.main.filename) + <span class="string">"/settings.json"</span>
-        <span class="keyword">if</span> fs.existsSync?
-            hasJson = fs.existsSync filename
-        <span class="keyword">else</span>
-            hasJson = path.existsSync filename</pre></div>
-        
-      
-        
-        <p>If <code>settings.json</code> does not exist on root, try on local path.</p>
-
-        
-          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> hasJson
-            filename = __dirname + <span class="string">"/settings.json"</span>
-        <span class="keyword">if</span> fs.existsSync?
-            hasJson = fs.existsSync filename
-        <span class="keyword">else</span>
-            hasJson = path.existsSync filename</pre></div>
-        
-      
-        
-        <p>Has json? Load it.</p>
-
-        
-          <div class='highlight'><pre>        <span class="keyword">if</span> hasJson
-            <span class="property">@instance</span>.loadFromJson filename</pre></div>
         
       
         

@@ -140,13 +140,25 @@ If you need help, check the project page at <a href="http://expresser.codeplex.c
         
       
         
-        <p>Helper to init all modules. Logger first, then general modules, and finally the App.</p>
+        <p>Helper to init all modules. Load settings first, then Logger, then general modules, and finally the App.</p>
 
         
           <div class='highlight'><pre>    init: =&gt;
-        <span class="property">@logger</span>.init()
+        <span class="property">@utils</span>.loadSettingsFromJson()</pre></div>
+        
+      
+        
+        <p>Init the Logger.</p>
 
-        <span class="property">@database</span>.init()
+        
+          <div class='highlight'><pre>        <span class="property">@logger</span>.init()</pre></div>
+        
+      
+        
+        <p>Init general modules.</p>
+
+        
+          <div class='highlight'><pre>        <span class="property">@database</span>.init()
         <span class="property">@mail</span>.init()
         <span class="property">@twitter</span>.init()</pre></div>
         

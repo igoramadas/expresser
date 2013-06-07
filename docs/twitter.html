@@ -116,6 +116,7 @@ Parameters on <a href="settings.coffee">settings.html</a>: Settings.Twitter</p>
         
           <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Twitter</span></span>
 
+    lodash = require <span class="string">"lodash"</span>
     logger = require <span class="string">"./logger.coffee"</span>
     moment = require <span class="string">"moment"</span>
     settings = require <span class="string">"./settings.coffee"</span>
@@ -170,6 +171,27 @@ Parameters on <a href="settings.coffee">settings.html</a>: Settings.Twitter</p>
         
       
         
+        <p>Helper to check and log when the module hasn&#39;t authenticated or is not enabled.
+This is called before any Twitter interaction.</p>
+
+        
+          <div class='highlight'><pre>    <span class="function"><span class="title">checkAuth</span></span> = (title, msg) -&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> settings.twitter.enabled
+            logger.warn <span class="string">"Expresser"</span>, title, <span class="string">"The Twitter module is not enabled!"</span>
+            <span class="keyword">return</span> <span class="literal">false</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> auth
+            logger.warn <span class="string">"Expresser"</span>, title, <span class="string">"Not authenticated!"</span>, msg
+            <span class="keyword">return</span> <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>Enabled and authenticated, so return true.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">return</span> <span class="literal">true</span></pre></div>
+        
+      
+        
         <h2>INIT</h2>
 
         
@@ -180,29 +202,34 @@ properly set on the <a href="settings.html">settings</a>.</p>
 
         
           <div class='highlight'><pre>    init: =&gt;
-        <span class="keyword">if</span> settings.twitter.consumerSecret? <span class="keyword">and</span> settings.twitter.accessSecret? <span class="keyword">and</span> settings.twitter.accessSecret <span class="keyword">isnt</span> <span class="string">""</span>
-            keys =
-                consumer_key: settings.twitter.consumerKey,
-                consumer_secret: settings.twitter.consumerSecret,
-                access_token_key: settings.twitter.accessToken,
-                access_token_secret: settings.twitter.accessSecret</pre></div>
+        <span class="keyword">if</span> settings.twitter.enabled
+
+            consumerOk = settings.twitter.consumerKey? <span class="keyword">and</span> settings.twitter.consumerSecret? <span class="keyword">and</span> settings.twitter.consumerSecret <span class="keyword">isnt</span> <span class="string">""</span>
+            accessOk = settings.twitter.accessToken? <span class="keyword">and</span> settings.twitter.accessSecret? <span class="keyword">and</span> settings.twitter.accessSecret <span class="keyword">isnt</span> <span class="string">""</span>
+
+            <span class="keyword">if</span> consumerOk <span class="keyword">and</span> accessOk
+                keys =
+                    consumer_key: settings.twitter.consumerKey,
+                    consumer_secret: settings.twitter.consumerSecret,
+                    access_token_key: settings.twitter.accessToken,
+                    access_token_secret: settings.twitter.accessSecret</pre></div>
         
       
         
         <p>Create the ntwitter object.</p>
 
         
-          <div class='highlight'><pre>            twit = <span class="keyword">new</span> twitter keys</pre></div>
+          <div class='highlight'><pre>                twit = <span class="keyword">new</span> twitter keys</pre></div>
         
       
         
         <p>Authenticate on Twitter.</p>
 
         
-          <div class='highlight'><pre>            authenticate()
+          <div class='highlight'><pre>                authenticate()
 
-        <span class="keyword">else</span> <span class="keyword">if</span> settings.general.debug
-            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Twitter.init"</span>, <span class="string">"No credentials were set."</span>, <span class="string">"Twitter module won't work."</span></pre></div>
+            <span class="keyword">else</span> <span class="keyword">if</span> settings.general.debug
+                logger.warn <span class="string">"Expresser"</span>, <span class="string">"Twitter.init"</span>, <span class="string">"No credentials were set."</span>, <span class="string">"Twitter module won't work."</span></pre></div>
         
       
         
@@ -216,8 +243,7 @@ it will get triggered with the corresponding status ID, or null if failed.</p>
 
         
           <div class='highlight'><pre>    postStatus: (message, callback) =&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> auth
-            <span class="property">@logNoAuth</span> <span class="string">"Twitter.postStatus"</span>, <span class="string">"Will NOT post status to Twitter."</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> checkAuth <span class="string">"Twitter.postStatus"</span>, <span class="string">"Will NOT post status to Twitter."</span>
             <span class="keyword">return</span></pre></div>
         
       
@@ -229,7 +255,8 @@ it will get triggered with the corresponding status ID, or null if failed.</p>
             <span class="keyword">if</span> err?
                 logger.error <span class="string">"Expresser"</span>, <span class="string">"Twitter.postStatus"</span>, <span class="string">"Failed: <span class="subst">#{message}</span>"</span>, err
             <span class="keyword">else</span> <span class="keyword">if</span> settings.general.debug
-                logger.info <span class="string">"Expresser"</span>, <span class="string">"Twitter.postStatus"</span>, <span class="string">"Posted, ID <span class="subst">#{data.id}</span>: <span class="subst">#{message}</span>"</span></pre></div>
+                logger.info <span class="string">"Expresser"</span>, <span class="string">"Twitter.postStatus"</span>, <span class="string">"Posted, ID <span class="subst">#{data.id}</span>: <span class="subst">#{message}</span>"</span>
+            callback err, data <span class="keyword">if</span> callback?</pre></div>
         
       
         
@@ -243,8 +270,7 @@ specified, it will get triggered passing the sent message ID, or null if failed.
 
         
           <div class='highlight'><pre>    sendMessage: (message, user, callback) =&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> auth
-            <span class="property">@logNoAuth</span> <span class="string">"Twitter.sendMessage"</span>, <span class="string">"Will NOT send message to <span class="subst">#{user}</span>."</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> checkAuth <span class="string">"Twitter.sendMessage"</span>, <span class="string">"Will NOT send message to <span class="subst">#{user}</span>."</span>
             <span class="keyword">return</span></pre></div>
         
       
@@ -254,12 +280,10 @@ specified, it will get triggered passing the sent message ID, or null if failed.
         
           <div class='highlight'><pre>        twit.sendDirectMessage {<span class="string">"screen_name"</span>: user, <span class="string">"text"</span>: message}, (err, data) =&gt;
             <span class="keyword">if</span> err?
-                callback <span class="literal">null</span> <span class="keyword">if</span> callback?
                 logger.error <span class="string">"Expresser"</span>, <span class="string">"Twitter.sendMessage"</span>, <span class="string">"Send to <span class="subst">#{user}</span> FAILED."</span>, message, err
-            <span class="keyword">else</span>
-                callback data.id <span class="keyword">if</span> callback?
-                <span class="keyword">if</span> settings.general.debug
-                    logger.info <span class="string">"Expresser"</span>, <span class="string">"Twitter.sendMessage"</span>, <span class="string">"Sent to <span class="subst">#{user}</span>."</span>, message</pre></div>
+            <span class="keyword">else</span> <span class="keyword">if</span> settings.general.debug
+                logger.info <span class="string">"Expresser"</span>, <span class="string">"Twitter.sendMessage"</span>, <span class="string">"Sent to <span class="subst">#{user}</span>."</span>, message
+            callback err, data <span class="keyword">if</span> callback?</pre></div>
         
       
         
@@ -268,8 +292,7 @@ get triggered passing true or false.</p>
 
         
           <div class='highlight'><pre>    destroyMessage: (id, callback) =&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> auth
-            <span class="property">@logNoAuth</span> <span class="string">"Twitter.destroyMessage"</span>, <span class="string">"Will NOT destroy message <span class="subst">#{id}</span>."</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> checkAuth <span class="string">"Twitter.destroyMessage"</span>, <span class="string">"Will NOT destroy message <span class="subst">#{id}</span>."</span>
             <span class="keyword">return</span></pre></div>
         
       
@@ -279,12 +302,10 @@ get triggered passing true or false.</p>
         
           <div class='highlight'><pre>        twit.destroyDirectMessage id, (err, data) =&gt;
             <span class="keyword">if</span> err?
-                callback <span class="literal">false</span> <span class="keyword">if</span> callback?
                 logger.error <span class="string">"Expresser"</span>, <span class="string">"Twitter.destroyMessage"</span>, <span class="string">"<span class="subst">#{id}</span> FAILED."</span>, err
-            <span class="keyword">else</span>
-                callback <span class="literal">true</span> <span class="keyword">if</span> callback?
-                <span class="keyword">if</span> settings.general.debug
-                    logger.info <span class="string">"Expresser"</span>, <span class="string">"Twitter.destroyMessage"</span>, <span class="string">"<span class="subst">#{id}</span> SUCCESS."</span></pre></div>
+            <span class="keyword">else</span> <span class="keyword">if</span> settings.general.debug
+                logger.info <span class="string">"Expresser"</span>, <span class="string">"Twitter.destroyMessage"</span>, <span class="string">"<span class="subst">#{id}</span> SUCCESS."</span>
+            callback err, data <span class="keyword">if</span> callback?</pre></div>
         
       
         
@@ -294,8 +315,7 @@ object (if any) and the messages result.</p>
 
         
           <div class='highlight'><pre>    getMessages: (filter, callback) =&gt;
-        <span class="keyword">if</span> <span class="keyword">not</span> auth
-            <span class="property">@logNoAuth</span> <span class="string">"Twitter.getMessages"</span>, <span class="string">"Will NOT get recent messages."</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> checkAuth <span class="string">"Twitter.getMessages"</span>, <span class="string">"Will NOT get recent messages."</span>
             <span class="keyword">return</span></pre></div>
         
       
@@ -305,7 +325,7 @@ object (if any) and the messages result.</p>
         
           <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> filter?
             filter = {}
-        <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">typeof</span> filter <span class="keyword">is</span> <span class="string">"function"</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> lodash.isFunction filter
             callback = filter</pre></div>
         
       
@@ -315,27 +335,10 @@ object (if any) and the messages result.</p>
         
           <div class='highlight'><pre>        twit.getDirectMessages filter, (err, data) =&gt;
             <span class="keyword">if</span> err?
-                callback err, <span class="literal">null</span> <span class="keyword">if</span> callback?
                 logger.error <span class="string">"Expresser"</span>, <span class="string">"Twitter.getMessages"</span>, <span class="string">"Could NOT retrieve direct messages."</span>, err
-            <span class="keyword">else</span>
-                callback <span class="literal">null</span>, result <span class="keyword">if</span> callback?
-                <span class="keyword">if</span> settings.general.debug
-                    logger.info <span class="string">"Expresser"</span>, <span class="string">"Twitter.getMessages"</span>, <span class="string">"Retrieved <span class="subst">#{data.length}</span> messages."</span></pre></div>
-        
-      
-        
-        <h2>HELPER METHODS</h2>
-
-        
-      
-        
-        <p>If <code>auth</code> is false and a request is made, log a warning saying it can&#39;t proceed.</p>
-
-        
-          <div class='highlight'><pre>    logNoAuth: (title, msg) =&gt;
-        <span class="keyword">if</span> settings.general.debug
-            logger.warn <span class="string">"Expresser"</span>, title, <span class="string">"Not authenticated!"</span>, msg
-            <span class="keyword">return</span></pre></div>
+            <span class="keyword">else</span> <span class="keyword">if</span> settings.general.debug
+                logger.info <span class="string">"Expresser"</span>, <span class="string">"Twitter.getMessages"</span>, <span class="string">"Retrieved <span class="subst">#{data.length}</span> messages."</span>
+            callback err, data <span class="keyword">if</span> callback?</pre></div>
         
       
         
