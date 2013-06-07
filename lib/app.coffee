@@ -51,15 +51,6 @@ class App
         # Require logger.
         logger = require "./logger.coffee"
 
-        # Check if uncaught exceptions should be logged. If so, try logging unhandled
-        # exceptions using the logger, otherwise log to the console.
-        if settings.logger.uncaughtException
-            process.on "uncaughtException", (err) ->
-                try
-                    logger.error "Expresser", "Unhandled exception!", err.stack
-                catch ex
-                    console.error "Expresser", "Unhandled exception!", Date(Date.now()), err.stack, ex
-
         # Log proccess termination to the console. This will force flush any buffered logs to disk.
         process.on "exit", (sig) ->
             console.warn "Expresser", "Terminating Expresser app...", Date(Date.now()), sig

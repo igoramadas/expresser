@@ -78,9 +78,18 @@ class Logger
         else
             ipInfo = "No server IP set."
 
+        # Check if uncaught exceptions should be logged. If so, try logging unhandled
+        # exceptions using the logger, otherwise log to the console.
+        if @settings.logger.uncaughtException
+            process.on "uncaughtException", (err) ->
+                try
+                    @logger.error "Expresser", "Unhandled exception!", err.stack
+                catch ex
+                    console.error "Expresser", "Unhandled exception!", Date(Date.now()), err.stack, ex
+
         # Start logging!
         if not localBuffer? and not logentries? and not loggly?
-            @warn "Expresser", "Logger.init", "Local, Logentries and Loggly are not enabled.", "Logger module will only log to the console!"
+            @warn "Expresser", "Logger.init", "No transports enabled.", "Logger module will only log to the console!"
         else
             @info "Expresser", "Logger.init", activeServices.join(), ipInfo
 

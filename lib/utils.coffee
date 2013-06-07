@@ -100,9 +100,9 @@ class Utils
         logentriesToken = env.LOGENTRIES_TOKEN
         logglyToken = env.LOGGLY_TOKEN
         logglySubdomain = env.LOGGLY_SUBDOMAIN
-        settings.logger.Logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
-        settings.logger.Loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
-        settings.logger.Loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
+        settings.logger.logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
+        settings.logger.loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
+        settings.logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
         # Check for SendGrid (email) variables.
         smtpUser = env.SENDGRID_USERNAME

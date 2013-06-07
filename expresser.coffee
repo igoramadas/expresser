@@ -19,7 +19,8 @@ class Expresser
     twitter: require "./lib/twitter.coffee"
     utils: require "./lib/utils.coffee"
 
-    # Helper to init all modules. Load settings first, then Logger, then general modules, and finally the App.
+    # Helper to init all modules. Load settings first, then Logger, then general
+    # modules, and finally the App.
     init: =>
         @utils.loadSettingsFromJson()
 
