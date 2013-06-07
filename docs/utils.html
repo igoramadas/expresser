@@ -168,10 +168,16 @@ it will try loading a <code>settings.json</code> file from the local folder, the
 
         
           <div class='highlight'><pre>        <span class="keyword">if</span> hasJson
-            <span class="keyword">try</span>
-                settingsJson = fs.readFileSync filename, {encoding: <span class="string">"utf8"</span>}
-            <span class="keyword">catch</span> ex
-                settingsJson = fs.readFileSync filename, {encoding: <span class="string">"ascii"</span>}</pre></div>
+            <span class="keyword">if</span> process.versions.node.indexOf(<span class="string">".10."</span>) &gt; <span class="number">0</span>
+                <span class="keyword">try</span>
+                    settingsJson = fs.readFileSync filename, {encoding: <span class="string">"utf8"</span>}
+                <span class="keyword">catch</span> ex
+                    settingsJson = fs.readFileSync filename, {encoding: <span class="string">"ascii"</span>}
+            <span class="keyword">else</span>
+                <span class="keyword">try</span>
+                    settingsJson = fs.readFileSync filename, <span class="string">"utf8"</span>
+                <span class="keyword">catch</span> ex
+                    settingsJson = fs.readFileSync filename, <span class="string">"ascii"</span></pre></div>
         
       
         
