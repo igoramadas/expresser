@@ -54,8 +54,16 @@ class Logger
         # Check if logs should be saved locally. If so, create the logs buffer and a timer to
         # flush logs to disk every X milliseconds.
         if settings.logger.local.enabled
-            if not fs.existsSync settings.path.logsDir
-                fs.mkdirSync settings.path.logsDir
+
+            if fs.existsSync?
+                createDir = not fs.existsSync settings.path.logsDir
+            else
+                createDir = not path.existsSync settings.path.logsDir
+
+            # Create logs folder, if it doesn't exist.
+            fs.mkdirSync settings.path.logsDir if createDir
+
+            # Set local buffer.
             localBuffer = {info: [], warn: [], error: []}
             bufferDispatcher = setInterval @flushLocal, settings.logger.local.bufferInterval
             activeServices.push "Local"
