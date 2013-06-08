@@ -56,12 +56,13 @@ class Logger
         if settings.logger.local.enabled
 
             if fs.existsSync?
-                createDir = not fs.existsSync settings.path.logsDir
+                folderExists = fs.existsSync settings.path.logsDir
             else
-                createDir = not path.existsSync settings.path.logsDir
+                folderExists = path.existsSync settings.path.logsDir
 
             # Create logs folder, if it doesn't exist.
-            fs.mkdirSync settings.path.logsDir if createDir
+            if not folderExists
+                fs.mkdirSync settings.path.logsDir
 
             # Set local buffer.
             localBuffer = {info: [], warn: [], error: []}
@@ -88,10 +89,10 @@ class Logger
 
         # Check if uncaught exceptions should be logged. If so, try logging unhandled
         # exceptions using the logger, otherwise log to the console.
-        if @settings.logger.uncaughtException
+        if settings.logger.uncaughtException
             process.on "uncaughtException", (err) ->
                 try
-                    @logger.error "Expresser", "Unhandled exception!", err.stack
+                    @error "Expresser", "Unhandled exception!", err.stack
                 catch ex
                     console.error "Expresser", "Unhandled exception!", Date(Date.now()), err.stack, ex
 
