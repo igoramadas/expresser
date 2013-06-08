@@ -14,8 +14,4 @@ describe("Imaging Tests", function() {
         var imaging2 = require("../lib/imaging.coffee");
         imaging.singleInstance.should.equal(imaging2.singleInstance);
     });
-
-    it("Has settings defined.", function() {
-        settings.should.have.property("imaging");
-    });
 });
