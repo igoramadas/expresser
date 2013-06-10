@@ -3,6 +3,8 @@
 A Node.js platform with web, database, email, logging, twitter and firewall features, built on top of Express.
 Official project page: http://expresser.codeplex.com
 
+[![Build Status](https://travis-ci.org/igoramadas/expresser.png?branch=master)](https://travis-ci.org/igoramadas/expresser)
+
 
 ### Why Expresser?
 
