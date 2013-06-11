@@ -194,9 +194,26 @@ flush logs to disk every X milliseconds.</p>
 
         
           <div class='highlight'><pre>        <span class="keyword">if</span> settings.logger.local.enabled
-            <span class="keyword">if</span> <span class="keyword">not</span> fs.existsSync settings.path.logsDir
-                fs.mkdirSync settings.path.logsDir
-            localBuffer = {info: [], warn: [], error: []}
+
+            <span class="keyword">if</span> fs.existsSync?
+                folderExists = fs.existsSync settings.path.logsDir
+            <span class="keyword">else</span>
+                folderExists = path.existsSync settings.path.logsDir</pre></div>
+        
+      
+        
+        <p>Create logs folder, if it doesn&#39;t exist.</p>
+
+        
+          <div class='highlight'><pre>            <span class="keyword">if</span> <span class="keyword">not</span> folderExists
+                fs.mkdirSync settings.path.logsDir</pre></div>
+        
+      
+        
+        <p>Set local buffer.</p>
+
+        
+          <div class='highlight'><pre>            localBuffer = {info: [], warn: [], error: []}
             bufferDispatcher = setInterval <span class="property">@flushLocal</span>, settings.logger.local.bufferInterval
             activeServices.push <span class="string">"Local"</span></pre></div>
         
@@ -236,10 +253,10 @@ flush logs to disk every X milliseconds.</p>
 exceptions using the logger, otherwise log to the console.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="property">@settings</span>.logger.uncaughtException
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.logger.uncaughtException
             process.<span class="literal">on</span> <span class="string">"uncaughtException"</span>, (err) -&gt;
                 <span class="keyword">try</span>
-                    <span class="property">@logger</span>.error <span class="string">"Expresser"</span>, <span class="string">"Unhandled exception!"</span>, err.stack
+                    <span class="property">@error</span> <span class="string">"Expresser"</span>, <span class="string">"Unhandled exception!"</span>, err.stack
                 <span class="keyword">catch</span> ex
                     console.error <span class="string">"Expresser"</span>, <span class="string">"Unhandled exception!"</span>, Date(Date.now()), err.stack, ex</pre></div>
         

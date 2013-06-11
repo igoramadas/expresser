@@ -26,6 +26,9 @@ class Logger
     # The `serverIP` will be set on init, but only if `settings.logger.sendIP` is true.
     serverIP = null
 
+    # Timer used for automatic logs cleaning.
+    timerCleanLocal = null
+
     # Holds a list of current active logging services.
     activeServices = []
 
@@ -68,6 +71,12 @@ class Logger
             localBuffer = {info: [], warn: [], error: []}
             bufferDispatcher = setInterval @flushLocal, settings.logger.local.bufferInterval
             activeServices.push "Local"
+
+            # Check the maxAge of local logs.
+            if settings.logger.local.maxAge? and settings.logger.local.maxAge > 0
+                if timerCleanLocal?
+                    clearInterval timerCleanLocal
+                timerCleanLocal = setInterval @cleanLocal, 86400
 
         # Check if Logentries should be used, and create the Logentries objects.
         if settings.logger.logentries.enabled and settings.logger.logentries.token? and settings.logger.logentries.token isnt ""
