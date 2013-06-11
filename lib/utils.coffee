@@ -29,6 +29,15 @@ class Utils
         else
             hasJson = path.existsSync filename
 
+        # If `settings.json` does not exist on local path, try parent path.
+        if not hasJson and loadDefault
+            filename = path.resolve path.dirname(require.main.filename), "../settings.json"
+
+            if fs.existsSync?
+                hasJson = fs.existsSync filename
+            else
+                hasJson = path.existsSync filename
+
         # If `settings.json` does not exist on root, try on local path.
         if not hasJson and loadDefault
             filename = __dirname + "/settings.json"
