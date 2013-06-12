@@ -187,8 +187,6 @@ class App
         logger.error "HTTP Error", message, res
 
 
-
-
 # Singleton implementation
 # --------------------------------------------------------------------------
 App.getInstance = ->

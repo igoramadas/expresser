@@ -137,6 +137,16 @@ class Utils
         settings.mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
         settings.mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
 
+        # Get Twitter credentials from environment variables.
+        twitterConsumerKey = env.TWITTER_CONSUMER_KEY
+        twitterConsumerSecret = env.TWITTER_CONSUMER_SECRET
+        twitterAccessKey = env.TWITTER_ACCESS_KEY
+        twitterAccessSecret = env.TWITTER_ACCESS_SECRET
+        settings.twitter.consumerKey = twitterConsumerKey if twitterConsumerKey? and twitterConsumerKey isnt ""
+        settings.twitter.consumerSecret = twitterConsumerSecret if twitterConsumerSecret? and twitterConsumerSecret isnt ""
+        settings.twitter.accessToken = twitterAccessKey if twitterAccessKey? and twitterAccessKey isnt ""
+        settings.twitter.accessSecret = twitterAccessSecret if twitterAccessSecret? and twitterAccessSecret isnt ""
+
 
     # SERVER INFO UTILS
     # --------------------------------------------------------------------------
