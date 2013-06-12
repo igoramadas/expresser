@@ -120,12 +120,15 @@ class App
 
                 # Enable LDAP authentication?
                 if settings.passport.ldap.enabled
-                    ldapStrategy = (require "passport-ldap").Strategy
+                    ldapStrategy = (require "passport-ldapauth").Strategy
 
                     ldapOptions =
-                        base: settings.passport.ldap.base
-                        search: {filter: settings.passport.ldap.filter}
-                        server: {url: settings.passport.ldap.server}
+                        server:
+                            url: settings.passport.ldap.server
+                            adminDn: settings.passport.ldap.adminDn
+                            adminPassword: settings.passport.ldap.adminPassword
+                            searchBase: settings.passport.ldap.searchBase
+                            searchFilter: settings.passport.ldap.searchFilter
 
                     @passport.use new ldapStrategy ldapOptions, (profile, callback) =>
                         if not @passportAuthenticate?

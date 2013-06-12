@@ -82,10 +82,14 @@ class Settings
         ldap:
             # Enable LDAP authentication?
             enabled: false
-            # The LDAP base. Example: cn=users,dc=local.
-            base: null
+            # The LDAP admin dn. Example: cn=root.
+            adminDn: null
+            # The LDAP admin password. Example: mypass.
+            adminPassword: null
+            # The LDAP search base. Example: cn=users,dc=local.
+            searchBase: null
             # The LDAP search filter. Example: (&(l=Berlin)(email=*@zalando.de)).
-            filter: null
+            searchFilter: null
             # The LDAP server full address with hostname and port. Example: ldap://127.0.0.1:1390.
             server: null
 

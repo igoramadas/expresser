@@ -34,7 +34,7 @@
         "ntwitter": ">= 0.5.0",
         "passport":">= 0.1.16",
         "passport-http":">= 0.2.1",
-        "passport-ldap":">= 0.0.1",
+        "passport-ldapauth":">= 0.0.5",
         "socket.io": ">= 0.9.14",
         "stylus": ">= 0.32.1"
 	},
