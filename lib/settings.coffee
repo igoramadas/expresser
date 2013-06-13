@@ -66,8 +66,9 @@ class Settings
             build: true
             # Build directories?
             buildDir: false
-            # Minify JS and CSS builds?
-            minifyBuilds: true
+            # Minify JS and CSS builds? True or false. If left null, it will minify on
+            # production environments but not on development.
+            minifyBuilds: null
 
     # PASSPORT MODULE
     # -------------------------------------------------------------------------
@@ -255,6 +256,13 @@ Settings.getInstance = ->
                 @instance.general.debug = false
             else
                 @instance.general.debug = true
+
+        # Set minifyBuilds in case it has not been set.
+        if not @instance.app.connectAssets.minifyBuilds?
+            if process.env.NODE_ENV is "production"
+                @instance.app.connectAssets.minifyBuilds = true
+            else
+                @instance.app.connectAssets.minifyBuilds = false
 
     return @instance
 
