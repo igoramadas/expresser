@@ -22,7 +22,7 @@ class Expresser
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App.
     init: =>
-        @utils.loadSettingsFromJson()
+        @utils.loadDefaultSettingsFromJson()
 
         # Init the Logger.
         @logger.init()

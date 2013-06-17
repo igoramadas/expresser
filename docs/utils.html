@@ -151,6 +151,19 @@ it will try loading a <code>settings.json</code> file from the local folder, the
         
       
         
+        <p>If <code>settings.json</code> does not exist on local path, try parent path.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> hasJson <span class="keyword">and</span> loadDefault
+            filename = path.resolve path.dirname(require.main.filename), <span class="string">"../settings.json"</span>
+
+            <span class="keyword">if</span> fs.existsSync?
+                hasJson = fs.existsSync filename
+            <span class="keyword">else</span>
+                hasJson = path.existsSync filename</pre></div>
+        
+      
+        
         <p>If <code>settings.json</code> does not exist on root, try on local path.</p>
 
         
@@ -303,6 +316,20 @@ it will try loading a <code>settings.json</code> file from the local folder, the
         settings.mail.smtp.port = smtpPort <span class="keyword">if</span> smtpPort? <span class="keyword">and</span> smtpPort <span class="keyword">isnt</span> <span class="string">""</span>
         settings.mail.smtp.user = smtpUser <span class="keyword">if</span> smtpUser? <span class="keyword">and</span> smtpUser <span class="keyword">isnt</span> <span class="string">""</span>
         settings.mail.smtp.password = smtpPassword <span class="keyword">if</span> smtpPassword? <span class="keyword">and</span> smtpPassword <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
+        
+      
+        
+        <p>Get Twitter credentials from environment variables.</p>
+
+        
+          <div class='highlight'><pre>        twitterConsumerKey = env.TWITTER_CONSUMER_KEY
+        twitterConsumerSecret = env.TWITTER_CONSUMER_SECRET
+        twitterAccessKey = env.TWITTER_ACCESS_KEY
+        twitterAccessSecret = env.TWITTER_ACCESS_SECRET
+        settings.twitter.consumerKey = twitterConsumerKey <span class="keyword">if</span> twitterConsumerKey? <span class="keyword">and</span> twitterConsumerKey <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.twitter.consumerSecret = twitterConsumerSecret <span class="keyword">if</span> twitterConsumerSecret? <span class="keyword">and</span> twitterConsumerSecret <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.twitter.accessToken = twitterAccessKey <span class="keyword">if</span> twitterAccessKey? <span class="keyword">and</span> twitterAccessKey <span class="keyword">isnt</span> <span class="string">""</span>
+        settings.twitter.accessSecret = twitterAccessSecret <span class="keyword">if</span> twitterAccessSecret? <span class="keyword">and</span> twitterAccessSecret <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
         
       
         

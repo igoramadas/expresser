@@ -307,12 +307,15 @@ New Relic agent but ONLY if not running under localhost.</p>
 
         
           <div class='highlight'><pre>                <span class="keyword">if</span> settings.passport.ldap.enabled
-                    ldapStrategy = (require <span class="string">"passport-ldap"</span>).Strategy
+                    ldapStrategy = (require <span class="string">"passport-ldapauth"</span>).Strategy
 
                     ldapOptions =
-                        base: settings.passport.ldap.base
-                        search: {filter: settings.passport.ldap.filter}
-                        server: {url: settings.passport.ldap.server}
+                        server:
+                            url: settings.passport.ldap.server
+                            adminDn: settings.passport.ldap.adminDn
+                            adminPassword: settings.passport.ldap.adminPassword
+                            searchBase: settings.passport.ldap.searchBase
+                            searchFilter: settings.passport.ldap.searchFilter
 
                     <span class="property">@passport</span>.use <span class="keyword">new</span> ldapStrategy ldapOptions, (profile, callback) =&gt;
                         <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@passportAuthenticate</span>?

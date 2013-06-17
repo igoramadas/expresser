@@ -1,6 +1,7 @@
 # EXPRESSER UTILS
 # -----------------------------------------------------------------------------
-# General network, IO, client and server utilities.
+# General network, IO, client and server utilities. As this module can't reference
+# any other module but Settings, all its logging will be done to the console only.
 
 class Utils
 
@@ -14,14 +15,17 @@ class Utils
     # SETTINGS UTILS
     # --------------------------------------------------------------------------
 
-    # Helper to load values from the specified settings.json file. If no `filename` is passed,
-    # it will try loading a `settings.json` file from the local folder, then the root folder.
+    # Helper to load default `settings.json` files. This will also load the specific
+    # settings for the current NODE_ENV value.
+    loadDefaultSettingsFromJson: =>
+        @loadSettingsFromJson "settings.json"
+        currentEnv = process.env.NODE_ENV
+        currentEnv = "development" if not currentEnv? or currentEnv is ""
+        @loadSettingsFromJson "settings.#{currentEnv.toString().toLowerCase()}.json"
+
+    # Helper to load values from the specified settings file.
     loadSettingsFromJson: (filename) =>
-        if not filename? or filename is ""
-            filename =  path.dirname(require.main.filename) + "/settings.json"
-            loadDefault = true
-        else
-            loadDefault = false
+        basename = path.basename filename
 
         # Check if file exists.
         if fs.existsSync?
@@ -29,18 +33,18 @@ class Utils
         else
             hasJson = path.existsSync filename
 
-        # If `settings.json` does not exist on local path, try parent path.
-        if not hasJson and loadDefault
-            filename = path.resolve path.dirname(require.main.filename), "../settings.json"
+        # If file does not exist on local path, try parent path.
+        if not hasJson
+            filename = path.resolve path.dirname(require.main.filename), "../#{basename}"
 
             if fs.existsSync?
                 hasJson = fs.existsSync filename
             else
                 hasJson = path.existsSync filename
 
-        # If `settings.json` does not exist on root, try on local path.
-        if not hasJson and loadDefault
-            filename = __dirname + "/settings.json"
+        # If file still not found, try root path.
+        if not hasJson
+            filename = path.resolve __dirname, basename
 
             if fs.existsSync?
                 hasJson = fs.existsSync filename
@@ -74,6 +78,9 @@ class Utils
                         target[prop] = source[prop]
 
             xtend settingsJson, settings
+
+        if settings.general.debug
+            console.log "Expresser", "Utils.loadSettingsFromJson", filename
 
     # Update settings based on Cloud Environmental variables.
     updateSettingsFromPaaS: =>
@@ -146,6 +153,10 @@ class Utils
         settings.twitter.consumerSecret = twitterConsumerSecret if twitterConsumerSecret? and twitterConsumerSecret isnt ""
         settings.twitter.accessToken = twitterAccessKey if twitterAccessKey? and twitterAccessKey isnt ""
         settings.twitter.accessSecret = twitterAccessSecret if twitterAccessSecret? and twitterAccessSecret isnt ""
+
+        # Log to console.
+        if settings.general.debug
+            console.log "Expresser", "Utils.updateSettingsFromPaaS"
 
 
     # SERVER INFO UTILS

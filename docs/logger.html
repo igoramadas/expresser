@@ -151,6 +151,13 @@ Parameters on <a href="settings.coffee">settings.html</a>: Settings.Logger</p>
         
       
         
+        <p>Timer used for automatic logs cleaning.</p>
+
+        
+          <div class='highlight'><pre>    timerCleanLocal = <span class="literal">null</span></pre></div>
+        
+      
+        
         <p>Holds a list of current active logging services.</p>
 
         
@@ -216,6 +223,16 @@ flush logs to disk every X milliseconds.</p>
           <div class='highlight'><pre>            localBuffer = {info: [], warn: [], error: []}
             bufferDispatcher = setInterval <span class="property">@flushLocal</span>, settings.logger.local.bufferInterval
             activeServices.push <span class="string">"Local"</span></pre></div>
+        
+      
+        
+        <p>Check the maxAge of local logs.</p>
+
+        
+          <div class='highlight'><pre>            <span class="keyword">if</span> settings.logger.local.maxAge? <span class="keyword">and</span> settings.logger.local.maxAge &gt; <span class="number">0</span>
+                <span class="keyword">if</span> timerCleanLocal?
+                    clearInterval timerCleanLocal
+                timerCleanLocal = setInterval <span class="property">@cleanLocal</span>, <span class="number">86400</span></pre></div>
         
       
         

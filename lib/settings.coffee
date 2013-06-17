@@ -1,7 +1,7 @@
 # EXPRESSER SETTINGS
 # -----------------------------------------------------------------------------
 # All server settings for the app are set on this file. Settings can be overriden
-# by creating a settings.json file with the specified keys and values, for example:
+# by creating a `settings.json` file with the specified keys and values, for example:
 # {
 #   "general": {
 #     "debug": true,
@@ -11,7 +11,15 @@
 #     "enabled": false
 #   }
 # }
-# Please note that the settings.json must ne located on the root of your app!
+#
+# You can also create specific settings for different running environments.
+# For example to set settings on development, create `settings.development.json`
+# and for production a `settings.production.json` file. These will be parsed
+# AFTER the main `settings.json` file. Lowercased!
+#
+# Please note that the `settings.json` must ne located on the root of your app!
+#
+# More info: https://expresser.codeplex.com/wikipage?title=Settings
 
 class Settings
 
