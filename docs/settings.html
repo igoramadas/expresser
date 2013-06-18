@@ -111,7 +111,7 @@
       
         
         <p>All server settings for the app are set on this file. Settings can be overriden
-by creating a settings.json file with the specified keys and values, for example:
+by creating a <code>settings.json</code> file with the specified keys and values, for example:
 {
   &quot;general&quot;: {
     &quot;debug&quot;: true,
@@ -120,8 +120,13 @@ by creating a settings.json file with the specified keys and values, for example
   &quot;firewall&quot; {
     &quot;enabled&quot;: false
   }
-}
-Please note that the settings.json must ne located on the root of your app!</p>
+}</p>
+<p>You can also create specific settings for different running environments.
+For example to set settings on development, create <code>settings.development.json</code>
+and for production a <code>settings.production.json</code> file. These will be parsed
+AFTER the main <code>settings.json</code> file. Lowercased!</p>
+<p>Please note that the <code>settings.json</code> must ne located on the root of your app!</p>
+<p>More info: <a href="https://expresser.codeplex.com/wikipage?title=Settings">https://expresser.codeplex.com/wikipage?title=Settings</a></p>
 
         
           <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Settings</span></span>
