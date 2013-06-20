@@ -20,7 +20,36 @@ describe("Database Tests", function() {
         settings.should.have.property("database");
     });
 
-    it("Inits.", function() {
+    it("Init (connect on localhost).", function() {
+        settings.database.connString = "mongodb://127.0.0.1/expresser"
         database.init();
+    });
+
+    it("Add simple record to the database.", function(done) {
+        var callback = function(err, result) {
+            if (err) {
+                throw err;
+            } else {
+                done();
+            }
+        };
+
+        var obj = {simple: true};
+
+        database.set("test", obj, callback);
+    });
+
+    it("Add complex record to the database.", function(done) {
+        var callback = function(err, result) {
+            if (err) {
+                throw err;
+            } else {
+                done();
+            }
+        };
+
+        var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
+
+        database.set("test", obj, callback);
     });
 });
