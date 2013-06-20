@@ -7,11 +7,10 @@ chai.should();
 describe("Settings Tests", function() {
     process.env.NODE_ENV = "test";
 
-    var settings = null;
+    var settings = require("../lib/settings.coffee");
     var utils = null;
 
     before(function() {
-        settings = require("../lib/settings.coffee");
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();
     });

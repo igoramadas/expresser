@@ -8,12 +8,11 @@ describe("Sockets Tests", function() {
     process.env.NODE_ENV = "test";
 
     var env = process.env;
-    var settings = null;
+    var settings = require("../lib/settings.coffee");
     var utils = null;
     var sockets = null;
 
     before(function() {
-        settings = require("../lib/settings.coffee");
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();
 

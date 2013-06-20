@@ -9,7 +9,7 @@ describe("Logger Tests", function() {
 
     var env = process.env;
     var envSettings = env.EXPRESSER_SETTINGS;
-    var settings = null;
+    var settings = require("../lib/settings.coffee");
     var utils = null;
     var logger = null;
 
@@ -23,7 +23,6 @@ describe("Logger Tests", function() {
     }
 
     before(function() {
-        settings = require("../lib/settings.coffee");
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();
 
@@ -62,37 +61,45 @@ describe("Logger Tests", function() {
         logger.init();
     });
 
-    it("Send info logline to Logentries.", function(done) {
-        this.timeout(5000);
+    if (settings.logger.logentries.token) {
+        it("Send info logline to Logentries.", function(done) {
+            this.timeout(5000);
 
-        settings.logger.loggly.enabled = false;
-        settings.logger.local.enabled = false;
-        settings.logger.logentries.enabled = true;
+            settings.logger.loggly.enabled = false;
+            settings.logger.local.enabled = false;
+            settings.logger.logentries.enabled = true;
 
-        logger.onLogSuccess = function(result) { console.log(result); done(); };
-        logger.onLogError = function(err) { console.error(err); throw err };
-        logger.initLogentries();
-        logger.info("Expresser Logentries test.", new Date());
+            logger.onLogSuccess = function(result) { console.log(result); done(); };
+            logger.onLogError = function(err) { console.error(err); throw err };
+            logger.initLogentries();
+            logger.info("Expresser Logentries test.", new Date());
 
-        settings.logger.logentries.enabled = false;
-        logger.initLogentries();
-    });
+            settings.logger.logentries.enabled = false;
+            logger.initLogentries();
+        });
+    } else {
+        console.warn("Skipping Logentries test because token was not specified.");
+    }
 
-    it("Send info logline to Loggly.", function(done) {
-        this.timeout(5000);
+    if (settings.logger.loggly.token) {
+        it("Send info logline to Loggly.", function(done) {
+            this.timeout(5000);
 
-        settings.logger.logentries.enabled = false;
-        settings.logger.local.enabled = false;
-        settings.logger.loggly.enabled = true;
+            settings.logger.logentries.enabled = false;
+            settings.logger.local.enabled = false;
+            settings.logger.loggly.enabled = true;
 
-        logger.onLogSuccess = function(result) { console.log(result); done(); };
-        logger.onLogError = function(err) { console.error(err); throw err };
-        logger.initLoggly();
-        logger.info("Expresser Loggly test.", new Date());
+            logger.onLogSuccess = function(result) { console.log(result); done(); };
+            logger.onLogError = function(err) { console.error(err); throw err };
+            logger.initLoggly();
+            logger.info("Expresser Loggly test.", new Date());
 
-        settings.logger.loggly.enabled = false;
-        logger.initLoggly();
-    });
+            settings.logger.loggly.enabled = false;
+            logger.initLoggly();
+        });
+    } else {
+        console.warn("Skipping Loggly test because token was not specified.");
+    }
 
     it("Clear onLogSuccess and onLogError.", function() {
         logger.onLogSuccess = null;
