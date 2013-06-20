@@ -252,6 +252,14 @@ class Settings
         retryInterval: 600
 
 
+    # HELPER METHODS
+    # -------------------------------------------------------------------------
+
+    # Reset to default settings.
+    reset:
+        @instance = new Settings()
+
+
 # Singleton implementation
 # -----------------------------------------------------------------------------
 Settings.getInstance = ->

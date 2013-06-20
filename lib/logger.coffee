@@ -33,16 +33,12 @@ class Logger
     activeServices = []
 
 
-    # INIT
+    # INIT AND STOP
     # --------------------------------------------------------------------------
 
     # Init the Logger. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
     init: =>
-        if bufferDispatcher?
-            @flushLocal()
-            clearInterval bufferDispatcher
-
         bufferDispatcher = null
         localBuffer = null
         logentries = null
@@ -54,10 +50,36 @@ class Logger
         if settings.logger.sendIP
             serverIP = utils.getServerIP()
 
-        # Check if logs should be saved locally. If so, create the logs buffer and a timer to
-        # flush logs to disk every X milliseconds.
-        if settings.logger.local.enabled
+        # Define server IP.
+        if serverIP?
+            ipInfo = "IP #{serverIP}"
+        else
+            ipInfo = "No server IP set."
 
+        # Init transports.
+        @initLocal()
+        @initLogentries()
+        @initLoggly()
+
+        # Check if uncaught exceptions should be logged. If so, try logging unhandled
+        # exceptions using the logger, otherwise log to the console.
+        if settings.logger.uncaughtException
+            process.on "uncaughtException", (err) ->
+                try
+                    @error "Expresser", "Unhandled exception!", err.stack
+                catch ex
+                    console.error "Expresser", "Unhandled exception!", Date(Date.now()), err.stack, ex
+
+        # Start logging!
+        if not localBuffer? and not logentries? and not loggly?
+            @warn "Expresser", "Logger.init", "No transports enabled.", "Logger module will only log to the console!"
+        else
+            @info "Expresser", "Logger.init", activeServices.join(), ipInfo
+
+    # Init the Local transport. Check if logs should be saved locally. If so, create the logs buffer
+    # and a timer to flush logs to disk every X milliseconds.
+    initLocal: =>
+        if settings.logger.local.enabled
             if fs.existsSync?
                 folderExists = fs.existsSync settings.path.logsDir
             else
@@ -77,39 +99,49 @@ class Logger
                 if timerCleanLocal?
                     clearInterval timerCleanLocal
                 timerCleanLocal = setInterval @cleanLocal, 86400
+        else
+            @stopLocal()
 
-        # Check if Logentries should be used, and create the Logentries objects.
+    # Init the Logentries transport. Check if Logentries should be used, and create the Logentries objects.
+    initLogentries: =>
         if settings.logger.logentries.enabled and settings.logger.logentries.token? and settings.logger.logentries.token isnt ""
             logentries = require "node-logentries"
             loggerLogentries = logentries.logger {token: settings.logger.logentries.token, timestamp: settings.logger.sendTimestamp}
             activeServices.push "Logentries"
+        else
+            @stopLogentries()
 
-        # Check if Loggly should be used, and create the Loggly objects.
+    # Init the Loggly transport. Check if Loggly should be used, and create the Loggly objects.
+    initLoggly: =>
         if settings.logger.loggly.enabled and settings.logger.loggly.subdomain? and settings.logger.loggly.token? and settings.logger.loggly.token isnt ""
             loggly = require "loggly"
             loggerLoggly = loggly.createClient {subdomain: settings.logger.loggly.subdomain, json: true}
             activeServices.push "Loggly"
-
-        # Define server IP.
-        if serverIP?
-            ipInfo = "IP #{serverIP}"
         else
-            ipInfo = "No server IP set."
+            @stopLoggly()
 
-        # Check if uncaught exceptions should be logged. If so, try logging unhandled
-        # exceptions using the logger, otherwise log to the console.
-        if settings.logger.uncaughtException
-            process.on "uncaughtException", (err) ->
-                try
-                    @error "Expresser", "Unhandled exception!", err.stack
-                catch ex
-                    console.error "Expresser", "Unhandled exception!", Date(Date.now()), err.stack, ex
+    # Disable and remove Local transport from the list of active services.
+    stopLocal: =>
+        @flushLocal()
+        clearInterval bufferDispatcher if bufferDispatcher?
+        bufferDispatcher = null
+        localBuffer = null
+        i = activeServices.indexOf "Local"
+        activeServices.splice(i, 1) if i >= 0
 
-        # Start logging!
-        if not localBuffer? and not logentries? and not loggly?
-            @warn "Expresser", "Logger.init", "No transports enabled.", "Logger module will only log to the console!"
-        else
-            @info "Expresser", "Logger.init", activeServices.join(), ipInfo
+    # Disable and remove Logentries transport from the list of active services.
+    stopLogentries: =>
+        logentries = null
+        loggerLogentries = null
+        i = activeServices.indexOf "Logentries"
+        activeServices.splice(i, 1) if i >= 0
+
+    # Disable and remove Loggly transport from the list of active services.
+    stopLoggly: =>
+        loggly = null
+        loggerLoggly = null
+        i = activeServices.indexOf "Loggly"
+        activeServices.splice(i, 1) if i >= 0
 
 
     # LOG METHODS
