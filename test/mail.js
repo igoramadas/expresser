@@ -20,7 +20,6 @@ describe("Mail Tests", function() {
     });
 
     it("Inits.", function() {
-        console.log("Mail.init()");
         mail.init();
     });
 });

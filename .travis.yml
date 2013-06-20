@@ -1,5 +1,11 @@
 language: node_js
+services:
+  - mongodb
+env:
+  - secure: "ieZsNeOvC8qEYxfugbYaObTDPrHV6do28h7Hky5Spc9oP57kZJunSMCRg0DQ\n5sguprz/LpZoXQ72rFALVJ58oejUE22Vh0B3DvhkQIL5nwm5hE1EMsJCmkKt\nKRWRB7gxfpT7Nv+ozR+AR/VbeuwEPzyc/omLEBN8hSz8h0SUBl0="
+  - secure: "ADWmwE/KtyVRC/ffIVuAJn+gHdADwqWHRrr4U19wfzBHyrBvzQ0FM6UmZBhl\nsnmRwa/bNjusKowV1BDaHJe0+6tFWU4onkTyI2KtkTeEo6KdGQgn68hNIItB\nztg/Ghi4lq34oKiq8WOyI4Uv9DQNoocpk+ndjoyWXT0mpQ8mU0c="
 node_js:
+  - "0.11"
   - "0.10"
   - "0.8"
   - "0.6"

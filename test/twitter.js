@@ -20,7 +20,6 @@ describe("Twitter Tests", function() {
     });
 
     it("Inits.", function() {
-        console.log("Twitter.init()");
         twitter.init();
     });
 });

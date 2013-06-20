@@ -77,7 +77,8 @@ More info at https://expresser.codeplex.com/wikipage?title=Mail
 
 
 ### Sockets
-*   Wrapper for the Socket.IO module
+*   Wrapper for the Socket.IO module.
+*   Works even if your server does not support websockets.
 
 More info at https://expresser.codeplex.com/wikipage?title=Sockets
 
@@ -99,12 +100,7 @@ More info at https://expresser.codeplex.com/wikipage?title=Utils
 
 Deploying your Expresser based app to AppFog, Heroku, OpenShift and possibly any other PaaS is dead simple.
 No need to configure anything - just leave the `Settings.App.paas` setting on, and it will automatically set
-settings from environment variables. Right now the following add-ons will be automatically identified:
-
-*   App: New Relic
-*   Database: AppFog, MongoLab, MongoHQ
-*   Logging: Loggly, Logentries
-*   Mail: SendGrid, Mandrill, Mailgun
+settings from environment variables.
 
 
 ## Common questions and answers

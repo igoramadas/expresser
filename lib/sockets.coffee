@@ -27,6 +27,7 @@ class Sockets
     # the counter to increase / decrease when users connects or
     # disconnects from the app.
     init: (server) =>
+        env = process.env
         @currentListeners = []
 
         if not server?
@@ -42,7 +43,7 @@ class Sockets
         if settings.general.debug
             @io.set "log level", 2
         else
-            @io.set "log level", 1
+            @io.set "log level", 0
             @io.set "browser client minification"
             @io.set "browser client etag"
             @io.set "browser client gzip"

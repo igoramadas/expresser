@@ -268,17 +268,17 @@ Settings.getInstance = ->
 
         # Set debug in case it has not been set.
         if not @instance.general.debug?
-            if process.env.NODE_ENV is "production"
-                @instance.general.debug = false
-            else
+            if process.env.NODE_ENV is "development"
                 @instance.general.debug = true
+            else
+                @instance.general.debug = false
 
         # Set minifyBuilds in case it has not been set.
         if not @instance.app.connectAssets.minifyBuilds?
-            if process.env.NODE_ENV is "production"
-                @instance.app.connectAssets.minifyBuilds = true
-            else
+            if process.env.NODE_ENV is "development"
                 @instance.app.connectAssets.minifyBuilds = false
+            else
+                @instance.app.connectAssets.minifyBuilds = true
 
     return @instance
 

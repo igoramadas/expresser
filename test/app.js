@@ -8,6 +8,7 @@ describe("App Tests", function() {
 
     var app = require("../lib/app.coffee");
     var settings = require("../lib/settings.coffee");
+    var env = process.env;
 
     it("Is single instance.", function() {
         app.singleInstance = true;
@@ -20,7 +21,6 @@ describe("App Tests", function() {
     });
 
     it("Inits.", function() {
-        console.log("App.init()");
         app.init();
     });
 });
