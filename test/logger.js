@@ -8,19 +8,9 @@ describe("Logger Tests", function() {
     process.env.NODE_ENV = "test";
 
     var env = process.env;
-    var envSettings = env.EXPRESSER_SETTINGS;
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var logger = null;
-
-    if (envSettings) {
-        try {
-            envSettings = JSON.parse(envSettings);
-        } catch (ex) {
-            envSettings = null;
-            console.warn("Can't parse EXPRESSER_SETTINGS variable.");
-        }
-    }
 
     before(function() {
         utils = require("../lib/utils.coffee");
@@ -29,21 +19,19 @@ describe("Logger Tests", function() {
         logger = require("../lib/logger.coffee");
 
         try {
-            if (envSettings) {
-                if (!settings.logger.logentries.token) {
-                    settings.logger.logentries.token = envSettings.logger.logentries.token;
-                }
+            if (!settings.logger.logentries.token) {
+                settings.logger.logentries.token = env.LOGENTRIES_T;
+            }
 
-                if (!settings.logger.loggly.token) {
-                    settings.logger.loggly.token = envSettings.logger.loggly.token;
-                }
+            if (!settings.logger.loggly.token) {
+                settings.logger.loggly.token = env.LOGGLY_T;
+            }
 
-                if (!settings.logger.loggly.subdomain) {
-                    settings.logger.loggly.subdomain = envSettings.logger.loggly.subdomain;
-                }
+            if (!settings.logger.loggly.subdomain) {
+                settings.logger.loggly.subdomain = env.LOGGLY_D;
             }
         } catch (ex) {
-            console.warn("Can't load settings from EXPRESSER_SETTINGS variable");
+            console.warn("Can't load settings from environment variable.");
         }
     });
 

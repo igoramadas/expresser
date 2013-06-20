@@ -8,7 +8,6 @@ describe("Database Tests", function() {
     process.env.NODE_ENV = "test";
 
     var env = process.env;
-    var envSettings = env.EXPRESSER_SETTINGS;
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var database = null;
@@ -18,6 +17,9 @@ describe("Database Tests", function() {
         utils.loadDefaultSettingsFromJson();
 
         database = require("../lib/database.coffee");
+
+        settings.database.connString = "connString": "mongodb://127.0.0.1/expresser";
+        settings.database.connString2 = "connString": "mongodb://127.0.0.1/expresser2";
     });
 
     it("Is single instance.", function() {
