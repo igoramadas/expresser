@@ -5,10 +5,48 @@ var chai = require("chai");
 chai.should();
 
 describe("Logger Tests", function() {
+    process.env.NODE_ENV = "test";
 
-    var logger = require("../lib/logger.coffee");
-    var settings = require("../lib/settings.coffee");
     var env = process.env;
+    var envSettings = env.EXPRESSER_SETTINGS;
+    var settings = null;
+    var utils = null;
+    var logger = null;
+
+    if (envSettings) {
+        try {
+            envSettings = JSON.parse(envSettings);
+        } catch (ex) {
+            envSettings = null;
+            console.warn("Can't parse EXPRESSER_SETTINGS variable.");
+        }
+    }
+
+    before(function() {
+        settings = require("../lib/settings.coffee");
+        utils = require("../lib/utils.coffee");
+        utils.loadDefaultSettingsFromJson();
+
+        logger = require("../lib/logger.coffee");
+
+        try {
+            if (envSettings) {
+                if (!settings.logger.logentries.token) {
+                    settings.logger.logentries.token = envSettings.logger.logentries.token;
+                }
+
+                if (!settings.logger.loggly.token) {
+                    settings.logger.loggly.token = envSettings.logger.loggly.token;
+                }
+
+                if (!settings.logger.loggly.subdomain) {
+                    settings.logger.loggly.subdomain = envSettings.logger.loggly.subdomain;
+                }
+            }
+        } catch (ex) {
+            console.warn("Can't load settings from EXPRESSER_SETTINGS variable");
+        }
+    });
 
     it("Is single instance.", function() {
         logger.singleInstance = true;
@@ -25,10 +63,11 @@ describe("Logger Tests", function() {
     });
 
     it("Send info logline to Logentries.", function(done) {
-        this.timeout(10000);
+        this.timeout(5000);
 
+        settings.logger.loggly.enabled = false;
+        settings.logger.local.enabled = false;
         settings.logger.logentries.enabled = true;
-        settings.logger.logentries.token = env.LOGENTRIES_TOKEN;
 
         logger.onLogSuccess = function(result) { console.log(result); done(); };
         logger.onLogError = function(err) { console.error(err); throw err };
@@ -40,11 +79,11 @@ describe("Logger Tests", function() {
     });
 
     it("Send info logline to Loggly.", function(done) {
-        this.timeout(10000);
+        this.timeout(5000);
 
+        settings.logger.logentries.enabled = false;
+        settings.logger.local.enabled = false;
         settings.logger.loggly.enabled = true;
-        settings.logger.loggly.token = env.LOGGLY_TOKEN;
-        settings.logger.loggly.subdomain = env.LOGGLY_SUBDOMAIN;
 
         logger.onLogSuccess = function(result) { console.log(result); done(); };
         logger.onLogError = function(err) { console.error(err); throw err };

@@ -5,9 +5,20 @@ var chai = require("chai");
 chai.should();
 
 describe("Mail Tests", function() {
+    process.env.NODE_ENV = "test";
 
-    var mail = require("../lib/mail.coffee");
-    var settings = require("../lib/settings.coffee");
+    var env = process.env;
+    var settings = null;
+    var utils = null;
+    var mail = null;
+
+    before(function() {
+        settings = require("../lib/settings.coffee");
+        utils = require("../lib/utils.coffee");
+        utils.loadDefaultSettingsFromJson();
+
+        mail = require("../lib/mail.coffee");
+    });
 
     it("Is single instance.", function() {
         mail.singleInstance = true;

@@ -5,9 +5,20 @@ var chai = require("chai");
 chai.should();
 
 describe("Sockets Tests", function() {
+    process.env.NODE_ENV = "test";
 
-    var sockets = require("../lib/sockets.coffee");
-    var settings = require("../lib/settings.coffee");
+    var env = process.env;
+    var settings = null;
+    var utils = null;
+    var sockets = null;
+
+    before(function() {
+        settings = require("../lib/settings.coffee");
+        utils = require("../lib/utils.coffee");
+        utils.loadDefaultSettingsFromJson();
+
+        sockets = require("../lib/sockets.coffee");
+    });
 
     it("Is single instance.", function() {
         sockets.singleInstance = true;

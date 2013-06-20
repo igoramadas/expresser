@@ -5,10 +5,21 @@ var chai = require("chai");
 chai.should();
 
 describe("Database Tests", function() {
+    process.env.NODE_ENV = "test";
 
-    var database = require("../lib/database.coffee");
-    var settings = require("../lib/settings.coffee");
     var env = process.env;
+    var envSettings = env.EXPRESSER_SETTINGS;
+    var settings = null;
+    var utils = null;
+    var database = null;
+
+    before(function() {
+        settings = require("../lib/settings.coffee");
+        utils = require("../lib/utils.coffee");
+        utils.loadDefaultSettingsFromJson();
+
+        database = require("../lib/database.coffee");
+    });
 
     it("Is single instance.", function() {
         database.singleInstance = true;
@@ -20,9 +31,9 @@ describe("Database Tests", function() {
         settings.should.have.property("database");
     });
 
-    it("Init (connect on localhost).", function() {
-        settings.database.connString = "mongodb://127.0.0.1/expresser"
+    it("Inits.", function(done) {
         database.init();
+        setTimeout(done, 1900);
     });
 
     it("Add simple record to the database.", function(done) {

@@ -5,9 +5,20 @@ var chai = require("chai");
 chai.should();
 
 describe("Firewall Tests", function() {
+    process.env.NODE_ENV = "test";
 
-    var firewall = require("../lib/firewall.coffee");
-    var settings = require("../lib/settings.coffee");
+    var env = process.env;
+    var settings = null;
+    var utils = null;
+    var firewall = null;
+
+    before(function() {
+        settings = require("../lib/settings.coffee");
+        utils = require("../lib/utils.coffee");
+        utils.loadDefaultSettingsFromJson();
+
+        firewall = require("../lib/firewall.coffee");
+    });
 
     it("Is single instance.", function() {
         firewall.singleInstance = true;

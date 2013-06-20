@@ -2,3 +2,4 @@
 .openshift/
 atlassian-ide-plugin.xml
 node_modules/
+settings.test.json

@@ -5,9 +5,20 @@ var chai = require("chai");
 chai.should();
 
 describe("Imaging Tests", function() {
+    process.env.NODE_ENV = "test";
 
-    var imaging = require("../lib/imaging.coffee");
-    var settings = require("../lib/settings.coffee");
+    var env = process.env;
+    var settings = null;
+    var utils = null;
+    var imaging = null;
+
+    before(function() {
+        settings = require("../lib/settings.coffee");
+        utils = require("../lib/utils.coffee");
+        utils.loadDefaultSettingsFromJson();
+
+        imaging = require("../lib/imaging.coffee");
+    });
 
     it("Is single instance.", function() {
         imaging.singleInstance = true;

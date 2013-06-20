@@ -6,9 +6,18 @@ chai.should();
 
 describe("App Tests", function() {
 
-    var app = require("../lib/app.coffee");
-    var settings = require("../lib/settings.coffee");
     var env = process.env;
+    var settings = null;
+    var utils = null;
+    var app = null;
+
+    before(function() {
+        settings = require("../lib/settings.coffee");
+        utils = require("../lib/utils.coffee");
+        utils.loadDefaultSettingsFromJson();
+
+        app = require("../lib/app.coffee");
+    });
 
     it("Is single instance.", function() {
         app.singleInstance = true;

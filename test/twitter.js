@@ -5,9 +5,20 @@ var chai = require("chai");
 chai.should();
 
 describe("Twitter Tests", function() {
+    process.env.NODE_ENV = "test";
 
-    var twitter = require("../lib/twitter.coffee");
-    var settings = require("../lib/settings.coffee");
+    var env = process.env;
+    var settings = null;
+    var utils = null;
+    var twitter = null;
+
+    before(function() {
+        settings = require("../lib/settings.coffee");
+        utils = require("../lib/utils.coffee");
+        utils.loadDefaultSettingsFromJson();
+
+        twitter = require("../lib/twitter.coffee");
+    });
 
     it("Is single instance.", function() {
         twitter.singleInstance = true;
