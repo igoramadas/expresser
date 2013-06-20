@@ -18,8 +18,8 @@ describe("Database Tests", function() {
 
         database = require("../lib/database.coffee");
 
-        settings.database.connString = "connString": "mongodb://127.0.0.1/expresser";
-        settings.database.connString2 = "connString": "mongodb://127.0.0.1/expresser2";
+        settings.database.connString = "mongodb://127.0.0.1/expresser";
+        settings.database.connString2 = "mongodb://127.0.0.1/expresser2";
     });
 
     it("Is single instance.", function() {
