@@ -41,17 +41,19 @@ class Firewall
 
     # Init the firewall. This must be called AFTER the web app has started.
     init: (server) =>
+        env = process.env
+
         if not server?
             logger.error "Expresser", "Firewall.init", "App server is invalid. Abort!"
             return
 
         # Bind HTTP protection.
-        if settings.firewall.httpPatterns isnt ""
+        if settings.firewall.httpPatterns isnt "" and env.NODE_ENV isnt "test"
             server.use @checkHttpRequest
             logger.info "Expresser", "Firewall.init", "Protect HTTP requests."
 
         # Bind sockets protection.
-        if settings.firewall.socketPatterns isnt ""
+        if settings.firewall.socketPatterns isnt "" and env.NODE_ENV isnt "test"
             logger.info "Expresser", "Firewall.init", "Protect Socket requests."
 
         @blacklist = {}

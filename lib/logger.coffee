@@ -32,6 +32,12 @@ class Logger
     # Holds a list of current active logging services.
     activeServices = []
 
+    # Custom method to call when logs are sent / saved successfully.
+    onLogSuccess: null
+
+    # Custom method to call when errors are triggered by the logging transport.
+    onLogError: null
+
 
     # INIT AND STOP
     # --------------------------------------------------------------------------
@@ -107,6 +113,8 @@ class Logger
         if settings.logger.logentries.enabled and settings.logger.logentries.token? and settings.logger.logentries.token isnt ""
             logentries = require "node-logentries"
             loggerLogentries = logentries.logger {token: settings.logger.logentries.token, timestamp: settings.logger.sendTimestamp}
+            loggerLogentries.on("log", @onLogSuccess) if lodash.isFunction @onLogSuccess
+            loggerLogentries.on("error", @onLogError) if lodash.isFunction @onLogError
             activeServices.push "Logentries"
         else
             @stopLogentries()
@@ -115,7 +123,7 @@ class Logger
     initLoggly: =>
         if settings.logger.loggly.enabled and settings.logger.loggly.subdomain? and settings.logger.loggly.token? and settings.logger.loggly.token isnt ""
             loggly = require "loggly"
-            loggerLoggly = loggly.createClient {subdomain: settings.logger.loggly.subdomain, json: true}
+            loggerLoggly = loggly.createClient {subdomain: settings.logger.loggly.subdomain, json: false}
             activeServices.push "Loggly"
         else
             @stopLoggly()
@@ -155,9 +163,9 @@ class Logger
         if localBuffer?
             @logLocal "info", msg
         if logentries?
-            loggerLogentries.info.apply this, [msg]
+            loggerLogentries.info.apply loggerLogentries, [msg]
         if loggly?
-            loggerLoggly.log.apply this, [settings.logger.loggly.token, msg]
+            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, msg, @logglyCallback]
 
     # Log any object to the default transports as `warn`.
     warn: =>
@@ -167,9 +175,9 @@ class Logger
         if localBuffer?
             @logLocal "warn", msg
         if logentries?
-            loggerLogentries.warning.apply this, [msg]
+            loggerLogentries.warning.apply loggerLogentries, [msg]
         if loggly?
-            loggerLoggly.log.apply this, [settings.logger.loggly.token, msg]
+            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, msg, @logglyCallback]
 
     # Log any object to the default transports as `error`.
     error: =>
@@ -179,9 +187,9 @@ class Logger
         if localBuffer?
             @logLocal "error", msg
         if logentries?
-            loggerLogentries.err.apply this, [msg]
+            loggerLogentries.err.apply loggerLogentries, [msg]
         if loggly?
-            loggerLoggly.log.apply this, [settings.logger.loggly.token, msg]
+            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, msg, @logglyCallback]
 
 
     # LOCAL LOGGING
@@ -254,6 +262,13 @@ class Logger
 
         # Return single string log message.
         return separated.join " | "
+
+    # Wrapper callback for `onLogSuccess` and `onLogError` to be used by Loggly.
+    logglyCallback: (err, result) =>
+        if err? and @onLogError?
+            @onLogError err
+        else if @onLogSuccess?
+            @onLogSuccess result
 
 
 # Singleton implementation
