@@ -11,6 +11,7 @@ class Expresser
     # Expresser modules.
     app: require "./lib/app.coffee"
     database: require "./lib/database.coffee"
+    downloader: require "./lib/downloader.coffee"
     firewall: require "./lib/firewall.coffee"
     imaging: require "./lib/imaging.coffee"
     logger: require "./lib/logger.coffee"

@@ -8,6 +8,7 @@ describe("Downloader Tests", function() {
     process.env.NODE_ENV = "test";
 
     var env = process.env;
+    var fs = require("fs");
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var downloader = null;
@@ -29,11 +30,12 @@ describe("Downloader Tests", function() {
         settings.should.have.property("downloader");
     });
 
-    it("Download works", function(done) {
-        var callback = function(err, result) {
+    it("Download (then delete) Google index html file", function(done) {
+        var callback = function(err, obj) {
             if (err) {
                 throw err;
             } else {
+                fs.unlinkSync(obj.saveTo);
                 done();
             }
         };
