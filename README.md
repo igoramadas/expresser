@@ -127,7 +127,7 @@ Create a `settings.json` file with the specific keys and values that you want to
 You can also change settings programatically:
 
     var expresser = require("expresser");
-    expresser.settings.General.appTitle = "MyApp";
+    expresser.settings.general.appTitle = "MyApp";
 
 #### I have a problem!
 

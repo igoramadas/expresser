@@ -220,6 +220,26 @@ class Settings
             subdomain: null
             token: null
 
+    # DOWNLOADER
+    # -------------------------------------------------------------------------
+    # Built-in download manager.
+    downloader:
+        # Default headers to append to all download requests.
+        # For example: {"Content-Type": "application/json"}
+        headers: null
+        # How many simultaneous downloads to allow?
+        maxSimultaneous: 4
+        # If true, the downloader will cancel duplicates. A duplicate is considered a download
+        # from the same remote URL and the same save location.
+        preventDuplicates: true
+        # Reject unathourized requests (when SSL certificate has expired for example)?
+        # Set this to true for increased security.
+        rejectUnauthorized: false
+        # The temp extension used while downloading files. Default is ".download".
+        tempExtension: ".download"
+        # Download timeout, in seconds.
+        timeout: 3600
+
     # NEW RELIC PROFILING
     # -------------------------------------------------------------------------
     # Built-in support for New Relic. Will be used ONLY if the appName and licenseKey
