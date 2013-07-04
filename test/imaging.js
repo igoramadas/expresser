@@ -19,7 +19,7 @@ describe("Imaging Tests", function() {
         imaging = require("../lib/imaging.coffee");
     });
 
-    it("Is single instance.", function() {
+    it("Is single instance", function() {
         imaging.singleInstance = true;
         var imaging2 = require("../lib/imaging.coffee");
         imaging.singleInstance.should.equal(imaging2.singleInstance);

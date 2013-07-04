@@ -22,22 +22,22 @@ describe("Database Tests", function() {
         settings.database.connString2 = "mongodb://127.0.0.1/expresser2";
     });
 
-    it("Is single instance.", function() {
+    it("Is single instance", function() {
         database.singleInstance = true;
         var database2 = require("../lib/database.coffee");
         database.singleInstance.should.equal(database2.singleInstance);
     });
 
-    it("Has settings defined.", function() {
+    it("Has settings defined", function() {
         settings.should.have.property("database");
     });
 
-    it("Inits.", function(done) {
+    it("Inits", function(done) {
         database.init();
         setTimeout(done, 1900);
     });
 
-    it("Add simple record to the database.", function(done) {
+    it("Add simple record to the database", function(done) {
         var callback = function(err, result) {
             if (err) {
                 throw err;
@@ -51,7 +51,7 @@ describe("Database Tests", function() {
         database.set("test", obj, callback);
     });
 
-    it("Add complex record to the database.", function(done) {
+    it("Add complex record to the database", function(done) {
         var callback = function(err, result) {
             if (err) {
                 throw err;

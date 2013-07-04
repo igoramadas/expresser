@@ -19,13 +19,13 @@ describe("Sockets Tests", function() {
         sockets = require("../lib/sockets.coffee");
     });
 
-    it("Is single instance.", function() {
+    it("Is single instance", function() {
         sockets.singleInstance = true;
         var sockets2 = require("../lib/sockets.coffee");
         sockets.singleInstance.should.equal(sockets2.singleInstance);
     });
 
-    it("Has settings defined.", function() {
+    it("Has settings defined", function() {
         settings.should.have.property("sockets");
     });
 });

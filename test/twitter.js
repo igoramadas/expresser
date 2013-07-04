@@ -19,17 +19,17 @@ describe("Twitter Tests", function() {
         twitter = require("../lib/twitter.coffee");
     });
 
-    it("Is single instance.", function() {
+    it("Is single instance", function() {
         twitter.singleInstance = true;
         var twitter2 = require("../lib/twitter.coffee");
         twitter.singleInstance.should.equal(twitter2.singleInstance);
     });
 
-    it("Has settings defined.", function() {
+    it("Has settings defined", function() {
         settings.should.have.property("twitter");
     });
 
-    it("Inits.", function() {
+    it("Inits", function() {
         twitter.init();
     });
 });

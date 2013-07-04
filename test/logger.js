@@ -35,22 +35,22 @@ describe("Logger Tests", function() {
         }
     });
 
-    it("Is single instance.", function() {
+    it("Is single instance", function() {
         logger.singleInstance = true;
         var logger2 = require("../lib/logger.coffee");
         logger.singleInstance.should.equal(logger2.singleInstance);
     });
 
-    it("Has settings defined.", function() {
+    it("Has settings defined", function() {
         settings.should.have.property("logger");
     });
 
-    it("Inits.", function() {
+    it("Inits", function() {
         logger.init();
     });
 
     if (settings.logger.logentries.token) {
-        it("Send info logline to Logentries.", function(done) {
+        it("Send info logline to Logentries", function(done) {
             this.timeout(5000);
 
             settings.logger.loggly.enabled = false;
@@ -70,7 +70,7 @@ describe("Logger Tests", function() {
     }
 
     if (settings.logger.loggly.token) {
-        it("Send info logline to Loggly.", function(done) {
+        it("Send info logline to Loggly", function(done) {
             this.timeout(5000);
 
             settings.logger.logentries.enabled = false;
@@ -89,7 +89,7 @@ describe("Logger Tests", function() {
         console.warn("Skipping Loggly test because token was not specified.");
     }
 
-    it("Clear onLogSuccess and onLogError.", function() {
+    it("Clear onLogSuccess and onLogError", function() {
         logger.onLogSuccess = null;
         logger.onLogError = null;
     });

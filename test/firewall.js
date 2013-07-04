@@ -19,13 +19,13 @@ describe("Firewall Tests", function() {
         firewall = require("../lib/firewall.coffee");
     });
 
-    it("Is single instance.", function() {
+    it("Is single instance", function() {
         firewall.singleInstance = true;
         var firewall2 = require("../lib/firewall.coffee");
         firewall.singleInstance.should.equal(firewall2.singleInstance);
     });
 
-    it("Has settings defined.", function() {
+    it("Has settings defined", function() {
         settings.should.have.property("firewall");
     });
 });

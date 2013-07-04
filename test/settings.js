@@ -15,13 +15,13 @@ describe("Settings Tests", function() {
         utils.loadDefaultSettingsFromJson();
     });
 
-    it("Is single instance.", function() {
+    it("Is single instance", function() {
         settings.singleInstance = true;
         var settings2 = require("../lib/settings.coffee");
         settings.singleInstance.should.equal(settings2.singleInstance);
     });
 
-    it("Has all module settings defined.", function() {
+    it("Has all module settings defined", function() {
         settings.should.have.property("general");
         settings.should.have.property("app");
         settings.should.have.property("database");

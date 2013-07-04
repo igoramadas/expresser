@@ -19,17 +19,17 @@ describe("App Tests", function() {
         app = require("../lib/app.coffee");
     });
 
-    it("Is single instance.", function() {
+    it("Is single instance", function() {
         app.singleInstance = true;
         var app2 = require("../lib/app.coffee");
         app.singleInstance.should.equal(app2.singleInstance);
     });
 
-    it("Has settings defined.", function() {
+    it("Has settings defined", function() {
         settings.should.have.property("app");
     });
 
-    it("Inits.", function() {
+    it("Inits", function() {
         app.init();
     });
 });

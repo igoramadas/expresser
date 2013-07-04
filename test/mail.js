@@ -19,17 +19,17 @@ describe("Mail Tests", function() {
         mail = require("../lib/mail.coffee");
     });
 
-    it("Is single instance.", function() {
+    it("Is single instance", function() {
         mail.singleInstance = true;
         var mail2 = require("../lib/mail.coffee");
         mail.singleInstance.should.equal(mail2.singleInstance);
     });
 
-    it("Has settings defined.", function() {
+    it("Has settings defined", function() {
         settings.should.have.property("mail");
     });
 
-    it("Inits.", function() {
+    it("Inits", function() {
         mail.init();
     });
 });
