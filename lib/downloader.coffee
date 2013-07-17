@@ -95,9 +95,12 @@ class Downloader
 
                     fileWriter.addListener "close", () =>
 
-                        # If .download file can't be found, stop here but do not throw the error.
-                        if not fs.existsSync saveToTemp
-                            return
+                        # If temp download file can't be found, stop here but do not throw an error.
+                        if fs.existsSync?
+                            fileExists = fs.existsSync saveToTemp
+                        else
+                            fileExists = path.existsSync saveToTemp
+                        return if not fileExists
 
                         # Delete the old file (if there's one) and rename the .download file to its original name.
                         fs.unlinkSync obj.saveTo if fs.existsSync obj.saveTo
