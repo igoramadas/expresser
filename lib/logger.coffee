@@ -16,6 +16,7 @@ class Logger
     # Local logging objects will be set on `init`.
     bufferDispatcher = null
     localBuffer = null
+    flushing = false
 
     # Remote logging providers will be set on `init`.
     logentries = null
@@ -32,7 +33,8 @@ class Logger
     # Holds a list of current active logging services.
     activeServices = []
 
-    # Custom method to call when logs are sent / saved successfully.
+    # Custom method to call when logs are sent / saved successfully. Please note that for local log
+    # files whis will be called ONLY when logs are flushed to disk.
     onLogSuccess: null
 
     # Custom method to call when errors are triggered by the logging transport.
@@ -204,6 +206,10 @@ class Logger
 
     # Flush all local buffered log messages to disk. This is usually called by the `bufferDispatcher` timer.
     flushLocal: ->
+        return if flushing
+
+        # Set flushing and current time.
+        flushing = true
         now = moment()
         date = now.format "YYYYMMDD"
 
@@ -213,9 +219,37 @@ class Logger
         for key, logs of localBuffer
             if logs.length > 0
                 writeData = logs.join("\n")
-                localBuffer[key] = []
                 filePath = path.join settings.path.logsDir, "#{date}.#{key}.log"
-                fs.appendFile filePath, writeData, (err) -> console.error("Expresser", "Logger.flushLocal", err) if err?
+                successMsg = "#{logs.length} records logged to disk."
+
+                # Reset this local buffer.
+                localBuffer[key] = []
+
+                # Only use `appendFile` on new versions of Node.
+                if fs.appendFile?
+                    fs.appendFile filePath, writeData, (err) =>
+                        flushing = false
+                        if err?
+                            console.error("Expresser", "Logger.flushLocal", err)
+                            @onLogError err if @onLogError?
+                        else
+                            @onLogSuccess successMsg if @onLogSuccess?
+
+                else
+                    fs.open filePath, "a", 666, (err1, fd) =>
+                        if err1?
+                            flushing = false
+                            console.error("Expresser", "Logger.flushLocal.open", err1)
+                            @onLogError err1 if @onLogError?
+                        else
+                            fs.write fd, writeData, null, "utf8", (err2) =>
+                                flushing = false
+                                if err2?
+                                    console.error("Expresser", "Logger.flushLocal.write", err2)
+                                    @onLogError err2 if @onLogError?
+                                else
+                                    @onLogSuccess successMsg if @onLogSuccess?
+                                fs.closeSync fd
 
     # Delete old log files.
     cleanLocal: ->

@@ -49,20 +49,37 @@ describe("Logger Tests", function() {
         logger.init();
     });
 
+    it("Save log to local file", function(done) {
+        settings.logger.loggly.enabled = false;
+        settings.logger.logentries.enabled = false;
+        settings.logger.local.enabled = true;
+
+        logger.onLogSuccess = function(result) { done(); };
+        logger.onLogError = function(err) { throw err };
+        logger.initLocal();
+        logger.info("Expresser local disk log test.", new Date());
+        logger.flushLocal();
+
+        settings.logger.local.enabled = false;
+        logger.initLocal();
+    });
+
     if (settings.logger.logentries.token) {
-        it("Send info logline to Logentries", function(done) {
-            this.timeout(5000);
+        it("Send log to Logentries", function(done) {
+            this.timeout(8000);
 
             settings.logger.loggly.enabled = false;
             settings.logger.local.enabled = false;
             settings.logger.logentries.enabled = true;
 
-            logger.onLogSuccess = function(result) { console.log(result); done(); };
-            logger.onLogError = function(err) { console.error(err); throw err };
+            logger.onLogSuccess = function(result) { done(); };
+            logger.onLogError = function(err) { throw err };
             logger.initLogentries();
             logger.info("Expresser Logentries test.", new Date());
 
             settings.logger.logentries.enabled = false;
+            logger.onLogSuccess = null;
+            logger.onLogError = null;
             logger.initLogentries();
         });
     } else {
@@ -70,19 +87,21 @@ describe("Logger Tests", function() {
     }
 
     if (settings.logger.loggly.token) {
-        it("Send info logline to Loggly", function(done) {
-            this.timeout(5000);
+        it("Send log to Loggly", function(done) {
+            this.timeout(8000);
 
             settings.logger.logentries.enabled = false;
             settings.logger.local.enabled = false;
             settings.logger.loggly.enabled = true;
 
-            logger.onLogSuccess = function(result) { console.log(result); done(); };
-            logger.onLogError = function(err) { console.error(err); throw err };
+            logger.onLogSuccess = function(result) { done(); };
+            logger.onLogError = function(err) { throw err };
             logger.initLoggly();
             logger.info("Expresser Loggly test.", new Date());
 
             settings.logger.loggly.enabled = false;
+            logger.onLogSuccess = null;
+            logger.onLogError = null;
             logger.initLoggly();
         });
     } else {
