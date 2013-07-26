@@ -44,6 +44,13 @@
               
                 
                 <li>
+                  <a class="source" href="downloader.html">
+                    downloader.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="firewall.html">
                     firewall.coffee
                   </a>
@@ -651,6 +658,14 @@ the module switches to the secondary one.</p>
         
       
         
+        <p>Output logs to the console? If left null or undefined, it will inherit the value
+from settings.general.debug.</p>
+
+        
+          <div class='highlight'><pre>        console: <span class="literal">null</span></pre></div>
+        
+      
+        
         <p>List will all field / property names to be removed from logs.
 Default list is &quot;Password, password, passwordHash and passwordEncrypted&quot;.</p>
 
@@ -725,6 +740,63 @@ the enabled setting below  is true.</p>
             enabled: <span class="literal">false</span>
             subdomain: <span class="literal">null</span>
             token: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <h2>DOWNLOADER</h2>
+
+        
+      
+        
+        <p>Built-in download manager.</p>
+
+        
+          <div class='highlight'><pre>    downloader:</pre></div>
+        
+      
+        
+        <p>Default headers to append to all download requests.
+For example: {&quot;Content-Type&quot;: &quot;application/json&quot;}</p>
+
+        
+          <div class='highlight'><pre>        headers: <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>How many simultaneous downloads to allow?</p>
+
+        
+          <div class='highlight'><pre>        maxSimultaneous: <span class="number">4</span></pre></div>
+        
+      
+        
+        <p>If true, the downloader will cancel duplicates. A duplicate is considered a download
+from the same remote URL and the same save location.</p>
+
+        
+          <div class='highlight'><pre>        preventDuplicates: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <p>Reject unathourized requests (when SSL certificate has expired for example)?
+Set this to true for increased security.</p>
+
+        
+          <div class='highlight'><pre>        rejectUnauthorized: <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>The temp extension used while downloading files. Default is &quot;.download&quot;.</p>
+
+        
+          <div class='highlight'><pre>        tempExtension: <span class="string">".download"</span></pre></div>
+        
+      
+        
+        <p>Download timeout, in seconds.</p>
+
+        
+          <div class='highlight'><pre>        timeout: <span class="number">3600</span></pre></div>
         
       
         
@@ -813,6 +885,19 @@ in case the authentication fails.</p>
         
       
         
+        <h2>HELPER METHODS</h2>
+
+        
+      
+        
+        <p>Reset to default settings.</p>
+
+        
+          <div class='highlight'><pre>    reset:
+        <span class="property">@instance</span> = <span class="keyword">new</span> Settings()</pre></div>
+        
+      
+        
         <h2>Singleton implementation</h2>
 
         
@@ -830,10 +915,18 @@ in case the authentication fails.</p>
 
         
           <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>.general.debug?
-            <span class="keyword">if</span> process.env.NODE_ENV <span class="keyword">is</span> <span class="string">"production"</span>
-                <span class="property">@instance</span>.general.debug = <span class="literal">false</span>
+            <span class="keyword">if</span> process.env.NODE_ENV <span class="keyword">is</span> <span class="string">"development"</span>
+                <span class="property">@instance</span>.general.debug = <span class="literal">true</span>
             <span class="keyword">else</span>
-                <span class="property">@instance</span>.general.debug = <span class="literal">true</span></pre></div>
+                <span class="property">@instance</span>.general.debug = <span class="literal">false</span></pre></div>
+        
+      
+        
+        <p>Set console log in case it has not been set.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>.logger.console?
+            <span class="property">@instance</span>.logger.console = <span class="property">@instance</span>.general.debug</pre></div>
         
       
         
@@ -841,10 +934,10 @@ in case the authentication fails.</p>
 
         
           <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>.app.connectAssets.minifyBuilds?
-            <span class="keyword">if</span> process.env.NODE_ENV <span class="keyword">is</span> <span class="string">"production"</span>
-                <span class="property">@instance</span>.app.connectAssets.minifyBuilds = <span class="literal">true</span>
-            <span class="keyword">else</span>
+            <span class="keyword">if</span> process.env.NODE_ENV <span class="keyword">is</span> <span class="string">"development"</span>
                 <span class="property">@instance</span>.app.connectAssets.minifyBuilds = <span class="literal">false</span>
+            <span class="keyword">else</span>
+                <span class="property">@instance</span>.app.connectAssets.minifyBuilds = <span class="literal">true</span>
 
     <span class="keyword">return</span> <span class="property">@instance</span>
 

@@ -44,6 +44,13 @@
               
                 
                 <li>
+                  <a class="source" href="downloader.html">
+                    downloader.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="firewall.html">
                     firewall.coffee
                   </a>
@@ -166,6 +173,8 @@ disable it, set <code>Settings.Firewall.enabled</code> to false.</p>
 
         
           <div class='highlight'><pre>    init: (server) =&gt;
+        env = process.env
+
         <span class="keyword">if</span> <span class="keyword">not</span> server?
             logger.error <span class="string">"Expresser"</span>, <span class="string">"Firewall.init"</span>, <span class="string">"App server is invalid. Abort!"</span>
             <span class="keyword">return</span></pre></div>
@@ -175,7 +184,7 @@ disable it, set <code>Settings.Firewall.enabled</code> to false.</p>
         <p>Bind HTTP protection.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> settings.firewall.httpPatterns <span class="keyword">isnt</span> <span class="string">""</span>
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.firewall.httpPatterns <span class="keyword">isnt</span> <span class="string">""</span> <span class="keyword">and</span> env.NODE_ENV <span class="keyword">isnt</span> <span class="string">"test"</span>
             server.use <span class="property">@checkHttpRequest</span>
             logger.info <span class="string">"Expresser"</span>, <span class="string">"Firewall.init"</span>, <span class="string">"Protect HTTP requests."</span></pre></div>
         
@@ -184,7 +193,7 @@ disable it, set <code>Settings.Firewall.enabled</code> to false.</p>
         <p>Bind sockets protection.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> settings.firewall.socketPatterns <span class="keyword">isnt</span> <span class="string">""</span>
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.firewall.socketPatterns <span class="keyword">isnt</span> <span class="string">""</span> <span class="keyword">and</span> env.NODE_ENV <span class="keyword">isnt</span> <span class="string">"test"</span>
             logger.info <span class="string">"Expresser"</span>, <span class="string">"Firewall.init"</span>, <span class="string">"Protect Socket requests."</span>
 
         <span class="property">@blacklist</span> = {}</pre></div>

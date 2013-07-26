@@ -44,6 +44,13 @@
               
                 
                 <li>
+                  <a class="source" href="downloader.html">
+                    downloader.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="firewall.html">
                     firewall.coffee
                   </a>
@@ -246,8 +253,8 @@ settings for the current NODE_ENV value.</p>
         <p>Check for web (IP and port) variables.</p>
 
         
-          <div class='highlight'><pre>        ip = env.OPENSHIFT_NODEJS_IP <span class="keyword">or</span> env.OPENSHIFT_INTERNAL_IP <span class="keyword">or</span> env.IP
-        port = env.OPENSHIFT_NODEJS_PORT <span class="keyword">or</span> env.OPENSHIFT_INTERNAL_PORT <span class="keyword">or</span> env.VCAP_APP_PORT <span class="keyword">or</span> env.PORT
+          <div class='highlight'><pre>        ip = env.OPENSHIFT_INTERNAL_IP <span class="keyword">or</span> env.IP
+        port = env.OPENSHIFT_INTERNAL_PORT <span class="keyword">or</span> env.VCAP_APP_PORT <span class="keyword">or</span> env.PORT
         settings.app.ip = ip <span class="keyword">if</span> ip? <span class="keyword">and</span> ip <span class="keyword">isnt</span> <span class="string">""</span>
         settings.app.port = port <span class="keyword">if</span> port? <span class="keyword">and</span> port <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
         
