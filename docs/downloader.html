@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>downloader.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>downloader.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="expresser.html">
+                    expresser.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="downloader.html">
+                    downloader.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mail.html">
+                    mail.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="twitter.html">
+                    twitter.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2>EXPRESSER DOWNLOADER</h2>
+
+        
+      
+        
+        <p>Handles external downloads.
+Parameters on <a href="settings.coffee">settings.html</a>: Settings.Downloader</p>
+
+        
+          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Downloader</span></span>
+
+    fs = require <span class="string">"fs"</span>
+    http = require <span class="string">"http"</span>
+    https = require <span class="string">"https"</span>
+    lodash = require <span class="string">"lodash"</span>
+    logger = require <span class="string">"./logger.coffee"</span>
+    moment = require <span class="string">"moment"</span>
+    path = require <span class="string">"path"</span>
+    settings = require <span class="string">"./settings.coffee"</span>
+    url = require <span class="string">"url"</span></pre></div>
+        
+      
+        
+        <p>The download queue and simultaneous count.</p>
+
+        
+          <div class='highlight'><pre>    queue = []
+    downloading = []</pre></div>
+        
+      
+        
+        <h2>INTERNAL METHODS</h2>
+
+        
+      
+        
+        <p>Helper to remove a download from the <code>downloading</code> list.</p>
+
+        
+          <div class='highlight'><pre>    <span class="function"><span class="title">removeDownloading</span></span> = (obj) -&gt;
+        filter = {timestamp: obj.timestamp, remoteUrl: obj.remoteUrl, saveTo: obj.saveTo}
+        downloading = lodash.reject downloading, filter</pre></div>
+        
+      
+        
+        <p>Helper function to proccess download errors.</p>
+
+        
+          <div class='highlight'><pre>    <span class="function"><span class="title">downloadError</span></span> = (err, obj) -&gt;
+        <span class="keyword">if</span> settings.general.debug
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Downloader.downloadError"</span>, err, obj
+
+        removeDownloading obj
+        obj.callback(err, obj) <span class="keyword">if</span> obj.callback?</pre></div>
+        
+      
+        
+        <p>Helper function to parse the URL and get its options.</p>
+
+        
+          <div class='highlight'><pre>    <span class="function"><span class="title">parseUrlOptions</span></span> = (obj, options) -&gt;
+        <span class="keyword">if</span> obj.redirectUrl? <span class="keyword">and</span> obj.redirectUrl <span class="keyword">isnt</span> <span class="string">""</span>
+            urlInfo = url.parse obj.redirectUrl
+        <span class="keyword">else</span>
+            urlInfo = url.parse obj.remoteUrl</pre></div>
+        
+      
+        
+        <p>Set URL options.</p>
+
+        
+          <div class='highlight'><pre>        options =
+            host: urlInfo.hostname
+            hostname: urlInfo.hostname
+            port: urlInfo.port
+            path: urlInfo.path</pre></div>
+        
+      
+        
+        <p>Check for credentials on the URL.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> urlInfo.auth? <span class="keyword">and</span> urlInfo.auth <span class="keyword">isnt</span> <span class="string">""</span>
+            options.auth = urlInfo.auth
+
+        <span class="keyword">return</span> options</pre></div>
+        
+      
+        
+        <p>Helper function to start a download request.</p>
+
+        
+          <div class='highlight'><pre>    <span class="function"><span class="title">reqStart</span></span> = (obj, options) -&gt;
+        <span class="keyword">if</span> obj.remoteUrl.indexOf(<span class="string">"https"</span>) <span class="keyword">is</span> <span class="number">0</span>
+            options.port = <span class="number">443</span> <span class="keyword">if</span> <span class="keyword">not</span> urlInfo.port?
+            httpHandler = https
+        <span class="keyword">else</span>
+            httpHandler = http</pre></div>
+        
+      
+        
+        <p>Start the request.</p>
+
+        
+          <div class='highlight'><pre>        req = httpHandler.get options, (response) =&gt;
+
+            saveToTemp = obj.saveTo + settings.downloader.tempExtension</pre></div>
+        
+      
+        
+        <p>If status is 301 or 302, redirect to the specified location and stop the current request.</p>
+
+        
+          <div class='highlight'><pre>            <span class="keyword">if</span> response.statusCode <span class="keyword">is</span> <span class="number">301</span> <span class="keyword">or</span> response.statusCode <span class="keyword">is</span> <span class="number">302</span>
+
+                obj.redirectUrl = response.headers.location
+                options = lodash.assign options, parseUrlOptions obj
+                req.end()
+
+                reqStart obj, options</pre></div>
+        
+      
+        
+        <p>If status is not 200 or 304, it means something went wrong so do not proceed
+with the download. Otherwise proceed and listen to the <code>data</code> and <code>end</code> events.</p>
+
+        
+          <div class='highlight'><pre>            <span class="keyword">else</span> <span class="keyword">if</span> response.statusCode <span class="keyword">isnt</span> <span class="number">200</span> <span class="keyword">and</span> response.statusCode <span class="keyword">isnt</span> <span class="number">304</span>
+
+                err = {code: response.statusCode, message: <span class="string">"Server returned an unexpected status code: <span class="subst">#{response.statusCode}</span>"</span>}
+                downloadError err, obj
+
+            <span class="keyword">else</span></pre></div>
+        
+      
+        
+        <p>Create the file stream with a .download extension. This will be renamed after the
+download has finished and the file is totally written.</p>
+
+        
+          <div class='highlight'><pre>                fileWriter = fs.createWriteStream saveToTemp, {<span class="string">"flags"</span>: <span class="string">"w+"</span>}</pre></div>
+        
+      
+        
+        <p>Listener: write data.</p>
+
+        
+          <div class='highlight'><pre>                response.addListener <span class="string">"data"</span>, (data) =&gt;
+                    fileWriter.write data</pre></div>
+        
+      
+        
+        <p>Listener: end data.</p>
+
+        
+          <div class='highlight'><pre>                response.addListener <span class="string">"end"</span>, () =&gt;
+                    fileWriter.addListener <span class="string">"close"</span>, () =&gt;</pre></div>
+        
+      
+        
+        <p>If temp download file can&#39;t be found, stop here but do not throw an error.</p>
+
+        
+          <div class='highlight'><pre>                        <span class="keyword">if</span> fs.existsSync?
+                            fileExists = fs.existsSync saveToTemp
+                        <span class="keyword">else</span>
+                            fileExists = path.existsSync saveToTemp
+
+                        <span class="keyword">return</span> <span class="keyword">if</span> <span class="keyword">not</span> fileExists</pre></div>
+        
+      
+        
+        <p>Delete the old file (if there&#39;s one) and rename the .download file to its original name.</p>
+
+        
+          <div class='highlight'><pre>                        fs.unlinkSync obj.saveTo <span class="keyword">if</span> fs.existsSync obj.saveTo</pre></div>
+        
+      
+        
+        <p>Remove .download extension.</p>
+
+        
+          <div class='highlight'><pre>                        fs.renameSync saveToTemp, obj.saveTo</pre></div>
+        
+      
+        
+        <p>Remove from <code>downloading</code> list and proceed with the callback.</p>
+
+        
+          <div class='highlight'><pre>                        removeDownloading obj
+                        obj.callback(err, obj) <span class="keyword">if</span> obj.callback?
+
+                        <span class="keyword">if</span> settings.general.debug
+                            logger.info <span class="string">"Expresser"</span>, <span class="string">"Downloader.next"</span>, <span class="string">"End"</span>, obj
+
+                    fileWriter.end()
+                    fileWriter.destroySoon()</pre></div>
+        
+      
+        
+        <p>Unhandled error, call the downloadError helper.</p>
+
+        
+          <div class='highlight'><pre>        req.<span class="literal">on</span> <span class="string">"error"</span>, (err) =&gt;
+            downloadError err, obj</pre></div>
+        
+      
+        
+        <p>Process next download.</p>
+
+        
+          <div class='highlight'><pre>    <span class="function"><span class="title">next</span></span> = -&gt;
+        <span class="keyword">return</span> <span class="keyword">if</span> queue.length &lt; <span class="number">0</span></pre></div>
+        
+      
+        
+        <p>Get first download from queue.</p>
+
+        
+          <div class='highlight'><pre>        obj = queue.shift()
+        downloading.push obj
+
+        <span class="keyword">if</span> settings.downloader.headers? <span class="keyword">and</span> settings.downloader.headers <span class="keyword">isnt</span> <span class="string">""</span>
+            headers = settings.web.downloaderHeaders
+        <span class="keyword">else</span>
+            headers = <span class="literal">null</span></pre></div>
+        
+      
+        
+        <p>Set default options.</p>
+
+        
+          <div class='highlight'><pre>        options =
+            headers: headers
+            rejectUnauthorized: settings.downloader.rejectUnauthorized</pre></div>
+        
+      
+        
+        <p>Extend options.</p>
+
+        
+          <div class='highlight'><pre>        options = lodash.assign options, obj.options, parseUrlOptions obj</pre></div>
+        
+      
+        
+        <p>Start the download.</p>
+
+        
+          <div class='highlight'><pre>        reqStart obj, options</pre></div>
+        
+      
+        
+        <h2>METHODS</h2>
+
+        
+      
+        
+        <p>Download an external file and save it to the specified location. The <code>callback</code>
+has the signature (error, data).</p>
+
+        
+          <div class='highlight'><pre>    download: (remoteUrl, saveTo, options, callback) =&gt;
+        <span class="keyword">if</span> <span class="keyword">not</span> remoteUrl?
+            logger.warn <span class="string">"Expresser"</span>, <span class="string">"Downloader.download"</span>, <span class="string">"Aborted, remoteUrl is not defined."</span>
+            <span class="keyword">return</span></pre></div>
+        
+      
+        
+        <p>Check options and callback.</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> callback? <span class="keyword">and</span> lodash.isFunction options
+            callback = options
+            options = <span class="literal">null</span>
+
+        now = <span class="keyword">new</span> Date().getTime()</pre></div>
+        
+      
+        
+        <p>Prevent duplicates?</p>
+
+        
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.downloader.preventDuplicates
+            existing = lodash.filter downloading, {remoteUrl: remoteUrl, saveTo: saveTo}</pre></div>
+        
+      
+        
+        <p>If downloading the same file and to the same location, abort download.</p>
+
+        
+          <div class='highlight'><pre>            <span class="keyword">if</span> existing.length &gt; <span class="number">0</span>
+                existing = existing[<span class="number">0</span>]
+                <span class="keyword">if</span> existing.saveTo <span class="keyword">is</span> saveTo
+                    logger.warn <span class="string">"Expresser"</span>, <span class="string">"Downloader.download"</span>, <span class="string">"Aborted, already downloading."</span>, remoteUrl, saveTo
+                    err = {message: <span class="string">"Download aborted: same file is already downloading."</span>, duplicate: <span class="literal">true</span>}
+                    callback(err, <span class="literal">null</span>) <span class="keyword">if</span> callback?
+                    <span class="keyword">return</span></pre></div>
+        
+      
+        
+        <p>Add download to the queue.</p>
+
+        
+          <div class='highlight'><pre>        queue.push {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback}</pre></div>
+        
+      
+        
+        <p>Start download immediatelly if not exceeding the <code>maxSimultaneous</code> setting.</p>
+
+        
+          <div class='highlight'><pre>        next() <span class="keyword">if</span> downloading.length &lt; settings.downloader.maxSimultaneous</pre></div>
+        
+      
+        
+        <h2>Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Downloader.<span class="function"><span class="title">getInstance</span></span> = -&gt;
+    <span class="property">@instance</span> = <span class="keyword">new</span> Downloader() <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
+    <span class="keyword">return</span> <span class="property">@instance</span>
+
+module.exports = exports = Downloader.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
