@@ -107,7 +107,12 @@ class Downloader
                         return if not fileExists
 
                         # Delete the old file (if there's one) and rename the .download file to its original name.
-                        fs.unlinkSync obj.saveTo if fs.existsSync obj.saveTo
+                        if fs.existsSync?
+                            fileExists = fs.existsSync obj.saveTo
+                        else
+                            fileExists = path.existsSync obj.saveTo
+
+                        fs.unlinkSync obj.saveTo if fileExists
 
                         # Remove .download extension.
                         fs.renameSync saveToTemp, obj.saveTo
