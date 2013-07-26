@@ -78,30 +78,6 @@ class Settings
             # production environments but not on development.
             minifyBuilds: null
 
-    # PASSPORT MODULE
-    # -------------------------------------------------------------------------
-    passport:
-        # Enable passport module on the App?
-        enabled: false
-        # Basic HTTP Auth strategy settings.
-        basic:
-            # Enable basic HTTP authentication?
-            enabled: false
-        # LDAP authentication strategy settings.
-        ldap:
-            # Enable LDAP authentication?
-            enabled: false
-            # The LDAP admin dn. Example: cn=root.
-            adminDn: null
-            # The LDAP admin password. Example: mypass.
-            adminPassword: null
-            # The LDAP search base. Example: cn=users,dc=local.
-            searchBase: null
-            # The LDAP search filter. Example: (&(l=Berlin)(email=*@zalando.de)).
-            searchFilter: null
-            # The LDAP server full address with hostname and port. Example: ldap://127.0.0.1:1390.
-            server: null
-
     # SOCKETS
     # -------------------------------------------------------------------------
     sockets:

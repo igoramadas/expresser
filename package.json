@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "0.8.9",
+    "version": "0.8.10",
     "description": "A ready-to-use platform for Node.js web apps, built on top of Express.",
     "homepage": "http://expresser.codeplex.com",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -32,9 +32,6 @@
         "nodemailer": ">= 0.4.1",
         "node-logentries": ">= 0.1.0",
         "ntwitter": ">= 0.5.0",
-        "passport":">= 0.1.16",
-        "passport-http":">= 0.2.1",
-        "passport-ldapauth":">= 0.0.5",
         "socket.io": ">= 0.9.14",
         "stylus": ">= 0.32.1"
 	},

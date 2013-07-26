@@ -102,7 +102,7 @@ class App
             @server.use ConnectAssets
 
             # Use passport?
-            if settings.passport.enabled
+            if settings.app.auth
                 @passport = require "passport"
 
                 # Enable basic HTTP authentication?
@@ -117,31 +117,6 @@ class App
 
                     if settings.general.debug
                         logger.info "Expresser", "App.configure", "Passport: using basic HTTP authentication."
-
-                # Enable LDAP authentication?
-                if settings.passport.ldap.enabled
-                    ldapStrategy = (require "passport-ldapauth").Strategy
-
-                    ldapOptions =
-                        server:
-                            url: settings.passport.ldap.server
-                            adminDn: settings.passport.ldap.adminDn
-                            adminPassword: settings.passport.ldap.adminPassword
-                            searchBase: settings.passport.ldap.searchBase
-                            searchFilter: settings.passport.ldap.searchFilter
-
-                    @passport.use new ldapStrategy ldapOptions, (profile, callback) =>
-                        if not @passportAuthenticate?
-                            logger.warn "Expresser", "App.passportAuthenticate not set.", "Abort LDAP authentication."
-                        else
-                            @passportAuthenticate profile, callback
-
-                    if settings.general.debug
-                        logger.info "Expresser", "App.configure", "Passport: using LDAP authentication."
-
-                # Init passport.
-                @server.use @passport.initialize()
-                @server.use @passport.session()
 
             # Set Express router.
             @server.use @server.router

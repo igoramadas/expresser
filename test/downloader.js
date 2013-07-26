@@ -44,7 +44,7 @@ describe("Downloader Tests", function() {
         downloader.download("http://google.com/", saveTo, callback);
     });
 
-    it("Prevent duplicate downloads.", function(done) {
+    it("Prevent duplicate downloads", function(done) {
         settings.downloader.preventDuplicates = true;
 
         var callback1 = function(err, obj) {
