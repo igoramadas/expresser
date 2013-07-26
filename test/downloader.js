@@ -45,8 +45,6 @@ describe("Downloader Tests", function() {
     });
 
     it("Prevent duplicate downloads.", function(done) {
-        this.timeout(5000);
-
         settings.downloader.preventDuplicates = true;
 
         var callback1 = function(err, obj) {

@@ -52,10 +52,8 @@
         "express",
         "app",
         "imagemagick",
-        "framework",
         "logger",
         "mongo",
-        "platform",
         "sockets",
         "twitter"
     ]
