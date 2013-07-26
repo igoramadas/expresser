@@ -90,8 +90,8 @@ class Utils
         currentSmtpHost = settings.mail.smtp.host?.toLowerCase()
 
         # Check for web (IP and port) variables.
-        ip = env.OPENSHIFT_NODEJS_IP or env.OPENSHIFT_INTERNAL_IP or env.IP
-        port = env.OPENSHIFT_NODEJS_PORT or env.OPENSHIFT_INTERNAL_PORT or env.VCAP_APP_PORT or env.PORT
+        ip = env.OPENSHIFT_INTERNAL_IP or env.IP
+        port = env.OPENSHIFT_INTERNAL_PORT or env.VCAP_APP_PORT or env.PORT
         settings.app.ip = ip if ip? and ip isnt ""
         settings.app.port = port if port? and port isnt ""
 

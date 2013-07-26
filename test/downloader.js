@@ -43,4 +43,29 @@ describe("Downloader Tests", function() {
         var saveTo = __dirname + "google.html";
         downloader.download("http://google.com/", saveTo, callback);
     });
+
+    it("Prevent duplicate downloads.", function(done) {
+        this.timeout(5000);
+
+        settings.downloader.preventDuplicates = true;
+
+        var callback1 = function(err, obj) {
+            try {
+                fs.unlinkSync(obj.saveTo);
+            } catch (ex) {
+                // Ignore unlink / deletion problems.
+            }
+        };
+
+        var callback2 = function(err, obj) {
+            if (err && err.duplicate) {
+                done();
+            }
+        };
+
+        var saveTo = __dirname + "downloadtest.zip";
+        var downUrl = "http://ipv4.download.thinkbroadband.com/5MB.zip";
+        downloader.download(downUrl, saveTo, callback1);
+        downloader.download(downUrl, saveTo, callback2);
+    });
 });

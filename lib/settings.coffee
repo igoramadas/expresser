@@ -187,6 +187,9 @@ class Settings
     # -------------------------------------------------------------------------
     # Built-in support for Loggly and Logentries.
     logger:
+        # Output logs to the console? If left null or undefined, it will inherit the value
+        # from settings.general.debug.
+        console: null
         # List will all field / property names to be removed from logs.
         # Default list is "Password, password, passwordHash and passwordEncrypted".
         removeFields: "Password,password,passwordHash,passwordEncrypted"
@@ -292,6 +295,10 @@ Settings.getInstance = ->
                 @instance.general.debug = true
             else
                 @instance.general.debug = false
+
+        # Set console log in case it has not been set.
+        if not @instance.logger.console?
+            @instance.logger.console = @instance.general.debug
 
         # Set minifyBuilds in case it has not been set.
         if not @instance.app.connectAssets.minifyBuilds?

@@ -157,7 +157,7 @@ class Logger
 
     # Log any object to the default transports as `log`.
     info: =>
-        console.info.apply(this, arguments) if settings.general.debug or activeServices.length < 1
+        console.info.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
 
         if localBuffer?
@@ -169,7 +169,7 @@ class Logger
 
     # Log any object to the default transports as `warn`.
     warn: =>
-        console.warn.apply(this, arguments) if settings.general.debug or activeServices.length < 1
+        console.warn.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
 
         if localBuffer?
@@ -181,7 +181,7 @@ class Logger
 
     # Log any object to the default transports as `error`.
     error: =>
-        console.error.apply(this, arguments) if settings.general.debug or activeServices.length < 1
+        console.error.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
 
         if localBuffer?

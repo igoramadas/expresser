@@ -17,18 +17,23 @@ class Downloader
 
     # The download queue and simultaneous count.
     queue = []
-    simultaneous = 0
+    downloading = []
 
 
     # INTERNAL METHODS
     # --------------------------------------------------------------------------
+
+    # Helper to remove a download from the `downloading` list.
+    removeDownloading = (obj) ->
+        filter = {timestamp: obj.timestamp, remoteUrl: obj.remoteUrl, saveTo: obj.saveTo}
+        downloading = lodash.reject downloading, filter
 
     # Helper function to proccess download errors.
     downloadError = (err, obj) ->
         if settings.general.debug
             logger.warn "Expresser", "Downloader.downloadError", err, obj
 
-        simultaneous -= 1
+        removeDownloading obj
         obj.callback(err, obj) if obj.callback?
 
     # Helper function to parse the URL and get its options.
@@ -91,8 +96,6 @@ class Downloader
 
                 # Listener: end data.
                 response.addListener "end", () =>
-                    simultaneous -= 1
-
                     fileWriter.addListener "close", () =>
 
                         # If temp download file can't be found, stop here but do not throw an error.
@@ -100,6 +103,7 @@ class Downloader
                             fileExists = fs.existsSync saveToTemp
                         else
                             fileExists = path.existsSync saveToTemp
+
                         return if not fileExists
 
                         # Delete the old file (if there's one) and rename the .download file to its original name.
@@ -108,7 +112,8 @@ class Downloader
                         # Remove .download extension.
                         fs.renameSync saveToTemp, obj.saveTo
 
-                        # Proceed with the callback.
+                        # Remove from `downloading` list and proceed with the callback.
+                        removeDownloading obj
                         obj.callback(err, obj) if obj.callback?
 
                         if settings.general.debug
@@ -119,7 +124,7 @@ class Downloader
 
         # Unhandled error, call the downloadError helper.
         req.on "error", (err) =>
-            downloadError err
+            downloadError err, obj
 
     # Process next download.
     next = ->
@@ -127,7 +132,7 @@ class Downloader
 
         # Get first download from queue.
         obj = queue.shift()
-        simultaneous += 1
+        downloading.push obj
 
         if settings.downloader.headers? and settings.downloader.headers isnt ""
             headers = settings.web.downloaderHeaders
@@ -156,29 +161,31 @@ class Downloader
             logger.warn "Expresser", "Downloader.download", "Aborted, remoteUrl is not defined."
             return
 
-        now = new Date()
+        # Check options and callback.
+        if not callback? and lodash.isFunction options
+            callback = options
+            options = null
+
+        now = new Date().getTime()
 
         # Prevent duplicates?
         if settings.downloader.preventDuplicates
-            existing = lodash.filter queue, {remoteUrl: remoteUrl}
+            existing = lodash.filter downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
 
             # If downloading the same file and to the same location, abort download.
             if existing.length > 0
                 existing = existing[0]
                 if existing.saveTo is saveTo
                     logger.warn "Expresser", "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
+                    err = {message: "Download aborted: same file is already downloading.", duplicate: true}
+                    callback(err, null) if callback?
                     return
 
-        # Check options and callback.
-        if not callback? and lodash.isFunction options
-            callback = options
-            options = null
-
         # Add download to the queue.
-        queue.push {remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback, date: now}
+        queue.push {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback}
 
         # Start download immediatelly if not exceeding the `maxSimultaneous` setting.
-        next() if simultaneous < settings.downloader.maxSimultaneous
+        next() if downloading.length < settings.downloader.maxSimultaneous
 
 
 # Singleton implementation
