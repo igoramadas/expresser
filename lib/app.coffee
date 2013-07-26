@@ -153,7 +153,7 @@ class App
 
         # Configure development environment.
         @server.configure "development", =>
-            @server.use express.errorHandler {dumpExceptions: false, showStack: false}
+            @server.use express.errorHandler {dumpExceptions: true, showStack: true}
 
         # Configure production environment.
         @server.configure "production", =>

@@ -96,6 +96,8 @@ class Logger
             # Create logs folder, if it doesn't exist.
             if not folderExists
                 fs.mkdirSync settings.path.logsDir
+                if settings.general.debug
+                    console.log "Expresser", "Logger.initLocal", "Created #{settings.path.logsDir} folder."
 
             # Set local buffer.
             localBuffer = {info: [], warn: [], error: []}
@@ -230,7 +232,7 @@ class Logger
                     fs.appendFile filePath, writeData, (err) =>
                         flushing = false
                         if err?
-                            console.error("Expresser", "Logger.flushLocal", err)
+                            console.error "Expresser", "Logger.flushLocal", err
                             @onLogError err if @onLogError?
                         else
                             @onLogSuccess successMsg if @onLogSuccess?
@@ -239,13 +241,13 @@ class Logger
                     fs.open filePath, "a", 666, (err1, fd) =>
                         if err1?
                             flushing = false
-                            console.error("Expresser", "Logger.flushLocal.open", err1)
+                            console.error "Expresser", "Logger.flushLocal.open", err1
                             @onLogError err1 if @onLogError?
                         else
                             fs.write fd, writeData, null, "utf8", (err2) =>
                                 flushing = false
                                 if err2?
-                                    console.error("Expresser", "Logger.flushLocal.write", err2)
+                                    console.error "Expresser", "Logger.flushLocal.write", err2
                                     @onLogError err2 if @onLogError?
                                 else
                                     @onLogSuccess successMsg if @onLogSuccess?
