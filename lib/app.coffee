@@ -5,14 +5,10 @@
 
 class App
 
-    # Expose the Express server to external code.
+    # Expose the Express server to external code, and an array of
+    # extra middlewares to be added before the server router.
     server: null
-
-    # Expose the Passport module to external code. The `passportCallback` must be set by your application
-    # with the signature (username, password, callback) for Basic HTTP, or (profile, callback) for LDAP.
-    # The `callback` has the signature (err, result).
-    passport: null
-    passportAuthenticate: null
+    extraMiddlewares: []
 
     # Internal modules will be set on `init`.
     firewall = null
@@ -27,8 +23,6 @@ class App
 
     # Init the Express server.
     init: =>
-
-        # Require OS to gather system info, and the server settigs.
         http = require "http"
         os = require "os"
         settings = require "./settings.coffee"
@@ -101,22 +95,9 @@ class App
             ConnectAssets = (require "connect-assets") settings.app.connectAssets
             @server.use ConnectAssets
 
-            # Use passport?
-            if settings.app.auth
-                @passport = require "passport"
-
-                # Enable basic HTTP authentication?
-                if settings.passport.basic.enabled
-                    httpStrategy = (require "passport-http").BasicStrategy
-
-                    @passport.use new httpStrategy (username, password, callback) =>
-                        if not @passportAuthenticate?
-                            logger.warn "Expresser", "App.passportAuthenticate not set.", "Abort basic HTTP authentication."
-                        else
-                            @passportAuthenticate username, password, callback
-
-                    if settings.general.debug
-                        logger.info "Expresser", "App.configure", "Passport: using basic HTTP authentication."
+            # Add more middlewares, if specified (for example passport for authentication).
+            if @extraMiddlewares.length > 0
+                @server.use mw for mw in @extraMiddlewares
 
             # Set Express router.
             @server.use @server.router

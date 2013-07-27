@@ -255,7 +255,7 @@ class Settings
     # -------------------------------------------------------------------------
 
     # Reset to default settings.
-    reset:
+    reset: =>
         @instance = new Settings()
 
 
@@ -267,10 +267,10 @@ Settings.getInstance = ->
 
         # Set debug in case it has not been set.
         if not @instance.general.debug?
-            if process.env.NODE_ENV is "development"
-                @instance.general.debug = true
-            else
+            if process.env.NODE_ENV is "production"
                 @instance.general.debug = false
+            else
+                @instance.general.debug = true
 
         # Set console log in case it has not been set.
         if not @instance.logger.console?
