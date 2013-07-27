@@ -13,6 +13,9 @@ class Database
     # Database object, will be set during `init`.
     db: null
 
+    # Callback triggered when a connection is validated successfully.
+    onConnectionValidated: null
+
     # When using the failover/secondary databse, `failover` will be set to true.
     failover: false
 
@@ -48,11 +51,16 @@ class Database
 
         # Try to connect to the current database. If it fails, try again in a few seconds.
         @db.open (err, result) =>
+
             if err?
                 if settings.general.debug
                     logger.warn "Expresser", "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
                 setTimeout (() => @validateConnection retry + 1), settings.database.retryInterval
+
             else if settings.general.debug
+
+                @onConnectionValidated result if @onConnectionValidated?
+
                 # If using the failover database, register a timeout to try
                 # to connect to the main database again.
                 if @failover

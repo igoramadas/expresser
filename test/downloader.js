@@ -31,6 +31,8 @@ describe("Downloader Tests", function() {
     });
 
     it("Download (then delete) Google index html file", function(done) {
+        this.timeout(8000);
+
         var callback = function(err, obj) {
             if (err) {
                 throw err;

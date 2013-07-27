@@ -33,8 +33,15 @@ describe("Database Tests", function() {
     });
 
     it("Inits", function(done) {
+        this.timeout(8000);
+
+        var callback = function(result) {
+            database.onConnectionValidated = null;
+            done();
+        };
+
+        database.onConnectionValidated = callback;
         database.init();
-        setTimeout(done, 1900);
     });
 
     it("Add simple record to the database", function(done) {
