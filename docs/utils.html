@@ -230,7 +230,7 @@ settings for the current NODE_ENV value.</p>
 
             xtend settingsJson, settings
 
-        <span class="keyword">if</span> settings.general.debug
+        <span class="keyword">if</span> settings.general.debug <span class="keyword">and</span> settings.logger.console
             console.log <span class="string">"Expresser"</span>, <span class="string">"Utils.loadSettingsFromJson"</span>, filename</pre></div>
         
       
@@ -253,8 +253,8 @@ settings for the current NODE_ENV value.</p>
         <p>Check for web (IP and port) variables.</p>
 
         
-          <div class='highlight'><pre>        ip = env.OPENSHIFT_INTERNAL_IP <span class="keyword">or</span> env.IP
-        port = env.OPENSHIFT_INTERNAL_PORT <span class="keyword">or</span> env.VCAP_APP_PORT <span class="keyword">or</span> env.PORT
+          <div class='highlight'><pre>        ip = env.OPENSHIFT_NODEJS_IP <span class="keyword">or</span> env.IP
+        port = env.OPENSHIFT_NODEJS_PORT <span class="keyword">or</span> env.VCAP_APP_PORT <span class="keyword">or</span> env.PORT
         settings.app.ip = ip <span class="keyword">if</span> ip? <span class="keyword">and</span> ip <span class="keyword">isnt</span> <span class="string">""</span>
         settings.app.port = port <span class="keyword">if</span> port? <span class="keyword">and</span> port <span class="keyword">isnt</span> <span class="string">""</span></pre></div>
         
@@ -354,8 +354,8 @@ settings for the current NODE_ENV value.</p>
         <p>Log to console.</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span> settings.general.debug
-            console.log <span class="string">"Expresser"</span>, <span class="string">"Utils.updateSettingsFromPaaS"</span></pre></div>
+          <div class='highlight'><pre>        <span class="keyword">if</span> settings.general.debug <span class="keyword">and</span> settings.logger.console
+            console.log <span class="string">"Expresser"</span>, <span class="string">"Utils.updateSettingsFromPaaS"</span>, <span class="string">"Settings updated!"</span></pre></div>
         
       
         

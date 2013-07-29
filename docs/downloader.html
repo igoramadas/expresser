@@ -287,7 +287,12 @@ download has finished and the file is totally written.</p>
         <p>Delete the old file (if there&#39;s one) and rename the .download file to its original name.</p>
 
         
-          <div class='highlight'><pre>                        fs.unlinkSync obj.saveTo <span class="keyword">if</span> fs.existsSync obj.saveTo</pre></div>
+          <div class='highlight'><pre>                        <span class="keyword">if</span> fs.existsSync?
+                            fileExists = fs.existsSync obj.saveTo
+                        <span class="keyword">else</span>
+                            fileExists = path.existsSync obj.saveTo
+
+                        fs.unlinkSync obj.saveTo <span class="keyword">if</span> fileExists</pre></div>
         
       
         

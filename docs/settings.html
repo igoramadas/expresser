@@ -306,87 +306,6 @@ production environments but not on development.</p>
         
       
         
-        <h2>PASSPORT MODULE</h2>
-
-        
-      
-        
-        
-        
-          <div class='highlight'><pre>    passport:</pre></div>
-        
-      
-        
-        <p>Enable passport module on the App?</p>
-
-        
-          <div class='highlight'><pre>        enabled: <span class="literal">false</span></pre></div>
-        
-      
-        
-        <p>Basic HTTP Auth strategy settings.</p>
-
-        
-          <div class='highlight'><pre>        basic:</pre></div>
-        
-      
-        
-        <p>Enable basic HTTP authentication?</p>
-
-        
-          <div class='highlight'><pre>            enabled: <span class="literal">false</span></pre></div>
-        
-      
-        
-        <p>LDAP authentication strategy settings.</p>
-
-        
-          <div class='highlight'><pre>        ldap:</pre></div>
-        
-      
-        
-        <p>Enable LDAP authentication?</p>
-
-        
-          <div class='highlight'><pre>            enabled: <span class="literal">false</span></pre></div>
-        
-      
-        
-        <p>The LDAP admin dn. Example: cn=root.</p>
-
-        
-          <div class='highlight'><pre>            adminDn: <span class="literal">null</span></pre></div>
-        
-      
-        
-        <p>The LDAP admin password. Example: mypass.</p>
-
-        
-          <div class='highlight'><pre>            adminPassword: <span class="literal">null</span></pre></div>
-        
-      
-        
-        <p>The LDAP search base. Example: cn=users,dc=local.</p>
-
-        
-          <div class='highlight'><pre>            searchBase: <span class="literal">null</span></pre></div>
-        
-      
-        
-        <p>The LDAP search filter. Example: (&amp;(l=Berlin)(email=*@zalando.de)).</p>
-
-        
-          <div class='highlight'><pre>            searchFilter: <span class="literal">null</span></pre></div>
-        
-      
-        
-        <p>The LDAP server full address with hostname and port. Example: ldap://127.0.0.1:1390.</p>
-
-        
-          <div class='highlight'><pre>            server: <span class="literal">null</span></pre></div>
-        
-      
-        
         <h2>SOCKETS</h2>
 
         
@@ -893,7 +812,7 @@ in case the authentication fails.</p>
         <p>Reset to default settings.</p>
 
         
-          <div class='highlight'><pre>    reset:
+          <div class='highlight'><pre>    reset: =&gt;
         <span class="property">@instance</span> = <span class="keyword">new</span> Settings()</pre></div>
         
       
@@ -907,7 +826,8 @@ in case the authentication fails.</p>
         
           <div class='highlight'><pre>Settings.<span class="function"><span class="title">getInstance</span></span> = -&gt;
     <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>?
-        <span class="property">@instance</span> = <span class="keyword">new</span> Settings()</pre></div>
+        <span class="property">@instance</span> = <span class="keyword">new</span> Settings()
+        nodeEnv = process.env.NODE_ENV</pre></div>
         
       
         
@@ -915,10 +835,10 @@ in case the authentication fails.</p>
 
         
           <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>.general.debug?
-            <span class="keyword">if</span> process.env.NODE_ENV <span class="keyword">is</span> <span class="string">"development"</span>
-                <span class="property">@instance</span>.general.debug = <span class="literal">true</span>
+            <span class="keyword">if</span> nodeEnv <span class="keyword">is</span> <span class="string">"production"</span> <span class="keyword">or</span> nodeEnv <span class="keyword">is</span> <span class="string">"test"</span>
+                <span class="property">@instance</span>.general.debug = <span class="literal">false</span>
             <span class="keyword">else</span>
-                <span class="property">@instance</span>.general.debug = <span class="literal">false</span></pre></div>
+                <span class="property">@instance</span>.general.debug = <span class="literal">true</span></pre></div>
         
       
         
@@ -934,7 +854,7 @@ in case the authentication fails.</p>
 
         
           <div class='highlight'><pre>        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span>.app.connectAssets.minifyBuilds?
-            <span class="keyword">if</span> process.env.NODE_ENV <span class="keyword">is</span> <span class="string">"development"</span>
+            <span class="keyword">if</span> nodeEnv <span class="keyword">is</span> <span class="string">"development"</span>
                 <span class="property">@instance</span>.app.connectAssets.minifyBuilds = <span class="literal">false</span>
             <span class="keyword">else</span>
                 <span class="property">@instance</span>.app.connectAssets.minifyBuilds = <span class="literal">true</span>

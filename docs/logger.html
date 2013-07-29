@@ -274,7 +274,9 @@ and a timer to flush logs to disk every X milliseconds.</p>
 
         
           <div class='highlight'><pre>            <span class="keyword">if</span> <span class="keyword">not</span> folderExists
-                fs.mkdirSync settings.path.logsDir</pre></div>
+                fs.mkdirSync settings.path.logsDir
+                <span class="keyword">if</span> settings.general.debug
+                    console.log <span class="string">"Expresser"</span>, <span class="string">"Logger.initLocal"</span>, <span class="string">"Created <span class="subst">#{settings.path.logsDir}</span> folder."</span></pre></div>
         
       
         
@@ -475,7 +477,7 @@ Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on
                     fs.appendFile filePath, writeData, (err) =&gt;
                         flushing = <span class="literal">false</span>
                         <span class="keyword">if</span> err?
-                            console.error(<span class="string">"Expresser"</span>, <span class="string">"Logger.flushLocal"</span>, err)
+                            console.error <span class="string">"Expresser"</span>, <span class="string">"Logger.flushLocal"</span>, err
                             <span class="property">@onLogError</span> err <span class="keyword">if</span> <span class="property">@onLogError</span>?
                         <span class="keyword">else</span>
                             <span class="property">@onLogSuccess</span> successMsg <span class="keyword">if</span> <span class="property">@onLogSuccess</span>?
@@ -484,13 +486,13 @@ Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on
                     fs.open filePath, <span class="string">"a"</span>, <span class="number">666</span>, (err1, fd) =&gt;
                         <span class="keyword">if</span> err1?
                             flushing = <span class="literal">false</span>
-                            console.error(<span class="string">"Expresser"</span>, <span class="string">"Logger.flushLocal.open"</span>, err1)
+                            console.error <span class="string">"Expresser"</span>, <span class="string">"Logger.flushLocal.open"</span>, err1
                             <span class="property">@onLogError</span> err1 <span class="keyword">if</span> <span class="property">@onLogError</span>?
                         <span class="keyword">else</span>
                             fs.write fd, writeData, <span class="literal">null</span>, <span class="string">"utf8"</span>, (err2) =&gt;
                                 flushing = <span class="literal">false</span>
                                 <span class="keyword">if</span> err2?
-                                    console.error(<span class="string">"Expresser"</span>, <span class="string">"Logger.flushLocal.write"</span>, err2)
+                                    console.error <span class="string">"Expresser"</span>, <span class="string">"Logger.flushLocal.write"</span>, err2
                                     <span class="property">@onLogError</span> err2 <span class="keyword">if</span> <span class="property">@onLogError</span>?
                                 <span class="keyword">else</span>
                                     <span class="property">@onLogSuccess</span> successMsg <span class="keyword">if</span> <span class="property">@onLogSuccess</span>?

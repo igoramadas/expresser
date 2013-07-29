@@ -137,6 +137,13 @@ Parameters on <a href="settings.coffee">settings.html</a>: Settings.Database</p>
         
       
         
+        <p>Callback triggered when a connection is validated successfully.</p>
+
+        
+          <div class='highlight'><pre>    onConnectionValidated: <span class="literal">null</span></pre></div>
+        
+      
+        
         <p>When using the failover/secondary databse, <code>failover</code> will be set to true.</p>
 
         
@@ -195,11 +202,14 @@ stop trying and log an error.</p>
 
         
           <div class='highlight'><pre>        <span class="property">@db</span>.open (err, result) =&gt;
+
             <span class="keyword">if</span> err?
                 <span class="keyword">if</span> settings.general.debug
                     logger.warn <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Failed to connect."</span>, <span class="string">"Retry <span class="subst">#{retry}</span>."</span>
                 setTimeout (() =&gt; <span class="property">@validateConnection</span> retry + <span class="number">1</span>), settings.database.retryInterval
-            <span class="keyword">else</span> <span class="keyword">if</span> settings.general.debug</pre></div>
+
+            <span class="keyword">else</span>
+                <span class="property">@onConnectionValidated</span> result <span class="keyword">if</span> <span class="property">@onConnectionValidated</span>?</pre></div>
         
       
         
@@ -207,11 +217,18 @@ stop trying and log an error.</p>
 to connect to the main database again.</p>
 
         
-          <div class='highlight'><pre>                <span class="keyword">if</span> <span class="property">@failover</span>
-                    setTimeout <span class="property">@validateConnection</span>, settings.database.failoverTimeout * <span class="number">1000</span>
-                    logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Connected to failover DB."</span>, <span class="string">"Try main DB again in <span class="subst">#{settings.database.failoverTimeout}</span> settings."</span>
-                <span class="keyword">else</span>
-                    logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Connected to main DB."</span></pre></div>
+          <div class='highlight'><pre>                setTimeout <span class="property">@validateConnection</span>, settings.database.failoverTimeout * <span class="number">1000</span></pre></div>
+        
+      
+        
+        <p>Debug if necessary.</p>
+
+        
+          <div class='highlight'><pre>                <span class="keyword">if</span> settings.general.debug
+                    <span class="keyword">if</span> <span class="property">@failover</span>
+                        logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Connected to failover DB."</span>, <span class="string">"Will try main DB again in <span class="subst">#{settings.database.failoverTimeout}</span> settings."</span>
+                    <span class="keyword">else</span>
+                        logger.info <span class="string">"Expresser"</span>, <span class="string">"Database.validateConnection"</span>, <span class="string">"Connected to main DB."</span></pre></div>
         
       
         
