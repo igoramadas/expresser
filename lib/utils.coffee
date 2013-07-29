@@ -79,7 +79,7 @@ class Utils
 
             xtend settingsJson, settings
 
-        if settings.general.debug
+        if settings.general.debug and settings.logger.console
             console.log "Expresser", "Utils.loadSettingsFromJson", filename
 
     # Update settings based on Cloud Environmental variables.
@@ -155,7 +155,7 @@ class Utils
         settings.twitter.accessSecret = twitterAccessSecret if twitterAccessSecret? and twitterAccessSecret isnt ""
 
         # Log to console.
-        if settings.general.debug
+        if settings.general.debug and settings.logger.console
             console.log "Expresser", "Utils.updateSettingsFromPaaS", "Settings updated!"
 
 

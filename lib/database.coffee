@@ -57,17 +57,19 @@ class Database
                     logger.warn "Expresser", "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
                 setTimeout (() => @validateConnection retry + 1), settings.database.retryInterval
 
-            else if settings.general.debug
-
+            else
                 @onConnectionValidated result if @onConnectionValidated?
 
                 # If using the failover database, register a timeout to try
                 # to connect to the main database again.
-                if @failover
-                    setTimeout @validateConnection, settings.database.failoverTimeout * 1000
-                    logger.info "Expresser", "Database.validateConnection", "Connected to failover DB.", "Try main DB again in #{settings.database.failoverTimeout} settings."
-                else
-                    logger.info "Expresser", "Database.validateConnection", "Connected to main DB."
+                setTimeout @validateConnection, settings.database.failoverTimeout * 1000
+
+                # Debug if necessary.
+                if settings.general.debug
+                    if @failover
+                        logger.info "Expresser", "Database.validateConnection", "Connected to failover DB.", "Will try main DB again in #{settings.database.failoverTimeout} settings."
+                    else
+                        logger.info "Expresser", "Database.validateConnection", "Connected to main DB."
 
 
     # INIT

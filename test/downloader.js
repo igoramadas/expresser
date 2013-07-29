@@ -30,7 +30,7 @@ describe("Downloader Tests", function() {
         settings.should.have.property("downloader");
     });
 
-    it("Download (then delete) Google index html file", function(done) {
+    it("Download with redirect (Google index html)", function(done) {
         this.timeout(8000);
 
         var callback = function(err, obj) {
@@ -42,7 +42,7 @@ describe("Downloader Tests", function() {
             }
         };
 
-        var saveTo = __dirname + "google.html";
+        var saveTo = __dirname + "/download-google.html";
         downloader.download("http://google.com/", saveTo, callback);
     });
 
@@ -63,7 +63,7 @@ describe("Downloader Tests", function() {
             }
         };
 
-        var saveTo = __dirname + "downloadtest.zip";
+        var saveTo = __dirname + "/download-test.zip";
         var downUrl = "http://ipv4.download.thinkbroadband.com/5MB.zip";
         downloader.download(downUrl, saveTo, callback1);
         downloader.download(downUrl, saveTo, callback2);

@@ -264,10 +264,11 @@ class Settings
 Settings.getInstance = ->
     if not @instance?
         @instance = new Settings()
+        nodeEnv = process.env.NODE_ENV
 
         # Set debug in case it has not been set.
         if not @instance.general.debug?
-            if process.env.NODE_ENV is "production"
+            if nodeEnv is "production" or nodeEnv is "test"
                 @instance.general.debug = false
             else
                 @instance.general.debug = true
@@ -278,7 +279,7 @@ Settings.getInstance = ->
 
         # Set minifyBuilds in case it has not been set.
         if not @instance.app.connectAssets.minifyBuilds?
-            if process.env.NODE_ENV is "development"
+            if nodeEnv is "development"
                 @instance.app.connectAssets.minifyBuilds = false
             else
                 @instance.app.connectAssets.minifyBuilds = true
