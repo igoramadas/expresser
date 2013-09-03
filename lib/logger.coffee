@@ -159,7 +159,21 @@ class Logger
     # LOG METHODS
     # --------------------------------------------------------------------------
 
-    # Log any object to the default transports as `log`.
+    # Log to the active transports as `debug`, only if the debug flag is enabled.
+    debug: =>
+        return if not settings.general.debug
+
+        console.info.apply(this, arguments) if settings.logger.console
+        msg = @getMessage arguments
+
+        if localBuffer?
+            @logLocal "debug", msg
+        if logentries?
+            loggerLogentries.debug.apply loggerLogentries, [msg]
+        if loggly?
+            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "debug: #{msg}", @logglyCallback]
+
+    # Log to the active transports as `log`.
     info: =>
         console.info.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
@@ -169,9 +183,9 @@ class Logger
         if logentries?
             loggerLogentries.info.apply loggerLogentries, [msg]
         if loggly?
-            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, msg, @logglyCallback]
+            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "info: #{msg}", @logglyCallback]
 
-    # Log any object to the default transports as `warn`.
+    # Log to the active transports as `warn`.
     warn: =>
         console.warn.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
@@ -181,9 +195,9 @@ class Logger
         if logentries?
             loggerLogentries.warning.apply loggerLogentries, [msg]
         if loggly?
-            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, msg, @logglyCallback]
+            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "warn: #{msg}", @logglyCallback]
 
-    # Log any object to the default transports as `error`.
+    # Log to the active transports as `error`.
     error: =>
         console.error.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
@@ -193,7 +207,7 @@ class Logger
         if logentries?
             loggerLogentries.err.apply loggerLogentries, [msg]
         if loggly?
-            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, msg, @logglyCallback]
+            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "error: #{msg}", @logglyCallback]
 
 
     # LOCAL LOGGING
