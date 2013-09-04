@@ -7,7 +7,6 @@ chai.should();
 describe("Cron Tests", function() {
     process.env.NODE_ENV = "test";
 
-    var env = process.env;
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var cron = null;
@@ -29,15 +28,21 @@ describe("Cron Tests", function() {
         settings.should.have.property("cron");
     });
 
-    it("Add and run a cron job", function(done) {
+    it("Add and run a cron job, passing itself to the callback", function(done) {
+        var schedule = 990;
         var callback = function(jobRef) {
-            console.warn("JOB RERERENCE!!!");
-            console.warn(jobRef);
-            done();
+            if (jobRef.schedule == schedule)
+            {
+                done();
+            }
+            else
+            {
+                done("The job was not passed to the callback.")
+            }
         };
 
-        var job = {callback: callback, schedule: 1000};
+        var job = {callback: callback, schedule: schedule};
 
-        cron.add("test", job);
+        cron.add("testAddJob", job);
     });
 });

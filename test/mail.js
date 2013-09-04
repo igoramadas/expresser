@@ -7,7 +7,6 @@ chai.should();
 describe("Mail Tests", function() {
     process.env.NODE_ENV = "test";
 
-    var env = process.env;
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var mail = null;
