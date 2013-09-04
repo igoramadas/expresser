@@ -219,6 +219,15 @@ class Settings
         # Download timeout, in seconds.
         timeout: 3600
 
+    # CRON
+    # -------------------------------------------------------------------------
+    # Built-in cron / scheduled jobs manager.
+    cron:
+        # If `allowReplacing` is true, cron will allow replacing jobs by adding a new
+        # job using the same ID. If false, you'll need to remove the existing job
+        # before adding otherwise it will throw an error.
+        allowReplacing: true
+
     # NEW RELIC PROFILING
     # -------------------------------------------------------------------------
     # Built-in support for New Relic. Will be used ONLY if the appName and licenseKey

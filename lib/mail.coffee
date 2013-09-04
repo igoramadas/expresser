@@ -46,9 +46,9 @@ class Mail
         transport.sendMail options, (err, result) ->
             if err?
                 logger.error "Expresser", "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
-            else if settings.general.debug
-                logger.info "Mail.smtpSend", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
-            callback err, result
+            else
+                logger.debug "Mail.smtpSend", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
+                callback err, result
 
 
     # INIT

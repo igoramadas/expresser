@@ -30,8 +30,7 @@ class Downloader
 
     # Helper function to proccess download errors.
     downloadError = (err, obj) ->
-        if settings.general.debug
-            logger.warn "Expresser", "Downloader.downloadError", err, obj
+        logger.debug "Expresser", "Downloader.downloadError", err, obj
 
         removeDownloading obj
         obj.callback(err, obj) if obj.callback?
@@ -121,8 +120,7 @@ class Downloader
                         removeDownloading obj
                         obj.callback(err, obj) if obj.callback?
 
-                        if settings.general.debug
-                            logger.info "Expresser", "Downloader.next", "End", obj
+                        logger.debug "Expresser", "Downloader.next", "End", obj
 
                     fileWriter.end()
                     fileWriter.destroySoon()

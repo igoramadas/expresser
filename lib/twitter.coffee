@@ -74,8 +74,8 @@ class Twitter
                 # Authenticate on Twitter.
                 authenticate()
 
-            else if settings.general.debug
-                logger.warn "Expresser", "Twitter.init", "No credentials were set.", "Twitter module won't work."
+            else
+                logger.debug "Expresser", "Twitter.init", "No credentials were set.", "Twitter module won't work."
 
 
     # STATUS
@@ -91,9 +91,9 @@ class Twitter
         twit.updateStatus message, (err, data) =>
             if err?
                 logger.error "Expresser", "Twitter.postStatus", "Failed: #{message}", err
-            else if settings.general.debug
-                logger.info "Expresser", "Twitter.postStatus", "Posted, ID #{data.id}: #{message}"
-            callback err, data if callback?
+            else
+                logger.debug "Expresser", "Twitter.postStatus", "Posted, ID #{data.id}: #{message}"
+                callback err, data if callback?
 
 
     # MESSAGES
@@ -109,9 +109,9 @@ class Twitter
         twit.sendDirectMessage {"screen_name": user, "text": message}, (err, data) =>
             if err?
                 logger.error "Expresser", "Twitter.sendMessage", "Send to #{user} FAILED.", message, err
-            else if settings.general.debug
-                logger.info "Expresser", "Twitter.sendMessage", "Sent to #{user}.", message
-            callback err, data if callback?
+            else
+                logger.debug "Expresser", "Twitter.sendMessage", "Sent to #{user}.", message
+                callback err, data if callback?
 
     # Destroy the specified direct message. If a `callback` is specified, it will
     # get triggered passing true or false.
@@ -123,9 +123,9 @@ class Twitter
         twit.destroyDirectMessage id, (err, data) =>
             if err?
                 logger.error "Expresser", "Twitter.destroyMessage", "#{id} FAILED.", err
-            else if settings.general.debug
-                logger.info "Expresser", "Twitter.destroyMessage", "#{id} SUCCESS."
-            callback err, data if callback?
+            else
+                logger.debug "Expresser", "Twitter.destroyMessage", "#{id} SUCCESS."
+                callback err, data if callback?
 
     # Returns a list of recent direct messages based on the optional `filter`, and process them
     # to generate new countdown models. A callback can be passed and will return an error
@@ -144,9 +144,9 @@ class Twitter
         twit.getDirectMessages filter, (err, data) =>
             if err?
                 logger.error "Expresser", "Twitter.getMessages", "Could NOT retrieve direct messages.", err
-            else if settings.general.debug
-                logger.info "Expresser", "Twitter.getMessages", "Retrieved #{data.length} messages."
-            callback err, data if callback?
+            else
+                logger.debug "Expresser", "Twitter.getMessages", "Retrieved #{data.length} messages."
+                callback err, data if callback?
 
 
 # Singleton implementation
