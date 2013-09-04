@@ -6,6 +6,7 @@ class Cron
 
     lodash = require "lodash"
     logger = require "./logger.coffee"
+    moment = require "moment"
     settings = require "./settings.coffee"
 
     # Jobs array object.
@@ -15,9 +16,10 @@ class Cron
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the databse by testing the connection.
+    # Init the cron jobs by reading the cron files and starting the `localTimer`.
     init: =>
         logger.debug "Expresser", "Cron.init"
+        localTimer = setInterval
 
 
     # METHODS
@@ -32,9 +34,8 @@ class Cron
                 setTimer @jobs[id]
         else
             logger.debug "Expresser", "Cron.start"
-
-            clearTimeout job.timer for job of @jobs
-            @jobs = {}
+            for job of @jobs
+                setTimer job
 
     # Stop the specified cron job. If no `id` is specified, all jobs will be stopped.
     stop: (id) =>
@@ -79,11 +80,17 @@ class Cron
 
     # Helper to get a timer / interval based on the defined options.
     setTimer = (job) ->
-        schedule = job.schedule
         callback = ->
             logger.debug "Expresser", "Cron", "Job #{job.id} trigger."
             job.callback job
             setTimer job
+
+        # Get the correct schedule / timeout value.
+        schedule = job.schedule
+        schedule = moment.duration(schedule).asMilliseconds() if not lodash.isNumber schedule
+
+        # Make sure timer is not running.
+        clearTimeout job.timer if job.timer?
 
         # Set the timeout based on the defined schedule.
         job.timer = setTimeout callback, schedule
