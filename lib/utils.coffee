@@ -25,34 +25,10 @@ class Utils
 
     # Helper to load values from the specified settings file.
     loadSettingsFromJson: (filename) =>
-        basename = path.basename filename
-
-        # Check if file exists.
-        if fs.existsSync?
-            hasJson = fs.existsSync filename
-        else
-            hasJson = path.existsSync filename
-
-        # If file does not exist on local path, try parent path.
-        if not hasJson
-            filename = path.resolve path.dirname(require.main.filename), "../#{basename}"
-
-            if fs.existsSync?
-                hasJson = fs.existsSync filename
-            else
-                hasJson = path.existsSync filename
-
-        # If file still not found, try root path.
-        if not hasJson
-            filename = path.resolve __dirname, basename
-
-            if fs.existsSync?
-                hasJson = fs.existsSync filename
-            else
-                hasJson = path.existsSync filename
+        filename = @getConfigFilePath filename
 
         # Has json? Load it. Try using UTF8 first, if failed, use ASCII.
-        if hasJson
+        if filename?
             if process.versions.node.indexOf(".10.") > 0
                 try
                     settingsJson = fs.readFileSync filename, {encoding: "utf8"}
@@ -161,6 +137,40 @@ class Utils
 
     # SERVER INFO UTILS
     # --------------------------------------------------------------------------
+
+    # Helper to get the correct filename for general config files, for example
+    # the settings.json file or cron.json for cron jobs. This will look into the current
+    # directory, the running directory and the root directory of the app.
+    getConfigFilePath: (filename) ->
+        basename = path.basename filename
+
+        # Check if file exists.
+        if fs.existsSync?
+            hasJson = fs.existsSync filename
+        else
+            hasJson = path.existsSync filename
+        return filename if hasJson
+
+        # If file does not exist on local path, try parent path.
+        filename = path.resolve path.dirname(require.main.filename), "../#{basename}"
+
+        if fs.existsSync?
+            hasJson = fs.existsSync filename
+        else
+            hasJson = path.existsSync filename
+        return filename if hasJson
+
+        # If file still not found, try root path.
+        filename = path.resolve __dirname, basename
+
+        if fs.existsSync?
+            hasJson = fs.existsSync filename
+        else
+            hasJson = path.existsSync filename
+        return filename if hasJson
+
+        # Nothing found, so return null.
+        return null
 
     # Return the first valid server IPv4 address.
     getServerIP: ->

@@ -227,6 +227,10 @@ class Settings
         # job using the same ID. If false, you'll need to remove the existing job
         # before adding otherwise it will throw an error.
         allowReplacing: true
+        # If `loadOnInit` is true, the cron.json file will be loaded and cron jobs
+        # will be started on init. Otherwise you'll have to manually call `load`
+        # and then `start`.
+        loadOnInit: true
 
     # NEW RELIC PROFILING
     # -------------------------------------------------------------------------
