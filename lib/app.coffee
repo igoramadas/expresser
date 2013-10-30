@@ -117,7 +117,7 @@ class App
 
         # Start the server.
         if settings.app.ip? and settings.app.ip isnt ""
-            httpServer.listen settings.app.ip, settings.app.port
+            httpServer.listen settings.app.port, settings.app.ip
             logger.info "Expresser", "App #{settings.general.appTitle} started!", settings.app.ip, settings.app.port
         else
             httpServer.listen settings.app.port
