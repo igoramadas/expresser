@@ -29,7 +29,7 @@ describe("Cron Tests", function() {
     });
 
     it("Add and run a cron job, passing itself to the callback", function(done) {
-        var schedule = 990;
+        var schedule = 500;
         var callback = function(jobRef) {
             if (jobRef.schedule == schedule)
             {
@@ -41,7 +41,7 @@ describe("Cron Tests", function() {
             }
         };
 
-        var job = {callback: callback, schedule: schedule};
+        var job = {callback: callback, schedule: schedule, once: true};
 
         cron.add("testAddJob", job);
     });

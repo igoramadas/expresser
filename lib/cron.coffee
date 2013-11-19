@@ -87,15 +87,20 @@ class Cron
 
         if @jobs[id]?
             if settings.cron.allowReplacing
-                clearInterval @jobs[id].timer
+                clearTimeout @jobs[id].timer
             else
                 logger.error "Expresser", "Cron.add", "Job #{id} already exists and 'allowReplacing' is false. Abort!"
                 return
+
+        # Set `startTime` and `endTime` if not set.
+        job.startTime = moment 0 if not job.startTime?
+        job.endTime = moment 0 if not job.endTime?
 
         # Only create the timer if `autoStart` is not false.
         setTimer job if job.autoStart isnt false
 
         # Add to the jobs list.
+        job.id = id
         @jobs[id] = job
 
     # Remove and stop a current job. If job does not exist, a warning will be logged.
@@ -111,12 +116,44 @@ class Cron
     # HELPERS
     # -------------------------------------------------------------------------
 
+    # Helper to get the timeout value (ms) to the next job callback.
+    getTimeout = (job) ->
+        now = moment()
+
+        # If `schedule` is not an array, parse it as integer / seconds.
+        if not lodash.isArray job.schedule
+            timeout = moment().add("s", job.schedule).valueOf() - now.valueOf()
+        else
+            minTime = "99:99:99"
+            nextTime = "99:99:99"
+
+            # Get the next and minimum times from `schedule`.
+            for sc in job.schedule
+                minTime = sc if sc < minTime
+                nextTime = sc if sc < nextTime and sc > now.format("HH:mm:ss")
+
+            # If no times were found for today then set for tomorrow, minimum time.
+            if nextTime is "99:99:99"
+                now = now.add "d", 1
+                nextTime = minTime
+
+            # Return the timeout.
+            arr = nextTime.split ":"
+            dateValue = [now.year(), now.month(), now.date(), parseInt(arr[0]), parseInt(arr[1]), parseInt(arr[2])]
+            timeout moment(dateValue).valueOf() - now.valueOf()
+
+        return timeout
+
     # Helper to get a timer / interval based on the defined options.
     setTimer = (job) ->
         callback = ->
             logger.debug "Expresser", "Cron", "Job #{job.id} trigger."
+            job.startTime = moment()
+            job.endTime = moment()
             job.callback job
-            setTimer job
+
+            # Only reset timer if once is not true.
+            setTimer job if not job.once
 
         # Get the correct schedule / timeout value.
         schedule = job.schedule
@@ -126,7 +163,10 @@ class Cron
         clearTimeout job.timer if job.timer?
 
         # Set the timeout based on the defined schedule.
-        job.timer = setTimeout callback, schedule
+        timeout = getTimeout job
+        job.timer = setTimeout callback, timeout
+
+        logger.debug "Expresser", "Cron.setTimer", job.id, timeout
 
 
 # Singleton implementation.
