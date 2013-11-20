@@ -31,12 +31,12 @@ class Utils
         if filename?
             if process.versions.node.indexOf(".10.") > 0
                 try
-                    settingsJson = fs.readFileSync filename, {encoding: "utf8"}
+                    settingsJson = fs.readFileSync filename, {encoding: settings.general.encoding}
                 catch ex
                     settingsJson = fs.readFileSync filename, {encoding: "ascii"}
             else
                 try
-                    settingsJson = fs.readFileSync filename, "utf8"
+                    settingsJson = fs.readFileSync filename, settings.general.encoding
                 catch ex
                     settingsJson = fs.readFileSync filename, "ascii"
 

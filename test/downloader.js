@@ -76,6 +76,8 @@ describe("Downloader Tests", function() {
         };
 
         var callback2 = function(err, obj) {
+            d1.stop();
+
             if (err && err.duplicate && d1 != d2) {
                 done();
             } else {

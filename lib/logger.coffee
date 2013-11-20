@@ -258,7 +258,7 @@ class Logger
                             console.error "Expresser", "Logger.flushLocal.open", err1
                             @onLogError err1 if @onLogError?
                         else
-                            fs.write fd, writeData, null, "utf8", (err2) =>
+                            fs.write fd, writeData, null, settings.general.encoding, (err2) =>
                                 flushing = false
                                 if err2?
                                     console.error "Expresser", "Logger.flushLocal.write", err2

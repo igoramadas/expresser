@@ -41,7 +41,7 @@ class Cron
             logger.debug "Expresser", "Cron.load", filepath
 
             try
-                cronJson = fs.readFileSync filepath, {encoding: "utf8"}
+                cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
             catch ex
                 cronJson = fs.readFileSync filepath, {encoding: "ascii"}
 
