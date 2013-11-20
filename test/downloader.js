@@ -45,26 +45,47 @@ describe("Downloader Tests", function() {
         downloader.download("http://google.com/", saveTo, callback);
     });
 
+    it("Force stop a download", function(done) {
+        settings.downloader.preventDuplicates = false;
+
+        var d, saveTo, downUrl;
+
+        var callback = function(err, obj) {
+            done();
+        };
+
+        saveTo = __dirname + "/download-test-stop.zip";
+        downUrl = "http://ipv4.download.thinkbroadband.com/100MB.zip";
+        d = downloader.download(downUrl, saveTo, callback);
+        d.stop()
+    });
+
     it("Prevent duplicate downloads", function(done) {
         settings.downloader.preventDuplicates = true;
 
+        var d1, d2, saveTo, downUrl;
+
         var callback1 = function(err, obj) {
             try {
-                fs.unlinkSync(obj.saveTo);
+                if (fs.existsSync(obj.saveTo)) {
+                    fs.unlinkSync(obj.saveTo);
+                }
             } catch (ex) {
-                // Ignore unlink / deletion problems.
+                done(ex);
             }
         };
 
         var callback2 = function(err, obj) {
-            if (err && err.duplicate) {
+            if (err && err.duplicate && d1 != d2) {
                 done();
+            } else {
+                done("Duplicate download was not prevented, or returned download objects are equal.");
             }
         };
 
-        var saveTo = __dirname + "/download-test.zip";
-        var downUrl = "http://ipv4.download.thinkbroadband.com/5MB.zip";
-        downloader.download(downUrl, saveTo, callback1);
-        downloader.download(downUrl, saveTo, callback2);
+        saveTo = __dirname + "/download-test.zip";
+        downUrl = "http://ipv4.download.thinkbroadband.com/5MB.zip";
+        d1 = downloader.download(downUrl, saveTo, callback1);
+        d2 = downloader.download(downUrl, saveTo, callback2);
     });
 });

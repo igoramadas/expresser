@@ -31,8 +31,8 @@ class Downloader
     # Helper function to proccess download errors.
     downloadError = (err, obj) ->
         logger.debug "Expresser", "Downloader.downloadError", err, obj
-
         removeDownloading obj
+        next()
         obj.callback(err, obj) if obj.callback?
 
     # Helper function to parse the URL and get its options.
@@ -89,32 +89,43 @@ class Downloader
                 # download has finished and the file is totally written.
                 fileWriter = fs.createWriteStream saveToTemp, {"flags": "w+"}
 
-                # Listener: write data.
-                response.addListener "data", (data) =>
-                    fileWriter.write data
+                # Helper called response gets new data.
+                onData = (data) ->
+                    if obj.stopFlag
+                        req.end()
+                        onEnd()
+                    else
+                        fileWriter.write data
 
-                # Listener: end data.
-                response.addListener "end", () =>
-                    fileWriter.addListener "close", () =>
+                # Helper called when response ends.
+                onEnd = ->
+                    response.removeListener "data", onData
 
-                        # If temp download file can't be found, stop here but do not throw an error.
+                    fileWriter.addListener "close", ->
+
+                        # Check if temp file exists.
                         if fs.existsSync?
-                            fileExists = fs.existsSync saveToTemp
+                            tempExists = fs.existsSync saveToTemp
                         else
-                            fileExists = path.existsSync saveToTemp
+                            tempExists = path.existsSync saveToTemp
 
-                        return if not fileExists
+                        # If temp download file can't be found, set error message.
+                        # If `stopFlag` is 2 means download was stopped and should not keep partial data.
+                        if not tempExists
+                            err = {message:"Can't find downloaded file: #{saveToTemp}"}
+                        else
+                            fs.unlinkSync saveToTemp if obj.stopFlag is 2
 
-                        # Delete the old file (if there's one) and rename the .download file to its original name.
+                        # Check if destination file already exists.
                         if fs.existsSync?
                             fileExists = fs.existsSync obj.saveTo
                         else
                             fileExists = path.existsSync obj.saveTo
 
-                        fs.unlinkSync obj.saveTo if fileExists
-
-                        # Remove .download extension.
-                        fs.renameSync saveToTemp, obj.saveTo
+                        # Only proceed with renaming if `stopFlag` wasn't set and destionation is valid.
+                        if not obj.stopFlag? or obj.stopFlag < 1
+                            fs.unlinkSync obj.saveTo if fileExists
+                            fs.renameSync saveToTemp, obj.saveTo if tempExists
 
                         # Remove from `downloading` list and proceed with the callback.
                         removeDownloading obj
@@ -124,6 +135,11 @@ class Downloader
 
                     fileWriter.end()
                     fileWriter.destroySoon()
+                    next()
+
+                # Attachd response listeners.
+                response.addListener "data", onData
+                response.addListener "end", onEnd
 
         # Unhandled error, call the downloadError helper.
         req.on "error", (err) =>
@@ -135,6 +151,15 @@ class Downloader
 
         # Get first download from queue.
         obj = queue.shift()
+
+        # Check if download is valid.
+        if not obj?
+            logger.debug "Expresser", "Downloader.next", "Skip", "Downloader object is invalid."
+            return
+        else
+            logger.debug "Expresser", "Downloader.next", obj
+
+        # Add to downloading array.
         downloading.push obj
 
         if settings.downloader.headers? and settings.downloader.headers isnt ""
@@ -148,17 +173,24 @@ class Downloader
             rejectUnauthorized: settings.downloader.rejectUnauthorized
 
         # Extend options.
-        options = lodash.assign options, obj.options, parseUrlOptions obj
+        options = lodash.assign options, obj.options, parseUrlOptions(obj)
 
-        # Start the download.
-        reqStart obj, options
+        # Start download
+        if obj.stopFlag? and obj.stopFlag > 0
+            logger.debug "Expresser", "Downloader.next", "Skip, 'stopFlag' is #{obj.stopFlag}.", obj
+            removeDownloading obj
+            next()
+        else
+            reqStart obj, options
 
 
     # METHODS
     # --------------------------------------------------------------------------
 
     # Download an external file and save it to the specified location. The `callback`
-    # has the signature (error, data).
+    # has the signature (error, data). Returns the downloader object which is added
+    # to the `queue`, which has the download properties and a `stop` helper to force
+    # stopping it. Returns false on error or duplicate.
     download: (remoteUrl, saveTo, options, callback) =>
         if not remoteUrl?
             logger.warn "Expresser", "Downloader.download", "Aborted, remoteUrl is not defined."
@@ -182,13 +214,20 @@ class Downloader
                     logger.warn "Expresser", "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
                     err = {message: "Download aborted: same file is already downloading.", duplicate: true}
                     callback(err, null) if callback?
-                    return
+                    return false
+
+        # Create a `stop` method to force stop the download by setting the `stopFlag`.
+        # Accepts a `keep` boolean, if true the already downloaded data will be kept on forced stop.
+        stopHelper = (keep) -> @stopFlag = (if keep then 1 else 2)
 
         # Add download to the queue.
-        queue.push {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback}
+        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback, stop: stopHelper}
+        queue.push downloadObj
 
         # Start download immediatelly if not exceeding the `maxSimultaneous` setting.
         next() if downloading.length < settings.downloader.maxSimultaneous
+
+        return downloadObj
 
 
 # Singleton implementation
