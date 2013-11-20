@@ -29,7 +29,7 @@ describe("Cron Tests", function() {
     });
 
     it("Add and run a cron job, passing itself to the callback", function(done) {
-        var schedule = 500;
+        var schedule = 1;
         var callback = function(jobRef) {
             if (jobRef.schedule == schedule)
             {

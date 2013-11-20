@@ -1,6 +1,13 @@
 # EXPRESSER CRON
 # -----------------------------------------------------------------------------
 # Handle scheduled / cron jobs.
+# To add a new scheduled job, use a job object with the following properties:
+# id [optional]: a unique ID for the job.
+# schedule:      interval in seconds or an array of times.
+#                Ex: 60 (evey minute), 3600 (every hour), ["09:00:00", "15:00:00"] (every day at 9AM and 3PM).
+# callback:      function to be called with the job, passing itself.
+#                Ex: function (job) { alert(job.id); }
+# once:          if true, execute this job only once.
 
 class Cron
 
@@ -81,10 +88,24 @@ class Cron
                 clearTimeout job.timer
                 delete job.timer
 
-    # Add a scheduled job to the cron.
+    # Add a scheduled job to the cron, passing an `id` and `job`.
+    # You can also pass only the `job` if it has an id property.
     add: (id, job) =>
         logger.debug "Expresser", "Cron.add", id, job
 
+        if id? and not job?
+            job = id
+            id = null
+
+        # If no `id` is passed, try getting it directly from the `job` object.
+        id = job.id if not id?
+
+        # Throw error if no `id` was provided.
+        if not id? or id is ""
+            logger.error "Expresser", "Cron.add", "No 'id' was passed. Abort!"
+            return
+
+        # Handle existing jobs.
         if @jobs[id]?
             if settings.cron.allowReplacing
                 clearTimeout @jobs[id].timer
