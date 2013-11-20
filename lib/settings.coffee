@@ -37,6 +37,8 @@ class Settings
         appUrl: "http://expresser.codeplex.com"
         # How long (seconds) should files read from disk (email templates for example) stay in cache?
         ioCacheTimeout: 60
+        # Default encoding to be used on IO and requests.
+        encoding: "utf8"
 
     # PATHS
     # -------------------------------------------------------------------------
