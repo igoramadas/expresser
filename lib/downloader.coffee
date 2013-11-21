@@ -30,7 +30,7 @@ class Downloader
 
     # Helper function to proccess download errors.
     downloadError = (err, obj) ->
-        logger.debug "Expresser", "Downloader.downloadError", err, obj
+        logger.debug "Downloader.downloadError", err, obj
         removeDownloading obj
         next()
         obj.callback(err, obj) if obj.callback?
@@ -131,7 +131,7 @@ class Downloader
                         removeDownloading obj
                         obj.callback(err, obj) if obj.callback?
 
-                        logger.debug "Expresser", "Downloader.next", "End", obj
+                        logger.debug "Downloader.next", "End", obj
 
                     fileWriter.end()
                     fileWriter.destroySoon()
@@ -154,10 +154,10 @@ class Downloader
 
         # Check if download is valid.
         if not obj?
-            logger.debug "Expresser", "Downloader.next", "Skip", "Downloader object is invalid."
+            logger.debug "Downloader.next", "Skip", "Downloader object is invalid."
             return
         else
-            logger.debug "Expresser", "Downloader.next", obj
+            logger.debug "Downloader.next", obj
 
         # Add to downloading array.
         downloading.push obj
@@ -177,7 +177,7 @@ class Downloader
 
         # Start download
         if obj.stopFlag? and obj.stopFlag > 0
-            logger.debug "Expresser", "Downloader.next", "Skip, 'stopFlag' is #{obj.stopFlag}.", obj
+            logger.debug "Downloader.next", "Skip, 'stopFlag' is #{obj.stopFlag}.", obj
             removeDownloading obj
             next()
         else

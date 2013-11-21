@@ -36,7 +36,7 @@ class Mail
                 pass: opt.password
 
         # Log SMTP creation.
-        logger.info "Expresser", "Mail.createSmtp", options.host, options.port, options.secureConnection
+        logger.info "Mail.createSmtp", options.host, options.port, options.secureConnection
 
         # Create and return SMTP object.
         return mailer.createTransport "SMTP", options
@@ -45,7 +45,7 @@ class Mail
     smtpSend = (transport, options, callback) ->
         transport.sendMail options, (err, result) ->
             if err?
-                logger.error "Expresser", "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
+                logger.error "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
             else
                 logger.debug "Mail.smtpSend", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
                 callback err, result
@@ -152,7 +152,7 @@ class Mail
     clearCache: =>
         count = Object.keys(templateCache).length
         templateCache = {}
-        logger.info "Expresser", "Mail.clearCache", "Cleared #{count} templates."
+        logger.info "Mail.clearCache", "Cleared #{count} templates."
 
 
 # Singleton implementation

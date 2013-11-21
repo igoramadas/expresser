@@ -33,7 +33,7 @@ class Twitter
                 auth = false
                 setTimeout (() -> authenticate retry + 1), settings.twitter.retryInterval * 1000
             else
-                logger.info "Expresser", "Twitter.init", "Authorized with ID #{data.id}."
+                logger.info "Twitter.init", "Authorized with ID #{data.id}."
                 auth = true
 
     # Helper to check and log when the module hasn't authenticated or is not enabled.
@@ -75,7 +75,7 @@ class Twitter
                 authenticate()
 
             else
-                logger.debug "Expresser", "Twitter.init", "No credentials were set.", "Twitter module won't work."
+                logger.debug "Twitter.init", "No credentials were set.", "Twitter module won't work."
 
 
     # STATUS
@@ -90,9 +90,9 @@ class Twitter
         # Update status on Twitter.
         twit.updateStatus message, (err, data) =>
             if err?
-                logger.error "Expresser", "Twitter.postStatus", "Failed: #{message}", err
+                logger.error "Twitter.postStatus", "Failed: #{message}", err
             else
-                logger.debug "Expresser", "Twitter.postStatus", "Posted, ID #{data.id}: #{message}"
+                logger.debug "Twitter.postStatus", "Posted, ID #{data.id}: #{message}"
                 callback err, data if callback?
 
 
@@ -108,9 +108,9 @@ class Twitter
         # Send the message to the user.
         twit.sendDirectMessage {"screen_name": user, "text": message}, (err, data) =>
             if err?
-                logger.error "Expresser", "Twitter.sendMessage", "Send to #{user} FAILED.", message, err
+                logger.error "Twitter.sendMessage", "Send to #{user} FAILED.", message, err
             else
-                logger.debug "Expresser", "Twitter.sendMessage", "Sent to #{user}.", message
+                logger.debug "Twitter.sendMessage", "Sent to #{user}.", message
                 callback err, data if callback?
 
     # Destroy the specified direct message. If a `callback` is specified, it will
@@ -122,9 +122,9 @@ class Twitter
         # Make a request to destroy the specified message.
         twit.destroyDirectMessage id, (err, data) =>
             if err?
-                logger.error "Expresser", "Twitter.destroyMessage", "#{id} FAILED.", err
+                logger.error "Twitter.destroyMessage", "#{id} FAILED.", err
             else
-                logger.debug "Expresser", "Twitter.destroyMessage", "#{id} SUCCESS."
+                logger.debug "Twitter.destroyMessage", "#{id} SUCCESS."
                 callback err, data if callback?
 
     # Returns a list of recent direct messages based on the optional `filter`, and process them
@@ -143,9 +143,9 @@ class Twitter
         # Make a request to get direct messages.
         twit.getDirectMessages filter, (err, data) =>
             if err?
-                logger.error "Expresser", "Twitter.getMessages", "Could NOT retrieve direct messages.", err
+                logger.error "Twitter.getMessages", "Could NOT retrieve direct messages.", err
             else
-                logger.debug "Expresser", "Twitter.getMessages", "Retrieved #{data.length} messages."
+                logger.debug "Twitter.getMessages", "Retrieved #{data.length} messages."
                 callback err, data if callback?
 
 

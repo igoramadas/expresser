@@ -31,7 +31,7 @@ class Sockets
         @currentListeners = []
 
         if not server?
-            logger.error "Expresser", "Sockets.init", "App server is invalid. Abort!"
+            logger.error "Sockets.init", "App server is invalid. Abort!"
             return
 
         @io = require("socket.io").listen server
@@ -64,7 +64,7 @@ class Sockets
     # Emit the specified key / data to clients.
     emit: (key, data) =>
         @io.sockets.emit key, data
-        logger.debug "Expresser", "Sockets.emit", key, JSON.stringify(data).length + " bytes"
+        logger.debug "Sockets.emit", key, JSON.stringify(data).length + " bytes"
 
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.
@@ -78,7 +78,7 @@ class Sockets
             for socketKey, socket of @io.sockets.manager.open
                 socket.on key, callback
 
-        logger.debug "Expresser", "Sockets.listenTo", key
+        logger.debug "Sockets.listenTo", key
 
     # Stops listening to the specified event key.
     stopListening: (key, callback) =>
@@ -93,7 +93,7 @@ class Sockets
             if listener.key is key and (listener.callback is callback or not callback?)
                 listener = null
 
-        logger.debug "Expresser", "Sockets.stopListening", key
+        logger.debug "Sockets.stopListening", key
 
     # Remove invalid and expired event listeners.
     compact: =>
@@ -110,7 +110,7 @@ class Sockets
     # When user disconnects, emit an event with the new connection count to all clients.
     onDisconnect: =>
         count = @getConnectionCount()
-        logger.debug "Expresser", "Sockets.onDisconnect", "New count: #{count}."
+        logger.debug "Sockets.onDisconnect", "New count: #{count}."
 
 
 # Singleton implementation

@@ -32,7 +32,7 @@ class Database
         # If connection has failed repeatedly for more than 3 times the `maxRetries` value then
         # stop trying and log an error.
         if retry > settings.database.maxRetries * 3
-            logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Abort!"
+            logger.error "Database.validateConnection", "Connection failed #{retry} times.", "Abort!"
             return
 
         # First try, use main database.
@@ -45,15 +45,15 @@ class Database
             if settings.database.connString2? and settings.database.connString2 isnt ""
                 @failover = true
                 @db = mongo.db settings.database.connString2, settings.database.options
-                logger.info "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "Switched to failover DB."
+                logger.info "Database.validateConnection", "Connection failed #{retry} times.", "Switched to failover DB."
             else
-                logger.error "Expresser", "Database.validateConnection", "Connection failed #{retry} times.", "No failover DB set, keep trying."
+                logger.error "Database.validateConnection", "Connection failed #{retry} times.", "No failover DB set, keep trying."
 
         # Try to connect to the current database. If it fails, try again in a few seconds.
         @db.open (err, result) =>
 
             if err?
-                logger.debug "Expresser", "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
+                logger.debug "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
                 setTimeout (() => @validateConnection retry + 1), settings.database.retryInterval
 
             else
@@ -64,9 +64,9 @@ class Database
                 setTimeout @validateConnection, settings.database.failoverTimeout * 1000
 
                 if @failover
-                    logger.debug "Expresser", "Database.validateConnection", "Connected to failover DB.", "Will try main DB again in #{settings.database.failoverTimeout} settings."
+                    logger.debug "Database.validateConnection", "Connected to failover DB.", "Will try main DB again in #{settings.database.failoverTimeout} settings."
                 else
-                    logger.debug "Expresser", "Database.validateConnection", "Connected to main DB."
+                    logger.debug "Database.validateConnection", "Connected to main DB."
 
 
     # INIT
@@ -77,7 +77,7 @@ class Database
         if settings.database.connString? and settings.database.connString isnt ""
             @validateConnection()
         else
-            logger.debug "Expresser", "Database.init", "No connection string set.", "Database module won't work."
+            logger.debug "Database.init", "No connection string set.", "Database module won't work."
 
 
     # LOW LEVEL IMPLEMENTATION
@@ -128,9 +128,9 @@ class Database
             dbCollection.find().toArray dbCallback
 
         if filter?
-            logger.debug "Expresser", "Database.get", collection, filter
+            logger.debug "Database.get", collection, filter
         else
-            logger.debug "Expresser", "Database.get", collection, "No filter."
+            logger.debug "Database.get", collection, "No filter."
 
     # Insert or update an object on the database.
     set: (collection, obj, options, callback) =>
@@ -171,9 +171,9 @@ class Database
             dbCollection.findAndModify {"_id": id}, {"sort": "_id"}, obj, {"new": true, "upsert": true}, dbCallback
 
         if id?
-            logger.debug "Expresser", "Database.set", collection, "ID: #{id}"
+            logger.debug "Database.set", collection, "ID: #{id}"
         else
-            logger.debug "Expresser", "Database.set", collection, "New document."
+            logger.debug "Database.set", collection, "New document."
 
 
     # Delete an object from the database. The `obj` argument can be either the object
@@ -213,7 +213,7 @@ class Database
         else
             dbCollection.remove filter, dbCallback
 
-        logger.debug "Expresser", "Database.del", collection, filter
+        logger.debug "Database.del", collection, filter
 
     # Count data from the database. A `collection` must be specified.
     # If no `filter` is passed (null or undefined) then count all documents.
@@ -231,7 +231,7 @@ class Database
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                logger.debug "Expresser", "Database.count", collection, filter, "Result #{result}"
+                logger.debug "Database.count", collection, filter, "Result #{result}"
                 callback err, result
 
         # MongoDB has a built-in count so use it.

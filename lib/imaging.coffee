@@ -57,11 +57,11 @@ class Imaging
                     # Try converting the source to the destination filetype trigger the `callback`, if passed.
                     im.convert args, (err, stdout) -> callback(err, stdout) if callback?
 
-                    logger.debug "Expresser", "Imaging.convert", source, options
+                    logger.debug "Imaging.convert", source, options
 
                 # In case of exception, log it and pass to the `callback`.
                 catch ex
-                    logger.error "Expresser", "Imaging.convert", ex
+                    logger.error "Imaging.convert", ex
                     callback(ex, false) if callback?
 
             else

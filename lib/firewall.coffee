@@ -44,17 +44,17 @@ class Firewall
         env = process.env
 
         if not server?
-            logger.error "Expresser", "Firewall.init", "App server is invalid. Abort!"
+            logger.error "Firewall.init", "App server is invalid. Abort!"
             return
 
         # Bind HTTP protection.
         if settings.firewall.httpPatterns isnt "" and env.NODE_ENV isnt "test"
             server.use @checkHttpRequest
-            logger.info "Expresser", "Firewall.init", "Protect HTTP requests."
+            logger.info "Firewall.init", "Protect HTTP requests."
 
         # Bind sockets protection.
         if settings.firewall.socketPatterns isnt "" and env.NODE_ENV isnt "test"
-            logger.info "Expresser", "Firewall.init", "Protect Socket requests."
+            logger.info "Firewall.init", "Protect Socket requests."
 
         @blacklist = {}
 

@@ -28,7 +28,7 @@ class Cron
 
     # Init the cron jobs by reading the cron files, but only if `loadOnInit` is true.
     init: =>
-        logger.debug "Expresser", "Cron.init"
+        logger.debug "Cron.init"
         @load true if settings.cron.loadOnInit
 
     # Load jobs from the `cron.json` file. If `autoStart` is true, it will automatically
@@ -38,7 +38,7 @@ class Cron
 
         # Found the cron.json file? Read it.
         if filepath?
-            logger.debug "Expresser", "Cron.load", filepath
+            logger.debug "Cron.load", filepath
 
             try
                 cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
@@ -54,7 +54,7 @@ class Cron
             @start() if autoStart
 
         else
-            logger.debug "Expresser", "Cron.load", "#{filename} not found."
+            logger.debug "Cron.load", "#{filename} not found."
 
     # METHODS
     # -------------------------------------------------------------------------
@@ -63,13 +63,13 @@ class Cron
     start: (id) =>
         if id? and id isnt false and id isnt ""
             if @jobs[id]?
-                logger.debug "Expresser", "Cron.start", id
+                logger.debug "Cron.start", id
                 clearTimeout @jobs[id].timer if @jobs[id].timer?
                 setTimer @jobs[id]
             else
-                logger.debug "Expresser", "Cron.start", "Job #{id} does not exist. Abort!"
+                logger.debug "Cron.start", "Job #{id} does not exist. Abort!"
         else
-            logger.debug "Expresser", "Cron.start"
+            logger.debug "Cron.start"
             for job of @jobs
                 setTimer job
 
@@ -77,13 +77,13 @@ class Cron
     stop: (id) =>
         if id? and id isnt false and id isnt ""
             if @jobs[id]?
-                logger.debug "Expresser", "Cron.stop", id
+                logger.debug "Cron.stop", id
                 clearTimeout @jobs[id].timer
                 delete @jobs[id].timer
             else
-                logger.debug "Expresser", "Cron.stop", "Job #{id} does not exist. Abort!"
+                logger.debug "Cron.stop", "Job #{id} does not exist. Abort!"
         else
-            logger.debug "Expresser", "Cron.stop"
+            logger.debug "Cron.stop"
             for job of @jobs
                 clearTimeout job.timer
                 delete job.timer
@@ -91,7 +91,7 @@ class Cron
     # Add a scheduled job to the cron, passing an `id` and `job`.
     # You can also pass only the `job` if it has an id property.
     add: (id, job) =>
-        logger.debug "Expresser", "Cron.add", id, job
+        logger.debug "Cron.add", id, job
 
         if id? and not job?
             job = id
@@ -102,7 +102,7 @@ class Cron
 
         # Throw error if no `id` was provided.
         if not id? or id is ""
-            logger.error "Expresser", "Cron.add", "No 'id' was passed. Abort!"
+            logger.error "Cron.add", "No 'id' was passed. Abort!"
             return
 
         # Handle existing jobs.
@@ -110,7 +110,7 @@ class Cron
             if settings.cron.allowReplacing
                 clearTimeout @jobs[id].timer
             else
-                logger.error "Expresser", "Cron.add", "Job #{id} already exists and 'allowReplacing' is false. Abort!"
+                logger.error "Cron.add", "Job #{id} already exists and 'allowReplacing' is false. Abort!"
                 return
 
         # Set `startTime` and `endTime` if not set.
@@ -127,7 +127,7 @@ class Cron
     # Remove and stop a current job. If job does not exist, a warning will be logged.
     remove: (id) =>
         if not @jobs[id]?
-            logger.debug "Expresser", "Cron.remove", "Job #{id} does not exist. Abort!"
+            logger.debug "Cron.remove", "Job #{id} does not exist. Abort!"
             return
 
         clearTimeout @jobs[id]
@@ -168,7 +168,7 @@ class Cron
     # Helper to get a timer / interval based on the defined options.
     setTimer = (job) ->
         callback = ->
-            logger.debug "Expresser", "Cron", "Job #{job.id} trigger."
+            logger.debug "Cron", "Job #{job.id} trigger."
             job.startTime = moment()
             job.endTime = moment()
             job.callback job
@@ -187,7 +187,7 @@ class Cron
         timeout = getTimeout job
         job.timer = setTimeout callback, timeout
 
-        logger.debug "Expresser", "Cron.setTimer", job.id, timeout
+        logger.debug "Cron.setTimer", job.id, timeout
 
 
 # Singleton implementation.
