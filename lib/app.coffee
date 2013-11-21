@@ -118,10 +118,10 @@ class App
         # Start the server.
         if settings.app.ip? and settings.app.ip isnt ""
             httpServer.listen settings.app.port, settings.app.ip
-            logger.info "Expresser", "App #{settings.general.appTitle} started!", settings.app.ip, settings.app.port
+            logger.info "App #{settings.general.appTitle} started!", settings.app.ip, settings.app.port
         else
             httpServer.listen settings.app.port
-            logger.info "Expresser", "App #{settings.general.appTitle} started!", settings.app.port
+            logger.info "App #{settings.general.appTitle} started!", settings.app.port
 
 
     # HELPER AND UTILS
@@ -134,13 +134,16 @@ class App
         options.device = utils.getClientDevice req
         options.title = settings.general.appTitle if not options.title?
         res.render view, options
+        logger.debug "App", "Render", view, options
 
-    # When the server can't return a valid result, send an error response with status code 500.
-    renderError: (res, message) =>
+    # When the server can't return a valid result, send an error response with the
+    # specified status code (default is 500).
+    renderError: (res, message, statusCode) =>
         message = JSON.stringify message
+        statusCode = 500 if not statusCode?
         res.statusCode = 500
         res.send "Server error: #{message}"
-        logger.error "HTTP Error", message, res
+        logger.error "App", "HTTP Error", statusCode, message, res
 
 
 # Singleton implementation
