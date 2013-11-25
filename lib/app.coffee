@@ -37,9 +37,9 @@ class App
         if newRelicAppName? and newRelicAppName isnt "" and newRelicLicenseKey? and newRelicLicenseKey isnt ""
             hostname = os.hostname()
             if hostname is "localhost" or hostname.indexOf(".local") > 0
-                console.log "Expresser", "New Relic #{newRelicAppName} won't be embedded because it's running in localhost!", hostname
+                console.log "App", "New Relic #{newRelicAppName} won't be embedded because it's running in localhost!", hostname
             else
-                console.log "Expresser", "Embeding New Relic agent for #{newRelicAppName}..."
+                console.log "App", "Embeding New Relic agent for #{newRelicAppName}..."
                 require "newrelic"
 
         # Require logger.
@@ -47,12 +47,12 @@ class App
 
         # Log proccess termination to the console. This will force flush any buffered logs to disk.
         process.on "exit", (sig) ->
-            console.warn "Expresser", "Terminating Expresser app...", Date(Date.now()), sig
+            console.warn "App", "Terminating Expresser app...", Date(Date.now()), sig
 
             try
                 logger.flushLocal()
             catch err
-                console.warn "Expresser", "Could not flush buffered logs to disk."
+                console.warn "App", "Could not flush buffered logs to disk."
 
 
         # Require express and create the app server.
@@ -75,7 +75,12 @@ class App
                     ip = utils.getClientIP req
                     method = req.method
                     url = req.url
-                    console.log "Expresser", "Request from #{ip}", method, url
+
+                    # Check if request flash is present before logging.
+                    if req.flash? and lodash.isFunction req.flash
+                        console.log "Request from #{ip}", method, url, req.flash()
+                    else
+                        console.log "Request from #{ip}", method, url
                     next() if next?
 
             # Enable firewall?
