@@ -31,22 +31,4 @@ describe("Mail Tests", function() {
     it("Inits", function() {
         mail.init();
     });
-
-    it("Sends a test email with custom keywords.", function(done) {
-        var options = {
-            message: "Expresser mail to {to}.",
-            subject: "Test mail",
-            to: settings.mail.from
-        };
-
-        var callback = function(err, result) {
-            if (!err) {
-                done();
-            } else {
-                done(err);
-            }
-        };
-
-        mail.send(options, callback);
-    });
 });

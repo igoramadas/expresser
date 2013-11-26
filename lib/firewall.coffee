@@ -1,11 +1,11 @@
 # EXPRESSER FIREWALL
 # -----------------------------------------------------------------------------
 # Firewall to protect the server against well known HTTP and socket attacks.
-# Parameters on [settings.html](settings.coffee): Settings.Firewall
-
-# ATTENTION!
-# The Firewall module is started automatically by the App module. If you wish to
-# disable it, set `Settings.Firewall.enabled` to false.
+# ATTENTION! The Firewall module is started automatically by the App module. If you wish to
+# disable it, set `Settings.firewall.enabled` to false.
+# <!--
+# @see Settings.firewall
+# -->
 class Firewall
 
     async = require "async"
