@@ -2,6 +2,9 @@
 # --------------------------------------------------------------------------
 # Sends and manages emails, supports templates. When parsing templates, the
 # tags should be wrapped with normal brackets {}. Example: {contents}
+# The base message template (which is loaded with every single sent message)
+# must be saved as base.html, under the /emailtemplates folder (or whatever
+# folder you have set on the settings).
 # <!--
 # @see Settings.mail
 # -->
@@ -25,7 +28,7 @@ class Mail
     # INTERNAL FEATURES
     # -------------------------------------------------------------------------
 
-    # Helper to set the SMTP objects.
+    # Helper to return a SMTP object.
     createSmtp = (opt) ->
         options =
             debug: settings.general.debug,
@@ -55,7 +58,7 @@ class Mail
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the SMTP transport objects.
+    # Init the Mail module and create the SMTP objects.
     init: =>
         if settings.mail.smtp.host? and settings.mail.smtp.host isnt "" and settings.mail.smtp.port > 0
             smtp = createSmtp settings.mail.smtp
@@ -71,7 +74,6 @@ class Mail
     # --------------------------------------------------------------------------
 
     # Sends an email to the specified address. A callback can be specified, having (err, result).
-    #
     # @param [String] options The email message options
     # @option options [String] body The email body in text or HTML.
     # @option options [String] subject The email subject.
@@ -120,9 +122,13 @@ class Mail
     # TEMPLATES
     # --------------------------------------------------------------------------
 
-    # Load the specified template from the cache or from the disk if it wasn't loaded yet.
-    # Templates are stored inside the `/emailtemplates` folder by default and should
-    # have a .html extension. The contents will be inserted on the {contents} tag.
+    # Load and return the specified template. Get from the cache or from the disk
+    # if it wasn't loaded yet. Templates are stored inside the `/emailtemplates`
+    # folder by default and should have a .html extension. The base template,
+    # which is always loaded first, must be called base.html.
+    # The contents will be inserted on the {contents} tag.
+    # @param [String] name The template name, without .html.
+    # @return [String] The template HTML.
     getTemplate: (name) =>
         cached = templateCache[name]
         if cached? and cached.expires > moment()
@@ -140,9 +146,12 @@ class Mail
 
         return result
 
-    # Parse the specified template and replace `keywords` with the correspondent values of
-    # the `obj` argument. For example if keywords is `{id: 1, friendlyUrl: "abc"}` then the tags
+    # Parse the specified template to replace keywords. The `keywords` is a set of key-values
+    # to be replaced. For example if keywords is `{id: 1, friendlyUrl: "abc"}` then the tags
     # `{id}` and `{friendlyUrl}` will be replaced with the values 1 and abc.
+    # @param [String] template The template (its value, not its name!) to be parsed.
+    # @param [Object] keywords Object with keys to be replaced with its values.
+    # @return [String] The parsed template, keywords replaced with values.
     parseTemplate: (template, keywords) =>
         template = template.toString()
 

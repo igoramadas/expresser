@@ -1,10 +1,11 @@
 # EXPRESSER IMAGING
 # --------------------------------------------------------------------------
 # Handles and manipulates images on the server using ImageMagick.
-# Parameters on [settings.html](settings.coffee): Settings.Logger
+# <!--
+# @see Settings.sockets
+# -->
 class Imaging
 
-    # Required modules.
     fs = require "fs"
     im = require "imagemagick"
     logger = require "./logger.coffee"
@@ -70,15 +71,24 @@ class Imaging
                 logger.warn "Imaging.convert", "Abort, source file does not exist.", source
                 callback("Source file does not exist.", false) if callback?
 
-    # Converts the specified image to GIF, with optional options and callback.
+    # Converts the specified image to GIF.
+    # @param [String] source Path to the source image.
+    # @param [Object] options Options to be passed to the converter, optional.
+    # @param [Method] callback Function (err, result) to be called when GIF conversion has finished.
     toGif: (source, options, callback) =>
         convert source, ".gif", options, callback
 
-    # Converts the specified image to JPG, with optional options and callback.
+    # Converts the specified image to JPG.
+    # @param [String] source Path to the source image.
+    # @param [Object] options Options to be passed to the converter, optional.
+    # @param [Method] callback Function (err, result) to be called when JPG conversion has finished.
     toJpg: (source, options, callback) =>
         convert source, ".jpg", options, callback
 
-    # Converts the specified image to PNG, with optional options and callback.
+    # Converts the specified image to PNG.
+    # @param [String] source Path to the source image.
+    # @param [Object] options Options to be passed to the converter, optional.
+    # @param [Method] callback Function (err, result) to be called when PNG conversion has finished.
     toPng: (source, options, callback) =>
         convert source, ".png", options, callback
 
