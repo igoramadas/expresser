@@ -192,7 +192,7 @@ class Downloader
     # stopping it. Returns false on error or duplicate.
     download: (remoteUrl, saveTo, options, callback) =>
         if not remoteUrl?
-            logger.warn "Expresser", "Downloader.download", "Aborted, remoteUrl is not defined."
+            logger.warn "Downloader.download", "Aborted, remoteUrl is not defined."
             return
 
         # Check options and callback.
@@ -210,7 +210,7 @@ class Downloader
             if existing.length > 0
                 existing = existing[0]
                 if existing.saveTo is saveTo
-                    logger.warn "Expresser", "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
+                    logger.warn "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
                     err = {message: "Download aborted: same file is already downloading.", duplicate: true}
                     callback(err, null) if callback?
                     return false

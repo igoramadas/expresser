@@ -198,7 +198,7 @@ class Firewall
 
     # Log attacks.
     logAttack: (module, pattern, resource, ip) =>
-        logger.warn "Expresser", "ATTACK DETECTED!", module, pattern, resource, "From #{ip}"
+        logger.warn "ATTACK DETECTED!", module, pattern, resource, "From #{ip}"
 
 
 # Singleton implementation

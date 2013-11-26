@@ -62,7 +62,7 @@ class Mail
 
         # Warn if no SMTP is available for sending emails, but only when debug is enabled.
         if not smtp? and not smtp2? and settings.general.debug
-            logger.warn "Expresser", "Mail.init", "No main SMTP host/port specified.", "No emails will be sent out!"
+            logger.warn "Mail.init", "No main SMTP host/port specified.", "No emails will be sent out!"
 
 
     # OUTBOUND
@@ -78,17 +78,17 @@ class Mail
     # @param [Function] callback Callback (err, result) when message is sent or fails.
     send: (options, callback) ->
         if not smtp? and not smtp2?
-            logger.warn "Expresser", "Mail.send", "SMTP transport wasn't initiated. Abort!", options
+            logger.warn "Mail.send", "SMTP transport wasn't initiated. Abort!", options
             return
 
         # Make sure message body is valid.
         if not options.body? or options.body is false or options.body is ""
-            logger.warn "Expresser", "Mail.send", "Option 'body' is not valid. Abort!", options
+            logger.warn "Mail.send", "Option 'body' is not valid. Abort!", options
             return
 
         # Make sure "to" address is valid.
         if not options.to? or options.to is false or options.to is ""
-            logger.warn "Expresser", "Mail.send", "Option 'to' is not valid. Abort!", options
+            logger.warn "Mail.send", "Option 'to' is not valid. Abort!", options
             return
 
         # Set from to default address if no `to` was set.

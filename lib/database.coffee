@@ -39,14 +39,14 @@ class Database
     # -------------------------------------------------------------------------
 
     # Get data from the database. A `collection` and `callback` must be specified. The `filter` is optional.
-    # Please note that if filter has an _id or id field, or if it's a plain string or number, it will be used
+    # Please note that if `filter` has an _id or id field, or if it's a plain string or number, it will be used
     # to return documents by ID. Otherwise it's used as keys-values object for filtering.
     # @param [String] collection The collection name.
-    # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume keys-values filter.
+    # @param [String, Object] filter Optional, if a string or number, assume it's the document ID. Otherwise assume keys-values filter.
     # @param [Method] callback Callback (err, result) when operation has finished.
     get: (collection, filter, callback) =>
         if not @db?
-            logger.warn "Expresser", "Database.get", "The db is null / was not initialized. Abort!"
+            logger.warn "Database.get", "The db is null / was not initialized. Abort!"
             return
 
         # Check if only collection and callback were passed.
@@ -55,7 +55,7 @@ class Database
 
         # Callback is mandatory!
         if not callback?
-            logger.warn "Expresser", "Database.get", "No callback specified. Abort!", collection, options
+            logger.warn "Database.get", "No callback specified. Abort!", collection, options
             return
 
         # Create the DB callback helper.
@@ -90,17 +90,23 @@ class Database
         else
             logger.debug "Database.get", collection, "No filter."
 
-    # Insert or update an object on the database.
+    # Insert or update a document on the database using Mongo's upsert command.
+    # The `options` parameter is optional.
+    # @param [String] collection The collection name.
+    # @param [Object] obj Document to be added to the database.
+    # @param [Object] options Optional, options to control the upsert behaviour.
+    # @option options [Boolean] patch If true, replace only the specific properties of "obj" instead of the whole document using $set.
+    # @param [Method] callback Callback (err, result) when operation has finished.
     set: (collection, obj, options, callback) =>
         if not @db?
-            logger.warn "Expresser", "Database.set", "The db is null / was not initialized. Abort!"
+            logger.warn "Database.set", "The db is null / was not initialized. Abort!"
             return
 
         # Obj is mandatory!
         if not obj?
             msg = "The obj argument is null or empty."
             callback msg, null
-            logger.warn "Expresser", "Database.set", msg
+            logger.warn "Database.set", msg
             return
 
         # Check if callback was passed as options.
@@ -134,17 +140,19 @@ class Database
             logger.debug "Database.set", collection, "New document."
 
 
-    # Delete an object from the database. The `obj` argument can be either the object
-    # itself, or its integer/string ID.
+    # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
+    # @param [String] collection The collection name.
+    # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
+    # @param [Method] callback Callback (err, result) when operation has finished.
     del: (collection, filter, callback) =>
         if not @db?
-            logger.warn "Expresser", "Database.del", "The db is null / was not initialized. Abort!"
+            logger.warn "Database.del", "The db is null / was not initialized. Abort!"
             return
 
         if not filter?
             msg = "The filter argument is null or empty."
             callback msg, null
-            logger.warn "Expresser", "Database.del", msg
+            logger.warn "Database.del", msg
             return
 
         # Check it the `obj` is the model itself, or only the ID string / number.
@@ -162,10 +170,10 @@ class Database
                 result = @normalizeId(result) if settings.database.normalizeId
                 callback err, result
 
-        # Set collection object and remove specified document from the database.
+        # Set collection object and remove specified object from the database.
         dbCollection = @db.collection collection
 
-        # Remove document by ID or filter.
+        # Remove object by ID or filter.
         if id? and id isnt ""
             dbCollection.removeById id, dbCallback
         else
@@ -173,12 +181,14 @@ class Database
 
         logger.debug "Database.del", collection, filter
 
-    # Count data from the database. A `collection` must be specified.
-    # If no `filter` is passed (null or undefined) then count all documents.
-    # The `callback` is mandatory.
+    # Count documents from the database. A `collection` must be specified.
+    # If no `filter` is not passed then count all documents.
+    # @param [String] collection The collection name.
+    # @param [Object] filter Optional, keys-values filter of documents to be counted.
+    # @param [Method] callback Callback (err, result) when operation has finished.
     count: (collection, filter, callback) =>
         if not callback?
-            logger.warn "Expresser", "Database.count", "No callback specified. Abort!", collection, options
+            logger.warn "Database.count", "No callback specified. Abort!", collection, options
             return
 
         # Check if callback was passed as options.
@@ -201,6 +211,8 @@ class Database
     # -------------------------------------------------------------------------
 
     # Helper to transform MongoDB document "_id" to "id".
+    # @param [Object] result The document or result to be normalized.
+    # @return [Object] Returns the normalized document.
     normalizeId: (result) =>
         return if not result?
 
@@ -219,7 +231,8 @@ class Database
 
     # Helper method to check the DB connection. If connection fails multiple times in a row,
     # switch to the failover DB (specified on the `Database.connString2` setting).
-    # You can customize these values on the `Database` [settings](settings.html).
+    # @param [Integer] retry Optional, current retry number, default is 0.
+    # @private
     validateConnection: (retry) =>
         retry = 0 if not retry?
 

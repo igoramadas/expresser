@@ -67,7 +67,7 @@ class Imaging
 
                 # Source file does not exist, so log the warning and trigger
                 # the `callback` if one was passed.
-                logger.warn "Expresser", "Imaging.convert", "Abort, source file does not exist.", source
+                logger.warn "Imaging.convert", "Abort, source file does not exist.", source
                 callback("Source file does not exist.", false) if callback?
 
     # Converts the specified image to GIF, with optional options and callback.

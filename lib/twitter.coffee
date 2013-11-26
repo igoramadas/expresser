@@ -29,7 +29,7 @@ class Twitter
         twit.verifyCredentials (err, data) =>
             # If fails, log and set a timeout to try again in a few seconds.
             if err?
-                logger.warn "Expresser", "Twitter.init", "Can't verify credentials.", err
+                logger.warn "Twitter.init", "Can't verify credentials.", err
                 auth = false
                 setTimeout (() -> authenticate retry + 1), settings.twitter.retryInterval * 1000
             else
@@ -40,10 +40,10 @@ class Twitter
     # This is called before any Twitter interaction.
     checkAuth = (title, msg) ->
         if not settings.twitter.enabled
-            logger.warn "Expresser", title, "The Twitter module is not enabled!"
+            logger.warn title, "The Twitter module is not enabled!"
             return false
         if not auth
-            logger.warn "Expresser", title, "Not authenticated!", msg
+            logger.warn title, "Not authenticated!", msg
             return false
 
         # Enabled and authenticated, so return true.
