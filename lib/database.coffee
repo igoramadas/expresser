@@ -15,8 +15,10 @@ class Database
 
     # @property [Object] Database object (using mongoskin), will be set during `init`.
     db: null
+
     # @property [Boolean] When using the failover/secondary databse this will be set to true.
     failover: false
+
     # @property [Method] Callback triggered when a connection is validated successfully.
     onConnectionValidated: null
 

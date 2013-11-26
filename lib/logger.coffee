@@ -2,7 +2,9 @@
 # --------------------------------------------------------------------------
 # Handles server logging using local files, Logentries or Loggly.
 # Multiple services can be enabled at the same time.
-# Parameters on [settings.html](settings.coffee): Settings.Logger
+# <!--
+# @see Settings.logger
+# -->
 class Logger
 
     fs = require "fs"
@@ -29,21 +31,21 @@ class Logger
     # Timer used for automatic logs cleaning.
     timerCleanLocal = null
 
-    # Holds a list of current active logging services.
-    activeServices = []
-
-    # Custom method to call when logs are sent / saved successfully. Please note that for local log
-    # files whis will be called ONLY when logs are flushed to disk.
+    # @property [Method] Custom method to call when logs are sent to logging server or flushed to disk.
     onLogSuccess: null
 
-    # Custom method to call when errors are triggered by the logging transport.
+    # @property [Method] Custom method to call when errors are triggered by the logging transport.
     onLogError: null
+
+    # @property [Array] Holds a list of current active logging services.
+    # @private
+    activeServices = []
 
 
     # INIT AND STOP
     # --------------------------------------------------------------------------
 
-    # Init the Logger. Verify which services are set, and add the necessary transports.
+    # Init the Logger module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
     init: =>
         bufferDispatcher = null
@@ -159,6 +161,7 @@ class Logger
     # --------------------------------------------------------------------------
 
     # Log to the active transports as `debug`, only if the debug flag is enabled.
+    # All arguments are transformed to readable strings.
     debug: =>
         return if not settings.general.debug
 
@@ -173,6 +176,7 @@ class Logger
             loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "debug: #{msg}", @logglyCallback]
 
     # Log to the active transports as `log`.
+    # All arguments are transformed to readable strings.
     info: =>
         console.info.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
@@ -185,6 +189,7 @@ class Logger
             loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "info: #{msg}", @logglyCallback]
 
     # Log to the active transports as `warn`.
+    # All arguments are transformed to readable strings.
     warn: =>
         console.warn.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
@@ -197,6 +202,7 @@ class Logger
             loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "warn: #{msg}", @logglyCallback]
 
     # Log to the active transports as `error`.
+    # All arguments are transformed to readable strings.
     error: =>
         console.error.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
@@ -213,6 +219,9 @@ class Logger
     # --------------------------------------------------------------------------
 
     # Log locally. The path is defined on `Settings.Path.logsDir`.
+    # @param [String] logType The log type (info, warn, error, debug, etc).
+    # @param [String] message Message to be logged.
+    # @private
     logLocal: (logType, message) ->
         now = moment()
         message = now.format("HH:mm:ss.SSS") + " - " + message
@@ -266,7 +275,7 @@ class Logger
                                     @onLogSuccess successMsg if @onLogSuccess?
                                 fs.closeSync fd
 
-    # Delete old log files.
+    # Delete old log files from disk. The maximum date is defined on the settings.
     cleanLocal: ->
         maxDate = moment().subtract "d", settings.logger.local.maxAge
 
@@ -284,8 +293,9 @@ class Logger
     # HELPER METHODS
     # --------------------------------------------------------------------------
 
-    # Serializes the parameters and return a JSON object representing the log message,
-    # depending on the service being used.
+    # Returns a human readable message out of the arguments.
+    # @return [String] The human readable, parsed JSON message.
+    # @private
     getMessage: ->
         separated = []
         args = arguments
@@ -313,6 +323,9 @@ class Logger
         return separated.join " | "
 
     # Wrapper callback for `onLogSuccess` and `onLogError` to be used by Loggly.
+    # @param [String] err The Loggly error.
+    # @param [String] result The Loggly logging result.
+    # @private
     logglyCallback: (err, result) =>
         if err? and @onLogError?
             @onLogError err

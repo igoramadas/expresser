@@ -2,7 +2,9 @@
 # --------------------------------------------------------------------------
 # Sends and manages emails, supports templates. When parsing templates, the
 # tags should be wrapped with normal brackets {}. Example: {contents}
-# Parameters on [settings.html](settings.coffee): Settings.Mail
+# <!--
+# @see Settings.mail
+# -->
 class Mail
 
     fs = require "fs"

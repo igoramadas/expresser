@@ -17,6 +17,7 @@ class App
 
     # @property [Object] Exposes the Express `server` object.
     server: null
+
     # @property [Array<Object>] Array of additional middlewares to be use by the Express server. Please note that if you're adding middlewares manually you must do it BEFORE calling `init`.
     extraMiddlewares: []
 

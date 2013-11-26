@@ -2,7 +2,6 @@
 # -----------------------------------------------------------------------------
 # General network, IO, client and server utilities. As this module can't reference
 # any other module but Settings, all its logging will be done to the console only.
-
 class Utils
 
     fs = require "fs"
@@ -24,6 +23,7 @@ class Utils
         @loadSettingsFromJson "settings.#{currentEnv.toString().toLowerCase()}.json"
 
     # Helper to load values from the specified settings file.
+    # @param [String] filename The filename or path to the settings file.
     loadSettingsFromJson: (filename) =>
         filename = @getConfigFilePath filename
 
@@ -138,9 +138,11 @@ class Utils
     # SERVER INFO UTILS
     # --------------------------------------------------------------------------
 
-    # Helper to get the correct filename for general config files, for example
+    # Helper to get the correct filename for general config files. For example
     # the settings.json file or cron.json for cron jobs. This will look into the current
     # directory, the running directory and the root directory of the app.
+    # @param [String] filename The base filename (with extension) of the config file.
+    # @return [String] The full path to the config file if one was found, or null.
     getConfigFilePath: (filename) ->
         basename = path.basename filename
 
@@ -172,10 +174,11 @@ class Utils
         # Nothing found, so return null.
         return null
 
-    # Return the first valid server IPv4 address.
+    # Returns the first valid server IPv4 address.
+    # @return The server IPv4 address, or null.
     getServerIP: ->
         ifaces = os.networkInterfaces()
-        result = ""
+        result = null
 
         # Parse network interfaces and try getting the server IPv4 address.
         for i of ifaces
@@ -186,6 +189,7 @@ class Utils
         return result
 
     # Return an object with general information about the server.
+    # @return [Object] Results with process pid, platform, memory, uptime and IP.
     getServerInfo: =>
         result = {}
 
@@ -209,10 +213,11 @@ class Utils
     # CLIENT INFO UTILS
     # --------------------------------------------------------------------------
 
-    # Get the client / browser IP, even when behind proxies. Works for http and socket requests.
+    # Get the client or browser IP. Works for http and socket requests, even when behind a proxy.
+    # @param [Object] reqOrSocket The request or socket object.
+    # @return [String] The client IP address, or null.
     getClientIP: (reqOrSocket) ->
-        if not reqOrSocket?
-            return null
+        return null if not reqOrSocket?
 
         # Try getting the xforwarded header first.
         if reqOrSocket.header?
@@ -226,7 +231,9 @@ class Utils
         else
             return reqOrSocket.remoteAddress
 
-    # Get the client's device identifier string based on the user agent.
+    # Get the client's device. This identifier string is based on the user agent.
+    # @param [Object] req The request object.
+    # @return [String] The client's device.
     getClientDevice: (req) ->
         ua = req.headers["user-agent"]
 
@@ -258,7 +265,9 @@ class Utils
     # DATA UTILS
     # --------------------------------------------------------------------------
 
-    # Minify the passed JSON value by removing comments, unecessary white spaces etc.
+    # Minify the passed JSON value. Removes comments, unecessary white spaces etc.
+    # @param [String] source The JSON text to be minified.
+    # @return [String] The minified JSON, or an empty string if there's an error.
     minifyJson: (source) ->
         source = JSON.stringify source if typeof source is "object"
         index = 0
@@ -273,20 +282,20 @@ class Utils
             symbol = source.charAt(index)
             switch symbol
 
-            # Ignore whitespace tokens. According to ES 5.1 section 15.12.1.1,
-            # whitespace tokens include tabs, carriage returns, line feeds, and
-            # space characters.
+                # Ignore whitespace tokens. According to ES 5.1 section 15.12.1.1,
+                # whitespace tokens include tabs, carriage returns, line feeds, and
+                # space characters.
                 when "\t", "\r"
                 , "\n"
                 , " "
                     index += 1
 
-            # Ignore line and block comments.
+                # Ignore line and block comments.
                 when "/"
                     symbol = source.charAt(index += 1)
                     switch symbol
 
-                    # Line comments.
+                        # Line comments.
                         when "/"
                             position = source.indexOf("\n", index)
 
@@ -294,7 +303,7 @@ class Utils
                             position = source.indexOf("\r", index)  if position < 0
                             index = (if position > -1 then position else length)
 
-                    # Block comments.
+                        # Block comments.
                         when "*"
                             position = source.indexOf("*/", index)
                             if position > -1
@@ -306,8 +315,8 @@ class Utils
                         else
                             throw SyntaxError("Invalid comment.")
 
-            # Parse strings separately to ensure that any whitespace characters and
-            # JavaScript-style comments within them are preserved.
+                # Parse strings separately to ensure that any whitespace characters and
+                # JavaScript-style comments within them are preserved.
                 when "\""
                     position = index
                     while index < length
@@ -322,10 +331,11 @@ class Utils
                         break
                     throw SyntaxError("Unterminated string.")
 
-            # Preserve all other characters.
+                # Preserve all other characters.
                 else
                     result += symbol
                     index += 1
+
         return result
 
 

@@ -57,10 +57,11 @@ class Cron
             cronJson = utils.minifyJson cronJson
             cronJson = JSON.parse cronJson
 
-            # Add jobs from the parsed JSON array, and auto start.
+            # Add jobs from the parsed JSON array and auto start.
             @add job for job in cronJson
             @start() if autoStart
 
+            logger.debug "Cron.load", "#{filename} loaded.", "Auto start: #{autoStart}"
         else
             logger.debug "Cron.load", "#{filename} not found."
 
@@ -68,6 +69,7 @@ class Cron
     # -------------------------------------------------------------------------
 
     # Start the specified cron job. If no `id` is specified, all jobs will be started.
+    # @param [String] id The job unique id, optional (if not specified, start everything).
     start: (id) =>
         if id? and id isnt false and id isnt ""
             if @jobs[id]?
@@ -82,6 +84,7 @@ class Cron
                 setTimer job
 
     # Stop the specified cron job. If no `id` is specified, all jobs will be stopped.
+    # @param [String] id The job unique id, optional (if not specified, stop everything).
     stop: (id) =>
         if id? and id isnt false and id isnt ""
             if @jobs[id]?
@@ -98,6 +101,12 @@ class Cron
 
     # Add a scheduled job to the cron, passing an `id` and `job`.
     # You can also pass only the `job` if it has an id property.
+    # @param [String] id The job id, optional, overrides job.id in case it has one.
+    # @param [Object] job The job object.
+    # @option job [String] id The job id, optional if the id parameter is passed.
+    # @option job [Integer, Array] schedule If a number assume it's the interval in seconds, otherwise a times array.
+    # @option job [Method] callback The callback (job) to be triggered.
+    # @option job [Boolean] once If true, the job will be triggered only once no matter which schedule it has.
     add: (id, job) =>
         logger.debug "Cron.add", id, job
 
