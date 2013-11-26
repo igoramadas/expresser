@@ -1,7 +1,9 @@
 # EXPRESSER DOWNLOADER
 # --------------------------------------------------------------------------
 # Handles external downloads.
-# Parameters on [settings.html](settings.coffee): Settings.Downloader
+# <!--
+# @see Settings.downloader
+# -->
 class Downloader
 
     fs = require "fs"
@@ -190,6 +192,11 @@ class Downloader
     # has the signature (error, data). Returns the downloader object which is added
     # to the `queue`, which has the download properties and a `stop` helper to force
     # stopping it. Returns false on error or duplicate.
+    # @param [String] remoteUrl The URL of the remote file to be downloaded.
+    # @param [String] saveTo The full local path and destination filename.
+    # @param [Object] options Optional, object with request options, for example auth.
+    # @param [Method] callback Optional, a function (err, result) to be called when download has finished.
+    # @return [Object] Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
     download: (remoteUrl, saveTo, options, callback) =>
         if not remoteUrl?
             logger.warn "Downloader.download", "Aborted, remoteUrl is not defined."

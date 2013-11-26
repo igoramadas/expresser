@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------------
 # Handles and manipulates images on the server using ImageMagick.
 # <!--
-# @see Settings.sockets
+# @see Settings.imaging
 # -->
 class Imaging
 

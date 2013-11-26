@@ -241,6 +241,13 @@ class Settings
         # and then `start`.
         loadOnInit: true
 
+    # IMAGING
+    # -------------------------------------------------------------------------
+    # @property [Object]
+    imaging:
+        # Set to false to disable the imaging module.
+        enabled: true
+
     # NEW RELIC PROFILING
     # -------------------------------------------------------------------------
     # @property [Object]
