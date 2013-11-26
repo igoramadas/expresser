@@ -3,5 +3,5 @@
 --readme     README.md
 --private
 --quiet
---destination ./doc
+--destination ./docs/api
 ./lib

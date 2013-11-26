@@ -1,5 +1,6 @@
 .idea/
 .openshift/
 atlassian-ide-plugin.xml
+docs
 node_modules/
 settings.test.json
