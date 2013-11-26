@@ -1,14 +1,11 @@
 # EXPRESSER APP
 # -----------------------------------------------------------------------------
-# The Express app server.
-# Parameters on [settings.html](settings.coffee): Settings.App
-
+# The Express app server, with built-in sockets and firewall integration.
+#
+# @see Firewall
+# @see Sockets
+# @see Settings.app
 class App
-
-    # Expose the Express server to external code, and an array of
-    # extra middlewares to be added before the server router.
-    server: null
-    extraMiddlewares: []
 
     # Internal modules will be set on `init`.
     firewall = null
@@ -17,11 +14,18 @@ class App
     sockets = null
     utils = null
 
+    # @property [Object] Exposes the Express `server` object.
+    server: null
+    # @property [Array<Object>] Array of additional middlewares to be use by the Express server.
+    extraMiddlewares: []
+
 
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Express server.
+    # Init the Express server. If New Relic settings are set it will automatically
+    # require and use the `newrelic` module. Firewall and Sockets modules will be
+    # used only if enabled on the settings.
     init: =>
         http = require "http"
         os = require "os"
@@ -112,13 +116,11 @@ class App
                 sockets = require "./sockets.coffee"
                 sockets.init httpServer
 
-        # Configure development environment.
-        @server.configure "development", =>
-            @server.use express.errorHandler {dumpExceptions: true, showStack: true}
+        # Configure development environment to dump exceptions and show stack.
+        @server.configure "development", => @server.use express.errorHandler {dumpExceptions: true, showStack: true}
 
         # Configure production environment.
-        @server.configure "production", =>
-            @server.use express.errorHandler()
+        @server.configure "production", => @server.use express.errorHandler()
 
         # Start the server.
         if settings.app.ip? and settings.app.ip isnt ""

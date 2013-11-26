@@ -1,2 +1,2 @@
 require("coffee-script");
-module.exports = exports = require("./expresser.coffee");
+module.exports = exports = require("./index.coffee");

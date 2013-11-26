@@ -2,7 +2,6 @@
 # --------------------------------------------------------------------------
 # Handles and manipulates images on the server using ImageMagick.
 # Parameters on [settings.html](settings.coffee): Settings.Logger
-
 class Imaging
 
     # Required modules.

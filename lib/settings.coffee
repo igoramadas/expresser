@@ -20,7 +20,6 @@
 # Please note that the `settings.json` must ne located on the root of your app!
 #
 # More info: https://expresser.codeplex.com/wikipage?title=Settings
-
 class Settings
 
     fs = require "fs"

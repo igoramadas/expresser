@@ -6,7 +6,6 @@
 # ATTENTION!
 # The Firewall module is started automatically by the App module. If you wish to
 # disable it, set `Settings.Firewall.enabled` to false.
-
 class Firewall
 
     async = require "async"

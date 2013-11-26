@@ -3,7 +3,6 @@
 # Handles server logging using local files, Logentries or Loggly.
 # Multiple services can be enabled at the same time.
 # Parameters on [settings.html](settings.coffee): Settings.Logger
-
 class Logger
 
     fs = require "fs"

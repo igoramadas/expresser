@@ -1,8 +1,10 @@
 # EXPRESSER DATABASE
 # -----------------------------------------------------------------------------
-# Handle the MongoDB database interactions on the app.
-# Parameters on [settings.html](settings.coffee): Settings.Database
-
+# This handles MongoDB database transactions. It supports a very simple failover
+# mechanism where you can specify a "backup" connection string to which the
+# module will connect in case the main database is down.
+#
+# @see Settings.database
 class Database
 
     lodash = require "lodash"
@@ -10,14 +12,12 @@ class Database
     settings = require "./settings.coffee"
     mongo = require "mongoskin"
 
-    # Database object, will be set during `init`.
+    # @property [Object] Database object (using mongoskin), will be set during `init`.
     db: null
-
-    # Callback triggered when a connection is validated successfully.
-    onConnectionValidated: null
-
-    # When using the failover/secondary databse, `failover` will be set to true.
+    # @property [Boolean] When using the failover/secondary databse this will be set to true.
     failover: false
+    # @property [Method] Callback triggered when a connection is validated successfully.
+    onConnectionValidated: null
 
 
     # INTERNAL FEATURES

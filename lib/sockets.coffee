@@ -6,7 +6,7 @@
 # ATTENTION!
 # The Sockets module is started automatically by the App module. If you wish to
 # disable it, set `Settings.Sockets.enabled` to false.
-
+# @see Settings.sockets
 class Sockets
 
     lodash = require "lodash"

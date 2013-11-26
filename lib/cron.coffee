@@ -8,7 +8,7 @@
 # callback:      function to be called with the job, passing itself.
 #                Ex: function (job) { alert(job.id); }
 # once:          if true, execute this job only once.
-
+# @see Settings.cron
 class Cron
 
     fs = require "fs"

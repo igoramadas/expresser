@@ -2,7 +2,6 @@
 # --------------------------------------------------------------------------
 # Handles external downloads.
 # Parameters on [settings.html](settings.coffee): Settings.Downloader
-
 class Downloader
 
     fs = require "fs"
