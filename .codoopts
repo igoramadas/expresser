@@ -1,7 +1,6 @@
---name       "Codo"
---title      "Expresser API Docs"
---readme     README.md
+--name "Expresser"
+--title "Expresser API Docs"
+--readme README.md
+--output ./docs/api
 --private
---quiet
---destination ./docs/api
 ./lib
