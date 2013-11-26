@@ -1,14 +1,21 @@
 # EXPRESSER CRON
 # -----------------------------------------------------------------------------
-# Handle scheduled / cron jobs.
-# To add a new scheduled job, use a job object with the following properties:
-# id [optional]: a unique ID for the job.
-# schedule:      interval in seconds or an array of times.
-#                Ex: 60 (evey minute), 3600 (every hour), ["09:00:00", "15:00:00"] (every day at 9AM and 3PM).
-# callback:      function to be called with the job, passing itself.
-#                Ex: function (job) { alert(job.id); }
-# once:          if true, execute this job only once.
+# Handle scheduled cron jobs. You can use intervals (seconds) or specific
+# times to trigger jobs, and the module will take care of setting the proper timers.
+# Jobs are added using "job" objects with id, schedule, callback and other options.
 # <!--
+# @example Sample job object, alerts user every minute (60 seconds).
+#   var myJob = {
+#     id: "alertJob",
+#     schedule: 60,
+#     callback: function(job) { alertUser(mydata); }
+#   }
+# @example Sample job object, sends email every day at 10AM and 5PM.
+#   var otherJob = {
+#     id: "my mail job",
+#     schedule: ["10:00:00", "17:00:00"],
+#     callback: function(job) { mail.send(something); }
+#   }
 # @see Settings.cron
 # -->
 class Cron
@@ -21,31 +28,30 @@ class Cron
     settings = require "./settings.coffee"
     utils = require "./utils.coffee"
 
-    # Jobs array object.
+    # @property [Object] The jobs container, please do edit this object manually!
     jobs: {}
 
 
-    # INIT AND LOAD FROM JSON
+    # INIT AND LOAD
     # -------------------------------------------------------------------------
 
-    # Init the cron jobs by reading the cron files, but only if `loadOnInit` is true.
+    # Init the cron manager. If `loadOnInit` is true, call `load` straight away.
     init: =>
         logger.debug "Cron.init"
         @load true if settings.cron.loadOnInit
 
     # Load jobs from the `cron.json` file. If `autoStart` is true, it will automatically
-    # call the `start` method after load.
+    # call the `start` method after loading.
+    # @param [String] filename Path to the JSON file containing jobs, optional, default is "cron.json".
+    # @param [Boolean] autoStart If true, call "start" after loading.
     load: (filename, autoStart) =>
-        filepath = @getConfigFilePath filename
+        filename = "cron.json" if not filename? or filename is false or filename is ""
+        filepath = utils.getConfigFilePath filename
 
         # Found the cron.json file? Read it.
         if filepath?
             logger.debug "Cron.load", filepath
-
-            try
-                cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
-            catch ex
-                cronJson = fs.readFileSync filepath, {encoding: "ascii"}
+            cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
 
             # Parse the JSON data.
             cronJson = utils.minifyJson cronJson
