@@ -1,0 +1,7 @@
+--name       "Codo"
+--title      "Expresser API Docs"
+--readme     README.md
+--private
+--quiet
+--destination ./doc
+./lib

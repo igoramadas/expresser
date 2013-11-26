@@ -69,34 +69,40 @@ class Mail
     # OUTBOUND
     # --------------------------------------------------------------------------
 
-    # Sends an email to the specified address. The `obj` will be parsed and transformed
-    # to a HTML formatted message. A callback can be specified, having (err, result).
-    send: (message, subject, toAddress, fromAddress, callback) ->
+    # Sends an email to the specified address. A callback can be specified, having (err, result).
+    #
+    # @param [String] options The email message options
+    # @option options [String] body The email body in text or HTML.
+    # @option options [String] subject The email subject.
+    # @option options [String] to The "to" address.
+    # @option options [String] from The "from" address, optional, if blank use default from settings.
+    # @param [Function] callback Callback (err, result) when message is sent or fails.
+    send: (options, callback) ->
         if not smtp? and not smtp2?
-            logger.warn "Expresser", "Mail.send", "SMTP transport wasn't initiated. Abort!", subject, "to #{toAddress}"
+            logger.warn "Expresser", "Mail.send", "SMTP transport wasn't initiated. Abort!", options
             return
 
-        if not message? or message is ""
-            logger.warn "Expresser", "Mail.send", "Message is not valid. Abort!", subject, "to #{toAddress}"
+        # Make sure message body is valid.
+        if not options.body? or options.body is false or options.body is ""
+            logger.warn "Expresser", "Mail.send", "Option 'body' is not valid. Abort!", options
             return
 
-        # Set from to default address if no `fromAddress` was set and create the options object.
-        fromAddress = "#{settings.general.appTitle} <#{settings.mail.from}>" if not fromAddress?
-        options = {}
+        # Make sure "to" address is valid.
+        if not options.to? or options.to is false or options.to is ""
+            logger.warn "Expresser", "Mail.send", "Option 'to' is not valid. Abort!", options
+            return
 
-        # Properly format the "to" address.
-        if toAddress.indexOf("<") < 3
-            toName = toAddress
+        # Set from to default address if no `to` was set.
+        options.to = "#{settings.general.appTitle} <#{settings.mail.from}>" if not options.to?
+
+        # Get the name of recipient based on the `to` option.
+        if options.to.indexOf("<") < 3
+            toName = options.to
         else
-            toName = toAddress.substring 0, toAddress.indexOf("<") - 1
+            toName = options.to.substring 0, toAddress.indexOf("<") - 1
 
-        # Replace common keywords.
-        html = @parseTemplate message.toString(), {to: toName, appTitle: settings.general.appTitle}
-
-        # Set the message options.
-        options.from = fromAddress
-        options.to = toAddress
-        options.subject = subject
+        # Replace common keywords and set HTML.
+        html = @parseTemplate options.body.toString(), {to: toName, appTitle: settings.general.appTitle}
         options.html = html
 
         # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.
