@@ -1,6 +1,6 @@
 # EXPRESSER APP
 # -----------------------------------------------------------------------------
-# The Express app server, with built-in sockets and firewall integration.
+# The Express app server, with built-in sockets, firewall and New Relic integration.
 #
 # @see Firewall
 # @see Sockets
@@ -16,7 +16,7 @@ class App
 
     # @property [Object] Exposes the Express `server` object.
     server: null
-    # @property [Array<Object>] Array of additional middlewares to be use by the Express server.
+    # @property [Array<Object>] Array of additional middlewares to be use by the Express server. Please note that if you're adding middlewares manually you must do it BEFORE calling `init`.
     extraMiddlewares: []
 
 
@@ -26,7 +26,8 @@ class App
     # Init the Express server. If New Relic settings are set it will automatically
     # require and use the `newrelic` module. Firewall and Sockets modules will be
     # used only if enabled on the settings.
-    init: =>
+    # @param [Array] arrExtraMiddlewares Array with extra middlewares to be added on init, optional.
+    init: (arrExtraMiddlewares) =>
         http = require "http"
         os = require "os"
         settings = require "./settings.coffee"
@@ -104,7 +105,14 @@ class App
             ConnectAssets = (require "connect-assets") settings.app.connectAssets
             @server.use ConnectAssets
 
-            # Add more middlewares, if specified (for example passport for authentication).
+            # Check for extra middlewares to be added.
+            if arrExtraMiddlewares?
+                if lodash.isArray arrExtraMiddlewares
+                    @extraMiddlewares.push mw for mw in arrExtraMiddlewares
+                else
+                    @extraMiddlewares.push arrExtraMiddlewares
+
+            # Add more middlewares, if any (for example passport for authentication).
             if @extraMiddlewares.length > 0
                 @server.use mw for mw in @extraMiddlewares
 
@@ -136,6 +144,10 @@ class App
 
     # Helper to render pages. The request, response and view are mandatory,
     # and the options argument is optional.
+    # @param [Object] req The request object.
+    # @param [Object] res The response object.
+    # @param [String] view The view name.
+    # @param [Object] options Options passed to the view, optional.
     renderView: (req, res, view, options) =>
         options = {} if not options?
         options.device = utils.getClientDevice req
@@ -145,6 +157,9 @@ class App
 
     # When the server can't return a valid result, send an error response with the
     # specified status code (default is 500).
+    # @param [Object] req The response object.
+    # @param [String] message The message to be sent to the client.
+    # @param [Integer] statusCode The response status code, optional, default is 500.
     renderError: (res, message, statusCode) =>
         message = JSON.stringify message
         statusCode = 500 if not statusCode?
