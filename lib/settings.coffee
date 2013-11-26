@@ -1,31 +1,33 @@
 # EXPRESSER SETTINGS
 # -----------------------------------------------------------------------------
-# All server settings for the app are set on this file. Settings can be overriden
-# by creating a `settings.json` file with the specified keys and values, for example:
-# {
-#   "general": {
-#     "debug": true,
-#     "appTitle": "A Super Cool App"
-#   },
-#   "firewall" {
-#     "enabled": false
-#   }
-# }
+# All main settings for the Expresser platform are set on this file. Settings can be overriden
+# by creating a `settings.json` file with the specified keys and values:
 #
 # You can also create specific settings for different running environments.
 # For example to set settings on development, create `settings.development.json`
 # and for production a `settings.production.json` file. These will be parsed
-# AFTER the main `settings.json` file. Lowercased!
+# AFTER the main `settings.json` file.
 #
 # Please note that the `settings.json` must ne located on the root of your app!
-#
-# More info: https://expresser.codeplex.com/wikipage?title=Settings
+# <!--
+# @example Sample settings.json file
+#   {
+#     "general": {
+#       "debug": true,
+#       "appTitle": "A Super Cool App"
+#     },
+#     "firewall" {
+#       "enabled": false
+#     }
+#   }
+# -->
 class Settings
 
     fs = require "fs"
 
     # GENERAL
     # -------------------------------------------------------------------------
+    # @property [Object]
     general:
         # Enable or disable debugging messages. Should be false on production environments.
         # If null, debug will be set automatically based on the NODE_ENV variable.
@@ -39,8 +41,9 @@ class Settings
         # Default encoding to be used on IO and requests.
         encoding: "utf8"
 
-    # PATHS
+    # PATH
     # -------------------------------------------------------------------------
+    # @property [Object]
     path:
         # Path to the email templates folder.
         emailTemplatesDir: "./emailtemplates/"
@@ -51,8 +54,9 @@ class Settings
         # Path where the .jade views are stored.
         viewsDir: "./views/"
 
-    # WEB
+    # APP
     # -------------------------------------------------------------------------
+    # @property [Object]
     app:
         # Secret key used for cookie encryption.
         cookieSecret: "ExpresserCookie"
@@ -81,12 +85,14 @@ class Settings
 
     # SOCKETS
     # -------------------------------------------------------------------------
+    # @property [Object]
     sockets:
-        # Enable the sockets helper?
+        # Enable the sockets module?
         enabled: true
 
     # FIREWALL
     # -------------------------------------------------------------------------
+    # @property [Object]
     firewall:
         # How long should IP be blacklisted, in seconds.
         blacklistExpires: 30
@@ -105,6 +111,7 @@ class Settings
 
     # DATABASE
     # ----------------------------------------------------------------------
+    # @property [Object]
     database:
         # Connection string to MongoDB, using the format `user:password@hostname/dbname`.
         connString: null
@@ -130,8 +137,9 @@ class Settings
             # Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.
             safe: false
 
-    # EMAIL
+    # MAIL
     # -------------------------------------------------------------------------
+    # @property [Object]
     mail:
         # Default `from` email address.
         from: null
@@ -162,7 +170,7 @@ class Settings
 
     # LOGGING
     # -------------------------------------------------------------------------
-    # Built-in support for Loggly and Logentries.
+    # @property [Object]
     logger:
         # Output logs to the console? If left null or undefined, it will inherit the value
         # from settings.general.debug.
@@ -180,7 +188,7 @@ class Settings
         # Set `uncaughtException` to true to bind the logger to the `uncaughtException`
         # event on the process and log all uncaught expcetions as errors.
         uncaughtException: true
-        # Save logs locally? The path to the logs folder is set above under the `path.logsDir` key.
+        # Save logs locally. The path to the logs folder is set above under the `path.logsDir` key.
         local:
             enabled: true
             # The bufferInterval defines the delay in between disk saves, in milliseconds.
@@ -188,12 +196,12 @@ class Settings
             # Sets the max age of log files, in days. Default is 30 days. Setting the
             # maxAge to to 0 or null will cancel the automatic log cleaning.
             maxAge: 30
-        # Please inform your Logentries token. Logentries will be used ONLY if
+        # Please inform your Logentries token below. Logentries will be used ONLY if
         # the enabled setting below  is true.
         logentries:
             enabled: false
             token: null
-        # Inform your Loggly subdomain and token. Loggly will be used ONLY if
+        # Inform your Loggly subdomain and token below. Loggly will be used ONLY if
         # the enabled setting below  is true.
         loggly:
             enabled: false
@@ -202,7 +210,7 @@ class Settings
 
     # DOWNLOADER
     # -------------------------------------------------------------------------
-    # Built-in download manager.
+    # @property [Object]
     downloader:
         # Default headers to append to all download requests.
         # For example: {"Content-Type": "application/json"}
@@ -222,7 +230,7 @@ class Settings
 
     # CRON
     # -------------------------------------------------------------------------
-    # Built-in cron / scheduled jobs manager.
+    # @property [Object]
     cron:
         # If `allowReplacing` is true, cron will allow replacing jobs by adding a new
         # job using the same ID. If false, you'll need to remove the existing job
@@ -235,8 +243,7 @@ class Settings
 
     # NEW RELIC PROFILING
     # -------------------------------------------------------------------------
-    # Built-in support for New Relic. Will be used ONLY if the appName and licenseKey
-    # settings below are set and valid.
+    # @property [Object]
     newRelic:
         # The App Name on New Relic.
         appName: null
@@ -245,8 +252,7 @@ class Settings
 
     # TWITTER
     # -------------------------------------------------------------------------
-    # If you want to integrate with Twitter, you'll need to register an application
-    # at http://dev.twitter.com and set the properties below.
+    # @property [Object]
     twitter:
         # Enable the Twitter module?
         enabled: true

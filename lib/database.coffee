@@ -1,10 +1,11 @@
 # EXPRESSER DATABASE
 # -----------------------------------------------------------------------------
-# This handles MongoDB database transactions. It supports a very simple failover
-# mechanism where you can specify a "backup" connection string to which the
-# module will connect in case the main database is down.
-#
+# Handles MongoDB database transactions using the `mongoskin` module. It supports
+# a very simple failover mechanism where you can specify a "backup" connection
+# string to which the module will connect in case the main database is down.
+# <!--
 # @see Settings.database
+# -->
 class Database
 
     lodash = require "lodash"
@@ -20,72 +21,29 @@ class Database
     onConnectionValidated: null
 
 
-    # INTERNAL FEATURES
-    # -------------------------------------------------------------------------
-
-    # Helper method to check the DB connection. If connection fails multiple times in a row,
-    # switch to the failover DB (specified on the `Database.connString2` setting).
-    # You can customize these values on the `Database` [settings](settings.html).
-    validateConnection: (retry) =>
-        retry = 0 if not retry?
-
-        # If connection has failed repeatedly for more than 3 times the `maxRetries` value then
-        # stop trying and log an error.
-        if retry > settings.database.maxRetries * 3
-            logger.error "Database.validateConnection", "Connection failed #{retry} times.", "Abort!"
-            return
-
-        # First try, use main database.
-        if retry < 1
-            @db = mongo.db settings.database.connString, settings.database.options
-            @failover = false
-
-        # Reached max retries? Try connecting to the failover database, if there's one specified.
-        if retry is settings.database.maxRetries
-            if settings.database.connString2? and settings.database.connString2 isnt ""
-                @failover = true
-                @db = mongo.db settings.database.connString2, settings.database.options
-                logger.info "Database.validateConnection", "Connection failed #{retry} times.", "Switched to failover DB."
-            else
-                logger.error "Database.validateConnection", "Connection failed #{retry} times.", "No failover DB set, keep trying."
-
-        # Try to connect to the current database. If it fails, try again in a few seconds.
-        @db.open (err, result) =>
-
-            if err?
-                logger.debug "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
-                setTimeout (() => @validateConnection retry + 1), settings.database.retryInterval
-
-            else
-                @onConnectionValidated result if @onConnectionValidated?
-
-                # If using the failover database, register a timeout to try
-                # to connect to the main database again.
-                setTimeout @validateConnection, settings.database.failoverTimeout * 1000
-
-                if @failover
-                    logger.debug "Database.validateConnection", "Connected to failover DB.", "Will try main DB again in #{settings.database.failoverTimeout} settings."
-                else
-                    logger.debug "Database.validateConnection", "Connected to main DB."
-
-
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the databse by testing the connection.
+    # Init the databse module and test the connection straight away.
     init: =>
         if settings.database.connString? and settings.database.connString isnt ""
             @validateConnection()
+        else if settings.database.connString2? and settings.database.connString2 isnt ""
+            @validateConnection()
+            logger.warn "Database.init", "The connString is empty but connString2 is set.", "Please set connString first (module will still work)."
         else
             logger.debug "Database.init", "No connection string set.", "Database module won't work."
 
 
-    # LOW LEVEL IMPLEMENTATION
+    # CRUD IMPLEMENTATION
     # -------------------------------------------------------------------------
 
     # Get data from the database. A `collection` and `callback` must be specified. The `filter` is optional.
     # Please note that if filter has an _id or id field, or if it's a plain string or number, it will be used
     # to return documents by ID. Otherwise it's used as keys-values object for filtering.
+    # @param [String] collection The collection name.
+    # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume keys-values filter.
+    # @param [Method] callback Callback (err, result) when operation has finished.
     get: (collection, filter, callback) =>
         if not @db?
             logger.warn "Expresser", "Database.get", "The db is null / was not initialized. Abort!"
@@ -258,6 +216,51 @@ class Database
             delete result["_id"]
 
         return result
+
+    # Helper method to check the DB connection. If connection fails multiple times in a row,
+    # switch to the failover DB (specified on the `Database.connString2` setting).
+    # You can customize these values on the `Database` [settings](settings.html).
+    validateConnection: (retry) =>
+        retry = 0 if not retry?
+
+        # If connection has failed repeatedly for more than 3 times the `maxRetries` value then
+        # stop trying and log an error.
+        if retry > settings.database.maxRetries * 3
+            logger.error "Database.validateConnection", "Connection failed #{retry} times.", "Abort!"
+            return
+
+        # First try, use main database.
+        if retry < 1
+            @db = mongo.db settings.database.connString, settings.database.options
+            @failover = false
+
+        # Reached max retries? Try connecting to the failover database, if there's one specified.
+        if retry is settings.database.maxRetries
+            if settings.database.connString2? and settings.database.connString2 isnt ""
+                @failover = true
+                @db = mongo.db settings.database.connString2, settings.database.options
+                logger.info "Database.validateConnection", "Connection failed #{retry} times.", "Switched to failover DB."
+            else
+                logger.error "Database.validateConnection", "Connection failed #{retry} times.", "No failover DB set, keep trying."
+
+        # Try to connect to the current database. If it fails, try again in a few seconds.
+        @db.open (err, result) =>
+
+            if err?
+                logger.debug "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
+                setTimeout (() => @validateConnection retry + 1), settings.database.retryInterval
+
+            else
+                @onConnectionValidated result if @onConnectionValidated?
+
+                # If using the failover database, register a timeout to try
+                # to connect to the main database again.
+                setTimeout @validateConnection, settings.database.failoverTimeout * 1000
+
+                if @failover
+                    logger.debug "Database.validateConnection", "Connected to failover DB.", "Will try main DB again in #{settings.database.failoverTimeout} settings."
+                else
+                    logger.debug "Database.validateConnection", "Connected to main DB."
 
 
 # Singleton implementation.

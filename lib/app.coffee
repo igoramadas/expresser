@@ -1,10 +1,11 @@
 # EXPRESSER APP
 # -----------------------------------------------------------------------------
 # The Express app server, with built-in sockets, firewall and New Relic integration.
-#
+# <!--
 # @see Firewall
 # @see Sockets
 # @see Settings.app
+# -->
 class App
 
     # Internal modules will be set on `init`.
@@ -155,8 +156,8 @@ class App
         res.render view, options
         logger.debug "App", "Render", view, options
 
-    # When the server can't return a valid result, send an error response with the
-    # specified status code (default is 500).
+    # Helper to send error responses. When the server can't return a valid result,
+    # send an error response with the specified status code.
     # @param [Object] req The response object.
     # @param [String] message The message to be sent to the client.
     # @param [Integer] statusCode The response status code, optional, default is 500.
