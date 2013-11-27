@@ -99,7 +99,7 @@ More info at https://expresser.codeplex.com/wikipage?title=Utils
 ## Running on PaaS
 
 Deploying your Expresser based app to AppFog, Heroku, OpenShift and possibly any other PaaS is dead simple.
-No need to configure anything - just leave the `Settings.App.paas` setting on, and it will automatically set
+No need to configure anything - just leave the `Settings.app.paas` setting on, and it will automatically set
 settings from environment variables.
 
 

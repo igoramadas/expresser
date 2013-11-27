@@ -1,5 +1,6 @@
 .idea/
 .openshift/
+.travis-secure.txt
 atlassian-ide-plugin.xml
 docs/annotated/
 docs/api/
