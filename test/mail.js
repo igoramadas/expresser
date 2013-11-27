@@ -9,22 +9,26 @@ describe("Mail Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    var utils = null;
+    var utils = require("../lib/utils.coffee");
     var mail = null;
+    var mandrill_it = null;
 
-    before(function() {
-        utils = require("../lib/utils.coffee");
-        utils.loadDefaultSettingsFromJson();
+    utils.loadDefaultSettingsFromJson();
+    utils.updateSettingsFromPaaS("mail");
 
-        // Check for MDA (Mandrill) variable on Travis.
-        if (env.MDA) {
-            settings.mail.smtp.password = env.MDA;
-        }
+    // Check for MDA (Mandrill) variable on Travis.
+    if (env.MDA) {
+        settings.mail.smtp.password = env.MDA;
+    }
 
-        utils.updateSettingsFromPaaS("mail");
+    // Decide if Mandrill should be tested.
+    if (settings.mail.smtp.host.indexOf("mandrill") >= 0) {
+        mandrill_it = it;
+    } else {
+        mandrill_it = it.skip;
+    }
 
-        mail = require("../lib/mail.coffee");
-    });
+    mail = require("../lib/mail.coffee");
 
     it("Is single instance", function() {
         mail.singleInstance = true;
@@ -40,7 +44,7 @@ describe("Mail Tests", function() {
         mail.init();
     });
 
-    it("Sends a test email with custom keywords", function(done) {
+    mandrill_it("Sends a test email using Mandrill", function(done) {
         this.timeout(10000);
 
         var options = {
