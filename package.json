@@ -15,8 +15,6 @@
     },
     "scripts": {
         "prepublish": "./prepublish.sh",
-        "install": "./updatedocs.sh",
-        "update": "./updatedocs.sh",
         "test": "./node_modules/.bin/mocha --reporter spec"
     },
 	"dependencies": {
