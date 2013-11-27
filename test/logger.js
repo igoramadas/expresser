@@ -10,9 +10,19 @@ describe("Logger Tests", function() {
     var logger = null;
 
     before(function() {
+        var env = process.env;
+
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();
         utils.updateSettingsFromPaaS("logger");
+
+        // Check for LET (Logentries) and LOT (Loggly) variable on Travis.
+        if (env.LET) {
+            settings.logger.logentries.token = env.LET;
+        }
+        if (env.LOT) {
+            settings.logger.loggly.token = env.LOT;
+        }
 
         logger = require("../lib/logger.coffee");
     });

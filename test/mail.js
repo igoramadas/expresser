@@ -10,8 +10,15 @@ describe("Mail Tests", function() {
     var mail = null;
 
     before(function() {
+        var env = process.env;
+
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();
+
+        // Check for MDA (Mandrill) variable on Travis.
+        if (env.MDA) {
+            settings.mail.smtp.password = env.MDA;
+        }
 
         settings.mail.from = "expresser@devv.com";
         settings.mail.smtp.host = "mandrill";
