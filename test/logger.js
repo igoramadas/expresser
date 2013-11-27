@@ -5,6 +5,9 @@ var chai = require("chai");
 chai.should();
 
 describe("Logger Tests", function() {
+    var env = process.env;
+    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
+
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var logger = null;

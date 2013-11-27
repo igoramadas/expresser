@@ -5,7 +5,10 @@ var chai = require("chai");
 chai.should();
 
 describe("Settings Tests", function() {
-     var settings = require("../lib/settings.coffee");
+    var env = process.env;
+    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
+
+    var settings = require("../lib/settings.coffee");
     var utils = null;
 
     before(function() {

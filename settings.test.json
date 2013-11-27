@@ -1,0 +1,24 @@
+{
+    "database": {
+        "connString": "mongodb://127.0.0.1/expresser",
+        "connString2": "mongodb://127.0.0.1/expresser2"
+    },
+    "logger": {
+        "console": false,
+        "logentries": {
+            //"token": "FROM ENVIRONMENT VARIABLE!"
+        },
+        "loggly": {
+            //"token": "FROM ENVIRONMENT VARIABLE!",
+            "subdomain": "devv"
+        }
+    },
+    "mail": {
+        "from": "expresser@devv.com",
+        "smtp": {
+            "host": "mandrill",
+            "user": "devv@devv.com"
+            //"password": "FROM ENVIRONMENT VARIABLE!",
+        }
+    }
+}

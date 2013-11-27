@@ -5,13 +5,14 @@ var chai = require("chai");
 chai.should();
 
 describe("Mail Tests", function() {
+    var env = process.env;
+    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
+
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var mail = null;
 
     before(function() {
-        var env = process.env;
-
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();
 
@@ -20,8 +21,6 @@ describe("Mail Tests", function() {
             settings.mail.smtp.password = env.MDA;
         }
 
-        settings.mail.from = "expresser@devv.com";
-        settings.mail.smtp.host = "mandrill";
         utils.updateSettingsFromPaaS("mail");
 
         mail = require("../lib/mail.coffee");
