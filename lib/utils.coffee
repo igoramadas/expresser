@@ -65,9 +65,6 @@ class Utils
         env = process.env
         filter = false if not filter? or filter is ""
 
-        # Temporary variables with current values.
-        currentSmtpHost = settings.mail.smtp.host?.toLowerCase()
-
         # Check for web (IP and port) variables.
         ip = env.OPENSHIFT_NODEJS_IP or env.IP
         port = env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
@@ -77,7 +74,7 @@ class Utils
             settings.app.ip = ip if ip? and ip isnt ""
             settings.app.port = port if port? and port isnt ""
 
-        # Update database settings.
+        # Update database settings (AppFog, MongoLab, MongoHQ).
         if not filter or filter.indexOf("database") >= 0
             vcap = env.VCAP_SERVICES
             vcap = JSON.parse vcap if vcap?
@@ -106,29 +103,51 @@ class Utils
             settings.logger.loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
             settings.logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
-        # Update mail settings (SendGrid, Mandrill, MailGun).
+        # Update mail settings (SendGrid, Mandrill, Mailgun).
         if not filter or filter.indexOf("mail") >= 0
+            currentSmtpHost = settings.mail.smtp.host?.toLowerCase()
+            currentSmtpHost = "" if not currentSmtpHost?
+
+            # Get and set SendGrid.
             smtpUser = env.SENDGRID_USERNAME
             smtpPassword = env.SENDGRID_PASSWORD
-            if currentSmtpHost?.indexOf("sendgrid") > 0
-                settings.mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
-                settings.mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
+            if currentSmtpHost.indexOf("sendgrid") > 0
+                if currentSmtpHost is "sendgrid"
+                    settings.mail.smtp.host = "smtp.sendgrid.net"
+                    settings.mail.smtp.port = 465
+                    settings.mail.smtp.secure = true
+                if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+                    settings.mail.smtp.user = smtpUser
+                    settings.mail.smtp.password = smtpPassword
 
+            # Get and set Mandrill.
             smtpUser = env.MANDRILL_USERNAME
             smtpPassword = env.MANDRILL_APIKEY
-            if currentSmtpHost?.indexOf("mandrill") > 0
-                settings.mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
-                settings.mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
+            if currentSmtpHost.indexOf("mandrill") > 0
+                if currentSmtpHost is "mandrill"
+                    settings.mail.smtp.host = "smtp.mandrillapp.com"
+                    settings.mail.smtp.port = 587
+                    settings.mail.smtp.secure = false
+                if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+                    settings.mail.smtp.user = smtpUser
+                    settings.mail.smtp.password = smtpPassword
 
+            # Get and set Mailgun.
             smtpHost = env.MAILGUN_SMTP_SERVER
             smtpPort = env.MAILGUN_SMTP_PORT
             smtpUser = env.MAILGUN_SMTP_LOGIN
             smtpPassword = env.MAILGUN_SMTP_PASSWORD
-
-            settings.mail.smtp.host = smtpHost if smtpHost? and smtpHost isnt ""
-            settings.mail.smtp.port = smtpPort if smtpPort? and smtpPort isnt ""
-            settings.mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
-            settings.mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
+            if currentSmtpHost.indexOf("mailgun") > 0
+                if smtpHost? and smtpHost isnt "" and smtpPort? and smtpPort isnt ""
+                    settings.mail.smtp.host = smtpHost
+                    settings.mail.smtp.port = smtpPort
+                else if currentSmtpHost is "mailgun"
+                    settings.mail.smtp.host = "smtp.mailgun.org"
+                    settings.mail.smtp.port = 587
+                    settings.mail.smtp.secure = false
+                if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+                    settings.mail.smtp.user = smtpUser
+                    settings.mail.smtp.password = smtpPassword
 
         # Update twitter settings.
         if not filter or filter.indexOf("twitter") >= 0
