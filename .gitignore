@@ -6,6 +6,4 @@ docs/annotated/
 docs/api/
 logs/*.*
 node_modules/
-settings.test.json
-settings.test-env.json
-settings.test-file.json
+settings.*test*.json

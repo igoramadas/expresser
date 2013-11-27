@@ -77,7 +77,7 @@ class Logger
                 try
                     @error "Expresser", "Unhandled exception!", err.stack
                 catch ex
-                    console.error "Expresser", "Unhandled exception!", Date(Date.now()), err.stack, ex
+                    console.error "Unhandled exception!", Date(Date.now()), err.stack, ex
 
         # Start logging!
         if not localBuffer? and not logentries? and not loggly?
@@ -254,7 +254,7 @@ class Logger
                     fs.appendFile filePath, writeData, (err) =>
                         flushing = false
                         if err?
-                            console.error "Expresser", "Logger.flushLocal", err
+                            console.error "Logger.flushLocal", err
                             @onLogError err if @onLogError?
                         else
                             @onLogSuccess successMsg if @onLogSuccess?
@@ -263,13 +263,13 @@ class Logger
                     fs.open filePath, "a", 666, (err1, fd) =>
                         if err1?
                             flushing = false
-                            console.error "Expresser", "Logger.flushLocal.open", err1
+                            console.error "Logger.flushLocal.open", err1
                             @onLogError err1 if @onLogError?
                         else
                             fs.write fd, writeData, null, settings.general.encoding, (err2) =>
                                 flushing = false
                                 if err2?
-                                    console.error "Expresser", "Logger.flushLocal.write", err2
+                                    console.error "Logger.flushLocal.write", err2
                                     @onLogError err2 if @onLogError?
                                 else
                                     @onLogSuccess successMsg if @onLogSuccess?
@@ -281,7 +281,7 @@ class Logger
 
         fs.readdir settings.path.logsDir, (err, files) ->
             if err?
-                console.error "Expresser", "Logger.cleanLocal", err
+                console.error "Logger.cleanLocal", err
             else
                 for f in files
                     date = moment f.split(".")[1], "yyyyMMdd"
