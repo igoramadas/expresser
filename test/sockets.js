@@ -12,6 +12,9 @@ describe("Sockets Tests", function() {
     var utils = null;
     var sockets = null;
 
+    // TESTS STARTS HERE!!!
+    // ----------------------------------------------------------------------------------
+
     before(function() {
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();

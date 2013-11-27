@@ -9,6 +9,9 @@ describe("App Tests", function() {
     var utils = null;
     var app = null;
 
+    // TESTS STARTS HERE!!!
+    // ----------------------------------------------------------------------------------
+
     before(function() {
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();

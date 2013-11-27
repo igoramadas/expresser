@@ -12,6 +12,9 @@ describe("Imaging Tests", function() {
     var utils = null;
     var imaging = null;
 
+    // TESTS STARTS HERE!!!
+    // ----------------------------------------------------------------------------------
+
     before(function() {
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();

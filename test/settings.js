@@ -11,6 +11,9 @@ describe("Settings Tests", function() {
     var settings = require("../lib/settings.coffee");
     var utils = null;
 
+    // TESTS STARTS HERE!!!
+    // ----------------------------------------------------------------------------------
+
     before(function() {
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();

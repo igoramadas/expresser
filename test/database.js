@@ -12,6 +12,9 @@ describe("Database Tests", function() {
     var utils = null;
     var database = null;
 
+    // TESTS STARTS HERE!!!
+    // ----------------------------------------------------------------------------------
+
     before(function() {
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();

@@ -15,7 +15,6 @@ describe("Logger Tests", function() {
     var loggly_it = null;
 
     utils.loadDefaultSettingsFromJson();
-    utils.updateSettingsFromPaaS("logger");
 
     // Check for LET (Logentries) and LOT (Loggly) variable on Travis.
     if (env.LET) {
@@ -40,6 +39,13 @@ describe("Logger Tests", function() {
     }
 
     logger = require("../lib/logger.coffee");
+
+    // TESTS STARTS HERE!!!
+    // ----------------------------------------------------------------------------------
+
+    before(function(){
+        utils.updateSettingsFromPaaS("logger");
+    });
 
     it("Is single instance", function() {
         logger.singleInstance = true;

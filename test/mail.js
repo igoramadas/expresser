@@ -14,7 +14,6 @@ describe("Mail Tests", function() {
     var mandrill_it = null;
 
     utils.loadDefaultSettingsFromJson();
-    utils.updateSettingsFromPaaS("mail");
 
     // Check for MDA (Mandrill) variable on Travis.
     if (env.MDA) {
@@ -29,6 +28,13 @@ describe("Mail Tests", function() {
     }
 
     mail = require("../lib/mail.coffee");
+
+    // TESTS STARTS HERE!!!
+    // ----------------------------------------------------------------------------------
+
+    before(function(){
+        utils.updateSettingsFromPaaS("mail");
+    });
 
     it("Is single instance", function() {
         mail.singleInstance = true;

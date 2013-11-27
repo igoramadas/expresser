@@ -13,6 +13,9 @@ describe("Downloader Tests", function() {
     var utils = null;
     var downloader = null;
 
+    // TESTS STARTS HERE!!!
+    // ----------------------------------------------------------------------------------
+
     before(function() {
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();

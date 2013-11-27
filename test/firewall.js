@@ -12,6 +12,9 @@ describe("Firewall Tests", function() {
     var utils = null;
     var firewall = null;
 
+    // TESTS STARTS HERE!!!
+    // ----------------------------------------------------------------------------------
+
     before(function() {
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();
