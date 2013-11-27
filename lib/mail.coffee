@@ -39,11 +39,15 @@ class Mail
                 user: opts.user,
                 pass: opts.password
 
-        # Log SMTP creation.
+        # Log and create SMTP object.
         logger.info "Mail.createSmtp", options.host, options.port, options.secureConnection
+        result = mailer.createTransport "SMTP", options
 
-        # Create and return SMTP object.
-        return mailer.createTransport "SMTP", options
+        # Sign using DKIM?
+        result.useDKIM settings.mail.dkim if settings.mail.dkim.enabled
+
+        # Return SMTP object.
+        return result
 
     # Helper to send emails using the specified transport and options.
     smtpSend = (transport, options, callback) ->

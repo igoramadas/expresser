@@ -167,6 +167,16 @@ class Settings
             secure: false
             # The secondary SMTP auth username.
             user: null
+        # DKIM signing options.
+        dkim:
+            # By default do not use DKIM, so enabled is false.
+            enabled: false
+            # The domain name used for signing.
+            domainName: null
+            # Key selector, first part of your TXT record (for example abc._domainkey.devv.com, key selector is "abc").
+            keySelector: null
+            # DKIM private key used for signing, as string.
+            privateKey: null
 
     # LOGGING
     # -------------------------------------------------------------------------

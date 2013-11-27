@@ -22,7 +22,7 @@ describe("Mail Tests", function() {
     }
 
     // Decide if Mandrill should be tested.
-    if (settings.mail.smtp.host.indexOf("mandrill") >= 0) {
+    if (settings.mail.smtp.host.indexOf("mandrill") >= 0 && settings.mail.smtp.password) {
         mandrill_it = it;
     } else {
         mandrill_it = it.skip;
