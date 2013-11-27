@@ -112,8 +112,8 @@ class Utils
             if currentSmtpHost.indexOf("sendgrid") >= 0
                 if currentSmtpHost is "sendgrid"
                     settings.mail.smtp.host = "smtp.sendgrid.net"
-                    settings.mail.smtp.port = 465
-                    settings.mail.smtp.secure = true
+                    settings.mail.smtp.port = 587
+                    settings.mail.smtp.secure = false
                 if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
                     settings.mail.smtp.user = smtpUser
                     settings.mail.smtp.password = smtpPassword

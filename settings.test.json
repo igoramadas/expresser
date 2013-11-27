@@ -1,4 +1,7 @@
 {
+    "general": {
+        "debug": false
+    },
     "database": {
         "connString": "mongodb://127.0.0.1/expresser",
         "connString2": "mongodb://127.0.0.1/expresser2"

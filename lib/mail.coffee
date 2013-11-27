@@ -29,15 +29,15 @@ class Mail
     # -------------------------------------------------------------------------
 
     # Helper to return a SMTP object.
-    createSmtp = (opt) ->
+    createSmtp = (opts) ->
         options =
             debug: settings.general.debug,
-            host: opt.host,
-            port: opt.port,
-            secureConnection: opt.secure,
+            host: opts.host,
+            port: opts.port,
+            secureConnection: opts.secure,
             auth:
-                user: opt.user,
-                pass: opt.password
+                user: opts.user,
+                pass: opts.password
 
         # Log SMTP creation.
         logger.info "Mail.createSmtp", options.host, options.port, options.secureConnection

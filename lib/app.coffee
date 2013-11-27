@@ -53,8 +53,12 @@ class App
         logger = require "./logger.coffee"
 
         # Log proccess termination to the console. This will force flush any buffered logs to disk.
+        # Do not log the exit if running under test environment.
         process.on "exit", (sig) ->
-            console.warn "App", "Terminating Expresser app...", Date(Date.now()), sig
+            nodeEnv = process.env.NODE_ENV
+
+            if nodeEnv? and nodeEnv.indexOf("test") < 0
+                console.warn "App", "Terminating Expresser app...", Date(Date.now()), sig
 
             try
                 logger.flushLocal()
