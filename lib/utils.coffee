@@ -56,11 +56,14 @@ class Utils
             xtend settingsJson, settings
 
         if settings.general.debug and settings.logger.console
-            console.log "Expresser", "Utils.loadSettingsFromJson", filename
+            console.log "Utils.loadSettingsFromJson", filename
 
-    # Update settings based on Cloud Environmental variables.
-    updateSettingsFromPaaS: =>
+    # Update settings based on Cloud Environmental variables. If a `filter` is specified,
+    # update only settings that match it, otherwise update everything.
+    # @param [String] filter Filter settings to be updated, for example "mail" or "database".
+    updateSettingsFromPaaS: (filter) =>
         env = process.env
+        filter = false if not filter? or filter is ""
 
         # Temporary variables with current values.
         currentSmtpHost = settings.mail.smtp.host?.toLowerCase()
@@ -68,71 +71,79 @@ class Utils
         # Check for web (IP and port) variables.
         ip = env.OPENSHIFT_NODEJS_IP or env.IP
         port = env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
-        settings.app.ip = ip if ip? and ip isnt ""
-        settings.app.port = port if port? and port isnt ""
 
-        # Check for MongoDB on AppFog variables.
-        vcap = env.VCAP_SERVICES
-        vcap = JSON.parse vcap if vcap?
-        if vcap? and vcap isnt ""
-            mongo = vcap["mongodb-1.8"]
-            mongo = mongo[0]["credentials"] if mongo?
-            if mongo?
-                settings.database.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
+        # Update app IP and port.
+        if not filter or filter.indexOf("app") >= 0
+            settings.app.ip = ip if ip? and ip isnt ""
+            settings.app.port = port if port? and port isnt ""
 
-        # Check for MongoLab variables.
-        mongoLab = env.MONGOLAB_URI
-        settings.database.connString = mongoLab if mongoLab? and mongoLab isnt ""
+        # Update database settings.
+        if not filter or filter.indexOf("database") >= 0
+            vcap = env.VCAP_SERVICES
+            vcap = JSON.parse vcap if vcap?
 
-        # Check for MongoHQ variables.
-        mongoHq = env.MONGOHQ_URL
-        settings.database.connString = mongoHq if mongoHq? and mongoHq isnt ""
+            # Check for AppFog MongoDB variables.
+            if vcap? and vcap isnt ""
+                mongo = vcap["mongodb-1.8"]
+                mongo = mongo[0]["credentials"] if mongo?
+                if mongo?
+                    settings.database.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
 
-        # Check for Logentries and Loggly variables.
-        logentriesToken = env.LOGENTRIES_TOKEN
-        logglyToken = env.LOGGLY_TOKEN
-        logglySubdomain = env.LOGGLY_SUBDOMAIN
-        settings.logger.logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
-        settings.logger.loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
-        settings.logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
+            # Check for MongoLab variables.
+            mongoLab = env.MONGOLAB_URI
+            settings.database.connString = mongoLab if mongoLab? and mongoLab isnt ""
 
-        # Check for SendGrid (email) variables.
-        smtpUser = env.SENDGRID_USERNAME
-        smtpPassword = env.SENDGRID_PASSWORD
-        if currentSmtpHost?.indexOf("sendgrid") > 0
+            # Check for MongoHQ variables.
+            mongoHq = env.MONGOHQ_URL
+            settings.database.connString = mongoHq if mongoHq? and mongoHq isnt ""
+
+        # Update logger settings (Logentries and Loggly).
+        if not filter or filter.indexOf("logger") >= 0
+            logentriesToken = env.LOGENTRIES_TOKEN
+            logglyToken = env.LOGGLY_TOKEN
+            logglySubdomain = env.LOGGLY_SUBDOMAIN
+            settings.logger.logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
+            settings.logger.loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
+            settings.logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
+
+        # Update mail settings (SendGrid, Mandrill, MailGun).
+        if not filter or filter.indexOf("mail") >= 0
+            smtpUser = env.SENDGRID_USERNAME
+            smtpPassword = env.SENDGRID_PASSWORD
+            if currentSmtpHost?.indexOf("sendgrid") > 0
+                settings.mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
+                settings.mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
+
+            smtpUser = env.MANDRILL_USERNAME
+            smtpPassword = env.MANDRILL_APIKEY
+            if currentSmtpHost?.indexOf("mandrill") > 0
+                settings.mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
+                settings.mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
+
+            smtpHost = env.MAILGUN_SMTP_SERVER
+            smtpPort = env.MAILGUN_SMTP_PORT
+            smtpUser = env.MAILGUN_SMTP_LOGIN
+            smtpPassword = env.MAILGUN_SMTP_PASSWORD
+
+            settings.mail.smtp.host = smtpHost if smtpHost? and smtpHost isnt ""
+            settings.mail.smtp.port = smtpPort if smtpPort? and smtpPort isnt ""
             settings.mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
             settings.mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
 
-        # Check for Mandrill (email) variables.
-        smtpUser = env.MANDRILL_USERNAME
-        smtpPassword = env.MANDRILL_APIKEY
-        if currentSmtpHost?.indexOf("mandrill") > 0
-            settings.mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
-            settings.mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
-
-        # Check for Mailgun (email) variables.
-        smtpHost = env.MAILGUN_SMTP_SERVER
-        smtpPort = env.MAILGUN_SMTP_PORT
-        smtpUser = env.MAILGUN_SMTP_LOGIN
-        smtpPassword = env.MAILGUN_SMTP_PASSWORD
-        settings.mail.smtp.host = smtpHost if smtpHost? and smtpHost isnt ""
-        settings.mail.smtp.port = smtpPort if smtpPort? and smtpPort isnt ""
-        settings.mail.smtp.user = smtpUser if smtpUser? and smtpUser isnt ""
-        settings.mail.smtp.password = smtpPassword if smtpPassword? and smtpPassword isnt ""
-
-        # Get Twitter credentials from environment variables.
-        twitterConsumerKey = env.TWITTER_CONSUMER_KEY
-        twitterConsumerSecret = env.TWITTER_CONSUMER_SECRET
-        twitterAccessKey = env.TWITTER_ACCESS_KEY
-        twitterAccessSecret = env.TWITTER_ACCESS_SECRET
-        settings.twitter.consumerKey = twitterConsumerKey if twitterConsumerKey? and twitterConsumerKey isnt ""
-        settings.twitter.consumerSecret = twitterConsumerSecret if twitterConsumerSecret? and twitterConsumerSecret isnt ""
-        settings.twitter.accessToken = twitterAccessKey if twitterAccessKey? and twitterAccessKey isnt ""
-        settings.twitter.accessSecret = twitterAccessSecret if twitterAccessSecret? and twitterAccessSecret isnt ""
+        # Update twitter settings.
+        if not filter or filter.indexOf("twitter") >= 0
+            twitterConsumerKey = env.TWITTER_CONSUMER_KEY
+            twitterConsumerSecret = env.TWITTER_CONSUMER_SECRET
+            twitterAccessKey = env.TWITTER_ACCESS_KEY
+            twitterAccessSecret = env.TWITTER_ACCESS_SECRET
+            settings.twitter.consumerKey = twitterConsumerKey if twitterConsumerKey? and twitterConsumerKey isnt ""
+            settings.twitter.consumerSecret = twitterConsumerSecret if twitterConsumerSecret? and twitterConsumerSecret isnt ""
+            settings.twitter.accessToken = twitterAccessKey if twitterAccessKey? and twitterAccessKey isnt ""
+            settings.twitter.accessSecret = twitterAccessSecret if twitterAccessSecret? and twitterAccessSecret isnt ""
 
         # Log to console.
         if settings.general.debug and settings.logger.console
-            console.log "Expresser", "Utils.updateSettingsFromPaaS", "Settings updated!"
+            console.log "Utils.updateSettingsFromPaaS", "Settings updated"
 
 
     # SERVER INFO UTILS
