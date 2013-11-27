@@ -5,8 +5,6 @@ var chai = require("chai");
 chai.should();
 
 describe("Mail Tests", function() {
-    process.env.NODE_ENV = "test";
-
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var mail = null;
@@ -15,9 +13,11 @@ describe("Mail Tests", function() {
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();
 
-        mail = require("../lib/mail.coffee");
+        settings.mail.from = "expresser@devv.com";
+        settings.mail.smtp.host = "mandrill";
+        utils.updateSettingsFromPaaS("mail");
 
-        settings.mail.
+        mail = require("../lib/mail.coffee");
     });
 
     it("Is single instance", function() {
@@ -34,9 +34,11 @@ describe("Mail Tests", function() {
         mail.init();
     });
 
-    it("Sends a test email with custom keywords.", function(done) {
+    it("Sends a test email with custom keywords", function(done) {
+        this.timeout(10000);
+
         var options = {
-            message: "Expresser mail to {to}.",
+            body: "Mail testing: app {appTitle}, to {to}.",
             subject: "Test mail",
             to: settings.mail.from
         };

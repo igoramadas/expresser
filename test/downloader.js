@@ -5,8 +5,6 @@ var chai = require("chai");
 chai.should();
 
 describe("Downloader Tests", function() {
-    process.env.NODE_ENV = "test";
-
     var fs = require("fs");
     var settings = require("../lib/settings.coffee");
     var utils = null;

@@ -65,12 +65,10 @@ class Utils
         env = process.env
         filter = false if not filter? or filter is ""
 
-        # Check for web (IP and port) variables.
-        ip = env.OPENSHIFT_NODEJS_IP or env.IP
-        port = env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
-
-        # Update app IP and port.
+        # Update app IP and port (OpenShift, AppFog).
         if not filter or filter.indexOf("app") >= 0
+            ip = env.OPENSHIFT_NODEJS_IP or env.IP
+            port = env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
             settings.app.ip = ip if ip? and ip isnt ""
             settings.app.port = port if port? and port isnt ""
 
@@ -111,7 +109,7 @@ class Utils
             # Get and set SendGrid.
             smtpUser = env.SENDGRID_USERNAME
             smtpPassword = env.SENDGRID_PASSWORD
-            if currentSmtpHost.indexOf("sendgrid") > 0
+            if currentSmtpHost.indexOf("sendgrid") >= 0
                 if currentSmtpHost is "sendgrid"
                     settings.mail.smtp.host = "smtp.sendgrid.net"
                     settings.mail.smtp.port = 465
@@ -123,7 +121,7 @@ class Utils
             # Get and set Mandrill.
             smtpUser = env.MANDRILL_USERNAME
             smtpPassword = env.MANDRILL_APIKEY
-            if currentSmtpHost.indexOf("mandrill") > 0
+            if currentSmtpHost.indexOf("mandrill") >= 0
                 if currentSmtpHost is "mandrill"
                     settings.mail.smtp.host = "smtp.mandrillapp.com"
                     settings.mail.smtp.port = 587
@@ -137,7 +135,7 @@ class Utils
             smtpPort = env.MAILGUN_SMTP_PORT
             smtpUser = env.MAILGUN_SMTP_LOGIN
             smtpPassword = env.MAILGUN_SMTP_PASSWORD
-            if currentSmtpHost.indexOf("mailgun") > 0
+            if currentSmtpHost.indexOf("mailgun") >= 0
                 if smtpHost? and smtpHost isnt "" and smtpPort? and smtpPort isnt ""
                     settings.mail.smtp.host = smtpHost
                     settings.mail.smtp.port = smtpPort

@@ -5,8 +5,6 @@ var chai = require("chai");
 chai.should();
 
 describe("Database Tests", function() {
-    process.env.NODE_ENV = "test";
-
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var database = null;
@@ -15,10 +13,11 @@ describe("Database Tests", function() {
         utils = require("../lib/utils.coffee");
         utils.loadDefaultSettingsFromJson();
 
-        database = require("../lib/database.coffee");
-
         settings.database.connString = "mongodb://127.0.0.1/expresser";
         settings.database.connString2 = "mongodb://127.0.0.1/expresser2";
+        utils.updateSettingsFromPaaS("database");
+
+        database = require("../lib/database.coffee");
     });
 
     it("Is single instance", function() {

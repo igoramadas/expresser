@@ -51,8 +51,8 @@ class Mail
             if err?
                 logger.error "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
             else
-                logger.debug "Mail.smtpSend", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
-                callback err, result
+                logger.debug "Mail.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
+            callback err, result
 
 
     # INIT
@@ -82,18 +82,23 @@ class Mail
     # @param [Function] callback Callback (err, result) when message is sent or fails.
     send: (options, callback) ->
         if not smtp? and not smtp2?
-            logger.warn "Mail.send", "SMTP transport wasn't initiated. Abort!", options
-            return
+            errMsg = "SMTP transport wasn't initiated. Abort!"
+            logger.warn "Mail.send", errMsg, options
+            return callback errMsg, null
 
         # Make sure message body is valid.
         if not options.body? or options.body is false or options.body is ""
-            logger.warn "Mail.send", "Option 'body' is not valid. Abort!", options
-            return
+            errMsg = "Option 'body' is not valid. Abort!"
+            logger.warn "Mail.send", errMsg, options
+            return callback errMsg, null
 
         # Make sure "to" address is valid.
         if not options.to? or options.to is false or options.to is ""
-            logger.warn "Mail.send", "Option 'to' is not valid. Abort!", options
-            return
+            errMsg = "Option 'to' is not valid. Abort!"
+            logger.warn "Mail.send", errMsg, options
+            return callback errMsg, null
+
+        logger.debug "Mail.send", options
 
         # Set from to default address if no `to` was set.
         options.to = "#{settings.general.appTitle} <#{settings.mail.from}>" if not options.to?

@@ -5,8 +5,6 @@ var chai = require("chai");
 chai.should();
 
 describe("Sockets Tests", function() {
-    process.env.NODE_ENV = "test";
-
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var sockets = null;

@@ -5,8 +5,6 @@ var chai = require("chai");
 chai.should();
 
 describe("Cron Tests", function() {
-    process.env.NODE_ENV = "test";
-
     var settings = require("../lib/settings.coffee");
     var utils = null;
     var cron = null;

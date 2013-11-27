@@ -168,11 +168,11 @@ class Logger
         console.info.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
 
-        if localBuffer?
+        if settings.logger.local.enabled and localBuffer?
             @logLocal "debug", msg
-        if logentries?
+        if settings.logger.logentries.enabled and logentries?
             loggerLogentries.debug.apply loggerLogentries, [msg]
-        if loggly?
+        if settings.logger.loggly.enabled and loggly?
             loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "debug: #{msg}", @logglyCallback]
 
     # Log to the active transports as `log`.
@@ -181,11 +181,11 @@ class Logger
         console.info.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
 
-        if localBuffer?
+        if settings.logger.local.enabled and localBuffer?
             @logLocal "info", msg
-        if logentries?
+        if settings.logger.logentries.enabled and logentries?
             loggerLogentries.info.apply loggerLogentries, [msg]
-        if loggly?
+        if settings.logger.loggly.enabled and loggly?
             loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "info: #{msg}", @logglyCallback]
 
     # Log to the active transports as `warn`.
@@ -194,11 +194,11 @@ class Logger
         console.warn.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
 
-        if localBuffer?
+        if settings.logger.local.enabled and localBuffer?
             @logLocal "warn", msg
-        if logentries?
+        if settings.logger.logentries.enabled and logentries?
             loggerLogentries.warning.apply loggerLogentries, [msg]
-        if loggly?
+        if settings.logger.loggly.enabled and loggly?
             loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "warn: #{msg}", @logglyCallback]
 
     # Log to the active transports as `error`.
@@ -207,11 +207,11 @@ class Logger
         console.error.apply(this, arguments) if settings.logger.console
         msg = @getMessage arguments
 
-        if localBuffer?
+        if settings.logger.local.enabled and localBuffer?
             @logLocal "error", msg
-        if logentries?
+        if settings.logger.logentries.enabled and logentries?
             loggerLogentries.err.apply loggerLogentries, [msg]
-        if loggly?
+        if settings.logger.loggly.enabled and loggly?
             loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "error: #{msg}", @logglyCallback]
 
 
@@ -232,7 +232,7 @@ class Logger
     flushLocal: ->
         return if flushing
 
-        # Set flushing and current time.
+        # Set flushing and current date.
         flushing = true
         now = moment()
         date = now.format "YYYYMMDD"
