@@ -21,8 +21,9 @@ describe("Mail Tests", function() {
     }
 
     // Decide if Mandrill should be tested.
+    // SKIP!!! Will rewrite mail sending tests for each of the supported PaaS providers.
     if (settings.mail.smtp.host.indexOf("mandrill") >= 0 && settings.mail.smtp.password) {
-        mandrill_it = it;
+        mandrill_it = it.skip;
     } else {
         mandrill_it = it.skip;
     }
