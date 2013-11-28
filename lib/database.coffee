@@ -48,17 +48,16 @@ class Database
     # @param [Method] callback Callback (err, result) when operation has finished.
     get: (collection, filter, callback) =>
         if not @db?
-            logger.warn "Database.get", "The db is null / was not initialized. Abort!"
-            return
+            return logger.warn "Database.get", "The db is null / was not initialized. Abort!"
 
         # Check if only collection and callback were passed.
         if not callback and lodash.isFunction filter
             callback = filter
+            filter = null
 
         # Callback is mandatory!
         if not callback?
-            logger.warn "Database.get", "No callback specified. Abort!", collection, options
-            return
+            return logger.warn "Database.get", "No callback specified. Abort!", collection, filter
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -82,8 +81,8 @@ class Database
         # Find documents depending on the parsed `filter`.
         if id?
             dbCollection.findById id, dbCallback
-        else if options?
-             dbCollection.find(filter).toArray dbCallback
+        else if filter?
+            dbCollection.find(filter).toArray dbCallback
         else
             dbCollection.find().toArray dbCallback
 
@@ -101,19 +100,18 @@ class Database
     # @param [Method] callback Callback (err, result) when operation has finished.
     set: (collection, obj, options, callback) =>
         if not @db?
-            logger.warn "Database.set", "The db is null / was not initialized. Abort!"
-            return
+            return logger.warn "Database.set", "The db is null / was not initialized. Abort!"
 
         # Obj is mandatory!
         if not obj?
             msg = "The obj argument is null or empty."
             callback msg, null
-            logger.warn "Database.set", msg
-            return
+            return logger.warn "Database.set", msg
 
         # Check if callback was passed as options.
         if not callback? and lodash.isFunction options
             callback = options
+            options = null
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -148,14 +146,12 @@ class Database
     # @param [Method] callback Callback (err, result) when operation has finished.
     del: (collection, filter, callback) =>
         if not @db?
-            logger.warn "Database.del", "The db is null / was not initialized. Abort!"
-            return
+            return logger.warn "Database.del", "The db is null / was not initialized. Abort!"
 
         if not filter?
             msg = "The filter argument is null or empty."
             callback msg, null
-            logger.warn "Database.del", msg
-            return
+            return logger.warn "Database.del", msg
 
         # Check it the `obj` is the model itself, or only the ID string / number.
         if filter._id?
@@ -190,10 +186,10 @@ class Database
     # @param [Method] callback Callback (err, result) when operation has finished.
     count: (collection, filter, callback) =>
         if not callback?
-            logger.warn "Database.count", "No callback specified. Abort!", collection, options
+            logger.warn "Database.count", "No callback specified. Abort!", collection, filter
             return
 
-        # Check if callback was passed as options.
+        # Check if callback was passed as filter.
         if not callback? and lodash.isFunction filter
             callback = filter
             filter = {}

@@ -30,7 +30,13 @@ class App
     # used only if enabled on the settings.
     # @param [Array] arrExtraMiddlewares Array with extra middlewares to be added on init, optional.
     init: (arrExtraMiddlewares) =>
+        if arrExtraMiddlewares?
+            logger.debug "App", "init", "#{arrExtraMiddlewares.length} middlewares"
+        else
+            logger.debug "App", "init", arrExtraMiddlewares
+
         http = require "http"
+        lodash = require "lodash"
         os = require "os"
         settings = require "./settings.coffee"
         utils = require "./utils.coffee"
