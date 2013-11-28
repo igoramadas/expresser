@@ -21,21 +21,25 @@ class Expresser
     utils: require "./lib/utils.coffee"
 
     # Helper to init all modules. Load settings first, then Logger, then general
-    # modules, and finally the App.
-    init: =>
+    # modules, and finally the App. The `options` can have properties to be
+    # passed to the `init` of each module.
+    # @param [Object] initOptions Options to be passed to each init module.
+    # @option initOptions [Object] app Pass options to the App init.
+    # @option initOptions [Object] app Pass options to the App init.
+    init: (initOptions) =>
         @utils.loadDefaultSettingsFromJson()
 
         # Init the Logger.
-        @logger.init()
+        @logger.init initOptions?.logger
 
         # Init general modules.
-        @database.init()
-        @mail.init()
-        @twitter.init()
+        @database.init initOptions?.database
+        @mail.init initOptions?.mail
+        @twitter.init initOptions?.twitter
 
         # App must be the last thing to be started!
         # The Firewall and Sockets modules are initiated inside the App module.
-        @app.init()
+        @app.init initOptions?.app
 
 
 # Singleton implementation
