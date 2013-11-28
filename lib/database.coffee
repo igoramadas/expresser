@@ -87,7 +87,10 @@ class Database
             dbCollection.find().toArray dbCallback
 
         if filter?
-            logger.debug "Database.get", collection, filter
+            filterLog = filter
+            filterLog.password = "***" if filterLog.password?
+            filterLog.passwordHash = "***" if filterLog.passwordHash?
+            logger.debug "Database.get", collection, filterLog
         else
             logger.debug "Database.get", collection, "No filter."
 
