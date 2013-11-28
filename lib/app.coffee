@@ -36,11 +36,6 @@ class App
         settings = require "./settings.coffee"
         utils = require "./utils.coffee"
 
-        if arrExtraMiddlewares?
-            logger.debug "App", "init", "#{arrExtraMiddlewares.length} middlewares"
-        else
-            logger.debug "App", "init", arrExtraMiddlewares
-
         # Get New Relic environment variables or settings.
         newRelicAppName = process.env.NEW_RELIC_APP_NAME or settings.newRelic.appName
         newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY or settings.newRelic.licenseKey
@@ -57,6 +52,7 @@ class App
 
         # Require logger.
         logger = require "./logger.coffee"
+        logger.debug "App", "init", arrExtraMiddlewares
 
         # Log proccess termination to the console. This will force flush any buffered logs to disk.
         # Do not log the exit if running under test environment.
