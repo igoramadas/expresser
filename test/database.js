@@ -17,12 +17,6 @@ describe("Database Tests", function() {
 
     before(function() {
         utils = require("../lib/utils.coffee");
-        utils.loadDefaultSettingsFromJson();
-
-        settings.database.connString = "mongodb://127.0.0.1/expresser";
-        settings.database.connString2 = "mongodb://127.0.0.1/expresser2";
-        utils.updateSettingsFromPaaS("database");
-
         database = require("../lib/database.coffee");
     });
 
@@ -36,15 +30,25 @@ describe("Database Tests", function() {
         settings.should.have.property("database");
     });
 
-    it("Inits", function(done) {
-        this.timeout(8000);
+    it("Inits and validates connection to localhost", function(done) {
+        this.timeout(10000);
 
-        var callback = function(result) {
+        var callbackValidated = function(result) {
             database.onConnectionValidated = null;
+            database.onConnectionError = null;
             done();
         };
 
-        database.onConnectionValidated = callback;
+        var callbackError = function(err) {
+            database.onConnectionValidated = null;
+            database.onConnectionError = null;
+            done(err);
+        };
+
+        settings.database.connString = "mongodb://127.0.0.1/expresser";
+
+        database.onConnectionValidated = callbackValidated;
+        database.onConnectionError = callbackError;
         database.init();
     });
 
@@ -74,5 +78,37 @@ describe("Database Tests", function() {
         var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
 
         database.set("test", obj, callback);
+    });
+
+    it("Switches to the failover database", function(done) {
+        this.timeout(10000);
+
+        var callbackFailover = function(failover) {
+            database.onFailoverSwitch = null;
+            if (failover) done();
+            else done("Database failover flag is false.");
+        };
+
+        settings.database.retryInterval = 500;
+        settings.database.connString = "abc:invalid:mongo/expresser";
+        settings.database.connString2 = "mongodb://127.0.0.1/expresserFailover";
+
+        database.onFailoverSwitch = callbackFailover;
+        database.init();
+    });
+
+    it("Triggers 'onConnectionError' on init with invalid connection", function(done) {
+        this.timeout(10000);
+
+        var callbackError = function(err) {
+            database.onConnectionError = null;
+            if (err) done();
+            else done("No error was returned!");
+        };
+
+        settings.database.connString = "abc:invalid:mongo/expresser";
+
+        database.onConnectionError = callbackError;
+        database.init();
     });
 });

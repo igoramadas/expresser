@@ -5,17 +5,16 @@ var chai = require("chai");
 chai.should();
 
 describe("App Tests", function() {
+    var env = process.env;
+    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
+
     var settings = require("../lib/settings.coffee");
-    var utils = null;
-    var app = null;
+    var app;
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
     before(function() {
-        utils = require("../lib/utils.coffee");
-        utils.loadDefaultSettingsFromJson();
-
         app = require("../lib/app.coffee");
     });
 
