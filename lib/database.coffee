@@ -19,8 +19,14 @@ class Database
     # @property [Boolean] When using the failover/secondary databse this will be set to true.
     failover: false
 
-    # @property [Method] Callback triggered when a connection is validated successfully.
+    # @property [Method] Callback (result) triggered when a connection is validated sucessfully.
     onConnectionValidated: null
+
+    # @property [Method] Callback (err) triggered when a connection fails.
+    onConnectionError: null
+
+    # @property [Method] Callback (isFailover) triggered when a connection switches to (true) or from (false) failover.
+    onFailoverSwitch: null
 
 
     # INIT
@@ -237,35 +243,37 @@ class Database
     validateConnection: (retry) =>
         retry = 0 if not retry?
 
-        # If connection has failed repeatedly for more than 3 times the `maxRetries` value then
-        # stop trying and log an error.
-        if retry > settings.database.maxRetries * 3
-            logger.error "Database.validateConnection", "Connection failed #{retry} times.", "Abort!"
-            return
+        # If connection has failed repeatedly for more than 2 times the `maxRetries` value
+        # then stop trying and log an error.
+        if retry > settings.database.maxRetries * 2
+            return logger.error "Database.validateConnection", "Connection failed #{retry} times, abort!", @getDbInfo()
 
-        # First try, use main database.
+        # First try using main database. If `failover` is true this will trigger the `onFailoverSwitch` event.
         if retry < 1
             @db = mongo.db settings.database.connString, settings.database.options
+            @onFailoverSwitch? false if @failover
             @failover = false
+            logger.debug "Database.validateConnection", "Switching to main DB.", @getDbInfo()
 
         # Reached max retries? Try connecting to the failover database, if there's one specified.
         if retry is settings.database.maxRetries
             if settings.database.connString2? and settings.database.connString2 isnt ""
-                @failover = true
                 @db = mongo.db settings.database.connString2, settings.database.options
-                logger.info "Database.validateConnection", "Connection failed #{retry} times.", "Switched to failover DB."
+                @onFailoverSwitch? true if @failover
+                @failover = true
+                logger.info "Database.validateConnection", "Connection failed #{retry} times.", "Switching to failover DB.", @getDbInfo()
             else
                 logger.error "Database.validateConnection", "Connection failed #{retry} times.", "No failover DB set, keep trying."
 
         # Try to connect to the current database. If it fails, try again in a few seconds.
         @db.open (err, result) =>
-
             if err?
-                logger.debug "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
+                logger.debug "Database.validateConnection", "Failed to connect.", "Retry #{retry}.", @getDbInfo()
                 setTimeout (() => @validateConnection retry + 1), settings.database.retryInterval
 
+                # Trigger connection error.
+                @onConnectionError? err
             else
-                @onConnectionValidated result if @onConnectionValidated?
 
                 # If using the failover database, register a timeout to try
                 # to connect to the main database again.
@@ -275,6 +283,17 @@ class Database
                     logger.debug "Database.validateConnection", "Connected to failover DB.", "Will try main DB again in #{settings.database.failoverTimeout} settings."
                 else
                     logger.debug "Database.validateConnection", "Connected to main DB."
+
+                # Trigger connection validated.
+                @onConnectionValidated? result
+
+    # Helper to get connection (host, port, db name) info about the current database / mongo object.
+    # @return [String] Single line string with db information.
+    # @private
+    getDbInfo: =>
+        if not @db?
+            return logger.debug "Database.getDbInfo", "Invalid DB (null or undefined)."
+        return "#{@db.db.serverConfig.name}/#{@db.databaseName}"
 
 
 # Singleton implementation.
