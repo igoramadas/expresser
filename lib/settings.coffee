@@ -118,7 +118,7 @@ class Settings
         # In case you don't have failover / sharding in place on the database above
         # using MongoDB built-in features, you can set a failover connection string below.
         # It will be used ONLY if connection to the main database fails repeatedly.
-        connString2: null
+        errorNotifyEmail: null
         # How long to wait before trying to connect to the main database again (in seconds) in case
         # the module switches to the secondary one.
         failoverTimeout: 300
@@ -126,8 +126,8 @@ class Settings
         maxRetries: 3
         # Normalize documents ID (replace _id with id when returning documents)?
         normalizeId: true
-        # How long between connection retries, in milliseconds. Default is 5 seconds.
-        retryInterval: 5000
+        # How long between connection retries, in milliseconds. Default is 1 second.
+        retryInterval: 1000
         # Database connection options.
         options:
             # Auto recconect if connection is lost?
@@ -185,6 +185,9 @@ class Settings
         # Output logs to the console? If left null or undefined, it will inherit the value
         # from settings.general.debug.
         console: null
+        # If the mail module is properly configured then all critical logs (logger.critical()) will
+        # be sent to the email address specified below. Leave blank or null to not send emails.
+        criticalEmail: null
         # List will all field / property names to be removed from logs.
         # Default list is "Password, password, passwordHash and passwordEncrypted".
         removeFields: "Password,password,passwordHash,passwordEncrypted"

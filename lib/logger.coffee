@@ -160,60 +160,54 @@ class Logger
     # LOG METHODS
     # --------------------------------------------------------------------------
 
+    # Generic log method.
+    log: (logType, logFunc, args) =>
+        console[logFunc] args if settings.logger.console
+        msg = @getMessage args
+
+        if settings.logger.local.enabled and localBuffer?
+            @logLocal logType, msg
+        if settings.logger.logentries.enabled and logentries?
+            loggerLogentries[logFunc] msg
+        if settings.logger.loggly.enabled and loggly?
+            loggerLoggly.log settings.logger.loggly.token, msg, @logglyCallback
+
+
     # Log to the active transports as `debug`, only if the debug flag is enabled.
     # All arguments are transformed to readable strings.
     debug: =>
         return if not settings.general.debug
-
-        console.info.apply(this, arguments) if settings.logger.console
-        msg = @getMessage arguments
-
-        if settings.logger.local.enabled and localBuffer?
-            @logLocal "debug", msg
-        if settings.logger.logentries.enabled and logentries?
-            loggerLogentries.debug.apply loggerLogentries, [msg]
-        if settings.logger.loggly.enabled and loggly?
-            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "debug: #{msg}", @logglyCallback]
+        args = Array.prototype.slice.call arguments
+        args.unshift "DEBUG"
+        @log "debug", "info", args
 
     # Log to the active transports as `log`.
     # All arguments are transformed to readable strings.
     info: =>
-        console.info.apply(this, arguments) if settings.logger.console
-        msg = @getMessage arguments
-
-        if settings.logger.local.enabled and localBuffer?
-            @logLocal "info", msg
-        if settings.logger.logentries.enabled and logentries?
-            loggerLogentries.info.apply loggerLogentries, [msg]
-        if settings.logger.loggly.enabled and loggly?
-            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "info: #{msg}", @logglyCallback]
+        args = Array.prototype.slice.call arguments
+        args.unshift "INFO"
+        @log "info", "info", args
 
     # Log to the active transports as `warn`.
     # All arguments are transformed to readable strings.
     warn: =>
-        console.warn.apply(this, arguments) if settings.logger.console
-        msg = @getMessage arguments
-
-        if settings.logger.local.enabled and localBuffer?
-            @logLocal "warn", msg
-        if settings.logger.logentries.enabled and logentries?
-            loggerLogentries.warning.apply loggerLogentries, [msg]
-        if settings.logger.loggly.enabled and loggly?
-            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "warn: #{msg}", @logglyCallback]
+        args = Array.prototype.slice.call arguments
+        args.unshift "WARN"
+        @log "warn", "warn", args
 
     # Log to the active transports as `error`.
     # All arguments are transformed to readable strings.
     error: =>
-        console.error.apply(this, arguments) if settings.logger.console
-        msg = @getMessage arguments
+        args = Array.prototype.slice.call arguments
+        args.unshift "ERROR"
+        @log "error", "err", args
 
-        if settings.logger.local.enabled and localBuffer?
-            @logLocal "error", msg
-        if settings.logger.logentries.enabled and logentries?
-            loggerLogentries.err.apply loggerLogentries, [msg]
-        if settings.logger.loggly.enabled and loggly?
-            loggerLoggly.log.apply loggerLoggly, [settings.logger.loggly.token, "error: #{msg}", @logglyCallback]
-
+    # Log to the active transports as `critical`.
+    # All arguments are transformed to readable strings.
+    critical: =>
+        args = Array.prototype.slice.call arguments
+        args.unshift "CRITICAL"
+        @log "critical", "info", args
 
     # LOCAL LOGGING
     # --------------------------------------------------------------------------

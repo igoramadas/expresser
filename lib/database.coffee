@@ -246,11 +246,12 @@ class Database
         # If connection has failed repeatedly for more than 2 times the `maxRetries` value
         # then stop trying and log an error.
         if retry > settings.database.maxRetries * 2
+            logger.critical
             return logger.error "Database.validateConnection", "Connection failed #{retry} times, abort!", @getDbInfo()
 
         # First try using main database. If `failover` is true this will trigger the `onFailoverSwitch` event.
         if retry < 1
-            @db = mongo.db settings.database.connString, settings.database.options
+            @setDb settings.database.connString, settings.database.options
             @onFailoverSwitch? false if @failover
             @failover = false
             logger.debug "Database.validateConnection", "Switching to main DB.", @getDbInfo()
@@ -258,8 +259,8 @@ class Database
         # Reached max retries? Try connecting to the failover database, if there's one specified.
         if retry is settings.database.maxRetries
             if settings.database.connString2? and settings.database.connString2 isnt ""
-                @db = mongo.db settings.database.connString2, settings.database.options
-                @onFailoverSwitch? true if @failover
+                @setDb settings.database.connString2, settings.database.options
+                @onFailoverSwitch? true if not @failover
                 @failover = true
                 logger.info "Database.validateConnection", "Connection failed #{retry} times.", "Switching to failover DB.", @getDbInfo()
             else
@@ -287,13 +288,22 @@ class Database
                 # Trigger connection validated.
                 @onConnectionValidated? result
 
+    # Helper to set the current DB object. Can be called externally but ideally you should control
+    # the connection string by updating your app settings.json file.
+    # Calling this directly won't change the `failover` flag!
+    # @param [Object] connString The connection string, for example user:password@hostname/dbname.
+    # @param [Object] options Additional options to be passed when creating the DB connection object.
+    setDb: (connString, options) =>
+        logger.debug "Database.setDb", connString, options
+        @db = mongo.db connString, options
+
     # Helper to get connection (host, port, db name) info about the current database / mongo object.
     # @return [String] Single line string with db information.
     # @private
     getDbInfo: =>
         if not @db?
             return logger.debug "Database.getDbInfo", "Invalid DB (null or undefined)."
-        return "#{@db.db.serverConfig.name}/#{@db.databaseName}"
+        return "#{@db._dbconn.serverConfig.name}/#{@db._dbconn.databaseName}"
 
 
 # Singleton implementation.
