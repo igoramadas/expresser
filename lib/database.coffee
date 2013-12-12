@@ -217,6 +217,8 @@ class Database
     # HELPER METHODS
     # -------------------------------------------------------------------------
 
+    #
+
     # Helper to transform MongoDB document "_id" to "id".
     # @param [Object] result The document or result to be normalized.
     # @return [Object] Returns the normalized document.

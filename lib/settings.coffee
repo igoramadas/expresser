@@ -187,7 +187,7 @@ class Settings
         console: null
         # If the mail module is properly configured then all critical logs (logger.critical()) will
         # be sent to the email address specified below. Leave blank or null to not send emails.
-        criticalEmail: null
+        criticalEmailTo: null
         # List will all field / property names to be removed from logs.
         # Default list is "Password, password, passwordHash and passwordEncrypted".
         removeFields: "Password,password,passwordHash,passwordEncrypted"

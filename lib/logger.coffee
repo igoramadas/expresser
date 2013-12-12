@@ -9,6 +9,7 @@ class Logger
 
     fs = require "fs"
     lodash = require "lodash"
+    mail = require "mail"
     moment = require "moment"
     path = require "path"
     settings = require "./settings.coffee"
@@ -161,10 +162,21 @@ class Logger
     # --------------------------------------------------------------------------
 
     # Generic log method.
+    # @param [String] logType The log type (for example: warning, error, info, security, etc).
+    # @param [String] logFunc Optional, the logging function name to be passed to the console and Logentries.
+    # @param [Array] args Array of arguments to be stringified and logged.
     log: (logType, logFunc, args) =>
+        if not args? and logFunc?
+            args = logFunc
+            logFunc = "info"
+
+        # Log to the console depending on `console` setting.
         console[logFunc] args if settings.logger.console
+
+        # Get message out of the arguments.
         msg = @getMessage args
 
+        # Log to different transports.
         if settings.logger.local.enabled and localBuffer?
             @logLocal logType, msg
         if settings.logger.logentries.enabled and logentries?
@@ -208,6 +220,17 @@ class Logger
         args = Array.prototype.slice.call arguments
         args.unshift "CRITICAL"
         @log "critical", "info", args
+
+        # If mail module is configured and the `criticalEmailTo` is set, send an email.
+        if settings.logger.criticalEmailTo? and settings.logger.criticalEmailTo isnt "" and mail.checkConfig()
+            options =
+                subject: "CRITICAL: #{args[1]}"
+                body: JSON.stringify args
+                to: settings.logger.criticalEmailTo
+            mail.send options, (err, result) =>
+                if err? and settings.logger.console
+                    console.error "CRITICAL", "Mail not sent!!!", arguments
+
 
     # LOCAL LOGGING
     # --------------------------------------------------------------------------

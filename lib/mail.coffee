@@ -173,6 +173,13 @@ class Mail
     # HELPER METHODS
     # --------------------------------------------------------------------------
 
+    # Check if configuration for sending emails is properly set.
+    checkConfig: =>
+        if smtp or smtp2?
+            return true
+        else
+            return false
+
     # Force clear the templates cache.
     clearCache: =>
         count = Object.keys(templateCache).length
