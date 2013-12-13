@@ -34,7 +34,7 @@ describe("Downloader Tests", function() {
     });
 
     it("Download with redirect (Google index html)", function(done) {
-        this.timeout(8000);
+        this.timeout(10000);
 
         var callback = function(err, obj) {
             if (err) {
@@ -50,6 +50,7 @@ describe("Downloader Tests", function() {
     });
 
     it("Force stop a download", function(done) {
+        this.timeout(10000);
         settings.downloader.preventDuplicates = false;
 
         var d, saveTo, downUrl;
@@ -65,6 +66,7 @@ describe("Downloader Tests", function() {
     });
 
     it("Prevent duplicate downloads", function(done) {
+        this.timeout(10000);
         settings.downloader.preventDuplicates = true;
 
         var d1, d2, saveTo, downUrl;

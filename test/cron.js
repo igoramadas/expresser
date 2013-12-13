@@ -9,12 +9,14 @@ describe("Cron Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    var utils = null;
     var cron = null;
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
     before(function() {
+        utils = require("../lib/utils.coffee");
         cron = require("../lib/cron.coffee");
     });
 
@@ -44,5 +46,21 @@ describe("Cron Tests", function() {
         var job = {callback: callback, schedule: schedule, once: true};
 
         cron.add("testAddJob", job);
+    });
+
+    it("Prevents duplicate jobs when 'allowReplacing' setting is false", function(done) {
+        var callback = function() { return true; };
+        var job1 = {id: "uniqueJob", callback: callback, schedule: 1000, once: true};
+        var job2 = {id: "uniqueJob", callback: callback, schedule: 2000, once: false};
+
+        settings.cron.allowReplacing = false;
+
+        cron.add(job1);
+
+        if (cron.add(job2).error) {
+            done();
+        } else {
+            done("Duplicate job was added, and it shouldn't be.")
+        }
     });
 });

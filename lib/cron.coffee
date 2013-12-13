@@ -101,12 +101,13 @@ class Cron
 
     # Add a scheduled job to the cron, passing an `id` and `job`.
     # You can also pass only the `job` if it has an id property.
-    # @param [String] id The job id, optional, overrides job.id in case it has one.
+    # @param [String] id The job ID, optional, overrides job.id in case it has one.
     # @param [Object] job The job object.
-    # @option job [String] id The job id, optional if the id parameter is passed.
+    # @option job [String] id The job ID, optional.
     # @option job [Integer, Array] schedule If a number assume it's the interval in seconds, otherwise a times array.
     # @option job [Method] callback The callback (job) to be triggered.
     # @option job [Boolean] once If true, the job will be triggered only once no matter which schedule it has.
+    # @return [Object] Returns {error, job}, where job is the job object and error is the error message (if any).
     add: (id, job) =>
         logger.debug "Cron.add", id, job
 
@@ -119,16 +120,18 @@ class Cron
 
         # Throw error if no `id` was provided.
         if not id? or id is ""
-            logger.error "Cron.add", "No 'id' was passed. Abort!"
-            return
+            errorMsg = "No 'id' was passed. Abort!"
+            logger.error "Cron.add", errorMsg
+            return {error: errorMsg}
 
         # Handle existing jobs.
         if @jobs[id]?
             if settings.cron.allowReplacing
                 clearTimeout @jobs[id].timer
             else
-                logger.error "Cron.add", "Job #{id} already exists and 'allowReplacing' is false. Abort!"
-                return
+                errorMsg = "Job #{id} already exists and 'allowReplacing' is false. Abort!"
+                logger.error "Cron.add", errorMsg
+                return {error: errorMsg}
 
         # Set `startTime` and `endTime` if not set.
         job.startTime = moment 0 if not job.startTime?
@@ -141,7 +144,10 @@ class Cron
         job.id = id
         @jobs[id] = job
 
+        return {job: job}
+
     # Remove and stop a current job. If job does not exist, a warning will be logged.
+    # @param [String] id The job ID.
     remove: (id) =>
         if not @jobs[id]?
             logger.debug "Cron.remove", "Job #{id} does not exist. Abort!"
@@ -203,6 +209,7 @@ class Cron
         # Set the timeout based on the defined schedule.
         timeout = getTimeout job
         job.timer = setTimeout callback, timeout
+        job.nextRun = moment().add "ms", timeout
 
         logger.debug "Cron.setTimer", job.id, timeout
 

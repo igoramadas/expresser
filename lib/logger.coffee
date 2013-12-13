@@ -7,9 +7,9 @@
 # -->
 class Logger
 
+    events = require "./events.coffee"
     fs = require "fs"
     lodash = require "lodash"
-    mail = require "mail"
     moment = require "moment"
     path = require "path"
     settings = require "./settings.coffee"
@@ -171,7 +171,11 @@ class Logger
             logFunc = "info"
 
         # Log to the console depending on `console` setting.
-        console[logFunc] args if settings.logger.console
+        if settings.logger.console
+            if settings.logger.errorLogTypes.indexOf(logType) >= 0
+                console.error.apply this, args
+            else
+                console.log.apply this, args
 
         # Get message out of the arguments.
         msg = @getMessage args

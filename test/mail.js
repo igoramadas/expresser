@@ -9,32 +9,15 @@ describe("Mail Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    var utils = require("../lib/utils.coffee");
+    var utils = null;
     var mail = null;
-    var mandrill_it = null;
-
-    utils.loadDefaultSettingsFromJson();
-
-    // Check for MDA (Mandrill) variable on Travis.
-    if (env.MDA) {
-        settings.mail.smtp.password = env.MDA;
-    }
-
-    // Decide if Mandrill should be tested.
-    // SKIP!!! Will rewrite mail sending tests for each of the supported PaaS providers.
-    if (settings.mail.smtp.host.indexOf("mandrill") >= 0 && settings.mail.smtp.password) {
-        mandrill_it = it.skip;
-    } else {
-        mandrill_it = it.skip;
-    }
-
-    mail = require("../lib/mail.coffee");
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
     before(function(){
-        utils.updateSettingsFromPaaS("mail");
+        utils = require("../lib/utils.coffee");
+        mail = require("../lib/mail.coffee");
     });
 
     it("Is single instance", function() {
@@ -51,16 +34,28 @@ describe("Mail Tests", function() {
         mail.init();
     });
 
-    mandrill_it("Sends a test email using Mandrill", function(done) {
+    it("Sends a test email using Mandrill", function(done) {
         this.timeout(10000);
 
-        var options = {
+        if (!env.MDA) {
+            return done("The 'MDA' variable which defines the Mandrill password was not set.");
+
+        }
+
+        var smtpOptions = {
+            password: env.MDA,
+            host: "smtp.mandrillapp.com",
+            port: 587,
+            secure: false
+        };
+
+        var msgOptions = {
             body: "Mail testing: app {appTitle}, to {to}.",
             subject: "Test mail",
             to: settings.mail.from
         };
 
-        var callback = function(err, result) {
+        var callback = function(err) {
             if (!err) {
                 done();
             } else {
@@ -68,6 +63,7 @@ describe("Mail Tests", function() {
             }
         };
 
-        mail.send(options, callback);
+        mail.setSmtp(smtpOptions);
+        mail.send(msgOptions, callback);
     });
 });

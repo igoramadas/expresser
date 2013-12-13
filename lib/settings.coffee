@@ -188,6 +188,8 @@ class Settings
         # If the mail module is properly configured then all critical logs (logger.critical()) will
         # be sent to the email address specified below. Leave blank or null to not send emails.
         criticalEmailTo: null
+        # Define all log types which should be treated as error (red colour on the console).
+        errorLogTypes: "err,error,warn,warning,critical"
         # List will all field / property names to be removed from logs.
         # Default list is "Password, password, passwordHash and passwordEncrypted".
         removeFields: "Password,password,passwordHash,passwordEncrypted"

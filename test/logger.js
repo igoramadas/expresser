@@ -9,43 +9,14 @@ describe("Logger Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    var utils = require("../lib/utils.coffee");
+    var utils = null;
     var logger = null;
-    var logentries_it = null;
-    var loggly_it = null;
-
-    utils.loadDefaultSettingsFromJson();
-
-    // Check for LET (Logentries) and LOT (Loggly) variable on Travis.
-    if (env.LET) {
-        settings.logger.logentries.token = env.LET;
-    }
-    if (env.LOT) {
-        settings.logger.loggly.token = env.LOT;
-    }
-
-    // Decide if Logentries should be tested.
-    if (settings.logger.logentries.token && settings.logger.logentries.token != "") {
-        logentries_it = it;
-    } else {
-        logentries_it = it.skip;
-    }
-
-    // Decide if Loggly should be tested.
-    // SKIP!!! Loggly is down, will reenable the test again soon.
-    if (settings.logger.loggly.token && settings.logger.loggly.token != "") {
-        loggly_it = it.skip;
-    } else {
-        loggly_it = it.skip;
-    }
-
-    logger = require("../lib/logger.coffee");
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
     before(function(){
-        utils.updateSettingsFromPaaS("logger");
+        logger = require("../lib/logger.coffee");
     });
 
     it("Is single instance", function() {
@@ -86,8 +57,12 @@ describe("Logger Tests", function() {
         settings.logger.local.enabled = false;
     });
 
-    logentries_it("Send log to Logentries", function(done) {
+    it("Send log to Logentries", function(done) {
         this.timeout(10000);
+
+        if (env.LET) {
+            settings.logger.logentries.token = env.LET;
+        }
 
         settings.logger.loggly.enabled = false;
         settings.logger.local.enabled = false;
@@ -111,8 +86,12 @@ describe("Logger Tests", function() {
         settings.logger.logentries.enabled = false;
     });
 
-    loggly_it("Send log to Loggly", function(done) {
+    it("Send log to Loggly", function(done) {
         this.timeout(10000);
+
+        if (env.LOT) {
+            settings.logger.loggly.token = env.LOT;
+        }
 
         settings.logger.logentries.enabled = false;
         settings.logger.local.enabled = false;

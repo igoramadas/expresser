@@ -19,9 +19,8 @@
     "mail": {
         "from": "expresser@devv.com",
         "smtp": {
-            "host": "mandrill",
-            "user": "devv@devv.com"
             //"password": "FROM ENVIRONMENT VARIABLE!",
+            "user": "devv@devv.com"
         }
     }
 }

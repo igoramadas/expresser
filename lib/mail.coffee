@@ -10,6 +10,7 @@
 # -->
 class Mail
 
+    events = require "./events.coffee"
     fs = require "fs"
     logger = require "./logger.coffee"
     mailer = require "nodemailer"
@@ -28,16 +29,10 @@ class Mail
     # INTERNAL FEATURES
     # -------------------------------------------------------------------------
 
-    # Helper to return a SMTP object.
-    createSmtp = (opts) ->
-        options =
-            debug: settings.general.debug,
-            host: opts.host,
-            port: opts.port,
-            secureConnection: opts.secure,
-            auth:
-                user: opts.user,
-                pass: opts.password
+    # Helper to create a SMTP object.
+    createSmtp = (options) ->
+        options.debug = settings.general.debug if not options.debug?
+        options.secureConnection = options.secure if not options.secureConnection?
 
         # Log and create SMTP object.
         logger.info "Mail.createSmtp", options.host, options.port, options.secureConnection
@@ -179,6 +174,15 @@ class Mail
             return true
         else
             return false
+
+    # Use the specified options and create a new SMTP server.
+    # @param [Object] options Options to be passed to SMTP creator.
+    # @param [Boolean] secondary If false set as the main SMTP server, if true set as secondary.
+    setSmtp: (options, secondary) =>
+        if secondary
+            smtp2 = createSmtp options
+        else
+            smtp = createSmtp options
 
     # Force clear the templates cache.
     clearCache: =>
