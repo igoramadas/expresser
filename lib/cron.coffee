@@ -44,6 +44,8 @@ class Cron
     setEvents: =>
         events.on "cron.start", @start
         events.on "cron.stop", @stop
+        events.on "cron.add", @add
+        events.on "cron.remove", @remove
 
     # Init the cron manager. If `loadOnInit` is true, call `load` straight away.
     init: =>

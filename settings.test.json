@@ -17,7 +17,7 @@
         }
     },
     "mail": {
-        "from": "expresser@devv.com",
+        "from": "devv@devv.com",
         "smtp": {
             //"password": "FROM ENVIRONMENT VARIABLE!",
             "user": "devv@devv.com"

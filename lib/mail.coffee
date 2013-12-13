@@ -84,10 +84,12 @@ class Mail
             logger.warn "Mail.send", errMsg, options
             return callback errMsg, null
 
-        logger.debug "Mail.send", options
+        # Set from to default address if no `to` was set, and `logError` defaults to true.
+        options.from = "#{settings.general.appTitle} <#{settings.mail.from}>" if not options.from?
+        options.logError = true if not options.logError?
 
-        # Set from to default address if no `to` was set.
-        options.to = "#{settings.general.appTitle} <#{settings.mail.from}>" if not options.to?
+        # Debug log.
+        logger.debug "Mail.send", options
 
         # Get the name of recipient based on the `to` option.
         if options.to.indexOf("<") < 3
@@ -159,7 +161,8 @@ class Mail
     smtpSend = (transport, options, callback) ->
         transport.sendMail options, (err, result) ->
             if err?
-                logger.error "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
+                if options.logError
+                    logger.error "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
             else
                 logger.debug "Mail.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
             callback err, result
@@ -183,7 +186,7 @@ class Mail
     # @param [Object] options Options to be passed to SMTP creator.
     # @param [Boolean] secondary If false set as the main SMTP server, if true set as secondary.
     setSmtp: (options, secondary) =>
-        if secondary
+        if secondary or secondary is 2
             smtp2 = createSmtp options
         else
             smtp = createSmtp options

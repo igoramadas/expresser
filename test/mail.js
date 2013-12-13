@@ -39,7 +39,6 @@ describe("Mail Tests", function() {
 
         if (!env.MDA) {
             return done("The 'MDA' variable which defines the Mandrill password was not set.");
-
         }
 
         var smtpOptions = {

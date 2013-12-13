@@ -231,6 +231,7 @@ class Logger
                 subject: "CRITICAL: #{args[1]}"
                 body: JSON.stringify args
                 to: settings.logger.criticalEmailTo
+                logError: false
 
             events.emit "mail.send", mailOptions, (err) ->
                 console.error "Logger.critical", "Can't send email!", err
