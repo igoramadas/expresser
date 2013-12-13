@@ -68,7 +68,7 @@ describe("Logger Tests", function() {
         settings.logger.local.enabled = false;
         settings.logger.logentries.enabled = true;
 
-        logger.onLogSuccess = function(result) {
+        logger.onLogSuccess = function() {
             logger.onLogSuccess = null;
             logger.onLogError = null;
             done();

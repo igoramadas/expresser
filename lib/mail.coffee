@@ -26,36 +26,16 @@ class Mail
     templateCache = {}
 
 
-    # INTERNAL FEATURES
-    # -------------------------------------------------------------------------
-
-    # Helper to create a SMTP object.
-    createSmtp = (options) ->
-        options.debug = settings.general.debug if not options.debug?
-        options.secureConnection = options.secure if not options.secureConnection?
-
-        # Log and create SMTP object.
-        logger.info "Mail.createSmtp", options.host, options.port, options.secureConnection
-        result = mailer.createTransport "SMTP", options
-
-        # Sign using DKIM?
-        result.useDKIM settings.mail.dkim if settings.mail.dkim.enabled
-
-        # Return SMTP object.
-        return result
-
-    # Helper to send emails using the specified transport and options.
-    smtpSend = (transport, options, callback) ->
-        transport.sendMail options, (err, result) ->
-            if err?
-                logger.error "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
-            else
-                logger.debug "Mail.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
-            callback err, result
-
-
-    # INIT
+    # CONSTRUCTOR AND INIT
     # --------------------------------------------------------------------------
+
+    # Class constructor.
+    constructor: ->
+        @setEvents()
+
+    # Bind event listeners.
+    setEvents: =>
+        events.on "mail.send", @send
 
     # Init the Mail module and create the SMTP objects.
     init: =>
@@ -68,6 +48,13 @@ class Mail
         if not smtp? and not smtp2? and settings.general.debug
             logger.warn "Mail.init", "No main SMTP host/port specified.", "No emails will be sent out!"
 
+    # Check if configuration for sending emails is properly set.
+    checkConfig: =>
+        if smtp or smtp2?
+            return true
+        else
+            return false
+
 
     # OUTBOUND
     # --------------------------------------------------------------------------
@@ -79,8 +66,8 @@ class Mail
     # @option options [String] to The "to" address.
     # @option options [String] from The "from" address, optional, if blank use default from settings.
     # @param [Function] callback Callback (err, result) when message is sent or fails.
-    send: (options, callback) ->
-        if not smtp? and not smtp2?
+    send: (options, callback) =>
+        if not @checkConfig()
             errMsg = "SMTP transport wasn't initiated. Abort!"
             logger.warn "Mail.send", errMsg, options
             return callback errMsg, null
@@ -168,12 +155,29 @@ class Mail
     # HELPER METHODS
     # --------------------------------------------------------------------------
 
-    # Check if configuration for sending emails is properly set.
-    checkConfig: =>
-        if smtp or smtp2?
-            return true
-        else
-            return false
+    # Helper to send emails using the specified transport and options.
+    smtpSend = (transport, options, callback) ->
+        transport.sendMail options, (err, result) ->
+            if err?
+                logger.error "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
+            else
+                logger.debug "Mail.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
+            callback err, result
+
+    # Helper to create a SMTP object.
+    createSmtp = (options) ->
+        options.debug = settings.general.debug if not options.debug?
+        options.secureConnection = options.secure if not options.secureConnection?
+
+        # Log and create SMTP object.
+        logger.info "Mail.createSmtp", options.host, options.port, options.secureConnection
+        result = mailer.createTransport "SMTP", options
+
+        # Sign using DKIM?
+        result.useDKIM settings.mail.dkim if settings.mail.dkim.enabled
+
+        # Return SMTP object.
+        return result
 
     # Use the specified options and create a new SMTP server.
     # @param [Object] options Options to be passed to SMTP creator.

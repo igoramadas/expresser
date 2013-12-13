@@ -20,6 +20,7 @@
 # -->
 class Cron
 
+    events = require "./events.coffee"
     fs = require "fs"
     lodash = require "lodash"
     logger = require "./logger.coffee"
@@ -32,8 +33,17 @@ class Cron
     jobs: {}
 
 
-    # INIT AND LOAD
+    # CONSTRUCTOR AND INIT
     # -------------------------------------------------------------------------
+
+    # Class constructor.
+    constructor: ->
+        @setEvents()
+
+    # Bind event listeners.
+    setEvents: =>
+        events.on "cron.start", @start
+        events.on "cron.stop", @stop
 
     # Init the cron manager. If `loadOnInit` is true, call `load` straight away.
     init: =>

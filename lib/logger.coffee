@@ -225,15 +225,15 @@ class Logger
         args.unshift "CRITICAL"
         @log "critical", "info", args
 
-        # If mail module is configured and the `criticalEmailTo` is set, send an email.
-        if settings.logger.criticalEmailTo? and settings.logger.criticalEmailTo isnt "" and mail.checkConfig()
-            options =
+        # If the `criticalEmailTo` is set, dispatch a mail send event.
+        if settings.logger.criticalEmailTo? and settings.logger.criticalEmailTo isnt ""
+            mailOptions =
                 subject: "CRITICAL: #{args[1]}"
                 body: JSON.stringify args
                 to: settings.logger.criticalEmailTo
-            mail.send options, (err, result) =>
-                if err? and settings.logger.console
-                    console.error "CRITICAL", "Mail not sent!!!", arguments
+
+            events.emit "mail.send", mailOptions, (err) ->
+                console.error "Logger.critical", "Can't send email!", err
 
 
     # LOCAL LOGGING
