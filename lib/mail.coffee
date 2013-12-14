@@ -39,10 +39,15 @@ class Mail
 
     # Init the Mail module and create the SMTP objects.
     init: =>
-        if settings.mail.smtp.host? and settings.mail.smtp.host isnt "" and settings.mail.smtp.port > 0
-            smtp = createSmtp settings.mail.smtp
-        if settings.mail.smtp2.host? and settings.mail.smtp2.host isnt "" and settings.mail.smtp2.port > 0
-            smtp2 = createSmtp settings.mail.smtp2
+        if settings.mail.smtp.service? and settings.mail.smtp.service isnt ""
+            @setSmtp settings.mail.smtp, false
+        else if settings.mail.smtp.host? and settings.mail.smtp.host isnt "" and settings.mail.smtp.port > 0
+            @setSmtp settings.mail.smtp, false
+
+        if settings.mail.smtp2.service? and settings.mail.smtp2.service isnt ""
+            @setSmtp settings.mail.smtp2, true
+        else if settings.mail.smtp2.host? and settings.mail.smtp2.host isnt "" and settings.mail.smtp2.port > 0
+            @setSmtp settings.mail.smtp2, true
 
         # Warn if no SMTP is available for sending emails, but only when debug is enabled.
         if not smtp? and not smtp2? and settings.general.debug
@@ -95,7 +100,7 @@ class Mail
         if options.to.indexOf("<") < 3
             toName = options.to
         else
-            toName = options.to.substring 0, toAddress.indexOf("<") - 1
+            toName = options.to.substring 0, options.to.indexOf("<") - 1
 
         # Replace common keywords and set HTML.
         html = @parseTemplate options.body.toString(), {to: toName, appTitle: settings.general.appTitle}
@@ -172,9 +177,19 @@ class Mail
         options.debug = settings.general.debug if not options.debug?
         options.secureConnection = options.secure if not options.secureConnection?
 
-        # Log and create SMTP object.
-        logger.info "Mail.createSmtp", options.host, options.port, options.secureConnection
-        result = mailer.createTransport "SMTP", options
+        # Make sure auth is properly set.
+        if not options.auth? and options.user? and options.password?
+            options.auth = {user: options.user, pass: options.password}
+            delete options["user"]
+            delete options["password"]
+
+        # Check if `service` is set. If so, pass to the mailer, otheriwse use SMTP.
+        if options.service? and options.service isnt ""
+            logger.info "Mail.createSmtp", "Service", options.service
+            result = mailer.createTransport options.service, options
+        else
+            logger.info "Mail.createSmtp", options.host, options.port, options.secureConnection
+            result = mailer.createTransport "SMTP", options
 
         # Sign using DKIM?
         result.useDKIM settings.mail.dkim if settings.mail.dkim.enabled
@@ -186,7 +201,7 @@ class Mail
     # @param [Object] options Options to be passed to SMTP creator.
     # @param [Boolean] secondary If false set as the main SMTP server, if true set as secondary.
     setSmtp: (options, secondary) =>
-        if secondary or secondary is 2
+        if secondary or secondary > 0
             smtp2 = createSmtp options
         else
             smtp = createSmtp options

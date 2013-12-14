@@ -43,15 +43,15 @@ describe("Mail Tests", function() {
 
         var smtpOptions = {
             password: env.MDA,
-            host: "smtp.mandrillapp.com",
-            port: 587,
-            secure: false
+            user: "devv@devv.com",
+            service: "mandrill"
         };
 
         var msgOptions = {
             body: "Mail testing: app {appTitle}, to {to}.",
             subject: "Test mail",
-            to: settings.mail.from
+            to: "devv@devv.com",
+            from: "devv@devv.com"
         };
 
         var callback = function(err) {
