@@ -10,9 +10,41 @@ class Utils
     path = require "path"
     settings = require "./settings.coffee"
 
+    # The settings watcher object.
+    settingsWatchers = []
+
 
     # SETTINGS UTILS
     # --------------------------------------------------------------------------
+
+    # Enable or disable the settings files watcher to auto reload settings when file changes.
+    # @param [Boolean] enable If enabled is true activate the fs watcher, otherwise deactivate.
+    watchSettingsFiles: (enable, callback) =>
+        currentEnv = process.env.NODE_ENV
+        currentEnv = "development" if not currentEnv? or currentEnv is ""
+
+        # Stop current watchers and reset the `settingsWatchers` array.
+        w.close() for w in settingsWatchers
+        settingsWatchers = []
+
+        # If `enable` is true, proceed enabling the watchers.
+        if enable
+            if fs.existsSync?
+                exists = fs.existsSync
+            else
+                exists = path.existsSync
+
+            # Add watcher for the settings.json file if it exists.
+            filename = "settings.json"
+            if exists filename
+                watcher = fs.watch filename, {persistent: true}, callback
+                settingsWatchers.push watcher
+
+            # Add watcher for the settings.node_env.json file if it exists.
+            filename = "settings.#{currentEnv.toString().toLowerCase()}.json"
+            if exists filename
+                watcher = fs.watch filename, {persistent: true}, callback
+                settingsWatchers.push watcher
 
     # Helper to load default `settings.json` files. This will also load the specific
     # settings for the current NODE_ENV value.
@@ -295,8 +327,9 @@ class Utils
 
     # Minify the passed JSON value. Removes comments, unecessary white spaces etc.
     # @param [String] source The JSON text to be minified.
+    # @param [Boolean] asString If true, return as string instead of JSON object.
     # @return [String] The minified JSON, or an empty string if there's an error.
-    minifyJson: (source) ->
+    minifyJson: (source, asString) ->
         source = JSON.stringify source if typeof source is "object"
         index = 0
         length = source.length
@@ -364,7 +397,11 @@ class Utils
                     result += symbol
                     index += 1
 
-        return result
+        # Check if should return as string or JSON.
+        if asString
+            return result
+        else
+            return JSON.parse result
 
 
 # Singleton implementation

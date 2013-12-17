@@ -25,21 +25,22 @@ class Settings
 
     fs = require "fs"
 
+
     # GENERAL
     # -------------------------------------------------------------------------
     # @property [Object]
     general:
-        # Enable or disable debugging messages. Should be false on production environments.
-        # If null, debug will be set automatically based on the NODE_ENV variable.
-        debug: null
         # The app title. This MUST be set.
         appTitle: "Expresser"
         # The app's base URL, including http://. This MUST be set.
         appUrl: "http://expresser.codeplex.com"
-        # How long (seconds) should files read from disk (email templates for example) stay in cache?
-        ioCacheTimeout: 60
+        # Enable or disable debugging messages. Should be false on production environments.
+        # If null, debug will be set automatically based on the NODE_ENV variable.
+        debug: null
         # Default encoding to be used on IO and requests.
         encoding: "utf8"
+        # How long (seconds) should files read from disk (email templates for example) stay in cache?
+        ioCacheTimeout: 60
 
     # PATH
     # -------------------------------------------------------------------------
@@ -131,7 +132,7 @@ class Settings
         # Database connection options.
         options:
             # Auto recconect if connection is lost?
-            autoReconnect: true
+            auto_reconnect: true
             # Default pool size for connections.
             poolSize: 8
             # Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.
@@ -319,7 +320,7 @@ Settings.getInstance = ->
         if not @instance.logger.console?
             @instance.logger.console = @instance.general.debug
 
-        # Set minifyBuilds in case it has not been set.
+        # Set `minifyBuilds` in case it has not been set.
         if not @instance.app.connectAssets.minifyBuilds?
             if nodeEnv is "development"
                 @instance.app.connectAssets.minifyBuilds = false
