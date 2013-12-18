@@ -25,7 +25,6 @@ class Settings
 
     fs = require "fs"
 
-
     # GENERAL
     # -------------------------------------------------------------------------
     # @property [Object]
@@ -320,7 +319,7 @@ Settings.getInstance = ->
         if not @instance.logger.console?
             @instance.logger.console = @instance.general.debug
 
-        # Set `minifyBuilds` in case it has not been set.
+        # Set minifyBuilds in case it has not been set.
         if not @instance.app.connectAssets.minifyBuilds?
             if nodeEnv is "development"
                 @instance.app.connectAssets.minifyBuilds = false

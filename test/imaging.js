@@ -17,7 +17,6 @@ describe("Imaging Tests", function() {
 
     before(function() {
         utils = require("../lib/utils.coffee");
-        utils.loadDefaultSettingsFromJson();
 
         imaging = require("../lib/imaging.coffee");
     });

@@ -9,6 +9,7 @@ describe("Settings Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    var fs = require("fs");
     var utils = null;
 
     // TESTS STARTS HERE!!!
@@ -16,7 +17,6 @@ describe("Settings Tests", function() {
 
     before(function() {
         utils = require("../lib/utils.coffee");
-        utils.loadDefaultSettingsFromJson();
     });
 
     it("Is single instance", function() {
@@ -25,7 +25,7 @@ describe("Settings Tests", function() {
         settings.singleInstance.should.equal(settings2.singleInstance);
     });
 
-    it("Has all module settings defined", function() {
+    it("All module have settings defined", function() {
         settings.should.have.property("general");
         settings.should.have.property("app");
         settings.should.have.property("database");
@@ -34,5 +34,24 @@ describe("Settings Tests", function() {
         settings.should.have.property("mail");
         settings.should.have.property("sockets");
         settings.should.have.property("twitter");
+    });
+
+    it("Settings file watchers properly working", function(done) {
+        var originalJson = fs.readFileSync("./settings.test.json", {encoding: "utf8"});
+        var newJson = utils.minifyJson(originalJson);
+
+        var callback = function(event, filename) {
+            fs.writeFileSync("./settings.test.json", originalJson);
+            done();
+        };
+
+        utils.watchSettingsFiles(true, callback);
+        newJson.testingFileWatcher = true;
+
+        try {
+            fs.writeFileSync("./settings.test.json", JSON.stringify(newJson, null, 4));
+        } catch (ex) {
+            done(ex);
+        }
     });
 });

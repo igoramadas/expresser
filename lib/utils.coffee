@@ -18,7 +18,9 @@ class Utils
     # --------------------------------------------------------------------------
 
     # Enable or disable the settings files watcher to auto reload settings when file changes.
+    # The `callback` is optional in case you want to notify another module.
     # @param [Boolean] enable If enabled is true activate the fs watcher, otherwise deactivate.
+    # @param [Method] callback A function (event, filename) triggered when a settings file changes.
     watchSettingsFiles: (enable, callback) =>
         currentEnv = process.env.NODE_ENV
         currentEnv = "development" if not currentEnv? or currentEnv is ""
@@ -29,21 +31,21 @@ class Utils
 
         # If `enable` is true, proceed enabling the watchers.
         if enable
-            if fs.existsSync?
-                exists = fs.existsSync
-            else
-                exists = path.existsSync
 
             # Add watcher for the settings.json file if it exists.
-            filename = "settings.json"
-            if exists filename
-                watcher = fs.watch filename, {persistent: true}, callback
+            filename = @getConfigFilePath "settings.json"
+            if filename?
+                watcher = fs.watch filename, {persistent: true}, (evt, filename) =>
+                    @loadSettingsFromJson filename
+                    callback(evt, filename) if callback?
                 settingsWatchers.push watcher
 
             # Add watcher for the settings.node_env.json file if it exists.
-            filename = "settings.#{currentEnv.toString().toLowerCase()}.json"
-            if exists filename
-                watcher = fs.watch filename, {persistent: true}, callback
+            filename = @getConfigFilePath "settings.#{currentEnv.toString().toLowerCase()}.json"
+            if filename?
+                watcher = fs.watch filename, {persistent: true}, (evt, filename) =>
+                    @loadSettingsFromJson filename
+                    callback(evt, filename) if callback?
                 settingsWatchers.push watcher
 
     # Helper to load default `settings.json` files. This will also load the specific
@@ -74,7 +76,6 @@ class Utils
 
             # Parse the JSON file.
             settingsJson = @minifyJson settingsJson
-            settingsJson = JSON.parse settingsJson
 
             # Helper function to overwrite settings.
             xtend = (source, target) ->
@@ -206,29 +207,24 @@ class Utils
     getConfigFilePath: (filename) ->
         basename = path.basename filename
 
-        # Check if file exists.
+        # Get correct exists function.
         if fs.existsSync?
-            hasJson = fs.existsSync filename
+            exists = fs.existsSync
         else
-            hasJson = path.existsSync filename
+            exists = path.existsSync
+
+        # Check if file exists.
+        hasJson = exists filename
         return filename if hasJson
 
         # If file does not exist on local path, try parent path.
         filename = path.resolve path.dirname(require.main.filename), "../#{basename}"
-
-        if fs.existsSync?
-            hasJson = fs.existsSync filename
-        else
-            hasJson = path.existsSync filename
+        hasJson = exists filename
         return filename if hasJson
 
         # If file still not found, try root path.
         filename = path.resolve __dirname, basename
-
-        if fs.existsSync?
-            hasJson = fs.existsSync filename
-        else
-            hasJson = path.existsSync filename
+        hasJson = exists filename
         return filename if hasJson
 
         # Nothing found, so return null.

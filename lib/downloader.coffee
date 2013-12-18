@@ -59,7 +59,7 @@ class Downloader
     # Helper function to start a download request.
     reqStart = (obj, options) ->
         if obj.remoteUrl.indexOf("https") is 0
-            options.port = 443 if not urlInfo.port?
+            options.port = 443 if not options.port?
             httpHandler = https
         else
             httpHandler = http
@@ -97,6 +97,8 @@ class Downloader
                         onEnd()
                     else
                         fileWriter.write data
+                        if options.returnData
+                            obj.data += data
 
                 # Helper called when response ends.
                 onEnd = ->

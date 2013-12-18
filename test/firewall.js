@@ -17,7 +17,6 @@ describe("Firewall Tests", function() {
 
     before(function() {
         utils = require("../lib/utils.coffee");
-        utils.loadDefaultSettingsFromJson();
 
         firewall = require("../lib/firewall.coffee");
     });

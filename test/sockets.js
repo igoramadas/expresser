@@ -17,7 +17,6 @@ describe("Sockets Tests", function() {
 
     before(function() {
         utils = require("../lib/utils.coffee");
-        utils.loadDefaultSettingsFromJson();
 
         sockets = require("../lib/sockets.coffee");
     });
