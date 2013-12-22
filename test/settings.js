@@ -37,6 +37,8 @@ describe("Settings Tests", function() {
     });
 
     it("Settings file watchers properly working", function(done) {
+        this.timeout(10000);
+
         var originalJson = fs.readFileSync("./settings.test.json", {encoding: "utf8"});
         var newJson = utils.minifyJson(originalJson);
 

@@ -10,9 +10,6 @@ class Utils
     path = require "path"
     settings = require "./settings.coffee"
 
-    # The settings watcher object.
-    settingsWatchers = []
-
 
     # SETTINGS UTILS
     # --------------------------------------------------------------------------
@@ -25,28 +22,25 @@ class Utils
         currentEnv = process.env.NODE_ENV
         currentEnv = "development" if not currentEnv? or currentEnv is ""
 
-        # Stop current watchers and reset the `settingsWatchers` array.
-        w.close() for w in settingsWatchers
-        settingsWatchers = []
-
-        # If `enable` is true, proceed enabling the watchers.
-        if enable
-
-            # Add watcher for the settings.json file if it exists.
-            filename = @getConfigFilePath "settings.json"
-            if filename?
-                watcher = fs.watch filename, {persistent: true}, (evt, filename) =>
+        # Add / remove watcher for the settings.json file if it exists.
+        filename = @getConfigFilePath "settings.json"
+        if filename?
+            if enable
+                fs.watchFile filename, {persistent: true}, (evt, filename) =>
                     @loadSettingsFromJson filename
                     callback(evt, filename) if callback?
-                settingsWatchers.push watcher
+            else
+                fs.unwatchFile filename, callback
 
-            # Add watcher for the settings.node_env.json file if it exists.
-            filename = @getConfigFilePath "settings.#{currentEnv.toString().toLowerCase()}.json"
-            if filename?
-                watcher = fs.watch filename, {persistent: true}, (evt, filename) =>
+        # Add / remove watcher for the settings.node_env.json file if it exists.
+        filename = @getConfigFilePath "settings.#{currentEnv.toString().toLowerCase()}.json"
+        if filename?
+            if enable
+                fs.watchFile filename, {persistent: true}, (evt, filename) =>
                     @loadSettingsFromJson filename
                     callback(evt, filename) if callback?
-                settingsWatchers.push watcher
+            else
+                fs.unwatchFile filename, callback
 
     # Helper to load default `settings.json` files. This will also load the specific
     # settings for the current NODE_ENV value.

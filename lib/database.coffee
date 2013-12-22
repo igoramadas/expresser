@@ -51,15 +51,21 @@ class Database
     # to return documents by ID. Otherwise it's used as keys-values object for filtering.
     # @param [String] collection The collection name.
     # @param [String, Object] filter Optional, if a string or number, assume it's the document ID. Otherwise assume keys-values filter.
+    # @param [Object] options Options to be passed to the query.
+    # @option options [Integer] limit Limits the resultset to X documents.
     # @param [Method] callback Callback (err, result) when operation has finished.
-    get: (collection, filter, callback) =>
+    get: (collection, filter, options, callback) =>
         if not @db?
             return logger.warn "Database.get", "The db is null / was not initialized. Abort!"
 
-        # Check if only collection and callback were passed.
-        if not callback and lodash.isFunction filter
-            callback = filter
-            filter = null
+        # Make sure callback is correctly identified.
+        if not callback?
+            if lodash.isFunction options
+                callback = options
+                options = null
+            else if lodash.isFunction filter
+                callback = filter
+                filter = null
 
         # Callback is mandatory!
         if not callback?
@@ -84,21 +90,41 @@ class Database
                 t = typeof filter
                 id = filter if t is "string" or t is "integer"
 
-        # Find documents depending on the parsed `filter`.
+        # Get `limit` option.
+        if options?.limit?
+            limit = options.limit
+        else
+            limit = 0
+
+        # Find documents depending on `filter` and `options`.
+        # If id is set, use the shorter findById.
         if id?
             dbCollection.findById id, dbCallback
+
+        # Create a params object for the find method.
         else if filter?
-            dbCollection.find(filter).toArray dbCallback
+            findParams = {$query: filter}
+            findParams["$orderby"] = options.orderBy if options.orderBy?
+
+            if limit > 0
+                dbCollection.find(findParams).limit(limit).toArray dbCallback
+            else
+                dbCollection.find(findParams).toArray dbCallback
+
+        # Search everything!
         else
-            dbCollection.find().toArray dbCallback
+            if limit > 0
+                dbCollection.find().limit(limit).toArray dbCallback
+            else
+                dbCollection.find().toArray dbCallback
 
         if filter?
             filterLog = filter
             filterLog.password = "***" if filterLog.password?
             filterLog.passwordHash = "***" if filterLog.passwordHash?
-            logger.debug "Database.get", collection, filterLog
+            logger.debug "Database.get", collection, filterLog, options
         else
-            logger.debug "Database.get", collection, "No filter."
+            logger.debug "Database.get", collection, "No filter.", options
 
     # Insert or update a document on the database using Mongo's upsert command.
     # The `options` parameter is optional.

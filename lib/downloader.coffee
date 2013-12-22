@@ -67,6 +67,11 @@ class Downloader
         # Start the request.
         req = httpHandler.get options, (response) =>
 
+            # Downloaded contents will be appended also to the `downloadedData`
+            # property of the options object.
+            obj.downloadedData = ""
+
+            # Set the estination temp file.
             saveToTemp = obj.saveTo + settings.downloader.tempExtension
 
             # If status is 301 or 302, redirect to the specified location and stop the current request.
@@ -90,15 +95,15 @@ class Downloader
                 # download has finished and the file is totally written.
                 fileWriter = fs.createWriteStream saveToTemp, {"flags": "w+"}
 
-                # Helper called response gets new data.
+                # Helper called response gets new data. The data will also be
+                # appended to `options.data` property.
                 onData = (data) ->
                     if obj.stopFlag
                         req.end()
                         onEnd()
                     else
                         fileWriter.write data
-                        if options.returnData
-                            obj.data += data
+                        obj.downloadedData += data
 
                 # Helper called when response ends.
                 onEnd = ->
@@ -194,6 +199,8 @@ class Downloader
     # has the signature (error, data). Returns the downloader object which is added
     # to the `queue`, which has the download properties and a `stop` helper to force
     # stopping it. Returns false on error or duplicate.
+    # Tip: if you want to get the downloaded data without having to read the target file
+    # you can get the downloaded contents via the `options.downloadedData`.
     # @param [String] remoteUrl The URL of the remote file to be downloaded.
     # @param [String] saveTo The full local path and destination filename.
     # @param [Object] options Optional, object with request options, for example auth.
@@ -211,6 +218,9 @@ class Downloader
 
         now = new Date().getTime()
 
+        # Create the download object.
+        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback}
+
         # Prevent duplicates?
         if settings.downloader.preventDuplicates
             existing = lodash.filter downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
@@ -221,15 +231,15 @@ class Downloader
                 if existing.saveTo is saveTo
                     logger.warn "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
                     err = {message: "Download aborted: same file is already downloading.", duplicate: true}
-                    callback(err, null) if callback?
+                    callback(err, downloadObj) if callback?
                     return false
 
         # Create a `stop` method to force stop the download by setting the `stopFlag`.
         # Accepts a `keep` boolean, if true the already downloaded data will be kept on forced stop.
         stopHelper = (keep) -> @stopFlag = (if keep then 1 else 2)
 
-        # Add download to the queue.
-        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback, stop: stopHelper}
+        # Update download object with stop helper and add to queue.
+        downloadObj.stop = stopHelper
         queue.push downloadObj
 
         # Start download immediatelly if not exceeding the `maxSimultaneous` setting.

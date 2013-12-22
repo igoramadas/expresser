@@ -8,18 +8,15 @@
     },
     "logger": {
         "console": false,
-        "logentries": {
-            //"token": "FROM ENVIRONMENT VARIABLE!"
-        },
+        "logentries": {},
         "loggly": {
-            //"token": "FROM ENVIRONMENT VARIABLE!",
             "subdomain": "devv"
         }
     },
     "mail": {
         "smtp": {
-            //"password": "FROM ENVIRONMENT VARIABLE!",
             "user": "devv@devv.com"
         }
-    }
+    },
+    "testingFileWatcher": true
 }
