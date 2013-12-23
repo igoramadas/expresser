@@ -86,7 +86,7 @@ describe("Logger Tests", function() {
         settings.logger.logentries.enabled = false;
     });
 
-    it("Send log to Loggly", function(done) {
+    it.skip("Send log to Loggly", function(done) {
         this.timeout(10000);
 
         if (env.LOT) {

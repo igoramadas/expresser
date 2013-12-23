@@ -8,7 +8,6 @@
     },
     "logger": {
         "console": false,
-        "logentries": {},
         "loggly": {
             "subdomain": "devv"
         }

@@ -70,7 +70,6 @@ describe("Settings Tests", function() {
         var originalJson = fs.readFileSync(filename, {encoding: "utf8"});
 
         var callback = function(err) {
-            fs.writeFileSync(filename, originalJson);
             if (err) done(err);
             else done();
         };
@@ -79,10 +78,12 @@ describe("Settings Tests", function() {
             return callback("Could not encrypt properties of settings.test.json file.")
         }
 
-        var encryptedJson = JSON.parse(fs.readFileSync(filename, {encoding: "utf8"}));
+        var encrypted = JSON.parse(fs.readFileSync(filename, {encoding: "utf8"}));
 
-        if (!encryptedJson.encrypted) {
+        if (!encrypted.encrypted) {
             return callback("Property 'encrypted' was not properly set.")
+        } else if (encrypted.general.appTitle == "Expresser") {
+            return callback("Encryption failed, settings.general.appTitle is still set as 'Expresser'.")
         }
 
         utils.decryptSettingsJson(filename);
@@ -91,6 +92,8 @@ describe("Settings Tests", function() {
 
         if (decrypted.encrypted) {
             return callback("Property 'encrypted' was not unset / deleted.")
+        } if (decrypted.general.appTitle != "Expresser") {
+            return callback("Decryption failed, settings.general.appTitle is still encrypted.")
         }
 
         callback();

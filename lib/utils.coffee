@@ -48,31 +48,60 @@ class Utils
                 if value?.constructor is Object
                     parser obj[prop]
                 else
-                    newValue = ""
-                    if encrypt
-                        c = aes = crypto.createCipher options.cipher, options.password
-                        newValue += c.update obj[prop].toString(), settings.general.encoding, "hex"
-                        newValue += c.final "hex"
-                    else
-                        try
+                    try
+                        currentValue = obj[prop]
+
+                        if encrypt
+
+                            # Check the property data type and prefix the new value.
+                            if lodash.isBoolean currentValue
+                                newValue = "bool:"
+                            else if lodash.isNumber currentValue
+                                newValue = "number:"
+                            else
+                                newValue = "string:"
+
+                            # Create cipher amd encrypt data.
+                            c = aes = crypto.createCipher options.cipher, options.password
+                            newValue += c.update currentValue.toString(), settings.general.encoding, "hex"
+                            newValue += c.final "hex"
+
+                        else
+
+                            # Split the data as "datatype:encryptedValue".
+                            arrValue = currentValue.split ":"
+                            newValue = ""
+
+                            # Create cipher and decrypt.
                             c = aes = crypto.createDecipher options.cipher, options.password
-                            newValue += c.update obj[prop], "hex", settings.general.encoding
+                            newValue += c.update arrValue[1], "hex", settings.general.encoding
                             newValue += c.final settings.general.encoding
-                        catch ex
-                            if settings.logger.console
-                                console.error "Utils.settingsJsonCryptoHelper", encrypt, filename, ex
+
+                            # Cast data type (boolean, number or string).
+                            if arrValue[0] is "bool"
+                                if newValue is "true" or newValue is "1"
+                                    newValue = true
+                                else
+                                    newValue = false
+                            else if arrValue[0] is "number"
+                                newValue = parseFloat newValue
+                    catch ex
+                        if settings.logger.console
+                            console.error "Utils.settingsJsonCryptoHelper", encrypt, filename, ex, currentValue
 
                     # Update settings property value.
                     obj[prop] = newValue
 
+        # Remove `encrypted` property prior to decrypting.
+        if not encrypt
+            delete settingsJson["encrypted"]
+
         # Process settings data.
         parser settingsJson
 
-        # Add or remove `encrypted` property.
+        # Add `encrypted` property after file is encrypted.
         if encrypt
             settingsJson.encrypted = true
-        else
-            delete settingsJson["encrypted"]
 
         # Stringify and save the new settings file.
         newSettingsJson = JSON.stringify settingsJson, null, 4
