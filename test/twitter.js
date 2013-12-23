@@ -17,7 +17,6 @@ describe("Twitter Tests", function() {
 
     before(function() {
         utils = require("../lib/utils.coffee");
-        utils.loadDefaultSettingsFromJson();
 
         twitter = require("../lib/twitter.coffee");
     });
