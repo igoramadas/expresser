@@ -4,7 +4,9 @@
 # any other module but Settings, all its logging will be done to the console only.
 class Utils
 
+    crypto = require "crypto"
     fs = require "fs"
+    lodash = require "lodash"
     moment = require "moment"
     os = require "os"
     path = require "path"
@@ -14,46 +16,99 @@ class Utils
     # SETTINGS UTILS
     # --------------------------------------------------------------------------
 
-    # Enable or disable the settings files watcher to auto reload settings when file changes.
-    # The `callback` is optional in case you want to notify another module.
-    # @param [Boolean] enable If enabled is true activate the fs watcher, otherwise deactivate.
-    # @param [Method] callback A function (event, filename) triggered when a settings file changes.
-    watchSettingsFiles: (enable, callback) =>
-        currentEnv = process.env.NODE_ENV
-        currentEnv = "development" if not currentEnv? or currentEnv is ""
+    # Helper to encrypt or decrypt settings files. The default encryption password
+    # defined on the `Settings.coffee` file is "ExpresserSettings". The default
+    # cipher algorithm is AES 256.
+    # @param [Boolean] encrypt Pass true to encrypt, false to decrypt.
+    # @param [String] filename The file to be encrypted or decrypted.
+    # @param [Object] options Options to be passed to the cipher.
+    # @option options [String] cipher The cipher to be used, default is aes256.
+    # @option options [String] password The default encryption password.
+    settingsJsonCryptoHelper: (encrypt, filename, options) =>
+        options = {} if not options?
+        options = lodash.defaults options, {cipher: "aes256", password: settings.general.settingsSecret}
 
-        # Add / remove watcher for the settings.json file if it exists.
-        filename = @getConfigFilePath "settings.json"
-        if filename?
-            if enable
-                fs.watchFile filename, {persistent: true}, (evt, filename) =>
-                    @loadSettingsFromJson filename
-                    callback(evt, filename) if callback?
-            else
-                fs.unwatchFile filename, callback
+        settingsJson = @loadSettingsFromJson filename, false
 
-        # Add / remove watcher for the settings.node_env.json file if it exists.
-        filename = @getConfigFilePath "settings.#{currentEnv.toString().toLowerCase()}.json"
-        if filename?
-            if enable
-                fs.watchFile filename, {persistent: true}, (evt, filename) =>
-                    @loadSettingsFromJson filename
-                    callback(evt, filename) if callback?
-            else
-                fs.unwatchFile filename, callback
+        # Settings file not found or invalid? Stop here.
+        if not settingsJson? and settings.logger.console
+            console.warn "Utils.settingsJsonCryptoHelper", encrypt, filename, "File not found or invalid, abort!"
+            return false
 
-    # Helper to load default `settings.json` files. This will also load the specific
-    # settings for the current NODE_ENV value.
+        # If trying to encrypt and settings property `encrypted` is true,
+        # abort encryption and log to the console.
+        if settingsJson.encrypted is true and encrypt
+            if settings.logger.console
+                console.warn "Utils.settingsJsonCryptoHelper", encrypt, filename, "Property 'encrypted' is true, abort!"
+                return false
+
+        # Helper to parse and encrypt / decrypt settings data.
+        parser = (obj) ->
+            for prop, value of obj
+                if value?.constructor is Object
+                    parser obj[prop]
+                else
+                    newValue = ""
+                    if encrypt
+                        c = aes = crypto.createCipher options.cipher, options.password
+                        newValue += c.update obj[prop].toString(), settings.general.encoding, "hex"
+                        newValue += c.final "hex"
+                    else
+                        try
+                            c = aes = crypto.createDecipher options.cipher, options.password
+                            newValue += c.update obj[prop], "hex", settings.general.encoding
+                            newValue += c.final settings.general.encoding
+                        catch ex
+                            if settings.logger.console
+                                console.error "Utils.settingsJsonCryptoHelper", encrypt, filename, ex
+
+                    # Update settings property value.
+                    obj[prop] = newValue
+
+        # Process settings data.
+        parser settingsJson
+
+        # Add or remove `encrypted` property.
+        if encrypt
+            settingsJson.encrypted = true
+        else
+            delete settingsJson["encrypted"]
+
+        # Stringify and save the new settings file.
+        newSettingsJson = JSON.stringify settingsJson, null, 4
+        fs.writeFileSync filename, newSettingsJson, {encoding: settings.general.encoding}
+        return true
+
+    # Helper to encrypt the specified settings file. Please see `settingsJsonCryptoHelper` above.
+    # @param [String] filename The file to be encrypted.
+    # @param [Object] options Options to be passed to the cipher.
+    # @return [Boolean] Returns true if encryption OK, false if something went wrong.
+    encryptSettingsJson: (filename, options) =>
+        @settingsJsonCryptoHelper true, filename, options
+
+    # Helper to decrypt the specified settings file. Please see `settingsJsonCryptoHelper` above.
+    # @param [String] filename The file to be decrypted.
+    # @param [Object] options Options to be passed to the cipher.
+    # @return [Boolean] Returns true if decryption OK, false if something went wrong.
+    decryptSettingsJson: (filename, options) =>
+        @settingsJsonCryptoHelper false, filename, options
+
+    # Helper to load default `settings.json` and `settings.NODE_ENV.json` files.
     loadDefaultSettingsFromJson: =>
-        @loadSettingsFromJson "settings.json"
         currentEnv = process.env.NODE_ENV
         currentEnv = "development" if not currentEnv? or currentEnv is ""
+        @loadSettingsFromJson "settings.json"
         @loadSettingsFromJson "settings.#{currentEnv.toString().toLowerCase()}.json"
 
-    # Helper to load values from the specified settings file.
+    # Helper to load values from the specified settings file. If `doNotUpdateSettings` is
+    # true it won't update the `Settings` class with the loaded data. This is useful when
+    # you want to pre-process the data before update the `Settings` class.
     # @param [String] filename The filename or path to the settings file.
-    loadSettingsFromJson: (filename) =>
+    # @param [Boolean] doNotUpdateSettings If true it won't update the Settings class, default is false.
+    # @return [Object] Returns the JSON representation of the loaded file.
+    loadSettingsFromJson: (filename, doNotUpdateSettings) =>
         filename = @getConfigFilePath filename
+        settingsJson = null
 
         # Has json? Load it. Try using UTF8 first, if failed, use ASCII.
         if filename?
@@ -72,18 +127,23 @@ class Utils
             settingsJson = @minifyJson settingsJson
 
             # Helper function to overwrite settings.
-            xtend = (source, target) ->
-                for prop, value of source
-                    if value?.constructor is Object
-                        target[prop] = {} if not target[prop]?
-                        xtend source[prop], target[prop]
-                    else
-                        target[prop] = source[prop]
+            # Executed only if `doNotUpdateSettings` is not true.
+            if not doNotUpdateSettings
+                xtend = (source, target) ->
+                    for prop, value of source
+                        if value?.constructor is Object
+                            target[prop] = {} if not target[prop]?
+                            xtend source[prop], target[prop]
+                        else
+                            target[prop] = source[prop]
 
-            xtend settingsJson, settings
+                xtend settingsJson, settings
 
         if settings.general.debug and settings.logger.console
             console.log "Utils.loadSettingsFromJson", filename
+
+        # Return the JSON representation of the file (or null if not found / empty).
+        return settingsJson
 
     # Update settings based on Cloud Environmental variables. If a `filter` is specified,
     # update only settings that match it, otherwise update everything.
@@ -188,6 +248,41 @@ class Utils
         # Log to console.
         if settings.general.debug and settings.logger.console
             console.log "Utils.updateSettingsFromPaaS", "Settings updated"
+
+    # Enable or disable the settings files watcher to auto reload settings when file changes.
+    # The `callback` is optional in case you want to notify another module about settings updates.
+    # @param [Boolean] enable If enabled is true activate the fs watcher, otherwise deactivate.
+    # @param [Method] callback A function (event, filename) triggered when a settings file changes.
+    watchSettingsFiles: (enable, callback) =>
+        currentEnv = process.env.NODE_ENV
+        currentEnv = "development" if not currentEnv? or currentEnv is ""
+
+        # Make sure callback is a function, if pased.
+        if callback? and not lodash.isFunction callback
+            throw new TypeError "The callback must be a valid function, or null/undefined."
+
+        # Add / remove watcher for the settings.json file if it exists.
+        filename = @getConfigFilePath "settings.json"
+        if filename?
+            if enable
+                fs.watchFile filename, {persistent: true}, (evt, filename) =>
+                    @loadSettingsFromJson filename
+                    callback(evt, filename) if callback?
+            else
+                fs.unwatchFile filename, callback
+
+        # Add / remove watcher for the settings.node_env.json file if it exists.
+        filename = @getConfigFilePath "settings.#{currentEnv.toString().toLowerCase()}.json"
+        if filename?
+            if enable
+                fs.watchFile filename, {persistent: true}, (evt, filename) =>
+                    @loadSettingsFromJson filename
+                    callback(evt, filename) if callback?
+            else
+                fs.unwatchFile filename, callback
+
+        if settings.general.debug and settings.logger.console
+            console.log "Utils.watchSettingsFiles", enable, (if callback? then "With callback" else "No callback")
 
 
     # SERVER INFO UTILS

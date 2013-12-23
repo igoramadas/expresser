@@ -39,21 +39,60 @@ describe("Settings Tests", function() {
     it("Settings file watchers properly working", function(done) {
         this.timeout(10000);
 
-        var originalJson = fs.readFileSync("./settings.test.json", {encoding: "utf8"});
+        var filename = "./settings.test.json";
+        var originalJson = fs.readFileSync(filename, {encoding: "utf8"});
         var newJson = utils.minifyJson(originalJson);
 
-        var callback = function(event, filename) {
-            fs.writeFileSync("./settings.test.json", originalJson);
+        var callback = function() {
+            fs.writeFileSync(filename, originalJson);
+            unwatch();
             done();
+        };
+
+        var unwatch = function() {
+            utils.watchSettingsFiles(false, callback);
         };
 
         utils.watchSettingsFiles(true, callback);
         newJson.testingFileWatcher = true;
 
         try {
-            fs.writeFileSync("./settings.test.json", JSON.stringify(newJson, null, 4));
+            fs.writeFileSync(filename, JSON.stringify(newJson, null, 4));
         } catch (ex) {
             done(ex);
         }
+    });
+
+    it("Encrypt and decrypt settings data", function(done) {
+        this.timeout(10000);
+
+        var filename = "./settings.test.json";
+        var originalJson = fs.readFileSync(filename, {encoding: "utf8"});
+
+        var callback = function(err) {
+            fs.writeFileSync(filename, originalJson);
+            if (err) done(err);
+            else done();
+        };
+
+        if (!utils.encryptSettingsJson(filename)) {
+            return callback("Could not encrypt properties of settings.test.json file.")
+        }
+
+        var encryptedJson = JSON.parse(fs.readFileSync(filename, {encoding: "utf8"}));
+
+        if (!encryptedJson.encrypted) {
+            return callback("Property 'encrypted' was not properly set.")
+        }
+
+        utils.decryptSettingsJson(filename);
+
+        var decrypted = JSON.parse(fs.readFileSync(filename, {encoding: "utf8"}));
+
+        if (decrypted.encrypted) {
+            return callback("Property 'encrypted' was not unset / deleted.")
+        }
+
+        callback();
     });
 });

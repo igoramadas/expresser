@@ -40,6 +40,8 @@ class Settings
         encoding: "utf8"
         # How long (seconds) should files read from disk (email templates for example) stay in cache?
         ioCacheTimeout: 60
+        # Secret key used to encrypt and decrypt settings files.
+        settingsSecret: "ExpresserSettings"
 
     # PATH
     # -------------------------------------------------------------------------
@@ -307,6 +309,10 @@ Settings.getInstance = ->
     if not @instance?
         @instance = new Settings()
         nodeEnv = process.env.NODE_ENV
+
+        # Disable console log on test.
+        if nodeEnv is "test"
+            @instance.logger.console = false
 
         # Set debug in case it has not been set.
         if not @instance.general.debug?
