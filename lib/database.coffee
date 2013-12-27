@@ -104,7 +104,7 @@ class Database
         # Create a params object for the find method.
         else if filter?
             findParams = {$query: filter}
-            findParams["$orderby"] = options.orderBy if options.orderBy?
+            findParams["$orderby"] = options.orderBy if options?.orderBy?
 
             if limit > 0
                 dbCollection.find(findParams).limit(limit).toArray dbCallback
@@ -126,27 +126,29 @@ class Database
         else
             logger.debug "Database.get", collection, "No filter.", options
 
-    # Insert or update a document on the database using Mongo's upsert command.
+    # Insert or update documents on the database using Mongo's upsert command.
     # The `options` parameter is optional.
     # @param [String] collection The collection name.
-    # @param [Object] obj Document to be added to the database.
-    # @param [Object] options Optional, options to control the upsert behaviour.
-    # @option options [Boolean] patch If true, replace only the specific properties of "obj" instead of the whole document using $set.
+    # @param [Object] obj Document or data to be added / updated.
+    # @param [Object] options Optional, options to control and filter the upsert behaviour.
+    # @option options [Object] filter Defines the query filter. If not specified, will try using the ID of the passed object.
+    # @option options [Boolean] patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
+    # @option options [Boolean] upsert Default is true, if false it won't add a new document (only update existing).
     # @param [Method] callback Callback (err, result) when operation has finished.
     set: (collection, obj, options, callback) =>
         if not @db?
             return logger.warn "Database.set", "The db is null / was not initialized. Abort!"
 
-        # Obj is mandatory!
+        # Check if callback was passed as options.
+        if not callback? and lodash.isFunction options
+            callback = options
+            options = {}
+
+        # Object or filter is mandatory.
         if not obj?
             msg = "The obj argument is null or empty."
             callback msg, null
             return logger.warn "Database.set", msg
-
-        # Check if callback was passed as options.
-        if not callback? and lodash.isFunction options
-            callback = options
-            options = null
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -163,16 +165,39 @@ class Database
         else if obj.id? and settings.database.normalizeId
             id = mongo.ObjectID.createFromHexString obj.id.toString()
 
-        # If options patch is set, replace specified document properties only instead of replacing the whole document.
-        if options?.patch
-            dbCollection.findAndModify {"_id": id}, {"sort": "_id"}, {$set: obj}, {"new": true}, dbCallback
+        # If a `filter` option was set, use it as the query filter otherwise use the "_id" property.
+        if options.filter?
+            filter = options.filter
         else
-            dbCollection.findAndModify {"_id": id}, {"sort": "_id"}, obj, {"new": true, "upsert": true}, dbCallback
+            filter = {"_id": id}
+
+        # If a `sort` option was set, use it as sorting otherwise use the default "_id" property.
+        if options.sort?
+            sort = {"sort": options.sort}
+        else if id?
+            sort = {"sort": "_id"}
+        else
+            sort = null
+
+        # If options patch is set, replace specified document properties only instead of replacing the whole document.
+        if options.patch
+            docData = {$set: obj}
+        else
+            docData = obj
+
+        # Check upsert option, if false it won't add new documents.
+        if options.upsert?
+            upsert = options.upsert
+        else
+            upsert = true
+
+        # Execute updated!
+        dbCollection.findAndModify filter, sort, docData, {"new": true, "upsert": upsert}, dbCallback
 
         if id?
-            logger.debug "Database.set", collection, "ID: #{id}"
+            logger.debug "Database.set", collection, options, "ID: #{id}"
         else
-            logger.debug "Database.set", collection, "New document."
+            logger.debug "Database.set", collection, options, "New document."
 
 
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
