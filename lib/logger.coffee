@@ -233,7 +233,7 @@ class Logger
                 to: settings.logger.criticalEmailTo
                 logError: false
 
-            events.emit "mail.send", mailOptions, (err) ->
+            events.emit "mailer.send", mailOptions, (err) ->
                 console.error "Logger.critical", "Can't send email!", err
 
 

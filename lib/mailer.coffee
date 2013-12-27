@@ -1,4 +1,4 @@
-# EXPRESSER MAIL
+# EXPRESSER MAILER
 # --------------------------------------------------------------------------
 # Sends and manages emails, supports templates. When parsing templates, the
 # tags should be wrapped with normal brackets {}. Example: {contents}
@@ -8,10 +8,11 @@
 # <!--
 # @see Settings.mail
 # -->
-class Mail
+class Mailer
 
     events = require "./events.coffee"
     fs = require "fs"
+    lodash = require "lodash"
     logger = require "./logger.coffee"
     mailer = require "nodemailer"
     moment = require "moment"
@@ -35,23 +36,28 @@ class Mail
 
     # Bind event listeners.
     setEvents: =>
-        events.on "mail.send", @send
+        events.on "mailer.send", @send
 
-    # Init the Mail module and create the SMTP objects.
+    # Init the Mailer module and create the SMTP objects.
+    # Also check if still using old "mail" instead of "mailer".
     init: =>
-        if settings.mail.smtp.service? and settings.mail.smtp.service isnt ""
-            @setSmtp settings.mail.smtp, false
-        else if settings.mail.smtp.host? and settings.mail.smtp.host isnt "" and settings.mail.smtp.port > 0
-            @setSmtp settings.mail.smtp, false
+        if settings.mail?
+            settings.mailer = lodash.defaults settings.mail, settings.mailer
+            logger.warn "Mailer.init", "The module is now called Mailer, please update settings from 'mail' to 'mailer'."
 
-        if settings.mail.smtp2.service? and settings.mail.smtp2.service isnt ""
-            @setSmtp settings.mail.smtp2, true
-        else if settings.mail.smtp2.host? and settings.mail.smtp2.host isnt "" and settings.mail.smtp2.port > 0
-            @setSmtp settings.mail.smtp2, true
+        if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
+            @setSmtp settings.mailer.smtp, false
+        else if settings.mailer.smtp.host? and settings.mailer.smtp.host isnt "" and settings.mailer.smtp.port > 0
+            @setSmtp settings.mailer.smtp, false
+
+        if settings.mailer.smtp2.service? and settings.mailer.smtp2.service isnt ""
+            @setSmtp settings.mailer.smtp2, true
+        else if settings.mailer.smtp2.host? and settings.mailer.smtp2.host isnt "" and settings.mailer.smtp2.port > 0
+            @setSmtp settings.mailer.smtp2, true
 
         # Warn if no SMTP is available for sending emails, but only when debug is enabled.
         if not smtp? and not smtp2? and settings.general.debug
-            logger.warn "Mail.init", "No main SMTP host/port specified.", "No emails will be sent out!"
+            logger.warn "Mailer.init", "No main SMTP host/port specified.", "No emails will be sent out!"
 
     # Check if configuration for sending emails is properly set.
     checkConfig: =>
@@ -74,27 +80,27 @@ class Mail
     send: (options, callback) =>
         if not @checkConfig()
             errMsg = "SMTP transport wasn't initiated. Abort!"
-            logger.warn "Mail.send", errMsg, options
+            logger.warn "Mailer.send", errMsg, options
             return callback errMsg, null
 
         # Make sure message body is valid.
         if not options.body? or options.body is false or options.body is ""
             errMsg = "Option 'body' is not valid. Abort!"
-            logger.warn "Mail.send", errMsg, options
+            logger.warn "Mailer.send", errMsg, options
             return callback errMsg, null
 
         # Make sure "to" address is valid.
         if not options.to? or options.to is false or options.to is ""
             errMsg = "Option 'to' is not valid. Abort!"
-            logger.warn "Mail.send", errMsg, options
+            logger.warn "Mailer.send", errMsg, options
             return callback errMsg, null
 
         # Set from to default address if no `to` was set, and `logError` defaults to true.
-        options.from = "#{settings.general.appTitle} <#{settings.mail.from}>" if not options.from?
+        options.from = "#{settings.general.appTitle} <#{settings.mailer.from}>" if not options.from?
         options.logError = true if not options.logError?
 
         # Debug log.
-        logger.debug "Mail.send", options
+        logger.debug "Mailer.send", options
 
         # Get the name of recipient based on the `to` option.
         if options.to.indexOf("<") < 3
@@ -167,9 +173,9 @@ class Mail
         transport.sendMail options, (err, result) ->
             if err?
                 if options.logError
-                    logger.error "Mail.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
+                    logger.error "Mailer.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
             else
-                logger.debug "Mail.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
+                logger.debug "Mailer.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
             callback err, result
 
     # Helper to create a SMTP object.
@@ -185,14 +191,14 @@ class Mail
 
         # Check if `service` is set. If so, pass to the mailer, otheriwse use SMTP.
         if options.service? and options.service isnt ""
-            logger.info "Mail.createSmtp", "Service", options.service
+            logger.info "Mailer.createSmtp", "Service", options.service
             result = mailer.createTransport options.service, options
         else
-            logger.info "Mail.createSmtp", options.host, options.port, options.secureConnection
+            logger.info "Mailer.createSmtp", options.host, options.port, options.secureConnection
             result = mailer.createTransport "SMTP", options
 
         # Sign using DKIM?
-        result.useDKIM settings.mail.dkim if settings.mail.dkim.enabled
+        result.useDKIM settings.mailer.dkim if settings.mailer.dkim.enabled
 
         # Return SMTP object.
         return result
@@ -210,13 +216,13 @@ class Mail
     clearCache: =>
         count = Object.keys(templateCache).length
         templateCache = {}
-        logger.info "Mail.clearCache", "Cleared #{count} templates."
+        logger.info "Mailer.clearCache", "Cleared #{count} templates."
 
 
 # Singleton implementation
 # --------------------------------------------------------------------------
-Mail.getInstance = ->
-    @instance = new Mail() if not @instance?
+Mailer.getInstance = ->
+    @instance = new Mailer() if not @instance?
     return @instance
 
-module.exports = exports = Mail.getInstance()
+module.exports = exports = Mailer.getInstance()

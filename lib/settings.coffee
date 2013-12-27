@@ -142,7 +142,7 @@ class Settings
     # MAIL
     # -------------------------------------------------------------------------
     # @property [Object]
-    mail:
+    mailer:
         # Default `from` email address.
         from: null
         # Main SMTP server.

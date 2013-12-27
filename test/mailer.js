@@ -1,4 +1,4 @@
-// TEST: MAIL
+// TEST: MAILER
 
 require("coffee-script");
 var chai = require("chai");
@@ -10,20 +10,20 @@ describe("Mail Tests", function() {
 
     var settings = require("../lib/settings.coffee");
     var utils = null;
-    var mail = null;
+    var mailer = null;
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
     before(function(){
         utils = require("../lib/utils.coffee");
-        mail = require("../lib/mail.coffee");
+        mailer = require("../lib/mailer.coffee");
     });
 
     it("Is single instance", function() {
-        mail.singleInstance = true;
-        var mail2 = require("../lib/mail.coffee");
-        mail.singleInstance.should.equal(mail2.singleInstance);
+        mailer.singleInstance = true;
+        var mailer2 = require("../lib/mailer.coffee");
+        mailer.singleInstance.should.equal(mailer2.singleInstance);
     });
 
     it("Has settings defined", function() {
@@ -31,7 +31,7 @@ describe("Mail Tests", function() {
     });
 
     it("Inits", function() {
-        mail.init();
+        mailer.init();
     });
 
     it.skip("Sends a test email using Mandrill", function(done) {
@@ -62,7 +62,7 @@ describe("Mail Tests", function() {
             }
         };
 
-        mail.setSmtp(smtpOptions);
-        mail.send(msgOptions, callback);
+        mailer.setSmtp(smtpOptions);
+        mailer.send(msgOptions, callback);
     });
 });

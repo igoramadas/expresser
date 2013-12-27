@@ -15,7 +15,7 @@ class Expresser
     firewall: require "./lib/firewall.coffee"
     imaging: require "./lib/imaging.coffee"
     logger: require "./lib/logger.coffee"
-    mail: require "./lib/mail.coffee"
+    mailer: require "./lib/mailer.coffee"
     sockets: require "./lib/sockets.coffee"
     twitter: require "./lib/twitter.coffee"
     utils: require "./lib/utils.coffee"
@@ -34,12 +34,17 @@ class Expresser
 
         # Init general modules.
         @database.init initOptions?.database
-        @mail.init initOptions?.mail
+        @mailer.init initOptions?.mailer
         @twitter.init initOptions?.twitter
 
         # App must be the last thing to be started!
         # The Firewall and Sockets modules are initiated inside the App module.
         @app.init initOptions?.app
+
+        # Updated mail to mailer.
+        mailerMsg = "Attention! The 'mail' module was renamed to 'mailer', please update your code if necessary!"
+        @logger.debug "Expresser.init", mailerMsg
+        @mail = @mailer
 
 
 # Singleton implementation
