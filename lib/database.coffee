@@ -305,7 +305,7 @@ class Database
             @setDb settings.database.connString, settings.database.options
             @onFailoverSwitch? false if @failover
             @failover = false
-            logger.debug "Database.validateConnection", "Switching to main DB.", @getDbInfo()
+            logger.debug "Database.validateConnection", "Using main DB.", @getDbInfo()
 
         # Reached max retries? Try connecting to the failover database, if there's one specified.
         if retry is settings.database.maxRetries

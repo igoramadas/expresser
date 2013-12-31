@@ -155,6 +155,9 @@ class Settings
             port: null
             # Connect using SSL? If you're using port 587 then secure must be set to false in most cases.
             secure: false
+            # The service is a shortcut setting. If defined, it will override the host, port and secure properties.
+            # For a list of supported services please go to http://www.nodemailer.com/#well-known-services-for-smtp
+            service: null
             # The SMTP auth username.
             user: null
         # Secondary SMTP server. Will be used only if the main SMTP fails.
@@ -167,6 +170,9 @@ class Settings
             port: null
             # Connect to secondary using SSL? If you're using port 587 then secure must be set to false in most cases.
             secure: false
+            # The service is a shortcut setting. If defined, it will override the host, port and secure properties.
+            # For a list of supported services please go to http://www.nodemailer.com/#well-known-services-for-smtp
+            service: null
             # The secondary SMTP auth username.
             user: null
         # DKIM signing options.

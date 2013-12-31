@@ -184,7 +184,7 @@ class Logger
         if settings.logger.local.enabled and localBuffer?
             @logLocal logType, msg
         if settings.logger.logentries.enabled and logentries?
-            loggerLogentries[logFunc] msg
+            loggerLogentries.log logType, msg
         if settings.logger.loggly.enabled and loggly?
             loggerLoggly.log settings.logger.loggly.token, msg, @logglyCallback
 
@@ -235,7 +235,6 @@ class Logger
 
             events.emit "mailer.send", mailOptions, (err) ->
                 console.error "Logger.critical", "Can't send email!", err
-
 
     # LOCAL LOGGING
     # --------------------------------------------------------------------------

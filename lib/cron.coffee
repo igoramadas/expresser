@@ -32,7 +32,6 @@ class Cron
     # @property [Object] The jobs container, please do edit this object manually!
     jobs: {}
 
-
     # CONSTRUCTOR AND INIT
     # -------------------------------------------------------------------------
 
@@ -57,58 +56,91 @@ class Cron
     # @param [String] filename Path to the JSON file containing jobs, optional, default is "cron.json".
     # @param [Boolean] autoStart If true, call "start" after loading.
     load: (filename, autoStart) =>
-        filename = "cron.json" if not filename? or filename is false or filename is ""
+        logger.debug "Cron.load", filepath, autoStart
+
+        if not autoStart and lodash.isBoolean filename
+            filename = null
+            autoStart = filename
+
+        if not filename? or filename is false or filename is ""
+            filename = "cron.json"
+            doNotWarn = true
+
+        # Get full path to the passed json file.
         filepath = utils.getConfigFilePath filename
 
         # Found the cron.json file? Read it.
         if filepath?
-            logger.debug "Cron.load", filepath
             cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
-
-            # Parse the JSON data.
             cronJson = utils.minifyJson cronJson
-            cronJson = JSON.parse cronJson
 
-            # Add jobs from the parsed JSON array and auto start.
-            @add job for job in cronJson
+            # Iterate jobs.
+            for key, data of cronJson
+                module = require key
+                for d of data
+                    job = d
+                    job.module = key
+                    job.id = key + job.callback
+                    job.callback = module[callback]
+                    @add job
+
+            # Start all jobs automatically if `autoStart` is true.
             @start() if autoStart
 
-            logger.debug "Cron.load", "#{filename} loaded.", "Auto start: #{autoStart}"
-        else
-            logger.debug "Cron.load", "#{filename} not found."
+            logger.info "Cron.load", "#{filename} loaded.", "Auto start: #{autoStart}"
+        else if not doNotWarn
+            logger.warn "Cron.load", "#{filename} not found."
 
     # METHODS
     # -------------------------------------------------------------------------
 
     # Start the specified cron job. If no `id` is specified, all jobs will be started.
-    # @param [String] id The job unique id, optional (if not specified, start everything).
-    start: (id) =>
-        if id? and id isnt false and id isnt ""
-            if @jobs[id]?
-                logger.debug "Cron.start", id
-                clearTimeout @jobs[id].timer if @jobs[id].timer?
-                setTimer @jobs[id]
+    # A filter can also be passed as an object. For example to start all jobs for
+    # the module "email", use start({module: "email"}).
+    # @param [String] idOrFilter The job id or filter, optional (if not specified, start everything).
+    start: (idOrFilter) =>
+        if lodash.isString idOrFilter or lodash.isNumber idOrFilter
+            if @jobs[idOrFilter]?
+                clearTimeout @jobs[idOrFilter].timer if @jobs[idOrFilter].timer?
+                setTimer @jobs[idOrFilter]
+                logger.info "Cron.start", idOrFilter
             else
-                logger.debug "Cron.start", "Job #{id} does not exist. Abort!"
+                logger.warn "Cron.start", "Job #{idOrFilter} does not exist. Abort!"
         else
-            logger.debug "Cron.start"
-            for job of @jobs
+            if lodash.isObject idOrFilter
+                logger.info "Cron.start", idOrFilter
+                arr = @jobs.find idOrFilter
+            else
+                logger.info "Cron.start", "All jobs"
+                arr = @jobs
+
+            for job of arr
                 setTimer job
 
     # Stop the specified cron job. If no `id` is specified, all jobs will be stopped.
-    # @param [String] id The job unique id, optional (if not specified, stop everything).
-    stop: (id) =>
-        if id? and id isnt false and id isnt ""
-            if @jobs[id]?
-                logger.debug "Cron.stop", id
-                clearTimeout @jobs[id].timer
+    # A filter can also be passed as an object. For example to stop all jobs for
+    # the module "mymodule", use stop({module: "mymodule"}).
+    # @param [String] idOrFilter The job id or filter, optional (if not specified, stop everything).
+    stop: (idOrFilter) =>
+        if lodash.isString idOrFilter or lodash.isNumber idOrFilter
+            logger.debug "Cron.stop", idOrFilter
+            if @jobs[idOrFilter]?
+                if @jobs[idOrFilter].timer?
+                    clearTimeout @jobs[id].timer
+                    logger.info "Cron.stop", idOrFilter
                 delete @jobs[id].timer
             else
-                logger.debug "Cron.stop", "Job #{id} does not exist. Abort!"
+                logger.debug "Cron.stop", "Job #{idOrFilter} does not exist. Abort!"
         else
-            logger.debug "Cron.stop"
-            for job of @jobs
-                clearTimeout job.timer
+            if lodash.isObject idOrFilter
+                logger.info "Cron.stop", idOrFilter
+                arr = @jobs.find idOrFilter
+            else
+                logger.info "Cron.stop", "All jobs"
+                arr = @jobs
+
+            for job of arr
+                clearTimeout job.timer if job.timer?
                 delete job.timer
 
     # Add a scheduled job to the cron, passing an `id` and `job`.
@@ -167,7 +199,6 @@ class Cron
 
         clearTimeout @jobs[id]
         delete @jobs[id]
-
 
     # HELPERS
     # -------------------------------------------------------------------------

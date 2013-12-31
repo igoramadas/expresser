@@ -7,7 +7,6 @@ class Events
     evt = require "events"
     emitter = new evt.EventEmitter()
 
-
     # METHODS
     # -------------------------------------------------------------------------
 

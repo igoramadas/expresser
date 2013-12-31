@@ -20,7 +20,6 @@ class Downloader
     queue = []
     downloading = []
 
-
     # INTERNAL METHODS
     # --------------------------------------------------------------------------
 
@@ -190,7 +189,6 @@ class Downloader
             next()
         else
             reqStart obj, options
-
 
     # METHODS
     # --------------------------------------------------------------------------
