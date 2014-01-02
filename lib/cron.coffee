@@ -249,8 +249,8 @@ class Cron
 
         return timeout
 
-    # Helper to get a timer / interval based on the defined options.
-    setTimer = (job) ->
+    # Helper to prepare and get a job callback function.
+    getCallback = (job) ->
         callback = ->
             logger.debug "Cron", "Job #{job.id} trigger."
             job.startTime = moment()
@@ -259,6 +259,13 @@ class Cron
 
             # Only reset timer if once is not true.
             setTimer job if not job.once
+
+        # Return generated callback.
+        return callback
+
+    # Helper to get a timer / interval based on the defined options.
+    setTimer = (job) ->
+        callback = getCallback job
 
         # Get the correct schedule / timeout value.
         schedule = job.schedule

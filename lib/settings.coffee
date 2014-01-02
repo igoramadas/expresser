@@ -53,6 +53,11 @@ class Settings
             # Minify JS and CSS builds? True or false. If left null, it will minify on
             # production environments but not on development.
             minifyBuilds: null
+        # SSL options.
+        ssl:
+            # Is SSL enabled? Please note that you'll need to set the path to the key
+            # and certificate files under the `Path` settings.
+            enabled: false
 
     # CRON
     # -------------------------------------------------------------------------
@@ -273,6 +278,10 @@ class Settings
         logsDir: "./logs/"
         # Path to the public folder used by Express.
         publicDir: "./public/"
+        # Path to the SSL key file.
+        sslKeyFile: null
+        # Path to the SSL certificate file.
+        sslCertFile: null
         # Path where the .jade views are stored.
         viewsDir: "./views/"
 
