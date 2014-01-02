@@ -4,7 +4,7 @@
 # tags should be wrapped with normal brackets {}. Example: {contents}
 # The base message template (which is loaded with every single sent message)
 # must be saved as base.html, under the /emailtemplates folder (or whatever
-# folder you have set on the settings).
+# folder / base file name you have set on the settings).
 # <!--
 # @see Settings.mail
 # -->
@@ -26,7 +26,6 @@ class Mailer
     # Templates cache to avoid disk reads.
     templateCache = {}
 
-
     # CONSTRUCTOR AND INIT
     # --------------------------------------------------------------------------
 
@@ -40,6 +39,7 @@ class Mailer
 
     # Init the Mailer module and create the SMTP objects.
     # Also check if still using old "mail" instead of "mailer".
+    # TODO! Old .mail references should  be removed in April 2014.
     init: =>
         if settings.mail?
             settings.mailer = lodash.defaults settings.mail, settings.mailer
@@ -65,7 +65,6 @@ class Mailer
             return true
         else
             return false
-
 
     # OUTBOUND
     # --------------------------------------------------------------------------
@@ -122,14 +121,13 @@ class Mailer
             else
                 callback err, result
 
-
     # TEMPLATES
     # --------------------------------------------------------------------------
 
     # Load and return the specified template. Get from the cache or from the disk
     # if it wasn't loaded yet. Templates are stored inside the `/emailtemplates`
     # folder by default and should have a .html extension. The base template,
-    # which is always loaded first, must be called base.html.
+    # which is always loaded first, should be called base.html by default.
     # The contents will be inserted on the {contents} tag.
     # @param [String] name The template name, without .html.
     # @return [String] The template HTML.
@@ -139,7 +137,7 @@ class Mailer
             return templateCache[name].template
 
         # Read base and `name` template and merge them together.
-        base = fs.readFileSync path.join(settings.path.emailTemplatesDir, "base.html")
+        base = fs.readFileSync path.join(settings.path.emailTemplatesDir, settings.mailer.baseTemplateFile)
         template = fs.readFileSync path.join(settings.path.emailTemplatesDir, "#{name}.html")
         result = base.toString().replace "{contents}", template.toString()
 
@@ -163,7 +161,6 @@ class Mailer
             template = template.replace new RegExp("\\{#{key}\\}", "gi"), value
 
         return template
-
 
     # HELPER METHODS
     # --------------------------------------------------------------------------

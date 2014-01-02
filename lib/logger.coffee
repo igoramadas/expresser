@@ -58,7 +58,7 @@ class Logger
 
         # Get a valid server IP to be appended to logs.
         if settings.logger.sendIP
-            serverIP = utils.getServerIP()
+            serverIP = utils.getServerIP true
 
         # Define server IP.
         if serverIP?
@@ -184,7 +184,7 @@ class Logger
         if settings.logger.local.enabled and localBuffer?
             @logLocal logType, msg
         if settings.logger.logentries.enabled and logentries?
-            loggerLogentries.log logType, msg
+            loggerLogentries.log logFunc, msg
         if settings.logger.loggly.enabled and loggly?
             loggerLoggly.log settings.logger.loggly.token, msg, @logglyCallback
 

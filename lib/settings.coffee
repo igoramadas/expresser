@@ -25,37 +25,6 @@ class Settings
 
     fs = require "fs"
 
-    # GENERAL
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    general:
-        # The app title. This MUST be set.
-        appTitle: "Expresser"
-        # The app's base URL, including http://. This MUST be set.
-        appUrl: "http://expresser.codeplex.com"
-        # Enable or disable debugging messages. Should be false on production environments.
-        # If null, debug will be set automatically based on the NODE_ENV variable.
-        debug: null
-        # Default encoding to be used on IO and requests.
-        encoding: "utf8"
-        # How long (seconds) should files read from disk (email templates for example) stay in cache?
-        ioCacheTimeout: 60
-        # Secret key used to encrypt and decrypt settings files.
-        settingsSecret: "ExpresserSettings"
-
-    # PATH
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    path:
-        # Path to the email templates folder.
-        emailTemplatesDir: "./emailtemplates/"
-        # Path to local logs folder.
-        logsDir: "./logs/"
-        # Path to the public folder used by Express.
-        publicDir: "./public/"
-        # Path where the .jade views are stored.
-        viewsDir: "./views/"
-
     # APP
     # -------------------------------------------------------------------------
     # @property [Object]
@@ -85,31 +54,18 @@ class Settings
             # production environments but not on development.
             minifyBuilds: null
 
-    # SOCKETS
+    # CRON
     # -------------------------------------------------------------------------
     # @property [Object]
-    sockets:
-        # Enable the sockets module?
-        enabled: true
-
-    # FIREWALL
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    firewall:
-        # How long should IP be blacklisted, in seconds.
-        blacklistExpires: 30
-        # How long should IP be blacklisted in case it reaches the "MaxRetries" value
-        # below after being already blacklisted before?
-        blacklistLongExpires: 3600
-        # If a blacklisted IP keeps attacking, how many attacks till its expiry date
-        # extends to the "LongExpires" value above?
-        blacklistMaxRetries: 5
-        # If enabled, all requests will be checked against common attacks.
-        enabled: true
-        # Which HTTP protection patterns should be enabled? Available: lfi, sql, xss
-        httpPatterns: "lfi,sql,xss"
-        # Which Socket protection patterns should be enabled? Available: lfi, sql, xss
-        socketPatterns: "lfi,sql,xss"
+    cron:
+        # If `allowReplacing` is true, cron will allow replacing jobs by adding a new
+        # job using the same ID. If false, you'll need to remove the existing job
+        # before adding otherwise it will throw an error.
+        allowReplacing: true
+        # If `loadOnInit` is true, the cron.json file will be loaded and cron jobs
+        # will be started on init. Otherwise you'll have to manually call `load`
+        # and then `start`.
+        loadOnInit: true
 
     # DATABASE
     # ----------------------------------------------------------------------
@@ -139,52 +95,69 @@ class Settings
             # Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.
             safe: false
 
-    # MAIL
+    # DOWNLOADER
     # -------------------------------------------------------------------------
     # @property [Object]
-    mailer:
-        # Default `from` email address.
-        from: null
-        # Main SMTP server.
-        smtp:
-            # The SMTP host. If set to null or blank, no emails will be sent out.
-            host: null
-            # The SMTP auth password.
-            password: null
-            # The SMTP port to connect to.
-            port: null
-            # Connect using SSL? If you're using port 587 then secure must be set to false in most cases.
-            secure: false
-            # The service is a shortcut setting. If defined, it will override the host, port and secure properties.
-            # For a list of supported services please go to http://www.nodemailer.com/#well-known-services-for-smtp
-            service: null
-            # The SMTP auth username.
-            user: null
-        # Secondary SMTP server. Will be used only if the main SMTP fails.
-        smtp2:
-            # The secondary SMTP host. If set to null or blank, no emails will be sent out.
-            host: null
-            # The secondary SMTP auth password.
-            password: null
-            # The secondary SMTP port to connect to.
-            port: null
-            # Connect to secondary using SSL? If you're using port 587 then secure must be set to false in most cases.
-            secure: false
-            # The service is a shortcut setting. If defined, it will override the host, port and secure properties.
-            # For a list of supported services please go to http://www.nodemailer.com/#well-known-services-for-smtp
-            service: null
-            # The secondary SMTP auth username.
-            user: null
-        # DKIM signing options.
-        dkim:
-            # By default do not use DKIM, so enabled is false.
-            enabled: false
-            # The domain name used for signing.
-            domainName: null
-            # Key selector, first part of your TXT record (for example abc._domainkey.devv.com, key selector is "abc").
-            keySelector: null
-            # DKIM private key used for signing, as string.
-            privateKey: null
+    downloader:
+        # Default headers to append to all download requests.
+        # For example: {"Content-Type": "application/json"}
+        headers: null
+        # How many simultaneous downloads to allow?
+        maxSimultaneous: 4
+        # If true, the downloader will cancel duplicates. A duplicate is considered a download
+        # from the same remote URL and the same save location.
+        preventDuplicates: true
+        # Reject unathourized requests (when SSL certificate has expired for example)?
+        # Set this to true for increased security.
+        rejectUnauthorized: false
+        # The temp extension used while downloading files. Default is ".download".
+        tempExtension: ".download"
+        # Download timeout, in seconds.
+        timeout: 3600
+
+    # FIREWALL
+    # -------------------------------------------------------------------------
+    # @property [Object]
+    firewall:
+        # How long should IP be blacklisted, in seconds.
+        blacklistExpires: 30
+        # How long should IP be blacklisted in case it reaches the "MaxRetries" value
+        # below after being already blacklisted before?
+        blacklistLongExpires: 3600
+        # If a blacklisted IP keeps attacking, how many attacks till its expiry date
+        # extends to the "LongExpires" value above?
+        blacklistMaxRetries: 5
+        # If enabled, all requests will be checked against common attacks.
+        enabled: true
+        # Which HTTP protection patterns should be enabled? Available: lfi, sql, xss
+        httpPatterns: "lfi,sql,xss"
+        # Which Socket protection patterns should be enabled? Available: lfi, sql, xss
+        socketPatterns: "lfi,sql,xss"
+
+    # GENERAL
+    # -------------------------------------------------------------------------
+    # @property [Object]
+    general:
+        # The app title. This MUST be set.
+        appTitle: "Expresser"
+        # The app's base URL, including http://. This MUST be set.
+        appUrl: "http://expresser.codeplex.com"
+        # Enable or disable debugging messages. Should be false on production environments.
+        # If null, debug will be set automatically based on the NODE_ENV variable.
+        debug: null
+        # Default encoding to be used on IO and requests.
+        encoding: "utf8"
+        # How long (seconds) should files read from disk (email templates for example) stay in cache?
+        ioCacheTimeout: 60
+        # Secret key used to encrypt and decrypt settings files.
+        settingsSecret: "ExpresserSettings"
+
+    # IMAGING
+    # -------------------------------------------------------------------------
+    # @property [Object]
+    imaging:
+        # Set to false to disable the imaging module.
+        enabled: true
 
     # LOGGING
     # -------------------------------------------------------------------------
@@ -231,45 +204,55 @@ class Settings
             subdomain: null
             token: null
 
-    # DOWNLOADER
+    # MAILER
     # -------------------------------------------------------------------------
     # @property [Object]
-    downloader:
-        # Default headers to append to all download requests.
-        # For example: {"Content-Type": "application/json"}
-        headers: null
-        # How many simultaneous downloads to allow?
-        maxSimultaneous: 4
-        # If true, the downloader will cancel duplicates. A duplicate is considered a download
-        # from the same remote URL and the same save location.
-        preventDuplicates: true
-        # Reject unathourized requests (when SSL certificate has expired for example)?
-        # Set this to true for increased security.
-        rejectUnauthorized: false
-        # The temp extension used while downloading files. Default is ".download".
-        tempExtension: ".download"
-        # Download timeout, in seconds.
-        timeout: 3600
-
-    # CRON
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    cron:
-        # If `allowReplacing` is true, cron will allow replacing jobs by adding a new
-        # job using the same ID. If false, you'll need to remove the existing job
-        # before adding otherwise it will throw an error.
-        allowReplacing: true
-        # If `loadOnInit` is true, the cron.json file will be loaded and cron jobs
-        # will be started on init. Otherwise you'll have to manually call `load`
-        # and then `start`.
-        loadOnInit: true
-
-    # IMAGING
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    imaging:
-        # Set to false to disable the imaging module.
-        enabled: true
+    mailer:
+        # The name of the base template file when loading and parsing email templates.
+        # The base path is defined under `Path.emailTemplatesDir`.
+        baseTemplateFile: "base.html"
+        # Default `from` email address.
+        from: null
+        # Main SMTP server.
+        # DKIM signing options.
+        dkim:
+            # By default do not use DKIM, so enabled is false.
+            enabled: false
+            # The domain name used for signing.
+            domainName: null
+            # Key selector, first part of your TXT record (for example abc._domainkey.devv.com, key selector is "abc").
+            keySelector: null
+            # DKIM private key used for signing, as string.
+            privateKey: null
+        smtp:
+            # The SMTP host. If set to null or blank, no emails will be sent out.
+            host: null
+            # The SMTP auth password.
+            password: null
+            # The SMTP port to connect to.
+            port: null
+            # Connect using SSL? If you're using port 587 then secure must be set to false in most cases.
+            secure: false
+            # The service is a shortcut setting. If defined, it will override the host, port and secure properties.
+            # For a list of supported services please go to http://www.nodemailer.com/#well-known-services-for-smtp
+            service: null
+            # The SMTP auth username.
+            user: null
+        # Secondary SMTP server. Will be used only if the main SMTP fails.
+        smtp2:
+            # The secondary SMTP host. If set to null or blank, no emails will be sent out.
+            host: null
+            # The secondary SMTP auth password.
+            password: null
+            # The secondary SMTP port to connect to.
+            port: null
+            # Connect to secondary using SSL? If you're using port 587 then secure must be set to false in most cases.
+            secure: false
+            # The service is a shortcut setting. If defined, it will override the host, port and secure properties.
+            # For a list of supported services please go to http://www.nodemailer.com/#well-known-services-for-smtp
+            service: null
+            # The secondary SMTP auth username.
+            user: null
 
     # NEW RELIC PROFILING
     # -------------------------------------------------------------------------
@@ -279,6 +262,26 @@ class Settings
         appName: null
         # The License Key on New Relic.
         licenseKey: null
+
+    # PATH
+    # -------------------------------------------------------------------------
+    # @property [Object]
+    path:
+        # Path to the email templates folder.
+        emailTemplatesDir: "./emailtemplates/"
+        # Path to local logs folder.
+        logsDir: "./logs/"
+        # Path to the public folder used by Express.
+        publicDir: "./public/"
+        # Path where the .jade views are stored.
+        viewsDir: "./views/"
+
+    # SOCKETS
+    # -------------------------------------------------------------------------
+    # @property [Object]
+    sockets:
+        # Enable the sockets module?
+        enabled: true
 
     # TWITTER
     # -------------------------------------------------------------------------
@@ -299,7 +302,6 @@ class Settings
         # How long to wait before trying to authenticate on Twitter again (in seconds),
         # in case the authentication fails.
         retryInterval: 600
-
 
     # HELPER METHODS
     # -------------------------------------------------------------------------

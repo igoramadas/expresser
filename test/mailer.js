@@ -27,7 +27,7 @@ describe("Mail Tests", function() {
     });
 
     it("Has settings defined", function() {
-        settings.should.have.property("mail");
+        settings.should.have.property("mailer");
     });
 
     it("Inits", function() {

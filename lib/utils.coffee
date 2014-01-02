@@ -347,19 +347,25 @@ class Utils
         # Nothing found, so return null.
         return null
 
-    # Returns the first valid server IPv4 address.
+    # Returns a list of valid server IP addresses. If `firstOnly` is true it will
+    # return only the very first IP address found.
+    # @param [Boolean] firstOnly Optional, default is false which returns an array with all valid IPs, true returns a String will first valid IP.
     # @return The server IPv4 address, or null.
-    getServerIP: ->
+    getServerIP: (firstOnly) ->
         ifaces = os.networkInterfaces()
-        result = null
+        result = []
 
         # Parse network interfaces and try getting the server IPv4 address.
         for i of ifaces
             ifaces[i].forEach (details) ->
                 if details.family is "IPv4" and not details.internal
-                    result = details.address
+                    result.push details.address
 
-        return result
+        # Return only first IP or all of them?
+        if firstOnly
+            return result[0]
+        else
+            return result
 
     # Return an object with general information about the server.
     # @return [Object] Results with process pid, platform, memory, uptime and IP.

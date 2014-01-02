@@ -13,6 +13,7 @@ class Expresser
     cron: require "./lib/cron.coffee"
     database: require "./lib/database.coffee"
     downloader: require "./lib/downloader.coffee"
+    events: require "./lib/events.coffee"
     firewall: require "./lib/firewall.coffee"
     imaging: require "./lib/imaging.coffee"
     logger: require "./lib/logger.coffee"

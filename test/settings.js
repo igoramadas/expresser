@@ -25,17 +25,6 @@ describe("Settings Tests", function() {
         settings.singleInstance.should.equal(settings2.singleInstance);
     });
 
-    it("All module have settings defined", function() {
-        settings.should.have.property("general");
-        settings.should.have.property("app");
-        settings.should.have.property("database");
-        settings.should.have.property("firewall");
-        settings.should.have.property("logger");
-        settings.should.have.property("mail");
-        settings.should.have.property("sockets");
-        settings.should.have.property("twitter");
-    });
-
     it("Settings file watchers properly working", function(done) {
         this.timeout(10000);
 

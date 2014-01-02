@@ -59,7 +59,7 @@ class Cron
     # @option options [String] basePath Sets the base path of modules when requiring them.
     # @option options [Boolean] autoStart If true, call "start" after loading.
     load: (filename, options) =>
-        logger.debug "Cron.load", filepath, autoStart
+        logger.debug "Cron.load", filename, options
 
         # Set default options.
         options = {} if not options?
@@ -84,11 +84,12 @@ class Cron
             # Iterate jobs.
             for key, data of cronJson
                 module = require(options.basePath + key)
-                for d of data
+                for d in data
+                    cb = module[d.callback]
                     job = d
                     job.module = key
-                    job.id = key + job.callback
-                    job.callback = module[callback]
+                    job.id = key + "." + d.callback
+                    job.callback = cb
                     @add job
 
             # Start all jobs automatically if `autoStart` is true.
@@ -116,8 +117,8 @@ class Cron
             logger.info "Cron.start", idOrFilter
             arr = lodash.find @jobs, idOrFilter
 
-        if arr?.length < 1
-            logger.warn "Cron.start", "Job #{idOrFilter} does not exist. Abort!"
+        if not arr? or arr.length < 1
+            logger.debug "Cron.start", "Job #{idOrFilter} does not exist. Abort!"
         else
             for job in arr
                 clearTimeout job.timer if job.timer?
@@ -138,8 +139,8 @@ class Cron
             logger.info "Cron.stop", idOrFilter
             arr = lodash.find @jobs, idOrFilter
 
-        if arr?.length < 1
-            logger.warn "Cron.stop", "Job #{idOrFilter} does not exist. Abort!"
+        if not arr? or arr.length < 1
+            logger.debug "Cron.stop", "Job #{idOrFilter} does not exist. Abort!"
         else
             for job in arr
                 clearTimeout job.timer if job.timer?
@@ -164,9 +165,15 @@ class Cron
         # If no `id` is passed, try getting it directly from the `job` object.
         id = job.id if not id?
 
-        # Throw error if no `id` was provided.
+        # Throw error if no `id` was provided or callback is invalid.
         if not id? or id is ""
             errorMsg = "No 'id' was passed. Abort!"
+            logger.error "Cron.add", errorMsg
+            return {error: errorMsg}
+
+        # Throw error if job callback is not a valid function.
+        if not lodash.isFunction job.callback
+            errorMsg = "The job #{id} callback is not a valid function. Abort!"
             logger.error "Cron.add", errorMsg
             return {error: errorMsg}
 
@@ -216,9 +223,10 @@ class Cron
     # Helper to get the timeout value (ms) to the next job callback.
     getTimeout = (job) ->
         now = moment()
+        nextDate = moment()
 
         # If `schedule` is not an array, parse it as integer / seconds.
-        if not lodash.isArray job.schedule
+        if lodash.isNumber job.schedule or lodash.isString job.schedule
             timeout = moment().add("s", job.schedule).valueOf() - now.valueOf()
         else
             minTime = "99:99:99"
@@ -227,17 +235,17 @@ class Cron
             # Get the next and minimum times from `schedule`.
             for sc in job.schedule
                 minTime = sc if sc < minTime
-                nextTime = sc if sc < nextTime and sc > now.format("HH:mm:ss")
+                nextTime = sc if sc < nextTime and sc > nextDate.format("HH:mm:ss")
 
             # If no times were found for today then set for tomorrow, minimum time.
             if nextTime is "99:99:99"
-                now = now.add "d", 1
+                nextDate = nextDate.add "d", 1
                 nextTime = minTime
 
             # Return the timeout.
             arr = nextTime.split ":"
-            dateValue = [now.year(), now.month(), now.date(), parseInt(arr[0]), parseInt(arr[1]), parseInt(arr[2])]
-            timeout moment(dateValue).valueOf() - now.valueOf()
+            dateValue = [nextDate.year(), nextDate.month(), nextDate.date(), parseInt(arr[0]), parseInt(arr[1]), parseInt(arr[2])]
+            timeout = moment(dateValue).valueOf() - now.valueOf()
 
         return timeout
 
