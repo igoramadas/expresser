@@ -322,16 +322,15 @@ class Utils
         console.warn "Utils.getConfigFilePath", "DEPRECATED! Please use getFilePath."
         return @getFilePath filename
 
-    # Helper to get the correct filename for general config files. For example
+    # Helper to get the correct filename for general files. For example
     # the settings.json file or cron.json for cron jobs. This will look into the current
     # directory, the running directory and the root directory of the app.
     # Returns null if no file is found.
     # @param [String] filename The base filename (with extension) of the config file.
     # @return [String] The full path to the config file if one was found, or null.
     getFilePath: (filename) ->
-        basename = path.basename filename
+        originalFilename = "./" + filename.toString()
 
-        # Get correct exists function.
         if fs.existsSync?
             exists = fs.existsSync
         else
@@ -342,12 +341,14 @@ class Utils
         return filename if hasJson
 
         # If file does not exist on local path, try parent path.
-        filename = path.resolve path.dirname(require.main.filename), "../#{basename}"
+        filename = path.resolve path.dirname(require.main.filename), originalFilename
+        console.warn filename
         hasJson = exists filename
         return filename if hasJson
 
         # If file still not found, try root path.
-        filename = path.resolve __dirname, basename
+        filename = path.resolve __dirname, originalFilename
+        console.warn filename
         hasJson = exists filename
         return filename if hasJson
 

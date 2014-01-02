@@ -18,6 +18,7 @@ class Mailer
     moment = require "moment"
     path = require "path"
     settings = require "./settings.coffee"
+    utils = require "./utils.coffee"
 
     # SMTP objects will be instantiated on `init`.
     smtp = null
@@ -39,17 +40,19 @@ class Mailer
 
     # Init the Mailer module and create the SMTP objects.
     # Also check if still using old "mail" instead of "mailer".
-    # TODO! Old .mail references should  be removed in April 2014.
+    # TODO! Old .mail references should be removed in April 2014.
     init: =>
         if settings.mail?
             settings.mailer = lodash.defaults settings.mail, settings.mailer
             logger.warn "Mailer.init", "The module is now called Mailer, please update settings from 'mail' to 'mailer'."
 
+        # Check and set main SMTP.
         if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
             @setSmtp settings.mailer.smtp, false
         else if settings.mailer.smtp.host? and settings.mailer.smtp.host isnt "" and settings.mailer.smtp.port > 0
             @setSmtp settings.mailer.smtp, false
 
+        # Check and set secondary SMTP.
         if settings.mailer.smtp2.service? and settings.mailer.smtp2.service isnt ""
             @setSmtp settings.mailer.smtp2, true
         else if settings.mailer.smtp2.host? and settings.mailer.smtp2.host isnt "" and settings.mailer.smtp2.port > 0
@@ -75,16 +78,13 @@ class Mailer
     # @option options [String] subject The email subject.
     # @option options [String] to The "to" address.
     # @option options [String] from The "from" address, optional, if blank use default from settings.
+    # @option options [String] template The template file to be loaded, optional.
     # @param [Function] callback Callback (err, result) when message is sent or fails.
     send: (options, callback) =>
+        logger.debug "Mailer.send", options
+
         if not @checkConfig()
             errMsg = "SMTP transport wasn't initiated. Abort!"
-            logger.warn "Mailer.send", errMsg, options
-            return callback errMsg, null
-
-        # Make sure message body is valid.
-        if not options.body? or options.body is false or options.body is ""
-            errMsg = "Option 'body' is not valid. Abort!"
             logger.warn "Mailer.send", errMsg, options
             return callback errMsg, null
 
@@ -98,8 +98,8 @@ class Mailer
         options.from = "#{settings.general.appTitle} <#{settings.mailer.from}>" if not options.from?
         options.logError = true if not options.logError?
 
-        # Debug log.
-        logger.debug "Mailer.send", options
+        # Set HTML to body, if passed.
+        html = if options.body? then options.body.toString() else ""
 
         # Get the name of recipient based on the `to` option.
         if options.to.indexOf("<") < 3
@@ -107,8 +107,17 @@ class Mailer
         else
             toName = options.to.substring 0, options.to.indexOf("<") - 1
 
-        # Replace common keywords and set HTML.
-        html = @parseTemplate options.body.toString(), {to: toName, appTitle: settings.general.appTitle}
+        # Load template if a `template` was passed.
+        if options.template? and options.template isnt ""
+            template = @getTemplate options.template
+            html = @parseTemplate template, {contents: html}
+
+            # Parse template keywords if a `keywords` was passed.
+            if lodash.isObject options.keywords
+                html = @parseTemplate html, options.keywords
+
+        # Parse final template and set it on the `options`.
+        html = @parseTemplate html, {to: toName, appTitle: settings.general.appTitle, appUrl: settings.general.appUrl}
         options.html = html
 
         # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.
@@ -132,14 +141,26 @@ class Mailer
     # @param [String] name The template name, without .html.
     # @return [String] The template HTML.
     getTemplate: (name) =>
+        name = name.replace(".html", "") if name.indexOf(".html")
+
         cached = templateCache[name]
+
+        # Is it already cached? If so do not hit the disk.
         if cached? and cached.expires > moment()
+            logger.debug "Mailer.getTemplate", name, "Loaded from cache."
             return templateCache[name].template
+        else
+            logger.debug "Mailer.getTemplate", name
+
+        # Set file system reading options.
+        readOptions = {encoding: settings.general.encoding}
+        baseFile = utils.getFilePath path.join(settings.path.emailTemplatesDir, settings.mailer.baseTemplateFile)
+        templateFile = utils.getFilePath path.join(settings.path.emailTemplatesDir, "#{name}.html")
 
         # Read base and `name` template and merge them together.
-        base = fs.readFileSync path.join(settings.path.emailTemplatesDir, settings.mailer.baseTemplateFile)
-        template = fs.readFileSync path.join(settings.path.emailTemplatesDir, "#{name}.html")
-        result = base.toString().replace "{contents}", template.toString()
+        base = fs.readFileSync baseFile, readOptions
+        template = fs.readFileSync templateFile, readOptions
+        result = @parseTemplate base, {contents: template}
 
         # Save to cache.
         templateCache[name] = {}
