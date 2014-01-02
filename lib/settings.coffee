@@ -53,11 +53,15 @@ class Settings
             # Minify JS and CSS builds? True or false. If left null, it will minify on
             # production environments but not on development.
             minifyBuilds: null
-        # SSL options.
+        # SSL enabled?
         ssl:
-            # Is SSL enabled? Please note that you'll need to set the path to the key
-            # and certificate files under the `Path` settings.
+            # Is SSL enabled? Please note that you must specify the path to the
+            # certificate files under the `Path` settings.
             enabled: false
+            # Create a redirector server to redirect requests made to the secure server?
+            # This is the port number of the redirector server. Leave 0, blank or null to
+            # disable this feature.
+            redirectorPort: 0
 
     # CRON
     # -------------------------------------------------------------------------

@@ -74,7 +74,7 @@ class Cron
             doNotWarn = true
 
         # Get full path to the passed json file.
-        filepath = utils.getConfigFilePath filename
+        filepath = utils.getFilePath filename
 
         # Found the cron.json file? Read it.
         if filepath?

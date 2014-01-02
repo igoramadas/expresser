@@ -8,6 +8,13 @@
 # -->
 class App
 
+    express = require "express"
+    fs = require "fs"
+    http = require "http"
+    https = require "https"
+    lodash = require "lodash"
+    os = require "os"
+
     # Internal modules will be set on `init`.
     firewall = null
     logger = null
@@ -15,12 +22,11 @@ class App
     sockets = null
     utils = null
 
-    # @property [Object] Exposes the Express `server` object.
+    # @property [Object] Exposes the Express HTTP or HTTPS `server` object.
     server: null
 
     # @property [Array<Object>] Array of additional middlewares to be use by the Express server. Please note that if you're adding middlewares manually you must do it BEFORE calling `init`.
     extraMiddlewares: []
-
 
     # INIT
     # --------------------------------------------------------------------------
@@ -30,9 +36,6 @@ class App
     # used only if enabled on the settings.
     # @param [Array] arrExtraMiddlewares Array with extra middlewares to be added on init, optional.
     init: (arrExtraMiddlewares) =>
-        http = require "http"
-        lodash = require "lodash"
-        os = require "os"
         settings = require "./settings.coffee"
         utils = require "./utils.coffee"
 
@@ -67,11 +70,25 @@ class App
             catch err
                 console.warn "App", "Could not flush buffered logs to disk."
 
-
         # Require express and create the app server.
-        express = require "express"
         @server = express()
-        httpServer = http.createServer @server
+
+        # Create normal or secure server?
+        if settings.app.ssl and settings.path.sslKeyFile? and settings.path.sslCertFile?
+            sslKeyFile = utils.getFilePath settings.path.sslKeyFile
+            sslCertFile = utils.getFilePath settings.path.sslCertFile
+
+            # Certificate files were found? Proceed, otherwise alert the user and throw an error.
+            if sslKeyFile? and sslCertFile?
+                sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
+                sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
+                sslOptions = {key: sslKey, cert: sslCert}
+                httpServer = https.createServer sslOptions, @server
+            else
+                logger.error "App", "init", "Cannot find certificate files.", settings.path.sslKeyFile, settings.path.sslCertFile
+                throw new Error "The certificate files could not be found. Please check the 'Path.sslKeyFile' and 'Path.sslCertFile' settings."
+        else
+            httpServer = http.createServer @server
 
         # General configuration of the app (for all environments).
         @server.configure =>

@@ -135,7 +135,7 @@ class Utils
     # @param [Boolean] doNotUpdateSettings If true it won't update the Settings class, default is false.
     # @return [Object] Returns the JSON representation of the loaded file.
     loadSettingsFromJson: (filename, doNotUpdateSettings) =>
-        filename = @getConfigFilePath filename
+        filename = @getFilePath filename
         settingsJson = null
 
         # Has json? Load it. Try using UTF8 first, if failed, use ASCII.
@@ -290,7 +290,7 @@ class Utils
             throw new TypeError "The callback must be a valid function, or null/undefined."
 
         # Add / remove watcher for the settings.json file if it exists.
-        filename = @getConfigFilePath "settings.json"
+        filename = @getFilePath "settings.json"
         if filename?
             if enable
                 fs.watchFile filename, {persistent: true}, (evt, filename) =>
@@ -300,7 +300,7 @@ class Utils
                 fs.unwatchFile filename, callback
 
         # Add / remove watcher for the settings.node_env.json file if it exists.
-        filename = @getConfigFilePath "settings.#{currentEnv.toString().toLowerCase()}.json"
+        filename = @getFilePath "settings.#{currentEnv.toString().toLowerCase()}.json"
         if filename?
             if enable
                 fs.watchFile filename, {persistent: true}, (evt, filename) =>
@@ -316,12 +316,19 @@ class Utils
     # SERVER INFO UTILS
     # --------------------------------------------------------------------------
 
+    # DEPRECATED! Please use getFilePath.
+    # TODO! The getConfigFilePath should be removed by April 2014.
+    getConfigFilePath: (filename) =>
+        console.warn "Utils.getConfigFilePath", "DEPRECATED! Please use getFilePath."
+        return @getFilePath filename
+
     # Helper to get the correct filename for general config files. For example
     # the settings.json file or cron.json for cron jobs. This will look into the current
     # directory, the running directory and the root directory of the app.
+    # Returns null if no file is found.
     # @param [String] filename The base filename (with extension) of the config file.
     # @return [String] The full path to the config file if one was found, or null.
-    getConfigFilePath: (filename) ->
+    getFilePath: (filename) ->
         basename = path.basename filename
 
         # Get correct exists function.
