@@ -342,13 +342,11 @@ class Utils
 
         # If file does not exist on local path, try parent path.
         filename = path.resolve path.dirname(require.main.filename), originalFilename
-        console.warn filename
         hasJson = exists filename
         return filename if hasJson
 
         # If file still not found, try root path.
         filename = path.resolve __dirname, originalFilename
-        console.warn filename
         hasJson = exists filename
         return filename if hasJson
 
