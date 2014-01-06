@@ -104,7 +104,10 @@ class Utils
 
         # Stringify and save the new settings file.
         newSettingsJson = JSON.stringify settingsJson, null, 4
-        fs.writeFileSync filename, newSettingsJson, {encoding: settings.general.encoding}
+        if process.versions.node.indexOf(".10.") > 0
+            fs.writeFileSync filename, newSettingsJson, {encoding: settings.general.encoding}
+        else
+            fs.writeFileSync filename, newSettingsJson, settings.general.encoding
         return true
 
     # Helper to encrypt the specified settings file. Please see `settingsJsonCryptoHelper` above.
@@ -141,15 +144,9 @@ class Utils
         # Has json? Load it. Try using UTF8 first, if failed, use ASCII.
         if filename?
             if process.versions.node.indexOf(".10.") > 0
-                try
-                    settingsJson = fs.readFileSync filename, {encoding: settings.general.encoding}
-                catch ex
-                    settingsJson = fs.readFileSync filename, {encoding: "ascii"}
+                settingsJson = fs.readFileSync filename, {encoding: settings.general.encoding}
             else
-                try
-                    settingsJson = fs.readFileSync filename, settings.general.encoding
-                catch ex
-                    settingsJson = fs.readFileSync filename, "ascii"
+                settingsJson = fs.readFileSync filename, settings.general.encoding
 
             # Parse the JSON file.
             settingsJson = @minifyJson settingsJson
