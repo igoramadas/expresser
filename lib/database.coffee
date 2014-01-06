@@ -28,7 +28,6 @@ class Database
     # @property [Method] Callback (isFailover) triggered when a connection switches to (true) or from (false) failover.
     onFailoverSwitch: null
 
-
     # INIT
     # -------------------------------------------------------------------------
 
@@ -42,7 +41,6 @@ class Database
         else
             logger.debug "Database.init", "No connection string set.", "Database module won't work."
 
-
     # CRUD IMPLEMENTATION
     # -------------------------------------------------------------------------
 
@@ -55,10 +53,6 @@ class Database
     # @option options [Integer] limit Limits the resultset to X documents.
     # @param [Method] callback Callback (err, result) when operation has finished.
     get: (collection, filter, options, callback) =>
-        if not @db?
-            return logger.warn "Database.get", "The db is null / was not initialized. Abort!"
-
-        # Make sure callback is correctly identified.
         if not callback?
             if lodash.isFunction options
                 callback = options
@@ -69,12 +63,20 @@ class Database
 
         # Callback is mandatory!
         if not callback?
-            return logger.warn "Database.get", "No callback specified. Abort!", collection, filter
+            if settings.logger.autoLogErrors
+                logger.error "Database.get", "No callback specified. Abort!", collection, filter
+            throw new Error "Database.get: a callback (last argument) must be specified."
+
+        # No DB set? Throw exception.
+        if not @db?
+            if settings.logger.autoLogErrors
+                logger.error "Database.get", "The db is null or was not initialized. Abort!", collection, filter
+            return callback "Database.set: the db was not initialized, please check database settings and call its 'init' method."
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId(result) if settings.database.normalizeId
+                result = @normalizeId result if settings.database.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -136,19 +138,25 @@ class Database
     # @option options [Boolean] upsert Default is true, if false it won't add a new document (only update existing).
     # @param [Method] callback Callback (err, result) when operation has finished.
     set: (collection, obj, options, callback) =>
-        if not @db?
-            return logger.warn "Database.set", "The db is null / was not initialized. Abort!"
-
-        # Check if callback was passed as options.
         if not callback? and lodash.isFunction options
             callback = options
             options = {}
 
         # Object or filter is mandatory.
         if not obj?
-            msg = "The obj argument is null or empty."
-            callback msg, null
-            return logger.warn "Database.set", msg
+            if settings.logger.autoLogErrors
+                logger.error "Database.set", "No object specified. Abort!", collection
+            if callback?
+                callback "Database.set: no object (second argument) was specified."
+            return false
+
+        # No DB set? Throw exception.
+        if not @db?
+            if settings.logger.autoLogErrors
+                logger.error "Database.set", "The db is null or was not initialized. Abort!", collection
+            if callback?
+                callback "Database.set: the db was not initialized, please check database settings and call its 'init' method."
+            return false
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -201,17 +209,30 @@ class Database
 
 
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
+    # This can also be called as `delete`.
     # @param [String] collection The collection name.
     # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
     # @param [Method] callback Callback (err, result) when operation has finished.
     del: (collection, filter, callback) =>
-        if not @db?
-            return logger.warn "Database.del", "The db is null / was not initialized. Abort!"
+        if not callback? and lodash.isFunction options
+            callback = options
+            options = {}
 
+        # Filter is mandatory.
         if not filter?
-            msg = "The filter argument is null or empty."
-            callback msg, null
-            return logger.warn "Database.del", msg
+            if settings.logger.autoLogErrors
+                logger.error "Database.del", "No filter specified. Abort!", collection
+            if callback?
+                callback "Database.del: no filter (second argument) was specified."
+            return false
+
+        # No DB set? Throw exception.
+        if not @db?
+            if settings.logger.autoLogErrors
+                logger.error "Database.del", "The db is null or was not initialized. Abort!", collection
+            if callback?
+                callback "Database.del: the db was not initialized, please check database settings and call its 'init' method."
+            return false
 
         # Check it the `obj` is the model itself, or only the ID string / number.
         if filter._id?
@@ -239,20 +260,25 @@ class Database
 
         logger.debug "Database.del", collection, filter
 
+    # Alias to `del`.
+    delete: (collection, filter, callback) =>
+        @del collection, filter, callback
+
     # Count documents from the database. A `collection` must be specified.
     # If no `filter` is not passed then count all documents.
     # @param [String] collection The collection name.
     # @param [Object] filter Optional, keys-values filter of documents to be counted.
     # @param [Method] callback Callback (err, result) when operation has finished.
     count: (collection, filter, callback) =>
-        if not callback?
-            logger.warn "Database.count", "No callback specified. Abort!", collection, filter
-            return
-
-        # Check if callback was passed as filter.
         if not callback? and lodash.isFunction filter
             callback = filter
             filter = {}
+
+        # Callback is mandatory!
+        if not callback?
+            if settings.logger.autoLogErrors
+                logger.error "Database.count", "No callback specified. Abort!", collection, filter
+            throw new Error "Database.count: a callback (last argument) must be specified."
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -263,7 +289,6 @@ class Database
         # MongoDB has a built-in count so use it.
         dbCollection = @db.collection collection
         dbCollection.count filter, dbCallback
-
 
     # HELPER METHODS
     # -------------------------------------------------------------------------
@@ -329,10 +354,10 @@ class Database
 
                 # If using the failover database, register a timeout to try
                 # to connect to the main database again.
-                setTimeout @validateConnection, settings.database.failoverTimeout * 1000
-
                 if @failover
-                    logger.debug "Database.validateConnection", "Connected to failover DB.", "Will try main DB again in #{settings.database.failoverTimeout} settings."
+                    timeout = settings.database.failoverTimeout
+                    setTimeout @validateConnection, timeout * 1000
+                    logger.debug "Database.validateConnection", "Connected to failover DB.", "Will try main DB again in #{timeout} seconds."
                 else
                     logger.debug "Database.validateConnection", "Connected to main DB."
 

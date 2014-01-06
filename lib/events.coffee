@@ -16,7 +16,7 @@ class Events
     # @param [Arguments] args Arguments to be passed to the emitter.
     # @return Returns itself so calls can be chained.
     emit: (id, args) =>
-        emitter.emit.call emitter, arguments
+        emitter.emit.apply emitter, arguments
         return this
 
     # Bind a specific callback to an event ID.

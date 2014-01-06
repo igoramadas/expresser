@@ -172,6 +172,9 @@ class Settings
     # -------------------------------------------------------------------------
     # @property [Object]
     logger:
+        # If true, other modules will use the Logger to log errors before throwing them as exceptions.
+        # By default it's false, as ideally you should log errors yourself using callbacks.
+        autoLogErrors: false
         # Output logs to the console? If left null or undefined, it will inherit the value
         # from settings.general.debug.
         console: null

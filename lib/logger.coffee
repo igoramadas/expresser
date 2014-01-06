@@ -76,15 +76,15 @@ class Logger
         if settings.logger.uncaughtException
             process.on "uncaughtException", (err) ->
                 try
-                    @error "Expresser", "Unhandled exception!", err.stack
+                    @error "Unhandled exception!", err.stack
                 catch ex
                     console.error "Unhandled exception!", Date(Date.now()), err.stack, ex
 
         # Start logging!
         if not localBuffer? and not logentries? and not loggly?
-            @warn "Expresser", "Logger.init", "No transports enabled.", "Logger module will only log to the console!"
+            @warn "Logger.init", "No transports enabled.", "Logger module will only log to the console!"
         else
-            @info "Expresser", "Logger.init", activeServices.join(), ipInfo
+            @info "Logger.init", activeServices.join(), ipInfo
 
     # Init the Local transport. Check if logs should be saved locally. If so, create the logs buffer
     # and a timer to flush logs to disk every X milliseconds.
@@ -99,7 +99,7 @@ class Logger
             if not folderExists
                 fs.mkdirSync settings.path.logsDir
                 if settings.general.debug
-                    console.log "Expresser", "Logger.initLocal", "Created #{settings.path.logsDir} folder."
+                    console.log "Logger.initLocal", "Created #{settings.path.logsDir} folder."
 
             # Set local buffer.
             localBuffer = {info: [], warn: [], error: []}
@@ -308,8 +308,7 @@ class Logger
                     date = moment f.split(".")[1], "yyyyMMdd"
                     if date.isBefore maxDate
                         fs.unlink path.join(settings.path.logsDir, f), (err) ->
-                            console.error("Expresser", "Logger.cleanLocal", err) if err?
-
+                            console.error "Logger.cleanLocal", err if err?
 
     # HELPER METHODS
     # --------------------------------------------------------------------------
