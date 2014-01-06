@@ -29,7 +29,11 @@ describe("Settings Tests", function() {
         this.timeout(10000);
 
         var filename = "./settings.test.json";
-        var originalJson = fs.readFileSync(filename, {encoding: "utf8"});
+        if (process.versions.node.indexOf(".10.") > 0) {
+            var originalJson = fs.readFileSync(filename, {encoding: "utf8"});
+        } else {
+            var originalJson = fs.readFileSync(filename, "utf8");
+        }
         var newJson = utils.minifyJson(originalJson);
 
         var callback = function() {
