@@ -43,9 +43,14 @@ class Expresser
         # The Firewall and Sockets modules are initiated inside the App module.
         @app.init initOptions?.app
 
-        # Updated mail to mailer.
-        mailerMsg = "Attention! The 'mail' module was renamed to 'mailer', please update your code if necessary!"
-        @logger.debug "Expresser.init", mailerMsg
+        # Check for deprecated / moved features.
+        if process.versions.node.indexOf(".6.") > 0
+            loggerMsg = "Attention! Support for Node.js 0.6 will be dropped soon, please consider upgrading to 0.10."
+            @logger.debug "Expresser.init", loggerMsg
+
+        if @settings.mail?
+            loggerMsg = "Attention! The 'mail' module was renamed to 'mailer', please update your code if necessary!"
+            @logger.debug "Expresser.init", loggerMsg
         @mail = @mailer
 
 

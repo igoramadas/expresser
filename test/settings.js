@@ -56,7 +56,11 @@ describe("Settings Tests", function() {
         this.timeout(10000);
 
         var filename = "./settings.test.json";
-        var originalJson = fs.readFileSync(filename, {encoding: "utf8"});
+        if (process.versions.node.indexOf(".10.") > 0) {
+            var originalJson = fs.readFileSync(filename, {encoding: "utf8"});
+        } else {
+            var originalJson = fs.readFileSync(filename, "utf8");
+        }
 
         var callback = function(err) {
             if (err) done(err);
@@ -67,7 +71,11 @@ describe("Settings Tests", function() {
             return callback("Could not encrypt properties of settings.test.json file.")
         }
 
-        var encrypted = JSON.parse(fs.readFileSync(filename, {encoding: "utf8"}));
+        if (process.versions.node.indexOf(".10.") > 0) {
+            var encrypted = JSON.parse(fs.readFileSync(filename, {encoding: "utf8"}));
+        } else {
+            var encrypted = JSON.parse(fs.readFileSync(filename, "utf8"));
+        }
 
         if (!encrypted.encrypted) {
             return callback("Property 'encrypted' was not properly set.")
@@ -77,7 +85,11 @@ describe("Settings Tests", function() {
 
         utils.decryptSettingsJson(filename);
 
-        var decrypted = JSON.parse(fs.readFileSync(filename, {encoding: "utf8"}));
+        if (process.versions.node.indexOf(".10.") > 0) {
+            var decrypted = JSON.parse(fs.readFileSync(filename, {encoding: "utf8"}));
+        } else {
+            var decrypted = JSON.parse(fs.readFileSync(filename, "utf8"));
+        }
 
         if (decrypted.encrypted) {
             return callback("Property 'encrypted' was not unset / deleted.")
