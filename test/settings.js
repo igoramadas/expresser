@@ -43,10 +43,10 @@ describe("Settings Tests", function() {
         };
 
         var unwatch = function() {
-            utils.watchSettingsFiles(false, callback);
+            settings.watch(false, callback);
         };
 
-        utils.watchSettingsFiles(true, callback);
+        settings.watch(true, callback);
         newJson.testingFileWatcher = true;
 
         try {
@@ -71,7 +71,7 @@ describe("Settings Tests", function() {
             else done();
         };
 
-        if (!utils.encryptSettingsJson(filename)) {
+        if (!settings.encrypt(filename)) {
             return callback("Could not encrypt properties of settings.test.json file.")
         }
 
@@ -87,7 +87,7 @@ describe("Settings Tests", function() {
             return callback("Encryption failed, settings.general.appTitle is still set as 'Expresser'.")
         }
 
-        utils.decryptSettingsJson(filename);
+        settings.decrypt();
 
         if (process.versions.node.indexOf(".10.") > 0) {
             var decrypted = JSON.parse(fs.readFileSync(filename, {encoding: "utf8"}));

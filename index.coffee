@@ -19,7 +19,6 @@ class Expresser
     logger: require "./lib/logger.coffee"
     mailer: require "./lib/mailer.coffee"
     sockets: require "./lib/sockets.coffee"
-    twitter: require "./lib/twitter.coffee"
     utils: require "./lib/utils.coffee"
 
     # Helper to init all modules. Load settings first, then Logger, then general

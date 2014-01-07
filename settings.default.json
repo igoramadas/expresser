@@ -1,0 +1,290 @@
+// DEFAULT EXPRESSER SETTINGS
+// This file has the default settings for all Expresser modules.
+// If you want to define or override settings, please create a settings.json
+// file, or for specific environments create a settings.NODE_ENV.json with the
+// specific NODE_ENV values. For example settings.production.json.
+
+{
+    // APP
+    // -------------------------------------------------------------------------
+    "app": {
+        // Secret key used for cookie encryption.
+        "cookieSecret": "ExpresserCookie",
+        // Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
+        // This value might be overriden by PaaS environmental values.
+        "ip": null,
+        // If paas is true, Expresser will figure out some settings out of environment variables
+        // like IP, ports and tokens. Leave true if you're deploying to AppFog, Heroku, OpenShift etc.
+        "paas": true,
+        // Node.js server port. Please note that this value might be overriden by PaaS
+        // environmental values (like in AppFog or OpenShift).
+        "port": 8080,
+        // Secret key used for session encryption.
+        "sessionSecret": "ExpresserSession",
+        // The view engine used by Express. Default is jade.
+        "viewEngine": "jade",
+        // Connect Assets options.
+        "connectAssets": {
+            // Build assets?
+            "build": true,
+            // Build directories?
+            "buildDir": false,
+            // Minify JS and CSS builds? True or false. If left null, it will minify on
+            // production environments but not on development.
+            "minifyBuilds": null
+        },
+        // SSL options to bind server to HTTPS.
+        "ssl": {
+            // Is SSL enabled? Please note that you must specify the path to the
+            // certificate files under the `Path` settings.
+            "enabled": false,
+            // Create a redirector server to redirect requests made to the secure server?
+            // This is the port number of the redirector server. Leave 0, blank or null to
+            // disable this feature.
+            "redirectorPort": 0
+        }
+    },
+
+    // CRON
+    // -------------------------------------------------------------------------
+    "cron": {
+        // If `allowReplacing` is true, cron will allow replacing jobs by adding a new
+        // job using the same ID. If false, you'll need to remove the existing job
+        // before adding otherwise it will throw an error.
+        "allowReplacing": true,
+        // If `loadOnInit` is true, the cron.json file will be loaded and cron jobs
+        // will be started on init. Otherwise you'll have to manually call `load`
+        // and then `start`.
+        "loadOnInit": true
+    },
+
+    // DATABASE
+    // ----------------------------------------------------------------------
+    "database": {
+        // Connection string to MongoDB, using the format `user:password@hostname/dbname`.
+        "connString": null,
+        // In case you don't have failover / sharding in place on the database above
+        // using MongoDB built-in features, you can set a failover connection string below.
+        // It will be used ONLY if connection to the main database fails repeatedly.
+        "errorNotifyEmail": null,
+        // How long to wait before trying to connect to the main database again (in seconds) in case
+        // the module switches to the secondary one.
+        "failoverTimeout": 300,
+        // How many retries before switching to the failover database or aborting a database operation.
+        "maxRetries": 3,
+        // Normalize documents ID (replace _id with id when returning documents)?
+        "normalizeId": true,
+        // How long between connection retries, in milliseconds. Default is half a second.
+        "retryInterval": 500,
+        // Database connection options.
+        "options": {
+            // Auto recconect if connection is lost?
+            "auto_reconnect": true,
+            // Default pool size for connections is 12.
+            "poolSize": 12,
+            // Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.
+            "safe": false
+        }
+    },
+
+    // DOWNLOADER
+    // -------------------------------------------------------------------------
+    "downloader": {
+        // Default headers to append to all download requests.
+        // For example: {"Content-Type": "application/json"}
+        "headers": null,
+        // How many simultaneous downloads to allow?
+        "maxSimultaneous": 6,
+        // If true, the downloader will cancel duplicates. A duplicate is considered a download
+        // from the same remote URL and the same save location.
+        "preventDuplicates": true,
+        // Reject unathourized requests (when SSL certificate has expired for example)?
+        // Set this to true for increased security.
+        "rejectUnauthorized": false,
+        // The temp extension used while downloading files. Default is ".download".
+        "tempExtension": ".download",
+        // Download timeout, in seconds.
+        "timeout": 1800
+    },
+
+    // FIREWALL
+    // -------------------------------------------------------------------------
+    "firewall": {
+        // How long should IP be blacklisted, in seconds.
+        "blacklistExpires": 30,
+        // How long should IP be blacklisted in case it reaches the "MaxRetries" value
+        // below after being already blacklisted before?
+        "blacklistLongExpires": 3600,
+        // If a blacklisted IP keeps attacking, how many attacks till its expiry date
+        // extends to the "LongExpires" value above?
+        "blacklistMaxRetries": 5,
+        // If enabled, all requests will be checked against common attacks.
+        "enabled": true,
+        // Which HTTP protection patterns should be enabled? Available: lfi, sql, xss
+        "httpPatterns": "lfi,sql,xss",
+        // Which Socket protection patterns should be enabled? Available: lfi, sql, xss
+        "socketPatterns": "lfi,sql,xss"
+    },
+
+    // GENERAL
+    // -------------------------------------------------------------------------
+    "general": {
+        // The app title. This must be set so Expresser can properly identify your app.
+        "appTitle": "Expresser",
+        // The app's base URL, including http://.
+        "appUrl": "http://expresser.codeplex.com",
+        // Enable or disable debugging messages. Should be false on production environments.
+        // If null, debug will be set automatically based on the NODE_ENV variable.
+        "debug": null,
+        // Default encoding to be used on IO and web requests.
+        "encoding": "utf8",
+        // How long (seconds) should files read from disk (email templates for example) stay in cache?
+        "ioCacheTimeout": 60,
+        // Secret key used to encrypt and decrypt settings files.
+        "settingsSecret": "ExpresserSettings"
+    },
+
+    // IMAGING
+    // -------------------------------------------------------------------------
+    "imaging": {
+        // Set to false to disable the imaging module.
+        "enabled": true
+    },
+
+    // LOGGER
+    // -------------------------------------------------------------------------
+    "logger": {
+        // If true, other modules will use the Logger to log errors before throwing them as exceptions.
+        // By default it's false, as ideally you should log errors yourself using callbacks.
+        "autoLogErrors": false,
+        // Output logs to the console? If left null or undefined, it will inherit the value
+        // from settings.general.debug.
+        "console": null,
+        // If the mail module is properly configured then all critical logs (logger.critical()) will
+        // be sent to the email address specified below. Leave blank or null to not send emails.
+        "criticalEmailTo": null,
+        // Define all log types which should be treated as error (red colour on the console).
+        "errorLogTypes": "err,error,warn,warning,critical",
+        // List will all field / property names to be removed from logs.
+        // Default list is "Password, password, passwordHash and passwordEncrypted".
+        "removeFields": "Password,password,passwordHash,passwordEncrypted",
+        // If `sendIP` is true, the IP address of the machine will be added to logs events.
+        // Useful when you have different instances of the app running on different services.
+        "sendIP": true,
+        // If `sendTimestamp` is true, a timestamp will be added to logs events.
+        // Please note that Loggly and Logentries already have a timestamp, so in these
+        // cases you can leave this value set to false.
+        "sendTimestamp": true,
+        // Set `uncaughtException` to true to bind the logger to the `uncaughtException`
+        // event on the process and log all uncaught expcetions as errors.
+        "uncaughtException": true,
+        // Save logs locally. The path to the logs folder is set above under the `path.logsDir` key.
+        "local": {
+            // Enable local logging?
+            "enabled": true,
+            // The bufferInterval defines the delay in between disk saves, in milliseconds.
+            "bufferInterval": 6000,
+            // Sets the max age of log files, in days. Default is 30 days. Setting the
+            // maxAge to to 0 or null will cancel the automatic log cleaning.
+            "maxAge": 30
+        },
+        // Please inform your Logentries token below (http://logentries.com).
+        "logentries": {
+            // Enable Logentries? If true, please set the token below.
+            "enabled": false,
+            // Your Logentries default token.
+            "token": null
+        },
+        // Inform your Loggly subdomain and token below (http://loggly.com).
+        "loggly": {
+            // Enable Loggly? If true, please set the subdomain and default token below.
+            "enabled": false,
+            // Your Loggly subdomain.
+            "subdomain": null,
+            // Your Loggly default token.
+            "token": null
+        }
+    },
+
+    // MAILER
+    // -------------------------------------------------------------------------
+    "mailer": {
+        // The name of the base template file when loading and parsing email templates.
+        // The base path is defined under `settings.path.emailTemplatesDir`.
+        "baseTemplateFile": "base.html",
+        // Default `from` email address.
+        "from": null,
+        // DKIM signing options must be set below if you want to sign emails.
+        "dkim": {
+            "enabled": false,
+            "domainName": null,
+            "keySelector": null,
+            "privateKey": null
+        },
+        // Main SMTP server.
+        "smtp": {
+            // The main SMTP host. If set to null or blank, no emails will be sent out.
+            "host": null,
+            // The main SMTP auth password.
+            "password": null,
+            // The main SMTP port.
+            "port": null,
+            // Use SSL / TSL with main SMTP server?
+            "secure": false,
+            // The service is a shortcut / overriding setting for host, port and secure.
+            // For a list of supported services please go to http://www.nodemailer.com///well-known-services-for-smtp
+            "service": null,
+            // The main SMTP auth user.
+            "user": null
+        },
+        // Secondary SMTP server.
+        "smtp2": {
+            // The secondary SMTP host. If set to null or blank, no emails will be sent out.
+            "host": null,
+            // The secondary SMTP auth password.
+            "password": null,
+            // The secondary SMTP port.
+            "port": null,
+            // Use SSL / TSL with secondary SMTP server?
+            "secure": false,
+            // The service is a shortcut / overriding setting for host, port and secure.
+            // For a list of supported services please go to http://www.nodemailer.com///well-known-services-for-smtp
+            "service": null,
+            // The secondary SMTP auth user.
+            "user": null
+        }
+    },
+
+    // NEW RELIC PROFILING
+    // -------------------------------------------------------------------------
+    "newRelic": {
+        // Your app name on New Relic.
+        "appName": null,
+        // Your New Relic license key.
+        "licenseKey": null
+    },
+
+    // PATH
+    // -------------------------------------------------------------------------
+    "path": {
+        // Path to the email templates folder.
+        "emailTemplatesDir": "./emailtemplates/",
+        // Path to local logs folder.
+        "logsDir": "./logs/",
+        // Path to the public folder used by Express.
+        "publicDir": "./public/",
+        // Path to the SSL key file.
+        "sslKeyFile": null,
+        // Path to the SSL certificate file.
+        "sslCertFile": null,
+        // Path where the .jade views are stored.
+        "viewsDir": "./views/"
+    },
+
+    // SOCKETS
+    // -------------------------------------------------------------------------
+    "sockets": {
+        // Enable the Sockets module?
+        "enabled": true
+    }
+}

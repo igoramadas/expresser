@@ -92,7 +92,7 @@ class App
 
         # General configuration of the app (for all environments).
         @server.configure =>
-            utils.updateSettingsFromPaaS() if settings.app.paas
+            settings.updateFromPaaS() if settings.app.paas
 
             # Set view options, use Jade for HTML templates.
             @server.set "views", settings.path.viewsDir

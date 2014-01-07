@@ -1,16 +1,17 @@
 # EXPRESSER SETTINGS
 # -----------------------------------------------------------------------------
-# All main settings for the Expresser platform are set on this file. Settings can be overriden
-# by creating a `settings.json` file with the specified keys and values:
+# All main settings for the Expresser platform are set and described on the
+# @default.json file. Do not edit it!!! To change settings please
+# create a @json file and put your values there.
 #
 # You can also create specific settings for different running environments.
-# For example to set settings on development, create `settings.development.json`
-# and for production a `settings.production.json` file. These will be parsed
-# AFTER the main `settings.json` file.
+# For example to set settings on development, create `@development.json`
+# and for production a `@production.json` file. These will be parsed
+# AFTER the main `@json` file.
 #
-# Please note that the `settings.json` must ne located on the root of your app!
+# Please note that the `@json` must ne located on the root of your app!
 # <!--
-# @example Sample settings.json file
+# @example Sample @json file
 #   {
 #     "general": {
 #       "debug": true,
@@ -23,308 +24,327 @@
 # -->
 class Settings
 
+    crypto = require "crypto"
     fs = require "fs"
+    lodash = require "lodash"
+    path = require "path"
+    utils = require "./utils.coffee"
 
-    # APP
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    app:
-        # Secret key used for cookie encryption.
-        cookieSecret: "ExpresserCookie"
-        # Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
-        # This value might be overriden by PaaS environmental values.
-        ip: null
-        # If paas is true, Expresser will figure out some settings out of environment variables
-        # like IP, ports and tokens. Leave true if you're deploying to AppFog, Heroku, OpenShift etc.
-        paas: true
-        # Node.js server port. Please note that this value might be overriden by PaaS
-        # environmental values (like in AppFog or OpenShift).
-        port: 8080
-        # Secret key used for session encryption.
-        sessionSecret: "ExpresserSession"
-        # The view engine used by Express. Default is jade.
-        viewEngine: "jade"
-        # Connect Assets options.
-        connectAssets:
-            # Build single assets?
-            build: true
-            # Build directories?
-            buildDir: false
-            # Minify JS and CSS builds? True or false. If left null, it will minify on
-            # production environments but not on development.
-            minifyBuilds: null
-        # SSL enabled?
-        ssl:
-            # Is SSL enabled? Please note that you must specify the path to the
-            # certificate files under the `Path` settings.
-            enabled: false
-            # Create a redirector server to redirect requests made to the secure server?
-            # This is the port number of the redirector server. Leave 0, blank or null to
-            # disable this feature.
-            redirectorPort: 0
+    currentEnv = process.env.NODE_ENV
+    currentEnv = "development" if not currentEnv? or currentEnv is ""
 
-    # CRON
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    cron:
-        # If `allowReplacing` is true, cron will allow replacing jobs by adding a new
-        # job using the same ID. If false, you'll need to remove the existing job
-        # before adding otherwise it will throw an error.
-        allowReplacing: true
-        # If `loadOnInit` is true, the cron.json file will be loaded and cron jobs
-        # will be started on init. Otherwise you'll have to manually call `load`
-        # and then `start`.
-        loadOnInit: true
+    # MAIN METHODS
+    # --------------------------------------------------------------------------
 
-    # DATABASE
-    # ----------------------------------------------------------------------
-    # @property [Object]
-    database:
-        # Connection string to MongoDB, using the format `user:password@hostname/dbname`.
-        connString: null
-        # In case you don't have failover / sharding in place on the database above
-        # using MongoDB built-in features, you can set a failover connection string below.
-        # It will be used ONLY if connection to the main database fails repeatedly.
-        errorNotifyEmail: null
-        # How long to wait before trying to connect to the main database again (in seconds) in case
-        # the module switches to the secondary one.
-        failoverTimeout: 300
-        # How many retries before switching to the failover database or aborting a database operation.
-        maxRetries: 3
-        # Normalize documents ID (replace _id with id when returning documents)?
-        normalizeId: true
-        # How long between connection retries, in milliseconds. Default is 1 second.
-        retryInterval: 1000
-        # Database connection options.
-        options:
-            # Auto recconect if connection is lost?
-            auto_reconnect: true
-            # Default pool size for connections.
-            poolSize: 8
-            # Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.
-            safe: false
+    # Load settings from @default.json, then @json, then environment specific @
+    load: =>
+        @loadFromJson "settings.default.json"
+        @loadFromJson "settings.json"
+        @loadFromJson "settings.#{currentEnv.toString().toLowerCase()}.json"
 
-    # DOWNLOADER
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    downloader:
-        # Default headers to append to all download requests.
-        # For example: {"Content-Type": "application/json"}
-        headers: null
-        # How many simultaneous downloads to allow?
-        maxSimultaneous: 4
-        # If true, the downloader will cancel duplicates. A duplicate is considered a download
-        # from the same remote URL and the same save location.
-        preventDuplicates: true
-        # Reject unathourized requests (when SSL certificate has expired for example)?
-        # Set this to true for increased security.
-        rejectUnauthorized: false
-        # The temp extension used while downloading files. Default is ".download".
-        tempExtension: ".download"
-        # Download timeout, in seconds.
-        timeout: 3600
+    # Helper to load values from the specified settings file.
+    # @param [String] filename The filename or path to the settings file.
+    # @param [Boolean] doNotUpdateSettings If true it won't update the Settings class, default is false.
+    # @return [Object] Returns the JSON representation of the loaded file.
+    loadFromJson: (filename) =>
+        filename = utils.getFilePath filename
+        settingsJson = null
 
-    # FIREWALL
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    firewall:
-        # How long should IP be blacklisted, in seconds.
-        blacklistExpires: 30
-        # How long should IP be blacklisted in case it reaches the "MaxRetries" value
-        # below after being already blacklisted before?
-        blacklistLongExpires: 3600
-        # If a blacklisted IP keeps attacking, how many attacks till its expiry date
-        # extends to the "LongExpires" value above?
-        blacklistMaxRetries: 5
-        # If enabled, all requests will be checked against common attacks.
-        enabled: true
-        # Which HTTP protection patterns should be enabled? Available: lfi, sql, xss
-        httpPatterns: "lfi,sql,xss"
-        # Which Socket protection patterns should be enabled? Available: lfi, sql, xss
-        socketPatterns: "lfi,sql,xss"
+        # Has json? Load it. Try using UTF8 first, if failed, use ASCII.
+        if filename?
+            if process.versions.node.indexOf(".10.") > 0
+                encUtf8 = {encoding: "utf8"}
+                encAscii = {encoding: "ascii"}
+            else
+                encUtf8 = "utf8"
+                encAscii = "ascii"
 
-    # GENERAL
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    general:
-        # The app title. This MUST be set.
-        appTitle: "Expresser"
-        # The app's base URL, including http://. This MUST be set.
-        appUrl: "http://expresser.codeplex.com"
-        # Enable or disable debugging messages. Should be false on production environments.
-        # If null, debug will be set automatically based on the NODE_ENV variable.
-        debug: null
-        # Default encoding to be used on IO and requests.
-        encoding: "utf8"
-        # How long (seconds) should files read from disk (email templates for example) stay in cache?
-        ioCacheTimeout: 60
-        # Secret key used to encrypt and decrypt settings files.
-        settingsSecret: "ExpresserSettings"
+            # Try parsing the file with UTF8 first, if fails, try ASCII.
+            try
+                settingsJson = fs.readFileSync filename, encUtf8
+                settingsJson = utils.minifyJson settingsJson
+            catch ex
+                settingsJson = fs.readFileSync filename, encAscii
+                settingsJson = utils.minifyJson settingsJson
 
-    # IMAGING
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    imaging:
-        # Set to false to disable the imaging module.
-        enabled: true
+            # Helper function to overwrite properties.
+            xtend = (source, target) ->
+                for prop, value of source
+                    if value?.constructor is Object
+                        target[prop] = {} if not target[prop]?
+                        xtend source[prop], target[prop]
+                    else
+                        target[prop] = source[prop]
 
-    # LOGGING
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    logger:
-        # If true, other modules will use the Logger to log errors before throwing them as exceptions.
-        # By default it's false, as ideally you should log errors yourself using callbacks.
-        autoLogErrors: false
-        # Output logs to the console? If left null or undefined, it will inherit the value
-        # from settings.general.debug.
-        console: null
-        # If the mail module is properly configured then all critical logs (logger.critical()) will
-        # be sent to the email address specified below. Leave blank or null to not send emails.
-        criticalEmailTo: null
-        # Define all log types which should be treated as error (red colour on the console).
-        errorLogTypes: "err,error,warn,warning,critical"
-        # List will all field / property names to be removed from logs.
-        # Default list is "Password, password, passwordHash and passwordEncrypted".
-        removeFields: "Password,password,passwordHash,passwordEncrypted"
-        # If `sendIP` is true, the IP address of the machine will be added to logs events.
-        # Useful when you have different instances of the app running on different services.
-        sendIP: true
-        # If `sendTimestamp` is true, a timestamp will be added to logs events.
-        # Please note that Loggly and Logentries already have a timestamp, so in most
-        # cases you can leave this value set to false.
-        sendTimestamp: false
-        # Set `uncaughtException` to true to bind the logger to the `uncaughtException`
-        # event on the process and log all uncaught expcetions as errors.
-        uncaughtException: true
-        # Save logs locally. The path to the logs folder is set above under the `path.logsDir` key.
-        local:
-            enabled: true
-            # The bufferInterval defines the delay in between disk saves, in milliseconds.
-            bufferInterval: 6000
-            # Sets the max age of log files, in days. Default is 30 days. Setting the
-            # maxAge to to 0 or null will cancel the automatic log cleaning.
-            maxAge: 30
-        # Please inform your Logentries token below. Logentries will be used ONLY if
-        # the enabled setting below  is true.
-        logentries:
-            enabled: false
-            token: null
-        # Inform your Loggly subdomain and token below. Loggly will be used ONLY if
-        # the enabled setting below  is true.
-        loggly:
-            enabled: false
-            subdomain: null
-            token: null
+            xtend settingsJson, this
 
-    # MAILER
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    mailer:
-        # The name of the base template file when loading and parsing email templates.
-        # The base path is defined under `Path.emailTemplatesDir`.
-        baseTemplateFile: "base.html"
-        # Default `from` email address.
-        from: null
-        # Main SMTP server.
-        # DKIM signing options.
-        dkim:
-            # By default do not use DKIM, so enabled is false.
-            enabled: false
-            # The domain name used for signing.
-            domainName: null
-            # Key selector, first part of your TXT record (for example abc._domainkey.devv.com, key selector is "abc").
-            keySelector: null
-            # DKIM private key used for signing, as string.
-            privateKey: null
-        smtp:
-            # The SMTP host. If set to null or blank, no emails will be sent out.
-            host: null
-            # The SMTP auth password.
-            password: null
-            # The SMTP port to connect to.
-            port: null
-            # Connect using SSL? If you're using port 587 then secure must be set to false in most cases.
-            secure: false
-            # The service is a shortcut setting. If defined, it will override the host, port and secure properties.
-            # For a list of supported services please go to http://www.nodemailer.com/#well-known-services-for-smtp
-            service: null
-            # The SMTP auth username.
-            user: null
-        # Secondary SMTP server. Will be used only if the main SMTP fails.
-        smtp2:
-            # The secondary SMTP host. If set to null or blank, no emails will be sent out.
-            host: null
-            # The secondary SMTP auth password.
-            password: null
-            # The secondary SMTP port to connect to.
-            port: null
-            # Connect to secondary using SSL? If you're using port 587 then secure must be set to false in most cases.
-            secure: false
-            # The service is a shortcut setting. If defined, it will override the host, port and secure properties.
-            # For a list of supported services please go to http://www.nodemailer.com/#well-known-services-for-smtp
-            service: null
-            # The secondary SMTP auth username.
-            user: null
+        if @general.debug and @logger.console
+            console.log "Utils.loadFromJson", filename
 
-    # NEW RELIC PROFILING
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    newRelic:
-        # The App Name on New Relic.
-        appName: null
-        # The License Key on New Relic.
-        licenseKey: null
+        # Return the JSON representation of the file (or null if not found / empty).
+        return settingsJson
 
-    # PATH
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    path:
-        # Path to the email templates folder.
-        emailTemplatesDir: "./emailtemplates/"
-        # Path to local logs folder.
-        logsDir: "./logs/"
-        # Path to the public folder used by Express.
-        publicDir: "./public/"
-        # Path to the SSL key file.
-        sslKeyFile: null
-        # Path to the SSL certificate file.
-        sslCertFile: null
-        # Path where the .jade views are stored.
-        viewsDir: "./views/"
-
-    # SOCKETS
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    sockets:
-        # Enable the sockets module?
-        enabled: true
-
-    # TWITTER
-    # -------------------------------------------------------------------------
-    # @property [Object]
-    twitter:
-        # Enable the Twitter module?
-        enabled: true
-        # Your OAuth access secret. This can be generated automatically for your
-        # account on you application details page.
-        accessSecret: null
-        # Your OAuth access token. This can be generated automatically for your
-        # account on you application details page.
-        accessToken: null
-        # The Twitter app consumer key.
-        consumerKey: null
-        # The Twitter app consumer secret.
-        consumerSecret: null
-        # How long to wait before trying to authenticate on Twitter again (in seconds),
-        # in case the authentication fails.
-        retryInterval: 600
-
-    # HELPER METHODS
-    # -------------------------------------------------------------------------
-
-    # Reset to default settings.
+    # Reset to default @
     reset: =>
         @instance = new Settings()
+        @loadDefaults()
+
+    # ENCRYPTION
+    # --------------------------------------------------------------------------
+
+    # Helper to encrypt or decrypt settings files. The default encryption password
+    # defined on the `Settings.coffee` file is "ExpresserSettings". The default
+    # cipher algorithm is AES 256.
+    # @param [Boolean] encrypt Pass true to encrypt, false to decrypt.
+    # @param [String] filename The file to be encrypted or decrypted.
+    # @param [Object] options Options to be passed to the cipher.
+    # @option options [String] cipher The cipher to be used, default is aes256.
+    # @option options [String] password The default encryption password.
+    cryptoHelper: (encrypt, filename, options) =>
+        options = {} if not options?
+        options = lodash.defaults options, {cipher: "aes256", password: @general.settingsSecret}
+
+        settingsJson = @loadFromJson filename, false
+
+        # Settings file not found or invalid? Stop here.
+        if not settingsJson? and @logger.console
+            console.warn "Settings.cryptoHelper", encrypt, filename, "File not found or invalid, abort!"
+            return false
+
+        # If trying to encrypt and settings property `encrypted` is true,
+        # abort encryption and log to the console.
+        if settingsJson.encrypted is true and encrypt
+            if @logger.console
+                console.warn "Settings.cryptoHelper", encrypt, filename, "Property 'encrypted' is true, abort!"
+                return false
+
+        # Helper to parse and encrypt / decrypt settings data.
+        parser = (obj) ->
+            for prop, value of obj
+                if value?.constructor is Object
+                    parser obj[prop]
+                else
+                    try
+                        currentValue = obj[prop]
+
+                        if encrypt
+
+                            # Check the property data type and prefix the new value.
+                            if lodash.isBoolean currentValue
+                                newValue = "bool:"
+                            else if lodash.isNumber currentValue
+                                newValue = "number:"
+                            else
+                                newValue = "string:"
+
+                            # Create cipher amd encrypt data.
+                            c = aes = crypto.createCipher options.cipher, options.password
+                            newValue += c.update currentValue.toString(), @general.encoding, "hex"
+                            newValue += c.final "hex"
+
+                        else
+
+                            # Split the data as "datatype:encryptedValue".
+                            arrValue = currentValue.split ":"
+                            newValue = ""
+
+                            # Create cipher and decrypt.
+                            c = aes = crypto.createDecipher options.cipher, options.password
+                            newValue += c.update arrValue[1], "hex", @general.encoding
+                            newValue += c.final @general.encoding
+
+                            # Cast data type (boolean, number or string).
+                            if arrValue[0] is "bool"
+                                if newValue is "true" or newValue is "1"
+                                    newValue = true
+                                else
+                                    newValue = false
+                            else if arrValue[0] is "number"
+                                newValue = parseFloat newValue
+                    catch ex
+                        if @logger.console
+                            console.error "Settings.cryptoHelper", encrypt, filename, ex, currentValue
+
+                    # Update settings property value.
+                    obj[prop] = newValue
+
+        # Remove `encrypted` property prior to decrypting.
+        if not encrypt
+            delete settingsJson["encrypted"]
+
+        # Process settings data.
+        parser settingsJson
+
+        # Add `encrypted` property after file is encrypted.
+        if encrypt
+            settingsJson.encrypted = true
+
+        # Stringify and save the new settings file.
+        newSettingsJson = JSON.stringify settingsJson, null, 4
+        if process.versions.node.indexOf(".10.") > 0
+            fs.writeFileSync filename, newSettingsJson, {encoding: @general.encoding}
+        else
+            fs.writeFileSync filename, newSettingsJson, @general.encoding
+        return true
+
+    # Helper to encrypt the specified settings file. Please see `cryptoHelper` above.
+    # @param [String] filename The file to be encrypted.
+    # @param [Object] options Options to be passed to the cipher.
+    # @return [Boolean] Returns true if encryption OK, false if something went wrong.
+    encrypt: (filename, options) =>
+        @cryptoHelper true, filename, options
+
+    # Helper to decrypt the specified settings file. Please see `cryptoHelper` above.
+    # @param [String] filename The file to be decrypted.
+    # @param [Object] options Options to be passed to the cipher.
+    # @return [Boolean] Returns true if decryption OK, false if something went wrong.
+    decrypt: (filename, options) =>
+        @cryptoHelper false, filename, options
+
+    # FILE WATCHER
+    # --------------------------------------------------------------------------
+
+    # Enable or disable the settings files watcher to auto reload settings when file changes.
+    # The `callback` is optional in case you want to notify another module about settings updates.
+    # @param [Boolean] enable If enabled is true activate the fs watcher, otherwise deactivate.
+    # @param [Method] callback A function (event, filename) triggered when a settings file changes.
+    watch: (enable, callback) =>
+        currentEnv = process.env.NODE_ENV
+        currentEnv = "development" if not currentEnv? or currentEnv is ""
+
+        # Make sure callback is a function, if pased.
+        if callback? and not lodash.isFunction callback
+            throw new TypeError "The callback must be a valid function, or null/undefined."
+
+        # Add / remove watcher for the @json file if it exists.
+        filename = utils.getFilePath "@json"
+        if filename?
+            if enable
+                fs.watchFile filename, {persistent: true}, (evt, filename) =>
+                    @loadSettingsFromJson filename
+                    callback(evt, filename) if callback?
+            else
+                fs.unwatchFile filename, callback
+
+        # Add / remove watcher for the @node_env.json file if it exists.
+        filename = utils.getFilePath "@#{currentEnv.toString().toLowerCase()}.json"
+        if filename?
+            if enable
+                fs.watchFile filename, {persistent: true}, (evt, filename) =>
+                    @loadSettingsFromJson filename
+                    callback(evt, filename) if callback?
+            else
+                fs.unwatchFile filename, callback
+
+        if @general.debug and @logger.console
+            console.log "Utils.watchSettingsFiles", enable, (if callback? then "With callback" else "No callback")
+
+    # PAAS
+    # --------------------------------------------------------------------------
+
+    # Update settings based on Cloud Environmental variables. If a `filter` is specified,
+    # update only settings that match it, otherwise update everything.
+    # @param [String] filter Filter settings to be updated, for example "mailer" or "database".
+    updateFromPaaS: (filter) =>
+        env = process.env
+        filter = false if not filter? or filter is ""
+
+        # Update app IP and port (OpenShift, AppFog).
+        if not filter or filter.indexOf("app") >= 0
+            ip = env.OPENSHIFT_NODEJS_IP or env.IP
+            port = env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
+            @app.ip = ip if ip? and ip isnt ""
+            @app.port = port if port? and port isnt ""
+
+        # Update database settings (AppFog, MongoLab, MongoHQ).
+        if not filter or filter.indexOf("database") >= 0
+            vcap = env.VCAP_SERVICES
+            vcap = JSON.parse vcap if vcap?
+
+            # Check for AppFog MongoDB variables.
+            if vcap? and vcap isnt ""
+                mongo = vcap["mongodb-1.8"]
+                mongo = mongo[0]["credentials"] if mongo?
+                if mongo?
+                    @database.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
+
+            # Check for MongoLab variables.
+            mongoLab = env.MONGOLAB_URI
+            @database.connString = mongoLab if mongoLab? and mongoLab isnt ""
+
+            # Check for MongoHQ variables.
+            mongoHq = env.MONGOHQ_URL
+            @database.connString = mongoHq if mongoHq? and mongoHq isnt ""
+
+        # Update logger settings (Logentries and Loggly).
+        if not filter or filter.indexOf("logger") >= 0
+            logentriesToken = env.LOGENTRIES_TOKEN
+            logglyToken = env.LOGGLY_TOKEN
+            logglySubdomain = env.LOGGLY_SUBDOMAIN
+            @logger.logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
+            @logger.loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
+            @logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
+
+        # Update mailer settings (SendGrid, Mandrill, Mailgun).
+        if not filter or filter.indexOf("mail") >= 0
+            currentSmtpHost = @mailer.smtp.host?.toLowerCase()
+            currentSmtpHost = "" if not currentSmtpHost?
+
+            # Get and set SendGrid.
+            smtpUser = env.SENDGRID_USERNAME
+            smtpPassword = env.SENDGRID_PASSWORD
+            if currentSmtpHost.indexOf("sendgrid") >= 0
+                if currentSmtpHost is "sendgrid"
+                    @mailer.smtp.host = "smtp.sendgrid.net"
+                    @mailer.smtp.port = 587
+                    @mailer.smtp.secure = false
+                if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+                    @mailer.smtp.user = smtpUser
+                    @mailer.smtp.password = smtpPassword
+
+            # Get and set Mandrill.
+            smtpUser = env.MANDRILL_USERNAME
+            smtpPassword = env.MANDRILL_APIKEY
+            if currentSmtpHost.indexOf("mandrill") >= 0
+                if currentSmtpHost is "mandrill"
+                    @mailer.smtp.host = "smtp.mandrillapp.com"
+                    @mailer.smtp.port = 587
+                    @mailer.smtp.secure = false
+                if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+                    @mailer.smtp.user = smtpUser
+                    @mailer.smtp.password = smtpPassword
+
+            # Get and set Mailgun.
+            smtpHost = env.MAILGUN_SMTP_SERVER
+            smtpPort = env.MAILGUN_SMTP_PORT
+            smtpUser = env.MAILGUN_SMTP_LOGIN
+            smtpPassword = env.MAILGUN_SMTP_PASSWORD
+            if currentSmtpHost.indexOf("mailgun") >= 0
+                if smtpHost? and smtpHost isnt "" and smtpPort? and smtpPort isnt ""
+                    @mailer.smtp.host = smtpHost
+                    @mailer.smtp.port = smtpPort
+                else if currentSmtpHost is "mailgun"
+                    @mailer.smtp.host = "smtp.mailgun.org"
+                    @mailer.smtp.port = 587
+                    @mailer.smtp.secure = false
+                if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+                    @mailer.smtp.user = smtpUser
+                    @mailer.smtp.password = smtpPassword
+
+        # Update twitter @
+        if not filter or filter.indexOf("twitter") >= 0
+            twitterConsumerKey = env.TWITTER_CONSUMER_KEY
+            twitterConsumerSecret = env.TWITTER_CONSUMER_SECRET
+            twitterAccessKey = env.TWITTER_ACCESS_KEY
+            twitterAccessSecret = env.TWITTER_ACCESS_SECRET
+            @twitter.consumerKey = twitterConsumerKey if twitterConsumerKey? and twitterConsumerKey isnt ""
+            @twitter.consumerSecret = twitterConsumerSecret if twitterConsumerSecret? and twitterConsumerSecret isnt ""
+            @twitter.accessToken = twitterAccessKey if twitterAccessKey? and twitterAccessKey isnt ""
+            @twitter.accessSecret = twitterAccessSecret if twitterAccessSecret? and twitterAccessSecret isnt ""
+
+        # Log to console.
+        if @general.debug and @logger.console
+            console.log "Utils.updateSettingsFromPaaS", "Settings updated"
 
 
 # Singleton implementation
@@ -333,6 +353,9 @@ Settings.getInstance = ->
     if not @instance?
         @instance = new Settings()
         nodeEnv = process.env.NODE_ENV
+
+        # Load from @default.json.
+        @instance.load()
 
         # Disable console log on test.
         if nodeEnv is "test"
@@ -349,7 +372,7 @@ Settings.getInstance = ->
         if not @instance.logger.console?
             @instance.logger.console = @instance.general.debug
 
-        # Set minifyBuilds in case it has not been set.
+        ## Set minifyBuilds in case it has not been set.
         if not @instance.app.connectAssets.minifyBuilds?
             if nodeEnv is "development"
                 @instance.app.connectAssets.minifyBuilds = false
