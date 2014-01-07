@@ -149,7 +149,7 @@ class Settings
                             newValue = ""
 
                             # Create cipher and decrypt.
-                            c = aes = crypto.createDecipher options.cipher, options.password
+                            c = crypto.createDecipher options.cipher, options.password
                             newValue += c.update arrValue[1], "hex", @general.encoding
                             newValue += c.final @general.encoding
 
@@ -331,17 +331,6 @@ class Settings
                     @mailer.smtp.user = smtpUser
                     @mailer.smtp.password = smtpPassword
 
-        # Update twitter @
-        if not filter or filter.indexOf("twitter") >= 0
-            twitterConsumerKey = env.TWITTER_CONSUMER_KEY
-            twitterConsumerSecret = env.TWITTER_CONSUMER_SECRET
-            twitterAccessKey = env.TWITTER_ACCESS_KEY
-            twitterAccessSecret = env.TWITTER_ACCESS_SECRET
-            @twitter.consumerKey = twitterConsumerKey if twitterConsumerKey? and twitterConsumerKey isnt ""
-            @twitter.consumerSecret = twitterConsumerSecret if twitterConsumerSecret? and twitterConsumerSecret isnt ""
-            @twitter.accessToken = twitterAccessKey if twitterAccessKey? and twitterAccessKey isnt ""
-            @twitter.accessSecret = twitterAccessSecret if twitterAccessSecret? and twitterAccessSecret isnt ""
-
         # Log to console.
         if @general.debug and @logger.console
             console.log "Utils.updateSettingsFromPaaS", "Settings updated"
@@ -352,18 +341,17 @@ class Settings
 Settings.getInstance = ->
     if not @instance?
         @instance = new Settings()
-        nodeEnv = process.env.NODE_ENV
 
         # Load from @default.json.
         @instance.load()
 
         # Disable console log on test.
-        if nodeEnv is "test"
+        if currentEnv is "test"
             @instance.logger.console = false
 
         # Set debug in case it has not been set.
         if not @instance.general.debug?
-            if nodeEnv is "production" or nodeEnv is "test"
+            if nodeEnv is "production" or currentEnv is "test"
                 @instance.general.debug = false
             else
                 @instance.general.debug = true
@@ -374,7 +362,7 @@ Settings.getInstance = ->
 
         ## Set minifyBuilds in case it has not been set.
         if not @instance.app.connectAssets.minifyBuilds?
-            if nodeEnv is "development"
+            if currentEnv is "development"
                 @instance.app.connectAssets.minifyBuilds = false
             else
                 @instance.app.connectAssets.minifyBuilds = true

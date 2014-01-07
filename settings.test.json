@@ -17,5 +17,6 @@
         "smtp": {
             "user": "devv@devv.com"
         }
-    }
+    },
+    "testingFileWatcher": true
 }
