@@ -87,7 +87,7 @@ describe("Settings Tests", function() {
             return callback("Encryption failed, settings.general.appTitle is still set as 'Expresser'.")
         }
 
-        settings.decrypt();
+        settings.decrypt(filename);
 
         if (process.versions.node.indexOf(".10.") > 0) {
             var decrypted = JSON.parse(fs.readFileSync(filename, {encoding: "utf8"}));

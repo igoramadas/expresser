@@ -30,17 +30,18 @@ class Settings
     path = require "path"
     utils = require "./utils.coffee"
 
-    currentEnv = process.env.NODE_ENV
-    currentEnv = "development" if not currentEnv? or currentEnv is ""
+    currentEnv: process.env.NODE_ENV
 
     # MAIN METHODS
     # --------------------------------------------------------------------------
 
     # Load settings from @default.json, then @json, then environment specific @
     load: =>
+        @currentEnv = "development" if not @currentEnv? or @currentEnv is ""
+
         @loadFromJson "settings.default.json"
         @loadFromJson "settings.json"
-        @loadFromJson "settings.#{currentEnv.toString().toLowerCase()}.json"
+        @loadFromJson "settings.#{@currentEnv.toString().toLowerCase()}.json"
 
     # Helper to load values from the specified settings file.
     # @param [String] filename The filename or path to the settings file.
@@ -79,7 +80,7 @@ class Settings
             xtend settingsJson, this
 
         if @general.debug and @logger.console
-            console.log "Utils.loadFromJson", filename
+            console.log "Settings.loadFromJson", filename
 
         # Return the JSON representation of the file (or null if not found / empty).
         return settingsJson
@@ -209,35 +210,31 @@ class Settings
     # @param [Boolean] enable If enabled is true activate the fs watcher, otherwise deactivate.
     # @param [Method] callback A function (event, filename) triggered when a settings file changes.
     watch: (enable, callback) =>
-        currentEnv = process.env.NODE_ENV
-        currentEnv = "development" if not currentEnv? or currentEnv is ""
-
-        # Make sure callback is a function, if pased.
         if callback? and not lodash.isFunction callback
             throw new TypeError "The callback must be a valid function, or null/undefined."
 
         # Add / remove watcher for the @json file if it exists.
-        filename = utils.getFilePath "@json"
+        filename = utils.getFilePath "settings.json"
         if filename?
             if enable
                 fs.watchFile filename, {persistent: true}, (evt, filename) =>
-                    @loadSettingsFromJson filename
+                    @loadFromJson filename
                     callback(evt, filename) if callback?
             else
                 fs.unwatchFile filename, callback
 
         # Add / remove watcher for the @node_env.json file if it exists.
-        filename = utils.getFilePath "@#{currentEnv.toString().toLowerCase()}.json"
+        filename = utils.getFilePath "settings.#{@currentEnv.toString().toLowerCase()}.json"
         if filename?
             if enable
                 fs.watchFile filename, {persistent: true}, (evt, filename) =>
-                    @loadSettingsFromJson filename
+                    @loadFromJson filename
                     callback(evt, filename) if callback?
             else
                 fs.unwatchFile filename, callback
 
         if @general.debug and @logger.console
-            console.log "Utils.watchSettingsFiles", enable, (if callback? then "With callback" else "No callback")
+            console.log "Settings.watch", enable, (if callback? then "With callback" else "No callback")
 
     # PAAS
     # --------------------------------------------------------------------------
@@ -333,7 +330,7 @@ class Settings
 
         # Log to console.
         if @general.debug and @logger.console
-            console.log "Utils.updateSettingsFromPaaS", "Settings updated"
+            console.log "Settings.updateFromPaaS", "Updated!", filter
 
 
 # Singleton implementation
@@ -346,12 +343,12 @@ Settings.getInstance = ->
         @instance.load()
 
         # Disable console log on test.
-        if currentEnv is "test"
+        if @instance.currentEnv is "test"
             @instance.logger.console = false
 
         # Set debug in case it has not been set.
         if not @instance.general.debug?
-            if nodeEnv is "production" or currentEnv is "test"
+            if nodeEnv is "production" or @instance.currentEnv is "test"
                 @instance.general.debug = false
             else
                 @instance.general.debug = true
@@ -362,7 +359,7 @@ Settings.getInstance = ->
 
         ## Set minifyBuilds in case it has not been set.
         if not @instance.app.connectAssets.minifyBuilds?
-            if currentEnv is "development"
+            if @instance.currentEnv is "development"
                 @instance.app.connectAssets.minifyBuilds = false
             else
                 @instance.app.connectAssets.minifyBuilds = true
