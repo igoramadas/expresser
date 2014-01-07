@@ -126,8 +126,12 @@ class App
             @server.use express.methodOverride()
             @server.use express["static"] settings.path.publicDir
 
+            # Fix connect assets helper context.
+            connectAssetsOptions = settings.app.connectAssets
+            connectAssetsOptions.helperContext = @server.locals
+
             # Connect assets and dynamic compiling.
-            ConnectAssets = (require "connect-assets") settings.app.connectAssets
+            ConnectAssets = (require "connect-assets") connectAssetsOptions
             @server.use ConnectAssets
 
             # Check for extra middlewares to be added.
