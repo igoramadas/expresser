@@ -28,6 +28,10 @@ class App
     # @property [Array<Object>] Array of additional middlewares to be use by the Express server. Please note that if you're adding middlewares manually you must do it BEFORE calling `init`.
     extraMiddlewares: []
 
+    # Current node environment and HTTP server handler are set on init.
+    nodeEnv = null
+    httpServer = null
+
     # INIT
     # --------------------------------------------------------------------------
 
@@ -38,57 +42,46 @@ class App
     init: (arrExtraMiddlewares) =>
         settings = require "./settings.coffee"
         utils = require "./utils.coffee"
+        nodeEnv = process.env.NODE_ENV
 
-        # Get New Relic environment variables or settings.
-        newRelicEnabled = settings.newRelic.enabled
-        newRelicAppName = process.env.NEW_RELIC_APP_NAME or settings.newRelic.appName
-        newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY or settings.newRelic.licenseKey
-
-        # Check if New Relic settings are available, and if so, start the
-        # New Relic agent but ONLY if not running under localhost.
-        if newRelicEnabled and newRelicAppName? and newRelicAppName isnt "" and newRelicLicenseKey? and newRelicLicenseKey isnt ""
-            hostname = os.hostname()
-            console.log "App", "Embeding New Relic agent for #{newRelicAppName}..."
-            require "newrelic"
+        # Init New Relic, if enabled.
+        @initNewRelic()
 
         # Require logger.
         logger = require "./logger.coffee"
         logger.debug "App", "init", arrExtraMiddlewares
 
-        # Log proccess termination to the console. This will force flush any buffered logs to disk.
-        # Do not log the exit if running under test environment.
-        process.on "exit", (sig) ->
-            nodeEnv = process.env.NODE_ENV
+        # Set error handler, configure Express server and start it.
+        @setErrorHandler()
+        @configureServer()
+        @startServer()
 
+    # Init new Relic, depending on its settings (enabled, appName and LicenseKey).
+    initNewRelic: =>
+        newRelicEnabled = settings.newRelic.enabled
+        newRelicAppName = process.env.NEW_RELIC_APP_NAME or settings.newRelic.appName
+        newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY or settings.newRelic.licenseKey
+
+        # Check if New Relic settings are available, and if so, start the New Relic agent.
+        if newRelicEnabled and newRelicAppName? and newRelicAppName isnt "" and newRelicLicenseKey? and newRelicLicenseKey isnt ""
+            console.log "App", "Embeding New Relic agent for #{newRelicAppName}..."
+            require "newrelic"
+
+    # Log proccess termination to the console. This will force flush any buffered logs to disk.
+    # Do not log the exit if running under test environment.
+    setErrorHandler: =>
+        process.on "exit", (sig) ->
             if nodeEnv? and nodeEnv.indexOf("test") < 0
                 console.warn "App", "Terminating Expresser app...", Date(Date.now()), sig
-
             try
                 logger.flushLocal()
             catch err
                 console.warn "App", "Could not flush buffered logs to disk."
 
-        # Require express and create the app server.
+    # Configure the server. Set views, options, use Express modules, etc.
+    configureServer: =>
         @server = express()
 
-        # Create normal or secure server?
-        if settings.app.ssl and settings.path.sslKeyFile? and settings.path.sslCertFile?
-            sslKeyFile = utils.getFilePath settings.path.sslKeyFile
-            sslCertFile = utils.getFilePath settings.path.sslCertFile
-
-            # Certificate files were found? Proceed, otherwise alert the user and throw an error.
-            if sslKeyFile? and sslCertFile?
-                sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
-                sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
-                sslOptions = {key: sslKey, cert: sslCert}
-                httpServer = https.createServer sslOptions, @server
-            else
-                logger.error "App", "init", "Cannot find certificate files.", settings.path.sslKeyFile, settings.path.sslCertFile
-                throw new Error "The certificate files could not be found. Please check the 'Path.sslKeyFile' and 'Path.sslCertFile' settings."
-        else
-            httpServer = http.createServer @server
-
-        # General configuration of the app (for all environments).
         @server.configure =>
             settings.updateFromPaaS() if settings.app.paas
 
@@ -152,19 +145,38 @@ class App
                 sockets.init httpServer
 
         # Configure development environment to dump exceptions and show stack.
-        @server.configure "development", => @server.use express.errorHandler {dumpExceptions: true, showStack: true}
+        @server.configure "development", =>
+            @server.use express.errorHandler {dumpExceptions: true, showStack: true}
 
         # Configure production environment.
-        @server.configure "production", => @server.use express.errorHandler()
+        @server.configure "production", =>
+            @server.use express.errorHandler()
 
-        # Start the server.
+    # Start the server using HTTP or HTTPS, depending on the settings.
+    startServer: =>
+        if settings.app.ssl and settings.path.sslKeyFile? and settings.path.sslCertFile?
+            sslKeyFile = utils.getFilePath settings.path.sslKeyFile
+            sslCertFile = utils.getFilePath settings.path.sslCertFile
+
+            # Certificate files were found? Proceed, otherwise alert the user and throw an error.
+            if sslKeyFile? and sslCertFile?
+                sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
+                sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
+                sslOptions = {key: sslKey, cert: sslCert}
+                httpServer = https.createServer sslOptions, @server
+            else
+                logger.error "App", "init", "Cannot find certificate files.", settings.path.sslKeyFile, settings.path.sslCertFile
+                throw new Error "The certificate files could not be found. Please check the 'Path.sslKeyFile' and 'Path.sslCertFile' settings."
+        else
+            httpServer = http.createServer @server
+
+        # Start the server and log output.
         if settings.app.ip? and settings.app.ip isnt ""
             httpServer.listen settings.app.port, settings.app.ip
             logger.info "App #{settings.general.appTitle} started!", settings.app.ip, settings.app.port
         else
             httpServer.listen settings.app.port
             logger.info "App #{settings.general.appTitle} started!", settings.app.port
-
 
     # HELPER AND UTILS
     # --------------------------------------------------------------------------

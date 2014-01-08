@@ -37,7 +37,11 @@ describe("Settings Tests", function() {
         var newJson = utils.minifyJson(originalJson);
 
         var callback = function() {
-            fs.writeFileSync(filename, originalJson);
+            if (process.versions.node.indexOf(".10.") > 0) {
+                fs.writeFileSync(filename, originalJson, {encoding: "utf8"});
+            } else {
+                fs.writeFileSync(filename, originalJson, "utf8");
+            }
             unwatch();
             done();
         };
