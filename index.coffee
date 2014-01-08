@@ -28,15 +28,11 @@ class Expresser
     # @option initOptions [Object] app Pass options to the App init.
     # @option initOptions [Object] app Pass options to the App init.
     init: (initOptions) =>
-        @utils.loadDefaultSettingsFromJson()
-
-        # Init the Logger.
         @logger.init initOptions?.logger
 
         # Init general modules.
         @database.init initOptions?.database
         @mailer.init initOptions?.mailer
-        @twitter.init initOptions?.twitter
 
         # App must be the last thing to be started!
         # The Firewall and Sockets modules are initiated inside the App module.

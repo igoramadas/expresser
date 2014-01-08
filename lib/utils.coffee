@@ -71,13 +71,18 @@ class Utils
         hasJson = exists filename
         return filename if hasJson
 
-        # If file does not exist on local path, try parent path.
-        filename = path.resolve path.dirname(require.main.filename), originalFilename
+        # Try current path..
+        filename = path.resolve __dirname, originalFilename
         hasJson = exists filename
         return filename if hasJson
 
-        # If file still not found, try root path.
-        filename = path.resolve __dirname, originalFilename
+        # Try parent path..
+        filename = path.resolve __dirname, "../", originalFilename
+        hasJson = exists filename
+        return filename if hasJson
+
+        # If file does not exist on local path, try application root path.
+        filename = path.resolve path.dirname(require.main.filename), originalFilename
         hasJson = exists filename
         return filename if hasJson
 

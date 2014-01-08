@@ -40,18 +40,16 @@ class App
         utils = require "./utils.coffee"
 
         # Get New Relic environment variables or settings.
+        newRelicEnabled = settings.newRelic.enabled
         newRelicAppName = process.env.NEW_RELIC_APP_NAME or settings.newRelic.appName
         newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY or settings.newRelic.licenseKey
 
         # Check if New Relic settings are available, and if so, start the
         # New Relic agent but ONLY if not running under localhost.
-        if newRelicAppName? and newRelicAppName isnt "" and newRelicLicenseKey? and newRelicLicenseKey isnt ""
+        if newRelicEnabled and newRelicAppName? and newRelicAppName isnt "" and newRelicLicenseKey? and newRelicLicenseKey isnt ""
             hostname = os.hostname()
-            if hostname is "localhost" or hostname.indexOf(".local") > 0
-                console.log "App", "New Relic #{newRelicAppName} won't be embedded because it's running in localhost!", hostname
-            else
-                console.log "App", "Embeding New Relic agent for #{newRelicAppName}..."
-                require "newrelic"
+            console.log "App", "Embeding New Relic agent for #{newRelicAppName}..."
+            require "newrelic"
 
         # Require logger.
         logger = require "./logger.coffee"

@@ -103,7 +103,7 @@ class Settings
     # @option options [String] password The default encryption password.
     cryptoHelper: (encrypt, filename, options) =>
         options = {} if not options?
-        options = lodash.defaults options, {cipher: "aes256", password: @general.settingsSecret}
+        options = lodash.defaults options, {cipher: "aes256", password: "ExpresserSettingsPassword"}
 
         settingsJson = @loadFromJson filename, false
 
@@ -120,7 +120,9 @@ class Settings
                 return false
 
         # Helper to parse and encrypt / decrypt settings data.
-        parser = (obj) ->
+        parser = (obj) =>
+            currentValue = null
+            
             for prop, value of obj
                 if value?.constructor is Object
                     parser obj[prop]
@@ -139,7 +141,7 @@ class Settings
                                 newValue = "string:"
 
                             # Create cipher amd encrypt data.
-                            c = aes = crypto.createCipher options.cipher, options.password
+                            c = crypto.createCipher options.cipher, options.password
                             newValue += c.update currentValue.toString(), @general.encoding, "hex"
                             newValue += c.final "hex"
 

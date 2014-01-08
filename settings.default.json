@@ -139,9 +139,7 @@
         // Default encoding to be used on IO and web requests.
         "encoding": "utf8",
         // How long (seconds) should files read from disk (email templates for example) stay in cache?
-        "ioCacheTimeout": 60,
-        // Secret key used to encrypt and decrypt settings files.
-        "settingsSecret": "ExpresserSettings"
+        "ioCacheTimeout": 60
     },
 
     // IMAGING
@@ -260,6 +258,8 @@
     "newRelic": {
         // Your app name on New Relic.
         "appName": null,
+        // Enable new Relic? Please note that you'll also need to set the `appName` and `licenseKey`.
+        "enabled": false,
         // Your New Relic license key.
         "licenseKey": null
     },
