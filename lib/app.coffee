@@ -13,7 +13,7 @@ class App
     http = require "http"
     https = require "https"
     lodash = require "lodash"
-    os = require "os"
+    path = require "path"
 
     # Internal modules will be set on `init`.
     firewall = null
@@ -44,28 +44,43 @@ class App
         utils = require "./utils.coffee"
         nodeEnv = process.env.NODE_ENV
 
-        # Init New Relic, if enabled.
+        # Init New Relic, if enabled, and set default error handler.
         @initNewRelic()
+        @setErrorHandler()
 
         # Require logger.
         logger = require "./logger.coffee"
         logger.debug "App", "init", arrExtraMiddlewares
 
-        # Set error handler, configure Express server and start it.
-        @setErrorHandler()
-        @configureServer()
+        # Configure Express server and start server.
+        @configureServer arrExtraMiddlewares
         @startServer()
 
     # Init new Relic, depending on its settings (enabled, appName and LicenseKey).
     initNewRelic: =>
-        newRelicEnabled = settings.newRelic.enabled
-        newRelicAppName = process.env.NEW_RELIC_APP_NAME or settings.newRelic.appName
-        newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY or settings.newRelic.licenseKey
+        enabled = settings.newRelic.enabled
+        appName = process.env.NEW_RELIC_APP_NAME or settings.newRelic.appName
+        licKey = process.env.NEW_RELIC_LICENSE_KEY or settings.newRelic.licenseKey
 
         # Check if New Relic settings are available, and if so, start the New Relic agent.
-        if newRelicEnabled and newRelicAppName? and newRelicAppName isnt "" and newRelicLicenseKey? and newRelicLicenseKey isnt ""
-            console.log "App", "Embeding New Relic agent for #{newRelicAppName}..."
+        if enabled and appName? and appName isnt "" and licKey? and licKey isnt ""
+            targetFile = path.resolve path.dirname(require.main.filename), "newrelic.js"
+
+            # Make sure the newrelic.js file exists on the app root, and create one if it doesn't.
+            if not fs.existsSync targetFile
+                if process.versions.node.indexOf(".10.") > 0
+                    enc = {encoding: settings.general.encoding}
+                else
+                    enc = settings.general.encoding
+
+                # Set values of newrelic.js file and write it to the app root.
+                newRelicJson = "exports.config = {app_name: ['#{appName}'], license_key: '#{licKey}', logging: {level: 'trace'}};"
+                fs.writeFileSync targetFile, newRelicJson, enc
+
+                console.log "App", "Original newrelic.js file was copied to the app root, app_name and license_key were set."
+
             require "newrelic"
+            console.log "App", "Started New Relic agent for #{appName}."
 
     # Log proccess termination to the console. This will force flush any buffered logs to disk.
     # Do not log the exit if running under test environment.
@@ -79,7 +94,7 @@ class App
                 console.warn "App", "Could not flush buffered logs to disk."
 
     # Configure the server. Set views, options, use Express modules, etc.
-    configureServer: =>
+    configureServer: (arrExtraMiddlewares) =>
         @server = express()
 
         @server.configure =>
@@ -139,11 +154,6 @@ class App
             # Set Express router.
             @server.use @server.router
 
-            # Enable sockets?
-            if settings.sockets.enabled
-                sockets = require "./sockets.coffee"
-                sockets.init httpServer
-
         # Configure development environment to dump exceptions and show stack.
         @server.configure "development", =>
             @server.use express.errorHandler {dumpExceptions: true, showStack: true}
@@ -169,6 +179,11 @@ class App
                 throw new Error "The certificate files could not be found. Please check the 'Path.sslKeyFile' and 'Path.sslCertFile' settings."
         else
             httpServer = http.createServer @server
+
+        # Enable sockets?
+        if settings.sockets.enabled
+            sockets = require "./sockets.coffee"
+            sockets.init httpServer
 
         # Start the server and log output.
         if settings.app.ip? and settings.app.ip isnt ""

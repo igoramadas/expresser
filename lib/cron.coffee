@@ -85,12 +85,15 @@ class Cron
             for key, data of cronJson
                 module = require(options.basePath + key)
                 for d in data
-                    cb = module[d.callback]
-                    job = d
-                    job.module = key
-                    job.id = key + "." + d.callback
-                    job.callback = cb
-                    @add job
+                    if d.enabled? and not d.enabled
+                        cb = module[d.callback]
+                        job = d
+                        job.module = key
+                        job.id = key + "." + d.callback
+                        job.callback = cb
+                        @add job
+                    else
+                        logger.debug "Cron.load", d.module, d.callback, "Property enabled is false. Skip!"
 
             # Start all jobs automatically if `autoStart` is true.
             @start() if options.autoStart

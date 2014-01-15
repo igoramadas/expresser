@@ -18,7 +18,6 @@ class Sockets
     # @property [Socket.IO Object] Exposes Socket.IO object to external modules.
     io: null
 
-
     # INIT
     # --------------------------------------------------------------------------
 
@@ -54,7 +53,6 @@ class Sockets
             # Bind all current event listeners.
             for listener in @currentListeners
                 socket.on(listener.key, listener.callback) if listener?
-
 
     # EVENTS
     # ----------------------------------------------------------------------
@@ -103,7 +101,6 @@ class Sockets
     # Remove invalid and expired event listeners.
     compact: =>
         @currentListeners = lodash.compact @currentListeners
-
 
     # HELPERS
     # ----------------------------------------------------------------------

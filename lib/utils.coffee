@@ -130,7 +130,6 @@ class Utils
 
         return result
 
-
     # CLIENT INFO UTILS
     # --------------------------------------------------------------------------
 
@@ -182,9 +181,15 @@ class Utils
         # Return default desktop value if no specific devices were found on user agent.
         return "desktop"
 
-
-    # DATA UTILS
+    # IO AND DATAUTILS
     # --------------------------------------------------------------------------
+
+    # Copy the `src` file to the `target`, both must be the full file path.
+    # @param [String] src The full source file path.
+    # @param [String] target The full target file path.
+    copyFileSync: (src, target) =>
+        srcContents = fs.readFileSync src
+        fs.writeFileSync target, srcContents
 
     # Minify the passed JSON value. Removes comments, unecessary white spaces etc.
     # @param [String] source The JSON text to be minified.
@@ -201,7 +206,7 @@ class Utils
         # Main iterator.
         while index < length
 
-            symbol = source.charAt(index)
+            symbol = source.charAt index
             switch symbol
 
                 # Ignore whitespace tokens. According to ES 5.1 section 15.12.1.1,
