@@ -85,7 +85,7 @@ class Cron
             for key, data of cronJson
                 module = require(options.basePath + key)
                 for d in data
-                    if d.enabled? and not d.enabled
+                    if not d.enabled? or d.enabled
                         cb = module[d.callback]
                         job = d
                         job.module = key
