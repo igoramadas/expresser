@@ -370,8 +370,13 @@ class Database
     # @param [Object] connString The connection string, for example user:password@hostname/dbname.
     # @param [Object] options Additional options to be passed when creating the DB connection object.
     setDb: (connString, options) =>
-        logger.debug "Database.setDb", connString, options
         @db = mongo.db connString, options
+
+        # Safe logging, strip username and password.
+        sep = connStringSafe.indexOf "@"
+        connStringSafe = connString
+        connStringSafe = connStringSafe.substring sep if sep > 0
+        logger.debug "Database.setDb", connStringSafe, options
 
     # Helper to get connection (host, port, db name) info about the current database / mongo object.
     # @return [String] Single line string with db information.
