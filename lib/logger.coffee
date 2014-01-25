@@ -42,6 +42,8 @@ class Logger
     # @private
     activeServices = []
 
+    # Holds a copy of emails sent for critical logs.
+    criticalEmailCache: {}
 
     # INIT AND STOP
     # --------------------------------------------------------------------------
@@ -227,16 +229,25 @@ class Logger
 
         # If the `criticalEmailTo` is set, dispatch a mail send event.
         if settings.logger.criticalEmailTo? and settings.logger.criticalEmailTo isnt ""
+            body = args.join ", "
+            maxAge = moment().subtract("m", settings.logger.criticalEmailExpireMinutes).unix()
+
+            # Do not proceed if this critical email was sent recently.
+            return if @criticalEmailCache[body]? and @criticalEmailCache[body] > maxAge
+
+            # Set mail options.
             mailOptions =
                 subject: "CRITICAL: #{args[1]}"
-                body: JSON.stringify args
+                body: body
                 to: settings.logger.criticalEmailTo
                 logError: false
 
-            console.warn mailOptions
-
+            # Emit mail send message.
             events.emit "mailer.send", mailOptions, (err) ->
                 console.error "Logger.critical", "Can't send email!", err if err?
+
+            # Save to critical email cache.
+            @criticalEmailCache[body] = moment().unix()
 
     # LOCAL LOGGING
     # --------------------------------------------------------------------------

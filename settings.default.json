@@ -161,6 +161,9 @@
         // If the mail module is properly configured then all critical logs (logger.critical()) will
         // be sent to the email address specified below. Leave blank or null to not send emails.
         "criticalEmailTo": null,
+        // For critical emails, avoid sending duplicate messages by setting an expiry time. So it will only
+        // send one email every 5 minutes (value set below) for the same error message.
+        "criticalEmailExpireMinutes": 5,
         // Define all log types which should be treated as error (red colour on the console).
         "errorLogTypes": "err,error,warn,warning,critical",
         // List will all field / property names to be removed from logs.
