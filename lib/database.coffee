@@ -373,7 +373,7 @@ class Database
         @db = mongo.db connString, options
 
         # Safe logging, strip username and password.
-        sep = connStringSafe.indexOf "@"
+        sep = connString.indexOf "@"
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
         logger.debug "Database.setDb", connStringSafe, options

@@ -233,8 +233,10 @@ class Logger
                 to: settings.logger.criticalEmailTo
                 logError: false
 
+            console.warn mailOptions
+
             events.emit "mailer.send", mailOptions, (err) ->
-                console.error "Logger.critical", "Can't send email!", err
+                console.error "Logger.critical", "Can't send email!", err if err?
 
     # LOCAL LOGGING
     # --------------------------------------------------------------------------
