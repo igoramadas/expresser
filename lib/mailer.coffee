@@ -86,13 +86,15 @@ class Mailer
         if not @checkConfig()
             errMsg = "SMTP transport wasn't initiated. Abort!"
             logger.warn "Mailer.send", errMsg, options
-            return callback errMsg, null
+            callback errMsg, null if callback?
+            return
 
         # Make sure "to" address is valid.
         if not options.to? or options.to is false or options.to is ""
             errMsg = "Option 'to' is not valid. Abort!"
             logger.warn "Mailer.send", errMsg, options
-            return callback errMsg, null
+            callback errMsg, null if callback?
+            return
 
         # Set from to default address if no `to` was set, and `logError` defaults to true.
         options.from = "#{settings.general.appTitle} <#{settings.mailer.from}>" if not options.from?
@@ -126,9 +128,9 @@ class Mailer
                 if smtp2?
                     smtpSend smtp2, options, (err2, result2) -> callback err2, result2
                 else
-                    callback err, result
+                    callback err, result if callback?
             else
-                callback err, result
+                callback err, result if callback?
 
     # TEMPLATES
     # --------------------------------------------------------------------------
