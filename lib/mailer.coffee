@@ -122,6 +122,11 @@ class Mailer
         html = @parseTemplate html, {to: toName, appTitle: settings.general.appTitle, appUrl: settings.general.appUrl}
         options.html = html
 
+        # Check if `doNotSend` flag is set, and if so, do not send anything.
+        if settings.mailer.doNotSend
+            callback null, "Do not send is true, avoid sending!" if callback?
+            return
+
         # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.
         smtpSend smtp, options, (err, result) ->
             if err?
