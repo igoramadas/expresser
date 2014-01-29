@@ -213,6 +213,8 @@
         // The name of the base template file when loading and parsing email templates.
         // The base path is defined under `settings.path.emailTemplatesDir`.
         "baseTemplateFile": "base.html",
+        // If `doNotSend` is true, no email will be sent out. Useful while testing.
+        "doNotSend": false,
         // Default `from` email address.
         "from": null,
         // DKIM signing options must be set below if you want to sign emails.
