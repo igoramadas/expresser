@@ -29,7 +29,7 @@ class Sockets
         options = {server: options} if not options.server?
         @currentListeners = []
 
-        if not server?
+        if not options.server?
             logger.error "Sockets.init", "App server is invalid. Abort!"
             return
 

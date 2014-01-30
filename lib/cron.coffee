@@ -75,6 +75,7 @@ class Cron
 
         # Get full path to the passed json file.
         filepath = utils.getFilePath filename
+        basename = path.basename filepath
 
         # Found the cron.json file? Read it.
         if filepath?
@@ -98,9 +99,9 @@ class Cron
             # Start all jobs automatically if `autoStart` is true.
             @start() if options.autoStart
 
-            logger.info "Cron.load", "#{filename} loaded.", options
+            logger.info "Cron.load", "#{basename} loaded."
         else if not doNotWarn
-            logger.warn "Cron.load", "#{filename} not found."
+            logger.warn "Cron.load", "#{basename} not found."
 
     # METHODS
     # -------------------------------------------------------------------------

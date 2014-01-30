@@ -14,7 +14,7 @@
         "node": "*"
     },
     "scripts": {
-        "prepublish": "./prepublish.sh",
+        "prepublish": "npm prune",
         "test": "./node_modules/.bin/mocha --reporter spec"
     },
 	"dependencies": {
