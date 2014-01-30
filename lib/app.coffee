@@ -132,7 +132,8 @@ class App
                 firewall.init @server
 
             # Use Express basic handlers.
-            @server.use express.bodyParser()
+            @server.use express.json()
+            @server.use express.urlencoded()
             @server.use express.cookieParser settings.app.cookieSecret
             @server.use express.session {secret: settings.app.sessionSecret}
             @server.use express.compress()
