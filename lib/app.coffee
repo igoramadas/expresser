@@ -41,7 +41,10 @@ class App
     # @param [Object] options App init options. If passed as an array, assume it's the array with extra middlewares.
     # @option options [Array] extraMiddlewares Array with extra middlewares to be loaded.
     init: (options) =>
-        options = {extraMiddlewares: options} if lodash.isArray options
+        if lodash.isArray options
+            options = {extraMiddlewares: options}
+        else if not options?
+            options = {}
 
         # Load settings and utils.
         settings = require "./settings.coffee"
