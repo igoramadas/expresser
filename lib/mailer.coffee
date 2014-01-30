@@ -41,7 +41,8 @@ class Mailer
     # Init the Mailer module and create the SMTP objects.
     # Also check if still using old "mail" instead of "mailer".
     # TODO! Old .mail references should be removed in April 2014.
-    init: =>
+    # @param [Object] options Mailer init options.
+    init: (options) =>
         if settings.mail?
             settings.mailer = lodash.defaults settings.mail, settings.mailer
             logger.warn "Mailer.init", "The module is now called Mailer, please update settings from 'mail' to 'mailer'."

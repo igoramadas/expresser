@@ -215,12 +215,15 @@ class Settings
         if callback? and not lodash.isFunction callback
             throw new TypeError "The callback must be a valid function, or null/undefined."
 
+        logToConsole = @general.debug and @logger.console
+
         # Add / remove watcher for the @json file if it exists.
         filename = utils.getFilePath "settings.json"
         if filename?
             if enable
                 fs.watchFile filename, {persistent: true}, (evt, filename) =>
                     @loadFromJson filename
+                    console.log "Settings.watch", filename, "Reloaded!" if logToConsole
                     callback(evt, filename) if callback?
             else
                 fs.unwatchFile filename, callback
@@ -231,11 +234,12 @@ class Settings
             if enable
                 fs.watchFile filename, {persistent: true}, (evt, filename) =>
                     @loadFromJson filename
+                    console.log "Settings.watch", filename, "Reloaded!" if logToConsole
                     callback(evt, filename) if callback?
             else
                 fs.unwatchFile filename, callback
 
-        if @general.debug and @logger.console
+        if logToConsole
             console.log "Settings.watch", enable, (if callback? then "With callback" else "No callback")
 
     # PAAS

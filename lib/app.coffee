@@ -38,8 +38,15 @@ class App
     # Init the Express server. If New Relic settings are set it will automatically
     # require and use the `newrelic` module. Firewall and Sockets modules will be
     # used only if enabled on the settings.
-    # @param [Array] arrExtraMiddlewares Array with extra middlewares to be added on init, optional.
-    init: (arrExtraMiddlewares) =>
+    # @param [Object] options App init options. If passed as an array, assume it's the array with extra middlewares.
+    # @option options [Array] extraMiddlewares Array with extra middlewares to be loaded.
+    init: (options) =>
+        if lodash.isArray options
+            options = {extraMiddlewares: options}
+        else if not options?
+            options = {}
+
+        # Load settings and utils.
         settings = require "./settings.coffee"
         utils = require "./utils.coffee"
         nodeEnv = process.env.NODE_ENV
@@ -50,10 +57,10 @@ class App
 
         # Require logger.
         logger = require "./logger.coffee"
-        logger.debug "App", "init", arrExtraMiddlewares
+        logger.debug "App", "init", options.extraMiddlewares
 
         # Configure Express server and start server.
-        @configureServer arrExtraMiddlewares
+        @configureServer options
         @startServer()
 
     # Init new Relic, depending on its settings (enabled, appName and LicenseKey).
@@ -94,7 +101,7 @@ class App
                 console.warn "App", "Could not flush buffered logs to disk."
 
     # Configure the server. Set views, options, use Express modules, etc.
-    configureServer: (arrExtraMiddlewares) =>
+    configureServer: (options) =>
         @server = express()
 
         @server.configure =>
@@ -141,11 +148,11 @@ class App
             @server.use ConnectAssets
 
             # Check for extra middlewares to be added.
-            if arrExtraMiddlewares?
-                if lodash.isArray arrExtraMiddlewares
-                    @extraMiddlewares.push mw for mw in arrExtraMiddlewares
+            if options.extraMiddlewares?
+                if lodash.isArray options.extraMiddlewares
+                    @extraMiddlewares.push mw for mw in options.extraMiddlewares
                 else
-                    @extraMiddlewares.push arrExtraMiddlewares
+                    @extraMiddlewares.push options.extraMiddlewares
 
             # Add more middlewares, if any (for example passport for authentication).
             if @extraMiddlewares.length > 0

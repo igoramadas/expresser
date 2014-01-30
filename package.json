@@ -19,7 +19,7 @@
     },
 	"dependencies": {
         "async": ">= 0.2.9",
-        "coffee-script": ">= 1.6.3",
+        "coffee-script": ">= 1.7.0",
         "connect-assets": ">= 2.5.3",
         "express": ">= 3.4.7",
         "imagemagick": ">= 0.1.3",
