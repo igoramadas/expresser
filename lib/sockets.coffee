@@ -23,15 +23,17 @@ class Sockets
 
     # Bind the Socket.IO object to the Express app. This will also set the counter
     # to increase / decrease when users connects or disconnects from the app.
-    # @param [Object] server The Express server object to bind to.
-    init: (server) =>
+    # @param [Object] Sockets init options.
+    # @option options [Object] server The Express server object to bind to.
+    init: (options) =>
+        options = {server: options} if not options.server?
         @currentListeners = []
 
         if not server?
             logger.error "Sockets.init", "App server is invalid. Abort!"
             return
 
-        @io = require("socket.io").listen server
+        @io = require("socket.io").listen options.server
 
         # Set transports.
         @io.set "transports", ["websocket", "xhr-polling", "htmlfile"]

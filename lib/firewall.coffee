@@ -39,16 +39,20 @@ class Firewall
     # -------------------------------------------------------------------------
 
     # Init the firewall. This must be called AFTER the web app has started.
-    init: (server) =>
+    # @param [Object] Firewall init options.
+    # @option options [Object] server The Express server object to bind to.
+    init: (options, callback) =>
+        options = {server: options} if not options.server?
         env = process.env
 
-        if not server?
+        # Server is mandatory!
+        if not options.server?
             logger.error "Firewall.init", "App server is invalid. Abort!"
             return
 
         # Bind HTTP protection.
         if settings.firewall.httpPatterns isnt "" and env.NODE_ENV isnt "test"
-            server.use @checkHttpRequest
+            options.server.use @checkHttpRequest
             logger.info "Firewall.init", "Protect HTTP requests."
 
         # Bind sockets protection.
@@ -56,7 +60,6 @@ class Firewall
             logger.info "Firewall.init", "Protect Socket requests."
 
         @blacklist = {}
-
 
     # HTTP PROTECTION
     # -------------------------------------------------------------------------
@@ -99,7 +102,6 @@ class Firewall
         @logAttack module, pattern, req.url, ip
         @sendAccessDenied res
 
-
     # SOCKETS PROTECTION
     # -------------------------------------------------------------------------
 
@@ -139,7 +141,6 @@ class Firewall
         @logAttack module, pattern, message, ip
         @sendAccessDenied socket
 
-
     # BLACKLIST METHODS
     # -------------------------------------------------------------------------
 
@@ -177,7 +178,6 @@ class Firewall
         bl.count = 1
 
         @blacklist[ip] = bl
-
 
     # HELPER METHODS
     # -------------------------------------------------------------------------

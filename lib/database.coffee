@@ -32,7 +32,7 @@ class Database
     # -------------------------------------------------------------------------
 
     # Init the databse module and test the connection straight away.
-    init: =>
+    init: (options) =>
         if settings.database.connString? and settings.database.connString isnt ""
             @validateConnection()
         else if settings.database.connString2? and settings.database.connString2 isnt ""
@@ -350,6 +350,7 @@ class Database
 
                 # Trigger connection error.
                 @onConnectionError? err
+
             else
 
                 # If using the failover database, register a timeout to try

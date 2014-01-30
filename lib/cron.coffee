@@ -48,7 +48,7 @@ class Cron
 
     # Init the cron manager. If `loadOnInit` setting is true, the `cron.json` file will be parsed
     # and loaded straight away (if there's one).
-    init: =>
+    init: (options) =>
         logger.debug "Cron.init"
         @load true if settings.cron.loadOnInit
 

@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "0.9.6",
+    "version": "0.9.7",
     "description": "A ready-to-use platform for Node.js web apps, built on top of Express.",
     "homepage": "http://expresser.codeplex.com",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -19,7 +19,7 @@
     },
 	"dependencies": {
         "async": ">= 0.2.9",
-        "coffee-script": ">= 1.6.3",
+        "coffee-script": ">= 1.7.0",
         "connect-assets": ">= 2.5.3",
         "express": ">= 3.4.7",
         "imagemagick": ">= 0.1.3",
