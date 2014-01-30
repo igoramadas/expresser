@@ -32,6 +32,7 @@ class Database
     # -------------------------------------------------------------------------
 
     # Init the databse module and test the connection straight away.
+    # @param [Object] options Database init options.
     init: (options) =>
         if settings.database.connString? and settings.database.connString isnt ""
             @validateConnection()

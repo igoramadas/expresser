@@ -38,34 +38,27 @@ class App
     # Init the Express server. If New Relic settings are set it will automatically
     # require and use the `newrelic` module. Firewall and Sockets modules will be
     # used only if enabled on the settings.
-    # @param Object options App init options. If passed as an array, assume it's the array with extra middlewares.
+    # @param [Object] options App init options. If passed as an array, assume it's the array with extra middlewares.
     # @option options [Array] extraMiddlewares Array with extra middlewares to be loaded.
-    init: (options, callback) =>
+    init: (options) =>
         options = {extraMiddlewares: options} if lodash.isArray options
 
-        try
-            # Load settings and utils.
-            settings = require "./settings.coffee"
-            utils = require "./utils.coffee"
-            nodeEnv = process.env.NODE_ENV
+        # Load settings and utils.
+        settings = require "./settings.coffee"
+        utils = require "./utils.coffee"
+        nodeEnv = process.env.NODE_ENV
 
-            # Init New Relic, if enabled, and set default error handler.
-            @initNewRelic()
-            @setErrorHandler()
+        # Init New Relic, if enabled, and set default error handler.
+        @initNewRelic()
+        @setErrorHandler()
 
-            # Require logger.
-            logger = require "./logger.coffee"
-            logger.debug "App", "init", options.extraMiddlewares
+        # Require logger.
+        logger = require "./logger.coffee"
+        logger.debug "App", "init", options.extraMiddlewares
 
-            # Configure Express server and start server.
-            @configureServer options
-            @startServer()
-
-            callback null if callback?
-
-        # Oops, something really bad happened.
-        catch ex
-            callback ex if callback?
+        # Configure Express server and start server.
+        @configureServer options
+        @startServer()
 
     # Init new Relic, depending on its settings (enabled, appName and LicenseKey).
     initNewRelic: =>

@@ -29,7 +29,7 @@ class Expresser
     # @option options [Object] database Pass options to the Database init.
     # @option options [Object] logger Pass options to the Logger init.
     # @option options [Object] mailer Pass options to the Mailer init.
-    init: (options, callback) =>
+    init: (options) =>
         @logger.init options?.logger
         @database.init options?.database
         @mailer.init options?.mailer
