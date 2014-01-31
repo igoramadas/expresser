@@ -1,6 +1,6 @@
 // TEST: FIREWALL
 
-require("coffee-script");
+require("coffee-script/register");
 var chai = require("chai");
 chai.should();
 
