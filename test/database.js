@@ -45,7 +45,7 @@ describe("Database Tests", function() {
             done(err);
         };
 
-        settings.database.connString = "mongodb://127.0.0.1/expresser";
+        settings.database.connString = "mongodb://127.0.0.1/expresser?auto_reconnect=true";
 
         database.onConnectionValidated = callbackValidated;
         database.onConnectionError = callbackError;
@@ -90,8 +90,8 @@ describe("Database Tests", function() {
         };
 
         settings.database.retryInterval = 500;
-        settings.database.connString = "abc:invalid:mongo/expresser";
-        settings.database.connString2 = "mongodb://127.0.0.1/expresserFailover";
+        settings.database.connString = "abc:invalid:mongo/expresser?auto_reconnect=true";
+        settings.database.connString2 = "mongodb://127.0.0.1/expresserFailover?auto_reconnect=true";
 
         database.onFailoverSwitch = callbackFailover;
         database.init();
