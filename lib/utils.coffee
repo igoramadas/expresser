@@ -116,13 +116,14 @@ class Utils
 
         # Save parsed OS info to the result object.
         result.hostname = os.hostname()
-        result.pid = process.pid + " " + process.title
-        result.platform = os.platform() + " " + os.arch() + ", v" + os.release()
-        result.memoryTotal = os.totalmem() / 1000 + " MB"
-        result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100)
+        result.pid = process.pid
+        result.title = path.getbasename process.title
+        result.platform = os.platform() + " " + os.arch() + " " + os.release()
+        result.memoryTotal = (os.totalmem() / 1000 / 1000).toFixed(0) + " MB"
+        result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100).toFixed(0)
         result.loadAvg = os.loadavg()
         result.uptime = moment.duration(process.uptime, "s").humanize()
-        result.ip = @getServerIP()
+        result.ips = @getServerIP()
 
         return result
 
