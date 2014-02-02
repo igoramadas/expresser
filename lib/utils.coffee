@@ -114,18 +114,14 @@ class Utils
     getServerInfo: =>
         result = {}
 
-        # Parse server info.
-        pid = process.pid + " " + process.title
-        platform = process.platform + " " + process.arch + ", v" + process.version
-        memUsage = process.memoryUsage()
-        memUsage = Math.round(memUsage.headUsed / 1000) + " / " + Math.round(memUsage.heapTotal / 1000) + " MB"
-        uptime = moment.duration(process.uptime, "s").humanize()
-
-        # Save parsed info to the result object.
-        result.pid = pid
-        result.platform = platform
-        result.memoryUsage = memUsage
-        result.uptime = uptime
+        # Save parsed OS info to the result object.
+        result.hostname = os.hostname()
+        result.pid = process.pid + " " + process.title
+        result.platform = os.platform() + " " + os.arch() + ", v" + os.release()
+        result.memoryTotal = os.totalmem() / 1000 + " MB"
+        result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100)
+        result.loadAvg = os.loadavg()
+        result.uptime = moment.duration(process.uptime, "s").humanize()
         result.ip = @getServerIP()
 
         return result

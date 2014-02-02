@@ -54,7 +54,7 @@ class Sockets
 
             # Bind all current event listeners.
             for listener in @currentListeners
-                socket.on(listener.key, listener.callback) if listener?
+                socket.on listener.key, listener.callback if listener?
 
     # EVENTS
     # ----------------------------------------------------------------------
@@ -78,7 +78,7 @@ class Sockets
         @currentListeners.push {key: key, callback: callback}
 
         if not onlyNewClients
-            for socketKey, socket of @io.sockets.manager.open
+            for key, socket of @io.sockets.manager.open
                 socket.on key, callback
 
         logger.debug "Sockets.listenTo", key
