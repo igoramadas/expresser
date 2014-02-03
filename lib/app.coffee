@@ -13,6 +13,7 @@ class App
     http = require "http"
     https = require "https"
     lodash = require "lodash"
+    net = require "net"
     path = require "path"
 
     # Internal modules will be set on `init`.
@@ -30,7 +31,6 @@ class App
 
     # Current node environment and HTTP server handler are set on init.
     nodeEnv = null
-    httpServer = null
 
     # INIT
     # --------------------------------------------------------------------------
@@ -160,6 +160,7 @@ class App
                 @server.use mw for mw in @extraMiddlewares
 
             # Set Express router.
+            console.warn 11111, @server.router
             @server.use @server.router
 
         # Configure development environment to dump exceptions and show stack.
@@ -172,7 +173,7 @@ class App
 
     # Start the server using HTTP or HTTPS, depending on the settings.
     startServer: =>
-        if settings.app.ssl and settings.path.sslKeyFile? and settings.path.sslCertFile?
+        if settings.app.ssl.enabled and settings.path.sslKeyFile? and settings.path.sslCertFile?
             sslKeyFile = utils.getFilePath settings.path.sslKeyFile
             sslCertFile = utils.getFilePath settings.path.sslCertFile
 
@@ -181,25 +182,34 @@ class App
                 sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
                 sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
                 sslOptions = {key: sslKey, cert: sslCert}
-                httpServer = https.createServer sslOptions, @server
+                server = https.createServer sslOptions, @server
             else
                 logger.error "App", "init", "Cannot find certificate files.", settings.path.sslKeyFile, settings.path.sslCertFile
                 throw new Error "The certificate files could not be found. Please check the 'Path.sslKeyFile' and 'Path.sslCertFile' settings."
         else
-            httpServer = http.createServer @server
+            server = http.createServer @server
 
         # Enable sockets?
         if settings.sockets.enabled
             sockets = require "./sockets.coffee"
-            sockets.init httpServer
+            sockets.init server
 
         # Start the server and log output.
         if settings.app.ip? and settings.app.ip isnt ""
-            httpServer.listen settings.app.port, settings.app.ip
+            server.listen settings.app.port, settings.app.ip
             logger.info "App #{settings.general.appTitle} started!", settings.app.ip, settings.app.port
         else
-            httpServer.listen settings.app.port
+            server.listen settings.app.port
             logger.info "App #{settings.general.appTitle} started!", settings.app.port
+
+        # Using SSL and redirector port is set? Then create the http server.
+        if settings.app.ssl.enabled and settings.app.ssl.redirectorPort > 0
+            logger.info "App #{settings.general.appTitle} will redirect HTTP #{settings.app.ssl.redirectorPort} to HTTPS on #{settings.app.port}."
+            redirServer = express()
+            redirServer.get "*", (req, res) -> res.redirect "https://#{req.host}:#{settings.app.port}#{req.url}"
+            @redirectorServer = http.createServer redirServer
+            @redirectorServer.listen settings.app.ssl.redirectorPort
+
 
     # HELPER AND UTILS
     # --------------------------------------------------------------------------

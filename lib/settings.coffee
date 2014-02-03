@@ -354,7 +354,7 @@ Settings.getInstance = ->
 
         # Set debug in case it has not been set.
         if not @instance.general.debug?
-            if nodeEnv is "production" or @instance.currentEnv is "test"
+            if @currentEnv is "production" or @instance.currentEnv is "test"
                 @instance.general.debug = false
             else
                 @instance.general.debug = true
