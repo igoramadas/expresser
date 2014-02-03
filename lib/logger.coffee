@@ -173,13 +173,6 @@ class Logger
             args = logFunc
             logFunc = "info"
 
-        # Log to the console depending on `console` setting.
-        if settings.logger.console
-            if settings.logger.errorLogTypes.indexOf(logType) >= 0
-                console.error.apply this, args
-            else
-                console.log.apply this, args
-
         # Get message out of the arguments.
         msg = @getMessage args
 
@@ -190,6 +183,14 @@ class Logger
             loggerLogentries.log logFunc, msg
         if settings.logger.loggly.enabled and loggly?
             loggerLoggly.log settings.logger.loggly.token, msg, @logglyCallback
+
+        # Log to the console depending on `console` setting.
+        if settings.logger.console
+            args.unshift moment().format "HH:mm:ss.SS"
+            if settings.logger.errorLogTypes.indexOf(logType) >= 0
+                console.error.apply this, args
+            else
+                console.log.apply this, args
 
 
     # Log to the active transports as `debug`, only if the debug flag is enabled.
