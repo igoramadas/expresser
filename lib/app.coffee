@@ -160,7 +160,6 @@ class App
                 @server.use mw for mw in @extraMiddlewares
 
             # Set Express router.
-            console.warn 11111, @server.router
             @server.use @server.router
 
         # Configure development environment to dump exceptions and show stack.

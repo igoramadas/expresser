@@ -21,6 +21,12 @@ class Expresser
     sockets: require "./lib/sockets.coffee"
     utils: require "./lib/utils.coffee"
 
+    # Expose 3rd party modules.
+    libs:
+        async: require "async"
+        lodash: require "lodash"
+        moment: require "moment"
+
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App. The `options` can have properties to be
     # passed to the `init` of each module.
