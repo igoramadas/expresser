@@ -213,7 +213,7 @@ class Logger
     warn: =>
         args = Array.prototype.slice.call arguments
         args.unshift "WARN"
-        @log "warn", "warn", args
+        @log "warn", "warning", args
 
     # Log to the active transports as `error`.
     # All arguments are transformed to readable strings.
@@ -227,7 +227,7 @@ class Logger
     critical: =>
         args = Array.prototype.slice.call arguments
         args.unshift "CRITICAL"
-        @log "critical", "info", args
+        @log "critical", "err", args
 
         # If the `criticalEmailTo` is set, dispatch a mail send event.
         if settings.logger.criticalEmailTo? and settings.logger.criticalEmailTo isnt ""
