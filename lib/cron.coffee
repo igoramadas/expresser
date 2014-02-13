@@ -82,7 +82,7 @@ class Cron
             cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
             cronJson = utils.minifyJson cronJson
 
-            # Iterate jobs.
+            # Iterate jobs, but do not add if job's `enabled` is false.
             for key, data of cronJson
                 module = require(options.basePath + key)
                 for d in data
