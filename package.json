@@ -14,8 +14,8 @@
         "node": "*"
     },
     "scripts": {
-        "prepublish": "npm prune",
-        "test": "./node_modules/.bin/mocha --reporter spec"
+        "prepublish": "make docs",
+        "test": "make test"
     },
 	"dependencies": {
         "async": ">= 0.2.9",
@@ -36,7 +36,6 @@
 	},
     "devDependencies": {
         "chai": "*",
-        "codo": "*",
         "docco": "*",
         "mocha": "*"
     },
