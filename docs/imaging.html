@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>imaging.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>imaging.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="cron.html">
+                    cron.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="downloader.html">
+                    downloader.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mailer.html">
+                    mailer.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-imaging">EXPRESSER IMAGING</h2>
+<p>Handles and manipulates images on the server using ImageMagick.
+<!--
+@see Settings.imaging
+--></p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Imaging</span></span>
+
+    fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+    im = <span class="hljs-built_in">require</span> <span class="hljs-string">"imagemagick"</span>
+    logger = <span class="hljs-built_in">require</span> <span class="hljs-string">"./logger.coffee"</span>
+    path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
+    settings = <span class="hljs-built_in">require</span> <span class="hljs-string">"./settings.coffee"</span></pre></div>
+        
+      
+        
+        <h2 id="image-methods">IMAGE METHODS</h2>
+
+        
+      
+        
+        <p>Internal method to convert image filetypes. Image will also be resized and scale to the specified
+dimensions (width and height). A callback (err, stdout) can be passed as well.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-title">convert</span> = <span class="hljs-params">(source, filetype, options, callback)</span> =&gt;</span>
+        fs.exists source, <span class="hljs-function"><span class="hljs-params">(exists)</span> -&gt;</span>
+            <span class="hljs-keyword">if</span> exists
+                <span class="hljs-keyword">try</span>
+                    callback = options <span class="hljs-keyword">if</span> <span class="hljs-keyword">typeof</span> options <span class="hljs-keyword">is</span> <span class="hljs-string">"function"</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> callback?</pre></div>
+        
+      
+        
+        <p>Create arguments for the ImageMagick <code>convert</code> command.</p>
+
+        
+          <div class='highlight'><pre>                    args = []
+                    args.push source</pre></div>
+        
+      
+        
+        <p>Get proper dimensions.</p>
+
+        
+          <div class='highlight'><pre>                    size = options.size
+                    width = options.width <span class="hljs-keyword">if</span> options.width?
+                    height = options.height <span class="hljs-keyword">if</span> options.height?</pre></div>
+        
+      
+        
+        <p>Set size based on options.</p>
+
+        
+          <div class='highlight'><pre>                    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> size?
+                        size = <span class="hljs-string">""</span>
+                        <span class="hljs-keyword">if</span> width? <span class="hljs-keyword">and</span> width &gt; <span class="hljs-number">0</span>
+                            size += width
+                        <span class="hljs-keyword">if</span> height? <span class="hljs-keyword">and</span> height &gt; <span class="hljs-number">0</span>
+                            size += <span class="hljs-string">"x"</span> + height</pre></div>
+        
+      
+        
+        <p>Resize?</p>
+
+        
+          <div class='highlight'><pre>                    <span class="hljs-keyword">if</span> size? <span class="hljs-keyword">and</span> size <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+                        args.push <span class="hljs-string">"-resize"</span>
+                        args.push size</pre></div>
+        
+      
+        
+        <p>Set quality?</p>
+
+        
+          <div class='highlight'><pre>                    <span class="hljs-keyword">if</span> options.quality? <span class="hljs-keyword">and</span> options.quality <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                        args.push <span class="hljs-string">"-quality"</span>
+                        args.push options.quality</pre></div>
+        
+      
+        
+        <p>Add target filename argument.</p>
+
+        
+          <div class='highlight'><pre>                    args.push source.replace(path.extname(source), filetype)</pre></div>
+        
+      
+        
+        <p>Try converting the source to the destination filetype trigger the <code>callback</code>, if passed.</p>
+
+        
+          <div class='highlight'><pre>                    im.convert args, <span class="hljs-function"><span class="hljs-params">(err, stdout)</span> -&gt;</span> callback(err, stdout) <span class="hljs-keyword">if</span> callback?
+
+                    logger.debug <span class="hljs-string">"Imaging.convert"</span>, source, options</pre></div>
+        
+      
+        
+        <p>In case of exception, log it and pass to the <code>callback</code>.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">catch</span> ex
+                    logger.error <span class="hljs-string">"Imaging.convert"</span>, ex
+                    callback(ex, <span class="hljs-literal">false</span>) <span class="hljs-keyword">if</span> callback?
+
+            <span class="hljs-keyword">else</span></pre></div>
+        
+      
+        
+        <p>Source file does not exist, so log the warning and trigger
+the <code>callback</code> if one was passed.</p>
+
+        
+          <div class='highlight'><pre>                logger.warn <span class="hljs-string">"Imaging.convert"</span>, <span class="hljs-string">"Abort, source file does not exist."</span>, source
+                callback(<span class="hljs-string">"Source file does not exist."</span>, <span class="hljs-literal">false</span>) <span class="hljs-keyword">if</span> callback?</pre></div>
+        
+      
+        
+        <p>Converts the specified image to GIF.
+@param [String] source Path to the source image.
+@param [Object] options Options to be passed to the converter, optional.
+@param [Method] callback Function (err, result) to be called when GIF conversion has finished.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">toGif</span>: <span class="hljs-function"><span class="hljs-params">(source, options, callback)</span> =&gt;</span>
+        convert source, <span class="hljs-string">".gif"</span>, options, callback</pre></div>
+        
+      
+        
+        <p>Converts the specified image to JPG.
+@param [String] source Path to the source image.
+@param [Object] options Options to be passed to the converter, optional.
+@param [Method] callback Function (err, result) to be called when JPG conversion has finished.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">toJpg</span>: <span class="hljs-function"><span class="hljs-params">(source, options, callback)</span> =&gt;</span>
+        convert source, <span class="hljs-string">".jpg"</span>, options, callback</pre></div>
+        
+      
+        
+        <p>Converts the specified image to PNG.
+@param [String] source Path to the source image.
+@param [Object] options Options to be passed to the converter, optional.
+@param [Method] callback Function (err, result) to be called when PNG conversion has finished.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">toPng</span>: <span class="hljs-function"><span class="hljs-params">(source, options, callback)</span> =&gt;</span>
+        convert source, <span class="hljs-string">".png"</span>, options, callback</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+          <div class='highlight'><pre>Imaging.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
+    <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Imaging() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@instance</span>
+
+<span class="hljs-built_in">module</span>.<span class="hljs-built_in">exports</span> = <span class="hljs-built_in">exports</span> = Imaging.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

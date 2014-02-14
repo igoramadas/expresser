@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>database.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>database.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="cron.html">
+                    cron.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="downloader.html">
+                    downloader.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mailer.html">
+                    mailer.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-database">EXPRESSER DATABASE</h2>
+<p>Handles MongoDB database transactions using the <code>mongoskin</code> module. It supports
+a very simple failover mechanism where you can specify a “backup” connection
+string to which the module will connect in case the main database is down.
+<!--
+@see Settings.database
+--></p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Database</span></span>
+
+    lodash = <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
+    logger = <span class="hljs-built_in">require</span> <span class="hljs-string">"./logger.coffee"</span>
+    settings = <span class="hljs-built_in">require</span> <span class="hljs-string">"./settings.coffee"</span>
+    mongo = <span class="hljs-built_in">require</span> <span class="hljs-string">"mongoskin"</span></pre></div>
+        
+      
+        
+        <p>@property [Object] Database object (using mongoskin), will be set during <code>init</code>.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">db</span>: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>@property [Boolean] When using the failover/secondary databse this will be set to true.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">failover</span>: <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>@property [Method] Callback (result) triggered when a connection is validated sucessfully.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">onConnectionValidated</span>: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>@property [Method] Callback (err) triggered when a connection fails.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">onConnectionError</span>: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>@property [Method] Callback (isFailover) triggered when a connection switches to (true) or from (false) failover.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">onFailoverSwitch</span>: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        <p>Init the databse module and test the connection straight away.
+@param [Object] options Database init options.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">init</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> settings.database.connString? <span class="hljs-keyword">and</span> settings.database.connString <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            <span class="hljs-property">@validateConnection</span>()
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.database.connString2? <span class="hljs-keyword">and</span> settings.database.connString2 <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            <span class="hljs-property">@validateConnection</span>()
+            logger.warn <span class="hljs-string">"Database.init"</span>, <span class="hljs-string">"The connString is empty but connString2 is set."</span>, <span class="hljs-string">"Please set connString first (module will still work)."</span>
+        <span class="hljs-keyword">else</span>
+            logger.debug <span class="hljs-string">"Database.init"</span>, <span class="hljs-string">"No connection string set."</span>, <span class="hljs-string">"Database module won't work."</span></pre></div>
+        
+      
+        
+        <h2 id="crud-implementation">CRUD IMPLEMENTATION</h2>
+
+        
+      
+        
+        <p>Get data from the database. A <code>collection</code> and <code>callback</code> must be specified. The <code>filter</code> is optional.
+Please note that if <code>filter</code> has an _id or id field, or if it’s a plain string or number, it will be used
+to return documents by ID. Otherwise it’s used as keys-values object for filtering.
+@param [String] collection The collection name.
+@param [String, Object] filter Optional, if a string or number, assume it’s the document ID. Otherwise assume keys-values filter.
+@param [Object] options Options to be passed to the query.
+@option options [Integer] limit Limits the resultset to X documents.
+@param [Method] callback Callback (err, result) when operation has finished.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">get</span>: <span class="hljs-function"><span class="hljs-params">(collection, filter, options, callback)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback?
+            <span class="hljs-keyword">if</span> lodash.isFunction options
+                callback = options
+                options = <span class="hljs-literal">null</span>
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction filter
+                callback = filter
+                filter = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>Callback is mandatory!</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback?
+            <span class="hljs-keyword">if</span> settings.logger.autoLogErrors
+                logger.error <span class="hljs-string">"Database.get"</span>, <span class="hljs-string">"No callback specified. Abort!"</span>, collection, filter
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Database.get: a callback (last argument) must be specified."</span></pre></div>
+        
+      
+        
+        <p>No DB set? Throw exception.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@db</span>?
+            <span class="hljs-keyword">if</span> settings.logger.autoLogErrors
+                logger.error <span class="hljs-string">"Database.get"</span>, <span class="hljs-string">"The db is null or was not initialized. Abort!"</span>, collection, filter
+            <span class="hljs-keyword">return</span> callback <span class="hljs-string">"Database.set: the db was not initialized, please check database settings and call its 'init' method."</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-function"><span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> callback?
+                result = <span class="hljs-property">@normalizeId</span> result <span class="hljs-keyword">if</span> settings.database.normalizeId
+                callback err, result</pre></div>
+        
+      
+        
+        <p>Set collection object.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = <span class="hljs-property">@db</span>.collection collection</pre></div>
+        
+      
+        
+        <p>Parse ID depending on <code>filter</code>.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> filter?
+            <span class="hljs-keyword">if</span> filter._id?
+                id = filter._id
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> filter.id? <span class="hljs-keyword">and</span> settings.database.normalizeId
+                id = filter.id
+            <span class="hljs-keyword">else</span>
+                t = <span class="hljs-keyword">typeof</span> filter
+                id = filter <span class="hljs-keyword">if</span> t <span class="hljs-keyword">is</span> <span class="hljs-string">"string"</span> <span class="hljs-keyword">or</span> t <span class="hljs-keyword">is</span> <span class="hljs-string">"integer"</span></pre></div>
+        
+      
+        
+        <p>Get <code>limit</code> option.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options?.limit?
+            limit = options.limit
+        <span class="hljs-keyword">else</span>
+            limit = <span class="hljs-number">0</span></pre></div>
+        
+      
+        
+        <p>Find documents depending on <code>filter</code> and <code>options</code>.
+If id is set, use the shorter findById.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> id?
+            dbCollection.findById id, dbCallback</pre></div>
+        
+      
+        
+        <p>Create a params object for the find method.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> filter?
+            findParams = {<span class="hljs-attribute">$query</span>: filter}
+            findParams[<span class="hljs-string">"$orderby"</span>] = options.orderBy <span class="hljs-keyword">if</span> options?.orderBy?
+
+            <span class="hljs-keyword">if</span> limit &gt; <span class="hljs-number">0</span>
+                dbCollection.find(findParams).limit(limit).toArray dbCallback
+            <span class="hljs-keyword">else</span>
+                dbCollection.find(findParams).toArray dbCallback</pre></div>
+        
+      
+        
+        <p>Search everything!</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">if</span> limit &gt; <span class="hljs-number">0</span>
+                dbCollection.find().limit(limit).toArray dbCallback
+            <span class="hljs-keyword">else</span>
+                dbCollection.find().toArray dbCallback
+
+        <span class="hljs-keyword">if</span> filter?
+            filterLog = filter
+            filterLog.password = <span class="hljs-string">"***"</span> <span class="hljs-keyword">if</span> filterLog.password?
+            filterLog.passwordHash = <span class="hljs-string">"***"</span> <span class="hljs-keyword">if</span> filterLog.passwordHash?
+            logger.debug <span class="hljs-string">"Database.get"</span>, collection, filterLog, options
+        <span class="hljs-keyword">else</span>
+            logger.debug <span class="hljs-string">"Database.get"</span>, collection, <span class="hljs-string">"No filter."</span>, options</pre></div>
+        
+      
+        
+        <p>Insert or update documents on the database using Mongo’s upsert command.
+The <code>options</code> parameter is optional.
+@param [String] collection The collection name.
+@param [Object] obj Document or data to be added / updated.
+@param [Object] options Optional, options to control and filter the upsert behaviour.
+@option options [Object] filter Defines the query filter. If not specified, will try using the ID of the passed object.
+@option options [Boolean] patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
+@option options [Boolean] upsert Default is true, if false it won’t add a new document (only update existing).
+@param [Method] callback Callback (err, result) when operation has finished.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">set</span>: <span class="hljs-function"><span class="hljs-params">(collection, obj, options, callback)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction options
+            callback = options
+            options = {}</pre></div>
+        
+      
+        
+        <p>Object or filter is mandatory.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?
+            <span class="hljs-keyword">if</span> settings.logger.autoLogErrors
+                logger.error <span class="hljs-string">"Database.set"</span>, <span class="hljs-string">"No object specified. Abort!"</span>, collection
+            <span class="hljs-keyword">if</span> callback?
+                callback <span class="hljs-string">"Database.set: no object (second argument) was specified."</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>No DB set? Throw exception.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@db</span>?
+            <span class="hljs-keyword">if</span> settings.logger.autoLogErrors
+                logger.error <span class="hljs-string">"Database.set"</span>, <span class="hljs-string">"The db is null or was not initialized. Abort!"</span>, collection
+            <span class="hljs-keyword">if</span> callback?
+                callback <span class="hljs-string">"Database.set: the db was not initialized, please check database settings and call its 'init' method."</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-function"><span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> callback?
+                result = <span class="hljs-property">@normalizeId</span>(result) <span class="hljs-keyword">if</span> settings.database.normalizeId
+                callback err, result</pre></div>
+        
+      
+        
+        <p>Set collection object.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = <span class="hljs-property">@db</span>.collection collection</pre></div>
+        
+      
+        
+        <p>Make sure the ID is converted to ObjectID.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> obj._id?
+            id = mongo.ObjectID.createFromHexString obj._id.toString()
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> obj.id? <span class="hljs-keyword">and</span> settings.database.normalizeId
+            id = mongo.ObjectID.createFromHexString obj.id.toString()</pre></div>
+        
+      
+        
+        <p>If a <code>filter</code> option was set, use it as the query filter otherwise use the “_id” property.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.filter?
+            filter = options.filter
+        <span class="hljs-keyword">else</span>
+            filter = {<span class="hljs-string">"_id"</span>: id}</pre></div>
+        
+      
+        
+        <p>If a <code>sort</code> option was set, use it as sorting otherwise use the default “_id” property.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.sort?
+            sort = {<span class="hljs-string">"sort"</span>: options.sort}
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> id?
+            sort = {<span class="hljs-string">"sort"</span>: <span class="hljs-string">"_id"</span>}
+        <span class="hljs-keyword">else</span>
+            sort = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>If options patch is set, replace specified document properties only instead of replacing the whole document.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.patch
+            docData = {<span class="hljs-attribute">$set</span>: obj}
+        <span class="hljs-keyword">else</span>
+            docData = obj</pre></div>
+        
+      
+        
+        <p>Check upsert option, if false it won’t add new documents.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.upsert?
+            upsert = options.upsert
+        <span class="hljs-keyword">else</span>
+            upsert = <span class="hljs-literal">true</span></pre></div>
+        
+      
+        
+        <p>Execute updated!</p>
+
+        
+          <div class='highlight'><pre>        dbCollection.findAndModify filter, sort, docData, {<span class="hljs-string">"new"</span>: <span class="hljs-literal">true</span>, <span class="hljs-string">"upsert"</span>: upsert}, dbCallback
+
+        <span class="hljs-keyword">if</span> id?
+            logger.debug <span class="hljs-string">"Database.set"</span>, collection, options, <span class="hljs-string">"ID: <span class="hljs-subst">#{id}</span>"</span>
+        <span class="hljs-keyword">else</span>
+            logger.debug <span class="hljs-string">"Database.set"</span>, collection, options, <span class="hljs-string">"New document."</span></pre></div>
+        
+      
+        
+        <p>Delete an object from the database. The <code>obj</code> argument can be either the document itself, or its integer/string ID.
+This can also be called as <code>delete</code>.
+@param [String] collection The collection name.
+@param [String, Object] filter If a string or number, assume it’s the document ID. Otherwise assume the document itself.
+@param [Method] callback Callback (err, result) when operation has finished.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">del</span>: <span class="hljs-function"><span class="hljs-params">(collection, filter, callback)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction options
+            callback = options
+            options = {}</pre></div>
+        
+      
+        
+        <p>Filter is mandatory.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter?
+            <span class="hljs-keyword">if</span> settings.logger.autoLogErrors
+                logger.error <span class="hljs-string">"Database.del"</span>, <span class="hljs-string">"No filter specified. Abort!"</span>, collection
+            <span class="hljs-keyword">if</span> callback?
+                callback <span class="hljs-string">"Database.del: no filter (second argument) was specified."</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>No DB set? Throw exception.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@db</span>?
+            <span class="hljs-keyword">if</span> settings.logger.autoLogErrors
+                logger.error <span class="hljs-string">"Database.del"</span>, <span class="hljs-string">"The db is null or was not initialized. Abort!"</span>, collection
+            <span class="hljs-keyword">if</span> callback?
+                callback <span class="hljs-string">"Database.del: the db was not initialized, please check database settings and call its 'init' method."</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>Check it the <code>obj</code> is the model itself, or only the ID string / number.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> filter._id?
+            id = filter._id
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> filter.id <span class="hljs-keyword">and</span> settings.database.normalizeId
+            id = filter.id
+        <span class="hljs-keyword">else</span>
+            t = <span class="hljs-keyword">typeof</span> filter
+            id = filter <span class="hljs-keyword">if</span> t <span class="hljs-keyword">is</span> <span class="hljs-string">"string"</span> <span class="hljs-keyword">or</span> t <span class="hljs-keyword">is</span> <span class="hljs-string">"integer"</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-function"><span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> callback?
+                result = <span class="hljs-property">@normalizeId</span>(result) <span class="hljs-keyword">if</span> settings.database.normalizeId
+                callback err, result</pre></div>
+        
+      
+        
+        <p>Set collection object and remove specified object from the database.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = <span class="hljs-property">@db</span>.collection collection</pre></div>
+        
+      
+        
+        <p>Remove object by ID or filter.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> id? <span class="hljs-keyword">and</span> id <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            dbCollection.removeById id, dbCallback
+        <span class="hljs-keyword">else</span>
+            dbCollection.remove filter, dbCallback
+
+        logger.debug <span class="hljs-string">"Database.del"</span>, collection, filter</pre></div>
+        
+      
+        
+        <p>Alias to <code>del</code>.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">delete</span>: <span class="hljs-function"><span class="hljs-params">(collection, filter, callback)</span> =&gt;</span>
+        <span class="hljs-property">@del</span> collection, filter, callback</pre></div>
+        
+      
+        
+        <p>Count documents from the database. A <code>collection</code> must be specified.
+If no <code>filter</code> is not passed then count all documents.
+@param [String] collection The collection name.
+@param [Object] filter Optional, keys-values filter of documents to be counted.
+@param [Method] callback Callback (err, result) when operation has finished.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">count</span>: <span class="hljs-function"><span class="hljs-params">(collection, filter, callback)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction filter
+            callback = filter
+            filter = {}</pre></div>
+        
+      
+        
+        <p>Callback is mandatory!</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback?
+            <span class="hljs-keyword">if</span> settings.logger.autoLogErrors
+                logger.error <span class="hljs-string">"Database.count"</span>, <span class="hljs-string">"No callback specified. Abort!"</span>, collection, filter
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Database.count: a callback (last argument) must be specified."</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-function"><span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> callback?
+                logger.debug <span class="hljs-string">"Database.count"</span>, collection, filter, <span class="hljs-string">"Result <span class="hljs-subst">#{result}</span>"</span>
+                callback err, result</pre></div>
+        
+      
+        
+        <p>MongoDB has a built-in count so use it.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = <span class="hljs-property">@db</span>.collection collection
+        dbCollection.count filter, dbCallback</pre></div>
+        
+      
+        
+        <h2 id="helper-methods">HELPER METHODS</h2>
+
+        
+      
+        
+        <p>Helper to transform MongoDB document “_id” to “id”.
+@param [Object] result The document or result to be normalized.
+@return [Object] Returns the normalized document.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">normalizeId</span>: <span class="hljs-function"><span class="hljs-params">(result)</span> =&gt;</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> result?
+
+        isArray = lodash.isArray result <span class="hljs-keyword">or</span> lodash.isArguments result</pre></div>
+        
+      
+        
+        <p>Check if result is a collection / array or a single document.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> isArray
+            <span class="hljs-keyword">for</span> obj <span class="hljs-keyword">in</span> result
+                obj[<span class="hljs-string">"id"</span>] = obj[<span class="hljs-string">"_id"</span>].toString()
+                <span class="hljs-keyword">delete</span> obj[<span class="hljs-string">"_id"</span>]
+        <span class="hljs-keyword">else</span>
+            result[<span class="hljs-string">"id"</span>] = result[<span class="hljs-string">"_id"</span>].toString()
+            <span class="hljs-keyword">delete</span> result[<span class="hljs-string">"_id"</span>]
+
+        <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>Helper method to check the DB connection. If connection fails multiple times in a row,
+switch to the failover DB (specified on the <code>Database.connString2</code> setting).
+@param [Integer] retry Optional, current retry number, default is 0.
+@private</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">validateConnection</span>: <span class="hljs-function"><span class="hljs-params">(retry)</span> =&gt;</span>
+        retry = <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> retry?</pre></div>
+        
+      
+        
+        <p>If connection has failed repeatedly for more than 2 times the <code>maxRetries</code> value
+then stop trying and log an error.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> retry &gt; settings.database.maxRetries * <span class="hljs-number">2</span>
+            logger.critical
+            <span class="hljs-keyword">return</span> logger.error <span class="hljs-string">"Database.validateConnection"</span>, <span class="hljs-string">"Connection failed <span class="hljs-subst">#{retry}</span> times, abort!"</span>, <span class="hljs-property">@getDbInfo</span>()</pre></div>
+        
+      
+        
+        <p>First try using main database. If <code>failover</code> is true this will trigger the <code>onFailoverSwitch</code> event.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> retry &lt; <span class="hljs-number">1</span>
+            <span class="hljs-property">@setDb</span> settings.database.connString, settings.database.options
+            <span class="hljs-property">@onFailoverSwitch</span>? <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> <span class="hljs-property">@failover</span>
+            <span class="hljs-property">@failover</span> = <span class="hljs-literal">false</span>
+            logger.debug <span class="hljs-string">"Database.validateConnection"</span>, <span class="hljs-string">"Using main DB."</span>, <span class="hljs-property">@getDbInfo</span>()</pre></div>
+        
+      
+        
+        <p>Reached max retries? Try connecting to the failover database, if there’s one specified.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> retry <span class="hljs-keyword">is</span> settings.database.maxRetries
+            <span class="hljs-keyword">if</span> settings.database.connString2? <span class="hljs-keyword">and</span> settings.database.connString2 <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                <span class="hljs-property">@setDb</span> settings.database.connString2, settings.database.options
+                <span class="hljs-property">@onFailoverSwitch</span>? <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@failover</span>
+                <span class="hljs-property">@failover</span> = <span class="hljs-literal">true</span>
+                logger.info <span class="hljs-string">"Database.validateConnection"</span>, <span class="hljs-string">"Connection failed <span class="hljs-subst">#{retry}</span> times."</span>, <span class="hljs-string">"Switching to failover DB."</span>, <span class="hljs-property">@getDbInfo</span>()
+            <span class="hljs-keyword">else</span>
+                logger.error <span class="hljs-string">"Database.validateConnection"</span>, <span class="hljs-string">"Connection failed <span class="hljs-subst">#{retry}</span> times."</span>, <span class="hljs-string">"No failover DB set, keep trying."</span></pre></div>
+        
+      
+        
+        <p>Try to connect to the current database. If it fails, try again in a few seconds.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-property">@db</span>.open <span class="hljs-function"><span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> err?
+                logger.debug <span class="hljs-string">"Database.validateConnection"</span>, <span class="hljs-string">"Failed to connect."</span>, <span class="hljs-string">"Retry <span class="hljs-subst">#{retry}</span>."</span>, <span class="hljs-property">@getDbInfo</span>()
+                setTimeout <span class="hljs-function"><span class="hljs-params">(() =&gt; <span class="hljs-property">@validateConnection</span> retry + <span class="hljs-number">1</span>)</span>, <span class="hljs-title">settings</span>.<span class="hljs-title">database</span>.<span class="hljs-title">retryInterval</span>
+
+</span></pre></div>
+        
+      
+        
+        <p>Trigger connection error.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-property">@onConnectionError</span>? err
+
+            <span class="hljs-keyword">else</span></pre></div>
+        
+      
+        
+        <p>If using the failover database, register a timeout to try
+to connect to the main database again.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> <span class="hljs-property">@failover</span>
+                    timeout = settings.database.failoverTimeout
+                    setTimeout <span class="hljs-property">@validateConnection</span>, timeout * <span class="hljs-number">1000</span>
+                    logger.debug <span class="hljs-string">"Database.validateConnection"</span>, <span class="hljs-string">"Connected to failover DB."</span>, <span class="hljs-string">"Will try main DB again in <span class="hljs-subst">#{timeout}</span> seconds."</span>
+                <span class="hljs-keyword">else</span>
+                    logger.debug <span class="hljs-string">"Database.validateConnection"</span>, <span class="hljs-string">"Connected to main DB."</span></pre></div>
+        
+      
+        
+        <p>Trigger connection validated.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-property">@onConnectionValidated</span>? result</pre></div>
+        
+      
+        
+        <p>Helper to set the current DB object. Can be called externally but ideally you should control
+the connection string by updating your app settings.json file.
+Calling this directly won’t change the <code>failover</code> flag!
+@param [Object] connString The connection string, for example user:password@hostname/dbname.
+@param [Object] options Additional options to be passed when creating the DB connection object.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">setDb</span>: <span class="hljs-function"><span class="hljs-params">(connString, options)</span> =&gt;</span>
+        <span class="hljs-property">@db</span> = mongo.db connString, options</pre></div>
+        
+      
+        
+        <p>Safe logging, strip username and password.</p>
+
+        
+          <div class='highlight'><pre>        sep = connString.indexOf <span class="hljs-string">"@"</span>
+        connStringSafe = connString
+        connStringSafe = connStringSafe.substring sep <span class="hljs-keyword">if</span> sep &gt; <span class="hljs-number">0</span>
+        logger.debug <span class="hljs-string">"Database.setDb"</span>, connStringSafe, options</pre></div>
+        
+      
+        
+        <p>Helper to get connection (host, port, db name) info about the current database / mongo object.
+@return [String] Single line string with db information.
+@private</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">getDbInfo</span>:<span class="hljs-function"> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@db</span>?
+            <span class="hljs-keyword">return</span> logger.debug <span class="hljs-string">"Database.getDbInfo"</span>, <span class="hljs-string">"Invalid DB (null or undefined)."</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-property">@db</span>._dbconn.serverConfig.name}</span>/<span class="hljs-subst">#{<span class="hljs-property">@db</span>._dbconn.databaseName}</span>"</span></pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation-">Singleton implementation.</h2>
+
+        
+          <div class='highlight'><pre>Database.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
+    <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Database() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@instance</span>
+
+<span class="hljs-built_in">module</span>.<span class="hljs-built_in">exports</span> = <span class="hljs-built_in">exports</span> = Database.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

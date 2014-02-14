@@ -1,42 +1,218 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-    <title>Expresser documentation</title>
-    <style type="text/css">
-        * {
-            font-family: "Myriad Pro", Calibri, Helvetica, Arial, sans-serif;
-        }
-        body {
-            margin: auto; text-align: center;
-        }
-        div {
-            background: rgb(240, 245, 250);
-            border: 1px solid rgb(180, 180, 180);
-            margin: auto;
-            padding: 5px 10px 5px 10px;
-            text-align: left;
-            width: 440px;
-        }
-        .doclink {
-            font-weight: bold;
-        }
-    </style>
+  <title>index.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
 </head>
 <body>
-    <h1>Expresser documentation</h1>
-    <p>
-        Documentation is generated automatically on install / update.<br />
-        If you wish to manually update the docs, run the <em>updatedocs.sh</em> script.
-    </p>
-    <div>
-        <h4>Annotated source-code</h4>
-        <p>
-            <a class="doclink" href="expresser.html">Here</a>, generated using <a href="https://npmjs.org/package/docco">docco</a>.
-        </p>
-        <h4>Modules API</h4>
-        <p>
-            <a class="doclink" href="http://coffeedoc.info/github/igoramadas/expresser/master">Here</a>, generated using <a href="https://npmjs.org/package/codo">codo</a>.
-        </p>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>index.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="cron.html">
+                    cron.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="downloader.html">
+                    downloader.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="firewall.html">
+                    firewall.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="imaging.html">
+                    imaging.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="mailer.html">
+                    mailer.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="sockets.html">
+                    sockets.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser">EXPRESSER</h2>
+<p>A platform and template for Node.js web apps, built on top of Express.
+If you need help, check the project page at <a href="http://expresser.codeplex.com">http://expresser.codeplex.com</a>.</p>
+
+        
+          <div class='highlight'><pre>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Expresser</span></span></pre></div>
+        
+      
+        
+        <p>Settings.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">settings</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/settings.coffee"</span></pre></div>
+        
+      
+        
+        <p>Expresser modules.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">app</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/app.coffee"</span>
+    <span class="hljs-attribute">cron</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/cron.coffee"</span>
+    <span class="hljs-attribute">database</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/database.coffee"</span>
+    <span class="hljs-attribute">downloader</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/downloader.coffee"</span>
+    <span class="hljs-attribute">events</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/events.coffee"</span>
+    <span class="hljs-attribute">firewall</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/firewall.coffee"</span>
+    <span class="hljs-attribute">imaging</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/imaging.coffee"</span>
+    <span class="hljs-attribute">logger</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/logger.coffee"</span>
+    <span class="hljs-attribute">mailer</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/mailer.coffee"</span>
+    <span class="hljs-attribute">sockets</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/sockets.coffee"</span>
+    <span class="hljs-attribute">utils</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/utils.coffee"</span></pre></div>
+        
+      
+        
+        <p>Expose 3rd party modules.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">libs</span>:
+        <span class="hljs-attribute">async</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"async"</span>
+        <span class="hljs-attribute">lodash</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
+        <span class="hljs-attribute">moment</span>: <span class="hljs-built_in">require</span> <span class="hljs-string">"moment"</span></pre></div>
+        
+      
+        
+        <p>Helper to init all modules. Load settings first, then Logger, then general
+modules, and finally the App. The <code>options</code> can have properties to be
+passed to the <code>init</code> of each module.
+@param [Object] options Options to be passed to each init module.
+@option options [Object] app Pass options to the App init.
+@option options [Object] database Pass options to the Database init.
+@option options [Object] logger Pass options to the Logger init.
+@option options [Object] mailer Pass options to the Mailer init.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">init</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
+        <span class="hljs-property">@logger</span>.init options?.logger
+        <span class="hljs-property">@database</span>.init options?.database
+        <span class="hljs-property">@mailer</span>.init options?.mailer</pre></div>
+        
+      
+        
+        <p>App must be the last thing to be started!
+The Firewall and Sockets modules are initiated inside the App module.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-property">@app</span>.init options?.app</pre></div>
+        
+      
+        
+        <p>Check for deprecated / moved features.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> process.versions.node.indexOf(<span class="hljs-string">".6."</span>) &gt; <span class="hljs-number">0</span>
+            loggerMsg = <span class="hljs-string">"Attention! Support for Node.js 0.6 will be dropped soon, please consider upgrading to 0.10."</span>
+            <span class="hljs-property">@logger</span>.debug <span class="hljs-string">"Expresser.init"</span>, loggerMsg
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@settings</span>.mail?
+            loggerMsg = <span class="hljs-string">"Attention! The 'mail' module was renamed to 'mailer', please update your code if necessary!"</span>
+            <span class="hljs-property">@logger</span>.debug <span class="hljs-string">"Expresser.init"</span>, loggerMsg
+            <span class="hljs-property">@mail</span> = <span class="hljs-property">@mailer</span></pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+          <div class='highlight'><pre>Expresser.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
+    <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Expresser() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@instance</span>
+
+<span class="hljs-built_in">module</span>.<span class="hljs-built_in">exports</span> = <span class="hljs-built_in">exports</span> = Expresser.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
     </div>
+  </div>
 </body>
 </html>

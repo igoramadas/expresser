@@ -4,14 +4,14 @@ ifeq ($(OS),Windows_NT)
 	DOCCO:= node_modules/.bin/docco.cmd
 else
 	MOCHA := ./node_modules/.bin/mocha
-	DOCCO:= ./node_modules..bin/docco
+	DOCCO:= ./node_modules/.bin/docco
 endif
 
 test:
 	$(MOCHA) -u tdd -R spec
 
 docs:
-	$(DOCCO) -l linear -o docs lib/*.coffee
+	$(DOCCO) -l linear -o docs index.coffee lib/*.coffee
 
 .PHONY: test
 .PHONY: docs
