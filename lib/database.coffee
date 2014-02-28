@@ -305,9 +305,10 @@ class Database
         # Check if result is a collection / array or a single document.
         if isArray
             for obj in result
-                obj["id"] = obj["_id"].toString()
-                delete obj["_id"]
-        else
+                if obj["_id"]?
+                    obj["id"] = obj["_id"].toString()
+                    delete obj["_id"]
+        else if result["_id"]?
             result["id"] = result["_id"].toString()
             delete result["_id"]
 
@@ -324,14 +325,14 @@ class Database
         # then stop trying and log an error.
         if retry > settings.database.maxRetries * 2
             logger.critical
-            return logger.error "Database.validateConnection", "Connection failed #{retry} times, abort!", @getDbInfo()
+            return logger.error "Database.validateConnection", "Connection failed #{retry} times, abort!"
 
         # First try using main database. If `failover` is true this will trigger the `onFailoverSwitch` event.
         if retry < 1
             @setDb settings.database.connString, settings.database.options
             @onFailoverSwitch? false if @failover
             @failover = false
-            logger.debug "Database.validateConnection", "Using main DB.", @getDbInfo()
+            logger.debug "Database.validateConnection", "Using main DB."
 
         # Reached max retries? Try connecting to the failover database, if there's one specified.
         if retry is settings.database.maxRetries
@@ -339,14 +340,14 @@ class Database
                 @setDb settings.database.connString2, settings.database.options
                 @onFailoverSwitch? true if not @failover
                 @failover = true
-                logger.info "Database.validateConnection", "Connection failed #{retry} times.", "Switching to failover DB.", @getDbInfo()
+                logger.info "Database.validateConnection", "Connection failed #{retry} times.", "Switching to failover DB."
             else
                 logger.error "Database.validateConnection", "Connection failed #{retry} times.", "No failover DB set, keep trying."
 
         # Try to connect to the current database. If it fails, try again in a few seconds.
         @db.open (err, result) =>
             if err?
-                logger.debug "Database.validateConnection", "Failed to connect.", "Retry #{retry}.", @getDbInfo()
+                logger.debug "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
                 setTimeout (() => @validateConnection retry + 1), settings.database.retryInterval
 
                 # Trigger connection error.
@@ -379,14 +380,6 @@ class Database
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
         logger.debug "Database.setDb", connStringSafe, options
-
-    # Helper to get connection (host, port, db name) info about the current database / mongo object.
-    # @return [String] Single line string with db information.
-    # @private
-    getDbInfo: =>
-        if not @db?
-            return logger.debug "Database.getDbInfo", "Invalid DB (null or undefined)."
-        return "#{@db._dbconn.serverConfig.name}/#{@db._dbconn.databaseName}"
 
 
 # Singleton implementation.

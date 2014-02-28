@@ -115,15 +115,15 @@ class Utils
         result = {}
 
         # Save parsed OS info to the result object.
+        result.uptime = moment.duration(process.uptime, "s").humanize()
         result.hostname = os.hostname()
-        result.pid = process.pid
-        result.title = path.getbasename process.title
+        result.title = path.basename process.title
         result.platform = os.platform() + " " + os.arch() + " " + os.release()
-        result.memoryTotal = (os.totalmem() / 1000 / 1000).toFixed(0) + " MB"
+        result.memoryTotal = (os.totalmem() / 1024 / 1024).toFixed(0) + " MB"
         result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100).toFixed(0)
         result.loadAvg = os.loadavg()
-        result.uptime = moment.duration(process.uptime, "s").humanize()
         result.ips = @getServerIP()
+        result.process = {pid: process.pid, memoryUsage: (process.memoryUsage().rss / 1024 / 1024).toFixed(0) + " MB"}
 
         return result
 
