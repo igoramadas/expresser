@@ -79,21 +79,4 @@ describe("Database Tests", function() {
 
         database.set("test", obj, callback);
     });
-
-    it("Switches to the failover database", function(done) {
-        this.timeout(10000);
-
-        var callbackFailover = function(failover) {
-            database.onFailoverSwitch = null;
-            if (failover) done();
-            else done("Database failover flag is false.");
-        };
-
-        settings.database.retryInterval = 500;
-        settings.database.connString = "mongodb://1.1.1.1/expresser";
-        settings.database.connString2 = "mongodb://127.0.0.1/expresserFailover?auto_reconnect=true";
-
-        database.onFailoverSwitch = callbackFailover;
-        database.init();
-    });
 });
