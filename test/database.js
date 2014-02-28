@@ -90,25 +90,10 @@ describe("Database Tests", function() {
         };
 
         settings.database.retryInterval = 500;
-        settings.database.connString = "abc:invalid:mongo/expresser?auto_reconnect=true";
+        settings.database.connString = "mongodb://1.1.1.1/expresser";
         settings.database.connString2 = "mongodb://127.0.0.1/expresserFailover?auto_reconnect=true";
 
         database.onFailoverSwitch = callbackFailover;
-        database.init();
-    });
-
-    it("Triggers 'onConnectionError' on init with invalid connection", function(done) {
-        this.timeout(10000);
-
-        var callbackError = function(err) {
-            database.onConnectionError = null;
-            if (err) done();
-            else done("No error was returned!");
-        };
-
-        settings.database.connString = "abc:invalid:mongo/expresser";
-
-        database.onConnectionError = callbackError;
         database.init();
     });
 });
