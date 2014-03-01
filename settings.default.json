@@ -8,6 +8,8 @@
     // APP
     // -------------------------------------------------------------------------
     "app": {
+        // Enable cookies on Express?
+        "cookieEnabled": true,
         // Secret key used for cookie encryption.
         "cookieSecret": "ExpresserCookie",
         // Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
@@ -19,6 +21,8 @@
         // Node.js server port. Please note that this value might be overriden by PaaS
         // environmental values (like in AppFog or OpenShift).
         "port": 8080,
+        // Enable session store? This will use the cookieSession implementation of Express.
+        "sessionEnabled": true,
         // Secret key used for session encryption.
         "sessionSecret": "ExpresserSession",
         // The view engine used by Express. Default is jade.

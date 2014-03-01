@@ -134,8 +134,8 @@ class App
             # Use Express basic handlers.
             @server.use express.json()
             @server.use express.urlencoded()
-            @server.use express.cookieParser settings.app.cookieSecret
-            @server.use express.session {secret: settings.app.sessionSecret}
+            @server.use express.cookieParser settings.app.cookieSecret if settings.app.cookieEnabled
+            @server.use express.session {secret: settings.app.sessionSecret} if settings.app.sessionEnabled
             @server.use express.compress()
             @server.use express.methodOverride()
             @server.use express["static"] settings.path.publicDir
