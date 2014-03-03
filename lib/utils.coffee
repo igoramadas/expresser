@@ -266,6 +266,40 @@ class Utils
         else
             return JSON.parse result
 
+    # Helper to convert HSL colour to HEX. Used by Philips Hue and other colored lights.
+    # @param [Number] h The hue value.
+    # @param [Number] s The saturation value.
+    # @param [Number] l The brightness value.
+    # @return [String] The colour in HEX format.
+    hslToHex: (h, s, l) ->
+        x = h
+        y = s
+        z = 1.0 - x - y
+        Y = l
+        X = (Y / y) * x
+        Z = (Y / y) * z
+        r = X * 1.612 - Y * 0.203 - Z * 0.302
+        g = -X * 0.509 + Y * 1.412 + Z * 0.066
+        b = X * 0.026 - Y * 0.072 + Z * 0.962
+        r = (if r <= 0.0031308 then 12.92 * r else (1.0 + 0.055) * Math.pow(r, (1.0 / 2.4)) - 0.055)
+        g = (if g <= 0.0031308 then 12.92 * g else (1.0 + 0.055) * Math.pow(g, (1.0 / 2.4)) - 0.055)
+        b = (if b <= 0.0031308 then 12.92 * b else (1.0 + 0.055) * Math.pow(b, (1.0 / 2.4)) - 0.055)
+        cap = (x) -> Math.max 0, Math.min(1, x)
+
+        # Helper to convert RGB to hex.
+        rgbhex = (v) ->
+            v = Math.round(v * 255)
+            s = "0" + v.toString(16)
+            return s.substr -2
+
+        # Cap and transform RGB values.
+        r = rgbhex cap r
+        g = rgbhex cap g
+        b = rgbhex cap b
+
+        # Convert RGB to hex and return result.
+        return "##{r}#{g}#{b}"
+
 
 # Singleton implementation
 # --------------------------------------------------------------------------
