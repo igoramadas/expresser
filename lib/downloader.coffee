@@ -138,7 +138,7 @@ class Downloader
                         removeDownloading obj
                         obj.callback(err, obj) if obj.callback?
 
-                        logger.debug "Downloader.next", "End", obj
+                        logger.debug "Downloader.next", "End", obj.remoteUrl, obj.saveTo
 
                     fileWriter.end()
                     fileWriter.destroySoon()

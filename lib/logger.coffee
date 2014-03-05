@@ -192,7 +192,6 @@ class Logger
             else
                 console.log.apply this, args
 
-
     # Log to the active transports as `debug`, only if the debug flag is enabled.
     # All arguments are transformed to readable strings.
     debug: =>
