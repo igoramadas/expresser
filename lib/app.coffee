@@ -102,73 +102,72 @@ class App
 
     # Configure the server. Set views, options, use Express modules, etc.
     configureServer: (options) =>
+        midCookieParser = require "cookie-parser"
+        midSession = require "express-session"
+        midCompression = require "compression"
+        midErrorHandler = require "errorhandler"
+
+        # Create express v4 app.
         @server = express()
 
-        @server.configure =>
-            settings.updateFromPaaS() if settings.app.paas
+        settings.updateFromPaaS() if settings.app.paas
 
-            # Set view options, use Jade for HTML templates.
-            @server.set "views", settings.path.viewsDir
-            @server.set "view engine", settings.app.viewEngine
-            @server.set "view options", { layout: false }
+        # Set view options, use Jade for HTML templates.
+        @server.set "views", settings.path.viewsDir
+        @server.set "view engine", settings.app.viewEngine
+        @server.set "view options", { layout: false }
 
-            # If debug is on, log requests to the console.
-            if settings.general.debug
-                @server.use (req, res, next) =>
-                    ip = utils.getClientIP req
-                    method = req.method
-                    url = req.url
+        # If debug is on, log requests to the console.
+        if settings.general.debug
+            @server.use (req, res, next) =>
+                ip = utils.getClientIP req
+                method = req.method
+                url = req.url
 
-                    # Check if request flash is present before logging.
-                    if req.flash? and lodash.isFunction req.flash
-                        console.log "Request from #{ip}", method, url, req.flash()
-                    else
-                        console.log "Request from #{ip}", method, url
-                    next() if next?
-
-            # Enable firewall?
-            if settings.firewall.enabled
-                firewall = require "./firewall.coffee"
-                firewall.init @server
-
-            # Use Express basic handlers.
-            @server.use express.json()
-            @server.use express.urlencoded()
-            @server.use express.cookieParser settings.app.cookieSecret if settings.app.cookieEnabled
-            @server.use express.session {secret: settings.app.sessionSecret} if settings.app.sessionEnabled
-            @server.use express.compress()
-            @server.use express.methodOverride()
-            @server.use express["static"] settings.path.publicDir
-
-            # Fix connect assets helper context.
-            connectAssetsOptions = settings.app.connectAssets
-            connectAssetsOptions.helperContext = @server.locals
-
-            # Connect assets and dynamic compiling.
-            ConnectAssets = (require "connect-assets") connectAssetsOptions
-            @server.use ConnectAssets
-
-            # Check for extra middlewares to be added.
-            if options.extraMiddlewares?
-                if lodash.isArray options.extraMiddlewares
-                    @extraMiddlewares.push mw for mw in options.extraMiddlewares
+                # Check if request flash is present before logging.
+                if req.flash? and lodash.isFunction req.flash
+                    console.log "Request from #{ip}", method, url, req.flash()
                 else
-                    @extraMiddlewares.push options.extraMiddlewares
+                    console.log "Request from #{ip}", method, url
+                next() if next?
 
-            # Add more middlewares, if any (for example passport for authentication).
-            if @extraMiddlewares.length > 0
-                @server.use mw for mw in @extraMiddlewares
+        # Enable firewall?
+        if settings.firewall.enabled
+            firewall = require "./firewall.coffee"
+            firewall.init @server
 
-            # Set Express router.
-            @server.use @server.router
+        # Use Express basic handlers.
+        @server.use midCookieParser settings.app.cookieSecret if settings.app.cookieEnabled
+        @server.use midSession {secret: settings.app.sessionSecret} if settings.app.sessionEnabled
+        @server.use midCompression
+        @server.use express["static"] settings.path.publicDir
+
+        # Fix connect assets helper context.
+        connectAssetsOptions = settings.app.connectAssets
+        connectAssetsOptions.helperContext = @server.locals
+
+        # Connect assets and dynamic compiling.
+        ConnectAssets = (require "connect-assets") connectAssetsOptions
+        @server.use ConnectAssets
+
+        # Check for extra middlewares to be added.
+        if options.extraMiddlewares?
+            if lodash.isArray options.extraMiddlewares
+                @extraMiddlewares.push mw for mw in options.extraMiddlewares
+            else
+                @extraMiddlewares.push options.extraMiddlewares
+
+        # Add more middlewares, if any (for example passport for authentication).
+        if @extraMiddlewares.length > 0
+            @server.use mw for mw in @extraMiddlewares
 
         # Configure development environment to dump exceptions and show stack.
-        @server.configure "development", =>
-            @server.use express.errorHandler {dumpExceptions: true, showStack: true}
+        if nodeEnv is "development"
+            @server.use midErrorHandler {dumpExceptions: true, showStack: true}
 
         # Configure production environment.
-        @server.configure "production", =>
-            @server.use express.errorHandler()
+        if nodeEnv is "production"
+            @server.use midErrorHandler()
 
     # Start the server using HTTP or HTTPS, depending on the settings.
     startServer: =>

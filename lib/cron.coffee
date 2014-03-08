@@ -148,7 +148,7 @@ class Cron
         else
             for job in arr
                 clearTimeout job.timer if job.timer?
-                delete job.timer
+                job.timer = null
 
     # Add a scheduled job to the cron, passing an `id` and `job`.
     # You can also pass only the `job` if it has an id property.
@@ -187,8 +187,8 @@ class Cron
         # Handle existing jobs.
         if existing?
             if settings.cron.allowReplacing
-                clearTimeout existing.timer
-                delete existing.timer
+                clearTimeout existing.timer if existing.timer?
+                existing.timer = null
             else
                 errorMsg = "Job #{id} already exists and 'allowReplacing' is false. Abort!"
                 logger.error "Cron.add", errorMsg
@@ -257,6 +257,7 @@ class Cron
     getCallback = (job) ->
         callback = ->
             logger.debug "Cron", "Job #{job.id} trigger."
+            job.timer = null
             job.startTime = moment()
             job.endTime = moment()
             job.callback job

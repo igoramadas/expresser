@@ -63,8 +63,11 @@ class Sockets
     # @param [String] key The event key.
     # @param [Object] data The JSON data to be sent out to clients.
     emit: (key, data) =>
-        @io.sockets.emit key, data
-        logger.debug "Sockets.emit", key, JSON.stringify(data).length + " bytes"
+        if @io?.sockets?
+            @io.sockets.emit key, data
+            logger.debug "Sockets.emit", key, JSON.stringify(data).length + " bytes"
+        else
+            logger.debug "Sockets.emit", key, "Sockets not initiated yet, abort!"
 
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.

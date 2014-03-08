@@ -77,11 +77,12 @@ class Logger
         # Check if uncaught exceptions should be logged. If so, try logging unhandled
         # exceptions using the logger, otherwise log to the console.
         if settings.logger.uncaughtException
-            process.on "uncaughtException", (err) ->
+            @debug "Logger.init", "Catching unhandled exceptions."
+            process.on "uncaughtException", (err) =>
                 try
-                    @error "Unhandled exception!", err.stack
+                    @error "Unhandled exception!", err
                 catch ex
-                    console.error "Unhandled exception!", Date(Date.now()), err.stack, ex
+                    console.error "Unhandled exception!", err
 
         # Start logging!
         if not localBuffer? and not logentries? and not loggly?
