@@ -12,46 +12,8 @@ class Utils
     path = require "path"
     settings = require "./settings.coffee"
 
-    # SETTINGS UTILS
-    # --------------------------------------------------------------------------
-
-    # TODO! Deprecated, this method should be removed soon. Please use settings.encrypt(filename, options).
-    encryptSettingsJson: (filename, options) =>
-        console.warn "Utils.encryptSettingsJson", "Method is deprecated. Please use settings.encrypt() directly."
-        settings.encrypt filename, options
-
-    # TODO! Deprecated, this method should be removed soon. Please use settings.decrypt(filename, options).
-    decryptSettingsJson: (filename, options) =>
-        console.warn "Utils.decryptSettingsJson", "Method is deprecated. Please use settings.decrypt() directly."
-        settings.decrypt filename, options
-
-    # TODO! Deprecated, this method should be removed soon. Please use settings.load().
-    loadDefaultSettingsFromJson: =>
-        console.warn "Utils.loadDefaultSettingsFromJson", "Method is deprecated. Please use settings.decrypt() directly."
-        settings.load()
-
-    # TODO! Deprecated, this method should be removed soon. Please use settings.loadFromJson(filename).
-    loadSettingsFromJson: (filename) =>
-        console.warn "Utils.loadSettingsFromJson", "Method is deprecated. Please use settings.loadFromJson() directly."
-        settings.loadFromJson filename
-
-    # TODO! Deprecated, this method should be removed soon. Please use settings.updateFromPaaS(filter).
-    updateSettingsFromPaaS: (filter) =>
-        console.warn "Utils.updateSettingsFromPaaS", "Method is deprecated. Please use settings.updateFromPaaS() directly."
-        settings.updateFromPaaS filter
-
-    # TODO! Deprecated, this method should be removed soon. Please use settings.watch(enable, callback).
-    watchSettingsFiles: (enable, callback) =>
-        console.warn "Utils.watchSettingsFiles", "Method is deprecated. Please use settings.watch() directly."
-        settings.watch enable, callback
-
     # SERVER INFO UTILS
     # --------------------------------------------------------------------------
-
-    # TODO! Deprecated, this method should be removed soon. Please use getFilePath.
-    getConfigFilePath: (filename) =>
-        console.warn "Utils.getConfigFilePath", "DEPRECATED! Please use getFilePath."
-        return @getFilePath filename
 
     # Helper to get the correct filename for general files. For example
     # the settings.json file or cron.json for cron jobs. This will look into the current
