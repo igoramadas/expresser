@@ -35,7 +35,7 @@ class Cron
     # CONSTRUCTOR AND INIT
     # -------------------------------------------------------------------------
 
-    # Class constructor.
+    # Cron constructor.
     constructor: ->
         @setEvents()
 

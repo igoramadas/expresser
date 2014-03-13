@@ -45,8 +45,19 @@ class Logger
     # Holds a copy of emails sent for critical logs.
     criticalEmailCache: {}
 
-    # INIT AND STOP
+    # # CONSTRUCTOR, INIT AND STOP
     # --------------------------------------------------------------------------
+
+    # Logger constructor.
+    constructor: ->
+        @setEvents()
+
+    # Bind event listeners.
+    setEvents: =>
+        events.on "cron.start", @start
+        events.on "cron.stop", @stop
+        events.on "cron.add", @add
+        events.on "cron.remove", @remove
 
     # Init the Logger module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.

@@ -6,6 +6,7 @@
 # -->
 class Downloader
 
+    events = require "./events.coffee"
     fs = require "fs"
     http = require "http"
     https = require "https"
@@ -20,7 +21,73 @@ class Downloader
     queue = []
     downloading = []
 
-    # INTERNAL METHODS
+    # CONSTRUCTOR AND INIT
+    # --------------------------------------------------------------------------
+
+    # Downloader constructor.
+    constructor: ->
+        @setEvents()
+
+    # Bind event listeners.
+    setEvents: =>
+        events.on "downloader.download", @download
+
+    # METHODS
+    # --------------------------------------------------------------------------
+
+    # Download an external file and save it to the specified location. The `callback`
+    # has the signature (error, data). Returns the downloader object which is added
+    # to the `queue`, which has the download properties and a `stop` helper to force
+    # stopping it. Returns false on error or duplicate.
+    # Tip: if you want to get the downloaded data without having to read the target file
+    # you can get the downloaded contents via the `options.downloadedData`.
+    # @param [String] remoteUrl The URL of the remote file to be downloaded.
+    # @param [String] saveTo The full local path and destination filename.
+    # @param [Object] options Optional, object with request options, for example auth.
+    # @param [Method] callback Optional, a function (err, result) to be called when download has finished.
+    # @return [Object] Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
+    download: (remoteUrl, saveTo, options, callback) =>
+        if not remoteUrl?
+            logger.warn "Downloader.download", "Aborted, remoteUrl is not defined."
+            return
+
+        # Check options and callback.
+        if not callback? and lodash.isFunction options
+            callback = options
+            options = null
+
+        now = new Date().getTime()
+
+        # Create the download object.
+        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback}
+
+        # Prevent duplicates?
+        if settings.downloader.preventDuplicates
+            existing = lodash.filter downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
+
+            # If downloading the same file and to the same location, abort download.
+            if existing.length > 0
+                existing = existing[0]
+                if existing.saveTo is saveTo
+                    logger.warn "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
+                    err = {message: "Download aborted: same file is already downloading.", duplicate: true}
+                    callback(err, downloadObj) if callback?
+                    return false
+
+        # Create a `stop` method to force stop the download by setting the `stopFlag`.
+        # Accepts a `keep` boolean, if true the already downloaded data will be kept on forced stop.
+        stopHelper = (keep) -> @stopFlag = (if keep then 1 else 2)
+
+        # Update download object with stop helper and add to queue.
+        downloadObj.stop = stopHelper
+        queue.push downloadObj
+
+        # Start download immediatelly if not exceeding the `maxSimultaneous` setting.
+        next() if downloading.length < settings.downloader.maxSimultaneous
+
+        return downloadObj
+
+    # INTERNAL IMPLEMENTATION
     # --------------------------------------------------------------------------
 
     # Helper to remove a download from the `downloading` list.
@@ -189,61 +256,6 @@ class Downloader
             next()
         else
             reqStart obj, options
-
-    # METHODS
-    # --------------------------------------------------------------------------
-
-    # Download an external file and save it to the specified location. The `callback`
-    # has the signature (error, data). Returns the downloader object which is added
-    # to the `queue`, which has the download properties and a `stop` helper to force
-    # stopping it. Returns false on error or duplicate.
-    # Tip: if you want to get the downloaded data without having to read the target file
-    # you can get the downloaded contents via the `options.downloadedData`.
-    # @param [String] remoteUrl The URL of the remote file to be downloaded.
-    # @param [String] saveTo The full local path and destination filename.
-    # @param [Object] options Optional, object with request options, for example auth.
-    # @param [Method] callback Optional, a function (err, result) to be called when download has finished.
-    # @return [Object] Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
-    download: (remoteUrl, saveTo, options, callback) =>
-        if not remoteUrl?
-            logger.warn "Downloader.download", "Aborted, remoteUrl is not defined."
-            return
-
-        # Check options and callback.
-        if not callback? and lodash.isFunction options
-            callback = options
-            options = null
-
-        now = new Date().getTime()
-
-        # Create the download object.
-        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback}
-
-        # Prevent duplicates?
-        if settings.downloader.preventDuplicates
-            existing = lodash.filter downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
-
-            # If downloading the same file and to the same location, abort download.
-            if existing.length > 0
-                existing = existing[0]
-                if existing.saveTo is saveTo
-                    logger.warn "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
-                    err = {message: "Download aborted: same file is already downloading.", duplicate: true}
-                    callback(err, downloadObj) if callback?
-                    return false
-
-        # Create a `stop` method to force stop the download by setting the `stopFlag`.
-        # Accepts a `keep` boolean, if true the already downloaded data will be kept on forced stop.
-        stopHelper = (keep) -> @stopFlag = (if keep then 1 else 2)
-
-        # Update download object with stop helper and add to queue.
-        downloadObj.stop = stopHelper
-        queue.push downloadObj
-
-        # Start download immediatelly if not exceeding the `maxSimultaneous` setting.
-        next() if downloading.length < settings.downloader.maxSimultaneous
-
-        return downloadObj
 
 
 # Singleton implementation

@@ -6,7 +6,7 @@
 # must be saved as base.html, under the /emailtemplates folder (or whatever
 # folder / base file name you have set on the settings).
 # <!--
-# @see Settings.mail
+# @see Settings.mailer
 # -->
 class Mailer
 
@@ -30,7 +30,7 @@ class Mailer
     # CONSTRUCTOR AND INIT
     # --------------------------------------------------------------------------
 
-    # Class constructor.
+    # Mailer constructor.
     constructor: ->
         @setEvents()
 
@@ -57,6 +57,7 @@ class Mailer
             logger.warn "Mailer.init", "No main SMTP host/port specified.", "No emails will be sent out!"
 
     # Check if configuration for sending emails is properly set.
+    # @return [Boolean] Returns true if smtp server is active, otherwise false.
     checkConfig: =>
         if smtp or smtp2?
             return true
