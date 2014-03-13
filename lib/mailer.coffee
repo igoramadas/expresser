@@ -32,14 +32,13 @@ class Mailer
 
     # Mailer constructor.
     constructor: ->
-        @setEvents()
+        @setEvents() if settings.events.enabled
 
     # Bind event listeners.
     setEvents: =>
         events.on "mailer.send", @send
 
     # Init the Mailer module and create the SMTP objects.
-    # Also check if still using old "mail" instead of "mailer".
     # @param [Object] options Mailer init options.
     init: (options) =>
         if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
@@ -52,9 +51,13 @@ class Mailer
         else if settings.mailer.smtp2.host? and settings.mailer.smtp2.host isnt "" and settings.mailer.smtp2.port > 0
             @setSmtp settings.mailer.smtp2, true
 
+        # Alert user if specified backup SMTP but not the main one.
+        if not smtp? and smtp2?
+            logger.warn "Mailer.init", "The secondary SMTP settings are defined but not the main one.", "Will still work, but you should set the main one instead."
+
         # Warn if no SMTP is available for sending emails, but only when debug is enabled.
         if not smtp? and not smtp2? and settings.general.debug
-            logger.warn "Mailer.init", "No main SMTP host/port specified.", "No emails will be sent out!"
+            logger.warn "Mailer.init", "No main SMTP host/port specified.", "No emails will be sent out."
 
     # Check if configuration for sending emails is properly set.
     # @return [Boolean] Returns true if smtp server is active, otherwise false.
@@ -119,7 +122,7 @@ class Mailer
 
         # Check if `doNotSend` flag is set, and if so, do not send anything.
         if settings.mailer.doNotSend
-            callback null, "Do not send is true, avoid sending!" if callback?
+            callback null, "The 'doNotSend' setting is true, will not send anything!" if callback?
             return
 
         # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.

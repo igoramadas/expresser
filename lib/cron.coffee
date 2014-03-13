@@ -37,7 +37,7 @@ class Cron
 
     # Cron constructor.
     constructor: ->
-        @setEvents()
+        @setEvents() if settings.events.enabled
 
     # Bind event listeners.
     setEvents: =>

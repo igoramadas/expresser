@@ -50,7 +50,7 @@ class Logger
 
     # Logger constructor.
     constructor: ->
-        @setEvents()
+        @setEvents() if settings.events.enabled
 
     # Bind event listeners.
     setEvents: =>

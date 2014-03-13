@@ -26,7 +26,7 @@ class Downloader
 
     # Downloader constructor.
     constructor: ->
-        @setEvents()
+        @setEvents() if settings.events.enabled
 
     # Bind event listeners.
     setEvents: =>
