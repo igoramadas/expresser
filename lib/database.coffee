@@ -3,6 +3,8 @@
 # Handles MongoDB database transactions using the `mongoskin` module. It supports
 # a very simple failover mechanism where you can specify a "backup" connection
 # string to which the module will connect in case the main database is down.
+# If you prefer tp access Mongo directly, you can use the `db` property, for example:
+# expresser.database.db.collection("mycollection").findAndModify(args...).
 # <!--
 # @see Settings.database
 # -->
@@ -72,7 +74,7 @@ class Database
         if not @db?
             if settings.logger.autoLogErrors
                 logger.error "Database.get", "The db is null or was not initialized. Abort!", collection, filter
-            return callback "Database.set: the db was not initialized, please check database settings and call its 'init' method."
+            return callback "Database.upsert: the db was not initialized, please check database settings and call its 'init' method."
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -129,7 +131,7 @@ class Database
         else
             logger.debug "Database.get", collection, "No filter.", options
 
-    # Insert or update documents on the database using Mongo's upsert command.
+    # Insert or update documents on the database using Mongo's findAndModify command.
     # The `options` parameter is optional.
     # @param [String] collection The collection name.
     # @param [Object] obj Document or data to be added / updated.
@@ -138,7 +140,7 @@ class Database
     # @option options [Boolean] patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
     # @option options [Boolean] upsert Default is true, if false it won't add a new document (only update existing).
     # @param [Method] callback Callback (err, result) when operation has finished.
-    set: (collection, obj, options, callback) =>
+    upsert: (collection, obj, options, callback) =>
         if not callback? and lodash.isFunction options
             callback = options
             options = {}
@@ -146,17 +148,17 @@ class Database
         # Object or filter is mandatory.
         if not obj?
             if settings.logger.autoLogErrors
-                logger.error "Database.set", "No object specified. Abort!", collection
+                logger.error "Database.upsert", "No object specified. Abort!", collection
             if callback?
-                callback "Database.set: no object (second argument) was specified."
+                callback "Database.upsert: no object (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @db?
             if settings.logger.autoLogErrors
-                logger.error "Database.set", "The db is null or was not initialized. Abort!", collection
+                logger.error "Database.upsert", "The db is null or was not initialized. Abort!", collection
             if callback?
-                callback "Database.set: the db was not initialized, please check database settings and call its 'init' method."
+                callback "Database.upsert: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
         # Create the DB callback helper.
@@ -200,21 +202,22 @@ class Database
         else
             upsert = true
 
-        # Execute updated!
+        # Execute update!
         dbCollection.findAndModify filter, sort, docData, {"new": true, "upsert": upsert}, dbCallback
 
         if id?
-            logger.debug "Database.set", collection, options, "ID: #{id}"
+            logger.debug "Database.upsert", collection, options, "ID: #{id}"
         else
-            logger.debug "Database.set", collection, options, "New document."
+            logger.debug "Database.upsert", collection, options, "New document."
 
+    # Alias for `upsert`.
+    set: => @upsert.apply this, arguments
 
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
-    # This can also be called as `delete`.
     # @param [String] collection The collection name.
     # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
     # @param [Method] callback Callback (err, result) when operation has finished.
-    del: (collection, filter, callback) =>
+    delete: (collection, filter, callback) =>
         if not callback? and lodash.isFunction options
             callback = options
             options = {}
@@ -222,17 +225,17 @@ class Database
         # Filter is mandatory.
         if not filter?
             if settings.logger.autoLogErrors
-                logger.error "Database.del", "No filter specified. Abort!", collection
+                logger.error "Database.delete", "No filter specified. Abort!", collection
             if callback?
-                callback "Database.del: no filter (second argument) was specified."
+                callback "Database.delete: no filter (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @db?
             if settings.logger.autoLogErrors
-                logger.error "Database.del", "The db is null or was not initialized. Abort!", collection
+                logger.error "Database.delete", "The db is null or was not initialized. Abort!", collection
             if callback?
-                callback "Database.del: the db was not initialized, please check database settings and call its 'init' method."
+                callback "Database.delete: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
         # Check it the `obj` is the model itself, or only the ID string / number.
@@ -259,11 +262,10 @@ class Database
         else
             dbCollection.remove filter, dbCallback
 
-        logger.debug "Database.del", collection, filter
+        logger.debug "Database.delete", collection, filter
 
-    # Alias to `del`.
-    delete: (collection, filter, callback) =>
-        @del collection, filter, callback
+    # Alias for `delete`.
+    del: => @delete.apply this, arguments
 
     # Count documents from the database. A `collection` must be specified.
     # If no `filter` is not passed then count all documents.
@@ -379,7 +381,7 @@ class Database
         sep = connString.indexOf "@"
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
-        logger.debug "Database.setDb", connStringSafe, options
+        logger.debug "Database.upsertDb", connStringSafe, options
 
 
 # Singleton implementation.

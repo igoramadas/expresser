@@ -16,6 +16,9 @@ class App
     net = require "net"
     path = require "path"
 
+    # Current node environment and HTTP server handler are set on init.
+    nodeEnv = null
+
     # Internal modules will be set on `init`.
     firewall = null
     logger = null
@@ -28,9 +31,6 @@ class App
 
     # @property [Array<Object>] Array of additional middlewares to be use by the Express server. Please note that if you're adding middlewares manually you must do it BEFORE calling `init`.
     extraMiddlewares: []
-
-    # Current node environment and HTTP server handler are set on init.
-    nodeEnv = null
 
     # INIT
     # --------------------------------------------------------------------------

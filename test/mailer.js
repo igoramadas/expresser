@@ -34,7 +34,7 @@ describe("Mail Tests", function() {
         mailer.init();
     });
 
-    it.skip("Sends a test email using Mandrill", function(done) {
+    it("Sends a test email using Mandrill", function(done) {
         this.timeout(10000);
 
         if (!env.MDA) {
