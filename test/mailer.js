@@ -38,7 +38,7 @@ describe("Mail Tests", function() {
         this.timeout(10000);
 
         if (!env.MDA) {
-            return done("The 'MDA' variable which defines the Mandrill password was not set.");
+            return done(new Error("The 'MDA' variable which defines the Mandrill password was not set."));
         }
 
         var smtpOptions = {
