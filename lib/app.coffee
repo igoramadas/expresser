@@ -2,9 +2,9 @@
 # -----------------------------------------------------------------------------
 # The Express app server, with built-in sockets, firewall and New Relic integration.
 # <!--
+# @see Settings.app
 # @see Firewall
 # @see Sockets
-# @see Settings.app
 # -->
 class App
 
