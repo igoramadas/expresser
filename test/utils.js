@@ -20,7 +20,7 @@ describe("Utils Tests", function() {
 
     it("Is single instance", function() {
         utils.singleInstance = true;
-        var utils = require("../lib/utils.coffee");
-        utils.singleInstance.should.equal(app2.singleInstance);
+        var utils2 = require("../lib/utils.coffee");
+        utils.singleInstance.should.equal(utils2.singleInstance);
     });
 });
