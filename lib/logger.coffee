@@ -54,10 +54,11 @@ class Logger
 
     # Bind event listeners.
     setEvents: =>
-        events.on "cron.start", @start
-        events.on "cron.stop", @stop
-        events.on "cron.add", @add
-        events.on "cron.remove", @remove
+        events.on "logger.debug", @debug
+        events.on "logger.info", @info
+        events.on "logger.warn", @warn
+        events.on "logger.error", @error
+        events.on "logger.critical", @critical
 
     # Init the Logger module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
