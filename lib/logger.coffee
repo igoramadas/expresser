@@ -145,7 +145,7 @@ class Logger
     initLoggly: =>
         if settings.logger.loggly.enabled and settings.logger.loggly.subdomain? and settings.logger.loggly.token? and settings.logger.loggly.token isnt ""
             loggly = require "loggly"
-            loggerLoggly = loggly.createClient {subdomain: settings.logger.loggly.subdomain, json: false}
+            loggerLoggly = loggly.createClient {token: settings.logger.loggly.token, subdomain: settings.logger.loggly.subdomain, json: false}
             activeServices.push "Loggly"
         else
             @stopLoggly()
@@ -192,10 +192,10 @@ class Logger
         # Log to different transports.
         if settings.logger.local.enabled and localBuffer?
             @logLocal logType, msg
-        if settings.logger.logentries.enabled and logentries?
+        if settings.logger.logentries.enabled and loggerLogentries?
             loggerLogentries.log logFunc, msg
-        if settings.logger.loggly.enabled and loggly?
-            loggerLoggly.log settings.logger.loggly.token, msg, @logglyCallback
+        if settings.logger.loggly.enabled and loggerLoggly?
+            loggerLoggly.log msg, @logglyCallback
 
         # Log to the console depending on `console` setting.
         if settings.logger.console

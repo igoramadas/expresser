@@ -1,4 +1,3 @@
-# Detect if we're running Windows
 ifeq ($(OS),Windows_NT)
 	MOCHA := node_modules/.bin/mocha.cmd
 	DOCCO:= node_modules/.bin/docco.cmd
@@ -8,7 +7,7 @@ else
 endif
 
 test:
-	$(MOCHA) -u tdd -R spec
+	$(MOCHA) -u tdd -R TAP
 
 docs:
 	$(DOCCO) -l linear -o docs index.coffee lib/*.coffee

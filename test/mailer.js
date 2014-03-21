@@ -4,7 +4,7 @@ require("coffee-script/register");
 var chai = require("chai");
 chai.should();
 
-describe("Mail Tests", function() {
+describe("Mailer Tests", function() {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
