@@ -102,6 +102,7 @@ class App
 
     # Configure the server. Set views, options, use Express modules, etc.
     configureServer: (options) =>
+        midBodyParser = require "body-parser"
         midCookieParser = require "cookie-parser"
         midSession = require "express-session"
         midCompression = require "compression"
@@ -117,30 +118,18 @@ class App
         @server.set "view engine", settings.app.viewEngine
         @server.set "view options", { layout: false }
 
-        # If debug is on, log requests to the console.
-        if settings.general.debug
-            @server.use (req, res, next) =>
-                ip = utils.getClientIP req
-                method = req.method
-                url = req.url
-
-                # Check if request flash is present before logging.
-                if req.flash? and lodash.isFunction req.flash
-                    console.log "Request from #{ip}", method, url, req.flash()
-                else
-                    console.log "Request from #{ip}", method, url
-                next() if next?
-
         # Enable firewall?
         if settings.firewall.enabled
             firewall = require "./firewall.coffee"
             firewall.init @server
 
         # Use Express basic handlers.
+        @server.use midBodyParser()
         @server.use midCookieParser settings.app.cookieSecret if settings.app.cookieEnabled
         @server.use midSession {secret: settings.app.sessionSecret} if settings.app.sessionEnabled
-        @server.use midCompression
-        @server.use express["static"] settings.path.publicDir
+
+        # Use HTTP compression only if enabled on settings.
+        @server.use midCompression if settings.app.compressionEnabled
 
         # Fix connect assets helper context.
         connectAssetsOptions = settings.app.connectAssets
@@ -168,6 +157,23 @@ class App
         # Configure production environment.
         if nodeEnv is "production"
             @server.use midErrorHandler()
+
+        # Use Express static routing.
+        @server.use express.static settings.path.publicDir
+
+        # If debug is on, log requests to the console.
+        if settings.general.debug
+            @server.use (req, res, next) =>
+                ip = utils.getClientIP req
+                method = req.method
+                url = req.url
+
+                # Check if request flash is present before logging.
+                if req.flash? and lodash.isFunction req.flash
+                    console.log "Request from #{ip}", method, url, req.flash()
+                else
+                    console.log "Request from #{ip}", method, url
+                next() if next?
 
     # Start the server using HTTP or HTTPS, depending on the settings.
     startServer: =>

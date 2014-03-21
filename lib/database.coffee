@@ -18,18 +18,6 @@ class Database
     # @property [Object] Database object (using mongoskin), will be set during `init`.
     db: null
 
-    # @property [Boolean] When using the failover/secondary databse this will be set to true.
-    failover: false
-
-    # @property [Method] Callback (result) triggered when a connection is validated sucessfully.
-    onConnectionValidated: null
-
-    # @property [Method] Callback (err) triggered when a connection fails.
-    onConnectionError: null
-
-    # @property [Method] Callback (isFailover) triggered when a connection switches to (true) or from (false) failover.
-    onFailoverSwitch: null
-
     # INIT
     # -------------------------------------------------------------------------
 
@@ -37,10 +25,7 @@ class Database
     # @param [Object] options Database init options.
     init: (options) =>
         if settings.database.connString? and settings.database.connString isnt ""
-            @validateConnection()
-        else if settings.database.connString2? and settings.database.connString2 isnt ""
-            @validateConnection()
-            logger.warn "Database.init", "The connString is empty but connString2 is set.", "Please set connString first (module will still work)."
+            @setDb settings.database.connString, settings.database.options
         else
             logger.debug "Database.init", "No connection string set.", "Database module won't work."
 
@@ -119,9 +104,9 @@ class Database
         # Search everything!
         else
             if limit > 0
-                dbCollection.find().limit(limit).toArray dbCallback
+                dbCollection.find({}).limit(limit).toArray dbCallback
             else
-                dbCollection.find().toArray dbCallback
+                dbCollection.find({}).toArray dbCallback
 
         if filter?
             filterLog = filter
@@ -316,62 +301,8 @@ class Database
 
         return result
 
-    # Helper method to check the DB connection. If connection fails multiple times in a row,
-    # switch to the failover DB (specified on the `Database.connString2` setting).
-    # @param [Integer] retry Optional, current retry number, default is 0.
-    # @private
-    validateConnection: (retry) =>
-        retry = 0 if not retry?
-
-        # If connection has failed repeatedly for more than 2 times the `maxRetries` value
-        # then stop trying and log an error.
-        if retry > settings.database.maxRetries * 2
-            logger.critical
-            return logger.error "Database.validateConnection", "Connection failed #{retry} times, abort!"
-
-        # First try using main database. If `failover` is true this will trigger the `onFailoverSwitch` event.
-        if retry < 1
-            @setDb settings.database.connString, settings.database.options
-            @onFailoverSwitch? false if @failover
-            @failover = false
-            logger.debug "Database.validateConnection", "Using main DB."
-
-        # Reached max retries? Try connecting to the failover database, if there's one specified.
-        if retry is settings.database.maxRetries
-            if settings.database.connString2? and settings.database.connString2 isnt ""
-                @setDb settings.database.connString2, settings.database.options
-                @onFailoverSwitch? true if not @failover
-                @failover = true
-                logger.info "Database.validateConnection", "Connection failed #{retry} times.", "Switching to failover DB."
-            else
-                logger.error "Database.validateConnection", "Connection failed #{retry} times.", "No failover DB set, keep trying."
-
-        # Try to connect to the current database. If it fails, try again in a few seconds.
-        @db.open (err, result) =>
-            if err?
-                logger.debug "Database.validateConnection", "Failed to connect.", "Retry #{retry}."
-                setTimeout (() => @validateConnection retry + 1), settings.database.retryInterval
-
-                # Trigger connection error.
-                @onConnectionError? err
-
-            else
-
-                # If using the failover database, register a timeout to try
-                # to connect to the main database again.
-                if @failover
-                    timeout = settings.database.failoverTimeout
-                    setTimeout @validateConnection, timeout * 1000
-                    logger.debug "Database.validateConnection", "Connected to failover DB.", "Will try main DB again in #{timeout} seconds."
-                else
-                    logger.debug "Database.validateConnection", "Connected to main DB."
-
-                # Trigger connection validated.
-                @onConnectionValidated? result
-
     # Helper to set the current DB object. Can be called externally but ideally you should control
     # the connection string by updating your app settings.json file.
-    # Calling this directly won't change the `failover` flag!
     # @param [Object] connString The connection string, for example user:password@hostname/dbname.
     # @param [Object] options Additional options to be passed when creating the DB connection object.
     setDb: (connString, options) =>
@@ -381,7 +312,7 @@ class Database
         sep = connString.indexOf "@"
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
-        logger.debug "Database.upsertDb", connStringSafe, options
+        logger.debug "Database.setDv", connStringSafe, options
 
 
 # Singleton implementation.

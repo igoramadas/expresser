@@ -30,28 +30,6 @@ describe("Database Tests", function() {
         settings.should.have.property("database");
     });
 
-    it("Inits and validates connection to localhost", function(done) {
-        this.timeout(10000);
-
-        var callbackValidated = function(result) {
-            database.onConnectionValidated = null;
-            database.onConnectionError = null;
-            done();
-        };
-
-        var callbackError = function(err) {
-            database.onConnectionValidated = null;
-            database.onConnectionError = null;
-            done(err);
-        };
-
-        settings.database.connString = "mongodb://127.0.0.1/expresser?auto_reconnect=true";
-
-        database.onConnectionValidated = callbackValidated;
-        database.onConnectionError = callbackError;
-        database.init();
-    });
-
     it("Add simple record to the database", function(done) {
         var callback = function(err, result) {
             if (err) {

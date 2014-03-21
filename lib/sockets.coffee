@@ -81,7 +81,7 @@ class Sockets
         @currentListeners.push {key: key, callback: callback}
 
         if not onlyNewClients
-            for key, socket of @io.sockets.manager.open
+            for key, socket of @io.sockets.connected
                 socket.on key, callback
 
         logger.debug "Sockets.listenTo", key
@@ -90,7 +90,7 @@ class Sockets
     # @param [String] key The event key.
     # @param [Object] callback The callback to stop triggering.
     stopListening: (key, callback) =>
-        for socketKey, socket of @io.sockets.manager.open
+        for socketKey, socket of @io.sockets.connected
             if callback?
                 socket.removeListener key, callback
             else
@@ -112,7 +112,7 @@ class Sockets
 
     # Get how many users are currenly connected to the app.
     getConnectionCount: =>
-        return Object.keys(@io.sockets.manager.open).length
+        return Object.keys(@io.sockets.connected).length
 
     # When user disconnects, emit an event with the new connection count to all clients.
     onDisconnect: =>

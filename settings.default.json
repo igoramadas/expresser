@@ -8,6 +8,8 @@
     // APP
     // -------------------------------------------------------------------------
     "app": {
+        // Enable HTTP compression?
+        "compressionEnabled": true,
         // Enable cookies on Express?
         "cookieEnabled": true,
         // Secret key used for cookie encryption.
