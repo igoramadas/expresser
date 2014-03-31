@@ -30,6 +30,10 @@ describe("Database Tests", function() {
         settings.should.have.property("database");
     });
 
+    it("Inits", function() {
+        database.init();
+    });
+
     it("Add simple record to the database", function(done) {
         var callback = function(err, result) {
             if (err) {
@@ -56,5 +60,28 @@ describe("Database Tests", function() {
         var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
 
         database.set("test", obj, callback);
+    });
+
+    it("Add 500 records to the database", function(done) {
+        this.timeout(20000);
+
+        var counter = 500;
+        var current = 1;
+
+        var callback = function(err, result) {
+            if (err) {
+                done(err);
+            } else if (current == counter) {
+                done();
+            }
+
+            current++;
+        };
+
+        for (var i = 0; i < counter; i++) {
+            database.set("test", {counter: i}, callback);
+        }
+
+
     });
 });

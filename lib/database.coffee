@@ -59,7 +59,7 @@ class Database
         if not @db?
             if settings.logger.autoLogErrors
                 logger.error "Database.get", "The db is null or was not initialized. Abort!", collection, filter
-            return callback "Database.upsert: the db was not initialized, please check database settings and call its 'init' method."
+            return callback "Database.insert: the db was not initialized, please check database settings and call its 'init' method."
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -116,16 +116,16 @@ class Database
         else
             logger.debug "Database.get", collection, "No filter.", options
 
-    # Insert or update documents on the database using Mongo's findAndModify command.
+    # Inserts documents on the database.
     # The `options` parameter is optional.
     # @param [String] collection The collection name.
     # @param [Object] obj Document or data to be added / updated.
-    # @param [Object] options Optional, options to control and filter the upsert behaviour.
+    # @param [Object] options Optional, options to control and filter the insert behaviour.
     # @option options [Object] filter Defines the query filter. If not specified, will try using the ID of the passed object.
     # @option options [Boolean] patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
-    # @option options [Boolean] upsert Default is true, if false it won't add a new document (only update existing).
+    # @option options [Boolean] insert Default is true, if false it won't add a new document (only update existing).
     # @param [Method] callback Callback (err, result) when operation has finished.
-    upsert: (collection, obj, options, callback) =>
+    insert: (collection, obj, options, callback) =>
         if not callback? and lodash.isFunction options
             callback = options
             options = {}
@@ -133,17 +133,67 @@ class Database
         # Object or filter is mandatory.
         if not obj?
             if settings.logger.autoLogErrors
-                logger.error "Database.upsert", "No object specified. Abort!", collection
+                logger.error "Database.insert", "No object specified. Abort!", collection
             if callback?
-                callback "Database.upsert: no object (second argument) was specified."
+                callback "Database.insert: no object (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @db?
             if settings.logger.autoLogErrors
-                logger.error "Database.upsert", "The db is null or was not initialized. Abort!", collection
+                logger.error "Database.insert", "The db is null or was not initialized. Abort!", collection
             if callback?
-                callback "Database.upsert: the db was not initialized, please check database settings and call its 'init' method."
+                callback "Database.insert: the db was not initialized, please check database settings and call its 'init' method."
+            return false
+
+        # Create the DB callback helper.
+        dbCallback = (err, result) =>
+            if callback?
+                result = @normalizeId(result) if settings.database.normalizeId
+                callback err, result
+
+        # Set collection object.
+        dbCollection = @db.collection collection
+
+        # Make sure options is valid.
+        options = {} if not options?
+
+        # Execute insert!
+        dbCollection.insert obj, {"new": true}, dbCallback
+
+        if id?
+            logger.debug "Database.insert", collection, options, "ID: #{id}"
+        else
+            logger.debug "Database.insert", collection, options, "New document."
+
+    # Update existing documents on the database.
+    # The `options` parameter is optional.
+    # @param [String] collection The collection name.
+    # @param [Object] obj Document or data to be added / updated.
+    # @param [Object] options Optional, options to control and filter the insert behaviour.
+    # @option options [Object] filter Defines the query filter. If not specified, will try using the ID of the passed object.
+    # @option options [Boolean] patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
+    # @option options [Boolean] insert Default is true, if false it won't add a new document (only update existing).
+    # @param [Method] callback Callback (err, result) when operation has finished.
+    update: (collection, obj, options, callback) =>
+        if not callback? and lodash.isFunction options
+            callback = options
+            options = {}
+
+        # Object or filter is mandatory.
+        if not obj?
+            if settings.logger.autoLogErrors
+                logger.error "Database.insert", "No object specified. Abort!", collection
+            if callback?
+                callback "Database.update: no object (second argument) was specified."
+            return false
+
+        # No DB set? Throw exception.
+        if not @db?
+            if settings.logger.autoLogErrors
+                logger.error "Database.update", "The db is null or was not initialized. Abort!", collection
+            if callback?
+                callback "Database.update: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
         # Create the DB callback helper.
@@ -160,6 +210,10 @@ class Database
             id = mongo.ObjectID.createFromHexString obj._id.toString()
         else if obj.id? and settings.database.normalizeId
             id = mongo.ObjectID.createFromHexString obj.id.toString()
+
+        # Make sure options is valid.
+        options = {} if not options?
+        options.upsert = false if not options.upsert?
 
         # If a `filter` option was set, use it as the query filter otherwise use the "_id" property.
         if options.filter?
@@ -181,28 +235,22 @@ class Database
         else
             docData = obj
 
-        # Check upsert option, if false it won't add new documents.
-        if options.upsert?
-            upsert = options.upsert
-        else
-            upsert = true
-
         # Execute update!
-        dbCollection.findAndModify filter, sort, docData, {"new": true, "upsert": upsert}, dbCallback
+        dbCollection.update filter, sort, docData, {"new": true, "insert": options.upsert}, dbCallback
 
         if id?
-            logger.debug "Database.upsert", collection, options, "ID: #{id}"
+            logger.debug "Database.update", collection, options, "ID: #{id}"
         else
-            logger.debug "Database.upsert", collection, options, "New document."
+            logger.debug "Database.update", collection, options, "New document."
 
-    # Alias for `upsert`.
-    set: => @upsert.apply this, arguments
+    # Alias for `insert`.
+    set: => @update.apply this, arguments
 
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
     # @param [String] collection The collection name.
     # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
     # @param [Method] callback Callback (err, result) when operation has finished.
-    delete: (collection, filter, callback) =>
+    remove: (collection, filter, callback) =>
         if not callback? and lodash.isFunction options
             callback = options
             options = {}
@@ -210,17 +258,17 @@ class Database
         # Filter is mandatory.
         if not filter?
             if settings.logger.autoLogErrors
-                logger.error "Database.delete", "No filter specified. Abort!", collection
+                logger.error "Database.remove", "No filter specified. Abort!", collection
             if callback?
-                callback "Database.delete: no filter (second argument) was specified."
+                callback "Database.remove: no filter (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @db?
             if settings.logger.autoLogErrors
-                logger.error "Database.delete", "The db is null or was not initialized. Abort!", collection
+                logger.error "Database.remove", "The db is null or was not initialized. Abort!", collection
             if callback?
-                callback "Database.delete: the db was not initialized, please check database settings and call its 'init' method."
+                callback "Database.remove: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
         # Check it the `obj` is the model itself, or only the ID string / number.
@@ -247,10 +295,10 @@ class Database
         else
             dbCollection.remove filter, dbCallback
 
-        logger.debug "Database.delete", collection, filter
+        logger.debug "Database.remove", collection, filter
 
-    # Alias for `delete`.
-    del: => @delete.apply this, arguments
+    # Alias for `remove`.
+    del: => @remove.apply this, arguments
 
     # Count documents from the database. A `collection` must be specified.
     # If no `filter` is not passed then count all documents.
@@ -312,7 +360,7 @@ class Database
         sep = connString.indexOf "@"
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
-        logger.debug "Database.setDv", connStringSafe, options
+        logger.debug "Database.setDb", connStringSafe, options
 
 
 # Singleton implementation.
