@@ -198,11 +198,11 @@ class Database
     # Alias for `upsert`.
     set: => @upsert.apply this, arguments
 
-    # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
+    # Removes an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
     # @param [String] collection The collection name.
     # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
     # @param [Method] callback Callback (err, result) when operation has finished.
-    delete: (collection, filter, callback) =>
+    remove: (collection, filter, callback) =>
         if not callback? and lodash.isFunction options
             callback = options
             options = {}
@@ -210,17 +210,17 @@ class Database
         # Filter is mandatory.
         if not filter?
             if settings.logger.autoLogErrors
-                logger.error "Database.delete", "No filter specified. Abort!", collection
+                logger.error "Database.remove", "No filter specified. Abort!", collection
             if callback?
-                callback "Database.delete: no filter (second argument) was specified."
+                callback "Database.remove: no filter (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @db?
             if settings.logger.autoLogErrors
-                logger.error "Database.delete", "The db is null or was not initialized. Abort!", collection
+                logger.error "Database.remove", "The db is null or was not initialized. Abort!", collection
             if callback?
-                callback "Database.delete: the db was not initialized, please check database settings and call its 'init' method."
+                callback "Database.remove: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
         # Check it the `obj` is the model itself, or only the ID string / number.
@@ -247,10 +247,10 @@ class Database
         else
             dbCollection.remove filter, dbCallback
 
-        logger.debug "Database.delete", collection, filter
+        logger.debug "Database.remove", collection, filter
 
     # Alias for `delete`.
-    del: => @delete.apply this, arguments
+    del: => @remove.apply this, arguments
 
     # Count documents from the database. A `collection` must be specified.
     # If no `filter` is not passed then count all documents.
