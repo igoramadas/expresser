@@ -199,20 +199,23 @@ class App
             sockets.init server
 
         # Start the server and log output.
-        if settings.app.ip? and settings.app.ip isnt ""
-            server.listen settings.app.port, settings.app.ip
-            logger.info "App #{settings.general.appTitle} started!", settings.app.ip, settings.app.port
-        else
-            server.listen settings.app.port
-            logger.info "App #{settings.general.appTitle} started!", settings.app.port
-
-        # Using SSL and redirector port is set? Then create the http server.
-        if settings.app.ssl.enabled and settings.app.ssl.redirectorPort > 0
-            logger.info "App #{settings.general.appTitle} will redirect HTTP #{settings.app.ssl.redirectorPort} to HTTPS on #{settings.app.port}."
-            redirServer = express()
-            redirServer.get "*", (req, res) -> res.redirect "https://#{req.host}:#{settings.app.port}#{req.url}"
-            @redirectorServer = http.createServer redirServer
-            @redirectorServer.listen settings.app.ssl.redirectorPort
+        try
+            if settings.app.ip? and settings.app.ip isnt ""
+                server.listen settings.app.port, settings.app.ip
+                logger.info "App", settings.general.appTitle, "Listening on #{settings.app.ip} - #{settings.app.port}"
+            else
+                server.listen settings.app.port
+                logger.info "App", settings.general.appTitle, "Listening on #{settings.app.port}"
+    
+            # Using SSL and redirector port is set? Then create the http server.
+            if settings.app.ssl.enabled and settings.app.ssl.redirectorPort > 0
+                logger.info "App", "#{settings.general.appTitle} will redirect HTTP #{settings.app.ssl.redirectorPort} to HTTPS on #{settings.app.port}."
+                redirServer = express()
+                redirServer.get "*", (req, res) -> res.redirect "https://#{req.host}:#{settings.app.port}#{req.url}"
+                @redirectorServer = http.createServer redirServer
+                @redirectorServer.listen settings.app.ssl.redirectorPort
+        catch ex
+            logger.error "App", "Could not start the server!", ex
 
 
     # HELPER AND UTILS
