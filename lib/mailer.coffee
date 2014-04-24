@@ -193,13 +193,16 @@ class Mailer
 
     # Helper to send emails using the specified transport and options.
     smtpSend = (transport, options, callback) ->
-        transport.sendMail options, (err, result) ->
-            if err?
-                if options.logError
-                    logger.error "Mailer.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
-            else
-                logger.debug "Mailer.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
-            callback err, result
+        try
+            transport.sendMail options, (err, result) ->
+                if err?
+                    if options.logError
+                        logger.error "Mailer.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
+                else
+                    logger.debug "Mailer.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
+                callback err, result
+        catch ex
+            callback ex
 
     # Helper to create a SMTP object.
     createSmtp = (options) ->

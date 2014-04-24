@@ -9,6 +9,11 @@ describe("Mailer Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    if (!settings.testKeysLoaded) {
+        settings.loadFromJson("settings.test.keys.json");
+        settings.testKeysLoaded = true;
+    }
+
     var utils = null;
     var mailer = null;
 
@@ -35,14 +40,14 @@ describe("Mailer Tests", function() {
     });
 
     it("Sends a test email using Mandrill", function(done) {
-        this.timeout(10000);
+        this.timeout(20000);
 
-        if (!env.MDA) {
-            return done(new Error("The 'MDA' variable which defines the Mandrill password was not set."));
+        if (!settings.mailer.smtp.password) {
+            return done(new Error("The mailer SMTP password was not set (settings.mailer.smtp.password)."));
         }
 
         var smtpOptions = {
-            password: env.MDA,
+            password: settings.mailer.smtp.password,
             user: "devv@devv.com",
             service: "mandrill"
         };

@@ -9,7 +9,11 @@ describe("Logger Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    var utils = null;
+    if (!settings.testKeysLoaded) {
+        settings.loadFromJson("settings.test.keys.json");
+        settings.testKeysLoaded = true;
+    }
+
     var logger = null;
 
     // TESTS STARTS HERE!!!
@@ -60,11 +64,10 @@ describe("Logger Tests", function() {
     it("Send log to Logentries", function(done) {
         this.timeout(10000);
 
-        if (!env.LET) {
-            return done(new Error("The 'LET' variable which defines the Logentries token was not set."));
+        if (!settings.logger.logentries.token) {
+            return done(new Error("The Logentries token was not set (settings.logger.logentries.token)."));
         }
 
-        settings.logger.logentries.token = env.LET;
         settings.logger.loggly.enabled = false;
         settings.logger.local.enabled = false;
         settings.logger.logentries.enabled = true;
@@ -90,11 +93,10 @@ describe("Logger Tests", function() {
     it("Send log to Loggly", function(done) {
         this.timeout(10000);
 
-        if (!env.LOT) {
-            return done(new Error("The 'LOT' variable which defines the Loggly token was not set."));
+        if (!settings.logger.loggly.token) {
+            return done(new Error("The Logentries token was not set (settings.logger.loggly.token)."));
         }
 
-        settings.logger.loggly.token = env.LOT;
         settings.logger.logentries.enabled = false;
         settings.logger.local.enabled = false;
         settings.logger.loggly.enabled = true;

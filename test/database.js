@@ -9,6 +9,11 @@ describe("Database Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    if (!settings.testKeysLoaded) {
+        settings.loadFromJson("settings.test.keys.json");
+        settings.testKeysLoaded = true;
+    }
+    
     var utils = null;
     var database = null;
 
@@ -59,7 +64,7 @@ describe("Database Tests", function() {
 
         var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
 
-        database.set("test", obj, callback);
+        database.insert("test", obj, callback);
     });
 
     it("Add 500 records to the database", function(done) {
@@ -79,9 +84,21 @@ describe("Database Tests", function() {
         };
 
         for (var i = 0; i < counter; i++) {
-            database.set("test", {counter: i}, callback);
+            database.insert("test", {counter: i}, callback);
         }
+    });
 
+    it("Updates all previously created records on the database", function(done) {
+        var callback = function(err, result) {
+            if (err) {
+                throw err;
+            } else {
+                done();
+            }
+        };
 
+        var obj = {updated: true};
+
+        database.update("test", obj, callback);
     });
 });

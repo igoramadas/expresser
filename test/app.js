@@ -9,6 +9,11 @@ describe("App Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    if (!settings.testKeysLoaded) {
+        settings.loadFromJson("settings.test.keys.json");
+        settings.testKeysLoaded = true;
+    }
+
     var app;
 
     // TESTS STARTS HERE!!!

@@ -120,17 +120,8 @@ class Database
     # The `options` parameter is optional.
     # @param [String] collection The collection name.
     # @param [Object] obj Document or array of documents to be added.
-    # @param [Object] options Optional, options to be passed to the mongoskin module.
-    # @option options [Object] filter Defines the query filter. If not specified, will try using the ID of the passed object.
-    # @option options [Boolean] patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
-    # @option options [Boolean] insert Default is true, if false it won't add a new document (only update existing).
     # @param [Method] callback Callback (err, result) when operation has finished.
-    insert: (collection, obj, options, callback) =>
-        if not callback? and lodash.isFunction options
-            callback = options
-            options = {}
-
-        # Object or filter is mandatory.
+    insert: (collection, obj, callback) =>
         if not obj?
             if settings.logger.autoLogErrors
                 logger.error "Database.insert", "No object specified. Abort!", collection
@@ -146,9 +137,6 @@ class Database
                 callback "Database.insert: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
-        # Set default options.
-        options = lodash.defaults options, {new: true}
-
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
@@ -159,8 +147,8 @@ class Database
         dbCollection = @db.collection collection
 
         # Execute insert!
-        dbCollection.insert obj, options, dbCallback
-        logger.debug "Database.insert", collection, options
+        dbCollection.insert obj, dbCallback
+        logger.debug "Database.insert", collection
 
     # Update existing documents on the database.
     # The `options` parameter is optional.
@@ -169,7 +157,7 @@ class Database
     # @param [Object] options Optional, options to control and filter the insert behaviour.
     # @option options [Object] filter Defines the query filter. If not specified, will try using the ID of the passed object.
     # @option options [Boolean] patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
-    # @option options [Boolean] insert Default is true, if false it won't add a new document (only update existing).
+    # @option options [Boolean] upsert Default is false, if true it will create documents if none was found.
     # @param [Method] callback Callback (err, result) when operation has finished.
     update: (collection, obj, options, callback) =>
         if not callback? and lodash.isFunction options
@@ -209,7 +197,6 @@ class Database
 
         # Make sure options is valid.
         options = {} if not options?
-        options.upsert = false if not options.upsert?
 
         # If a `filter` option was set, use it as the query filter otherwise use the "_id" property.
         if options.filter?
@@ -217,29 +204,24 @@ class Database
         else
             filter = {"_id": id}
 
-        # If a `sort` option was set, use it as sorting otherwise use the default "_id" property.
-        if options.sort?
-            sort = {"sort": options.sort}
-        else if id?
-            sort = {"sort": "_id"}
-        else
-            sort = null
-
         # If options patch is set, replace specified document properties only instead of replacing the whole document.
         if options.patch
             docData = {$set: obj}
         else
             docData = obj
 
+        # Set default options.
+        options = lodash.defaults options, {"new": true, "insert": false}
+
         # Execute update!
-        dbCollection.update filter, sort, docData, {"new": true, "insert": options.upsert}, dbCallback
+        dbCollection.update filter, docData, options, dbCallback
 
         if id?
             logger.debug "Database.update", collection, options, "ID: #{id}"
         else
             logger.debug "Database.update", collection, options, "New document."
 
-    # Alias for `insert`.
+    # Alias for `update`.
     set: => @update.apply this, arguments
 
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
