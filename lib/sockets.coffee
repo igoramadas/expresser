@@ -38,11 +38,8 @@ class Sockets
         # Set transports.
         @io.set "transports", ["websocket", "xhr-polling", "htmlfile"]
 
-        # On production, log only critical errors. On development, log almost everything.
-        if settings.general.debug
-            @io.set "log level", 2
-        else
-            @io.set "log level", 0
+        # Turn optimizations on if debug is not enabled.
+        if not settings.general.debug
             @io.set "browser client minification"
             @io.set "browser client etag"
             @io.set "browser client gzip"
