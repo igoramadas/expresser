@@ -33,20 +33,11 @@ class Sockets
             logger.error "Sockets.init", "App server is invalid. Abort!"
             return
 
-        @io = require("socket.io").listen options.server
-
-        # Set transports.
-        @io.set "transports", ["websocket", "xhr-polling", "htmlfile"]
-
-        # Turn optimizations on if debug is not enabled.
-        if not settings.general.debug
-            @io.set "browser client minification"
-            @io.set "browser client etag"
-            @io.set "browser client gzip"
+        @io = require("socket.io") options.server
 
         # Listen to user connection count updates.
         @io.sockets.on "connection", (socket) =>
-            @io.sockets.emit "connection-count", @getConnectionCount()
+            @io.emit "connection-count", @getConnectionCount()
             socket.on "disconnect", @onDisconnect
 
             # Bind all current event listeners.
@@ -60,8 +51,8 @@ class Sockets
     # @param [String] key The event key.
     # @param [Object] data The JSON data to be sent out to clients.
     emit: (key, data) =>
-        if @io?.sockets?
-            @io.sockets.emit key, data
+        if @io?
+            @io.emit key, data
             logger.debug "Sockets.emit", key, JSON.stringify(data).length + " bytes"
         else
             logger.debug "Sockets.emit", key, "Sockets not initiated yet, abort!"
