@@ -31,13 +31,12 @@
         "viewEngine": "jade",
         // Connect Assets options.
         "connectAssets": {
-            // Build assets?
+            // Build assets? True or false.
             "build": true,
-            // Build directories?
+            // Build directories? True or false.
             "buildDir": false,
-            // Minify JS and CSS builds? True or false. If left null, it will minify on
-            // production environments but not on development.
-            "minifyBuilds": null
+            // Minify JS and CSS builds? True or false.
+            "minifyBuilds": true
         },
         // SSL options to bind server to HTTPS.
         "ssl": {
@@ -148,8 +147,7 @@
         // The app's base URL, including http://.
         "appUrl": "http://expresser.codeplex.com",
         // Enable or disable debugging messages. Should be false on production environments.
-        // If null, debug will be set automatically based on the NODE_ENV variable.
-        "debug": null,
+        "debug": false,
         // Default encoding to be used on IO and web requests.
         "encoding": "utf8",
         // How long (seconds) should files read from disk (email templates for example) stay in cache?
@@ -169,9 +167,8 @@
         // If true, other modules will use the Logger to log errors before throwing them as exceptions.
         // By default it's false, as ideally you should log errors yourself using callbacks.
         "autoLogErrors": false,
-        // Output logs to the console? If left null or undefined, it will inherit the value
-        // from settings.general.debug.
-        "console": null,
+        // Output logs to the console? True or false.
+        "console": true,
         // If the mail module is properly configured then all critical logs (logger.critical()) will
         // be sent to the email address specified below. Leave blank or null to not send emails.
         "criticalEmailTo": null,

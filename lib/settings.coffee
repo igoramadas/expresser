@@ -1,17 +1,17 @@
 # EXPRESSER SETTINGS
 # -----------------------------------------------------------------------------
 # All main settings for the Expresser platform are set and described on the
-# @default.json file. Do not edit it!!! To change settings please
-# create a @json file and put your values there.
+# settings.default.json file. Do not edit it!!! To change settings please
+# create a settings.json file and put your values there.
 #
-# You can also create specific settings for different running environments.
-# For example to set settings on development, create `@development.json`
-# and for production a `@production.json` file. These will be parsed
-# AFTER the main `@json` file.
+# You can also create specific settings for different runtime environments.
+# For example to set settings on development, create `settings.development.json`
+# and for production a `settings.production.json` file. These will be parsed
+# AFTER the main `settings.json` file.
 #
-# Please note that the `@json` must ne located on the root of your app!
+# Please note that the `settings.json` must ne located on the root of your app!
 # <!--
-# @example Sample @json file
+# @example Sample settings.json file
 #   {
 #     "general": {
 #       "debug": true,
@@ -35,9 +35,9 @@ class Settings
     # MAIN METHODS
     # --------------------------------------------------------------------------
 
-    # Load settings from @default.json, then @json, then environment specific @
+    # Load settings from settings.default.json, then settings.json, then environment specific settings.
     load: =>
-        @currentEnv = "development" if not @currentEnv? or @currentEnv is ""
+        @currentEnv = process.env.NODE_ENV or "development"
 
         @loadFromJson "settings.default.json"
         @loadFromJson "settings.json"
@@ -85,10 +85,10 @@ class Settings
         # Return the JSON representation of the file (or null if not found / empty).
         return settingsJson
 
-    # Reset to default @
+    # Reset to default settings.
     reset: =>
         @instance = new Settings()
-        @loadDefaults()
+        @instance.load()
 
     # ENCRYPTION
     # --------------------------------------------------------------------------
@@ -122,7 +122,7 @@ class Settings
         # Helper to parse and encrypt / decrypt settings data.
         parser = (obj) =>
             currentValue = null
-            
+
             for prop, value of obj
                 if value?.constructor is Object
                     parser obj[prop]
@@ -228,7 +228,7 @@ class Settings
             else
                 fs.unwatchFile filename, callback
 
-        # Add / remove watcher for the @node_env.json file if it exists.
+        # Add / remove watcher for the settings.NODE_ENV.json file if it exists.
         filename = utils.getFilePath "settings.#{@currentEnv.toString().toLowerCase()}.json"
         if filename?
             if enable
@@ -345,30 +345,9 @@ Settings.getInstance = ->
     if not @instance?
         @instance = new Settings()
 
-        # Load from @default.json.
+        # Load default settings and force disable console log on test.
         @instance.load()
-
-        # Disable console log on test.
-        if @instance.currentEnv is "test"
-            @instance.logger.console = false
-
-        # Set debug in case it has not been set.
-        if not @instance.general.debug?
-            if @currentEnv is "production" or @instance.currentEnv is "test"
-                @instance.general.debug = false
-            else
-                @instance.general.debug = true
-
-        # Set console log in case it has not been set.
-        if not @instance.logger.console?
-            @instance.logger.console = @instance.general.debug
-
-        ## Set minifyBuilds in case it has not been set.
-        if not @instance.app.connectAssets.minifyBuilds?
-            if @instance.currentEnv is "development"
-                @instance.app.connectAssets.minifyBuilds = false
-            else
-                @instance.app.connectAssets.minifyBuilds = true
+        @instance.logger.console = false if @instance.currentEnv is "test"
 
     return @instance
 
