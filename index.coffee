@@ -1,7 +1,7 @@
 # EXPRESSER
 # -----------------------------------------------------------------------------
-# A platform and template for Node.js web apps, built on top of Express.
-# If you need help, check the project page at http://expresser.codeplex.com.
+# A platform afor Node.js web apps, built on top of Express.
+# If you need help check the project page at http://expresser.codeplex.com.
 
 class Expresser
 
