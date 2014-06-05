@@ -120,7 +120,11 @@
       
         
         <h2 id="expresser-firewall">EXPRESSER FIREWALL</h2>
-<p>Firewall to protect the server against well known HTTP and socket attacks.
+
+        
+      
+        
+        <p>Firewall to protect the server against well known HTTP and socket attacks.
 ATTENTION! The Firewall module is started automatically by the App module. If you wish to
 disable it, set <code>Settings.firewall.enabled</code> to false.
 <!--
@@ -151,6 +155,10 @@ disable it, set <code>Settings.firewall.enabled</code> to false.
         <h2 id="protection-patterns">PROTECTION PATTERNS</h2>
 
         
+      
+        
+        
+        
           <div class='highlight'><pre>    patterns = {}
     patterns.lfi = [<span class="hljs-regexp">/\.\.\//</span>] <span class="hljs-comment"># root path match</span>
     patterns.sql = [<span class="hljs-regexp">/((\%3D)|(=))[^\n]*((\%27)|(\')|(\-\-)|(\%3B)|(;))/i</span>, <span class="hljs-comment"># SQL meta chars</span>
@@ -166,6 +174,10 @@ disable it, set <code>Settings.firewall.enabled</code> to false.
         
         <h2 id="init">INIT</h2>
 
+        
+      
+        
+        
         
       
         
@@ -210,6 +222,10 @@ disable it, set <code>Settings.firewall.enabled</code> to false.
         
         <h2 id="http-protection">HTTP PROTECTION</h2>
 
+        
+      
+        
+        
         
       
         
@@ -284,6 +300,10 @@ disable it, set <code>Settings.firewall.enabled</code> to false.
         
       
         
+        
+        
+      
+        
         <p>Check Socket requests against common web attacks.</p>
 
         
@@ -353,6 +373,10 @@ disable it, set <code>Settings.firewall.enabled</code> to false.
         
       
         
+        
+        
+      
+        
         <p>Reset the blacklist object.</p>
 
         
@@ -417,6 +441,10 @@ it has reached the max retries.</p>
         
       
         
+        
+        
+      
+        
         <p>Send an access denied and end the request in case it wasn’t authorized.</p>
 
         
@@ -453,6 +481,10 @@ it has reached the max retries.</p>
         
         <h2 id="singleton-implementation">Singleton implementation</h2>
 
+        
+      
+        
+        
         
           <div class='highlight'><pre>Firewall.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
     <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Firewall() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?

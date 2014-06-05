@@ -221,8 +221,10 @@ class Database
         else
             logger.debug "Database.update", collection, options, "New document."
 
-    # Alias for `update`.
-    set: => @update.apply this, arguments
+    # DEPRECATED! Alias for `update`, will be removed soon.
+    set: =>
+        console.warn "Database.set", "Method is deprecated, use .insert or .update instead!"
+        @update.apply this, arguments
 
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
     # @param [String] collection The collection name.

@@ -120,7 +120,11 @@
       
         
         <h2 id="expresser-cron">EXPRESSER CRON</h2>
-<p>Handle scheduled cron jobs. You can use intervals (seconds) or specific
+
+        
+      
+        
+        <p>Handle scheduled cron jobs. You can use intervals (seconds) or specific
 times to trigger jobs, and the module will take care of setting the proper timers.
 Jobs are added using “job” objects with id, schedule, callback and other options.
 <!--
@@ -165,11 +169,15 @@ Jobs are added using “job” objects with id, schedule, callback and other opt
         
       
         
-        <p>Class constructor.</p>
+        
+        
+      
+        
+        <p>Cron constructor.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">constructor</span>:<span class="hljs-function"> -&gt;</span>
-        <span class="hljs-property">@setEvents</span>()</pre></div>
+        <span class="hljs-property">@setEvents</span>() <span class="hljs-keyword">if</span> settings.events.enabled</pre></div>
         
       
         
@@ -274,6 +282,10 @@ call the <code>start</code> method after loading.
         
       
         
+        
+        
+      
+        
         <p>Start the specified cron job. If no <code>id</code> is specified, all jobs will be started.
 A filter can also be passed as an object. For example to start all jobs for
 the module “email”, use start({module: “email”}).
@@ -322,7 +334,7 @@ the module “mymodule”, use stop({module: “mymodule”}).
         <span class="hljs-keyword">else</span>
             <span class="hljs-keyword">for</span> job <span class="hljs-keyword">in</span> arr
                 clearTimeout job.timer <span class="hljs-keyword">if</span> job.timer?
-                <span class="hljs-keyword">delete</span> job.timer</pre></div>
+                job.timer = <span class="hljs-literal">null</span></pre></div>
         
       
         
@@ -385,8 +397,8 @@ You can also pass only the <code>job</code> if it has an id property.
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> existing?
             <span class="hljs-keyword">if</span> settings.cron.allowReplacing
-                clearTimeout existing.timer
-                <span class="hljs-keyword">delete</span> existing.timer
+                clearTimeout existing.timer <span class="hljs-keyword">if</span> existing.timer?
+                existing.timer = <span class="hljs-literal">null</span>
             <span class="hljs-keyword">else</span>
                 errorMsg = <span class="hljs-string">"Job <span class="hljs-subst">#{id}</span> already exists and 'allowReplacing' is false. Abort!"</span>
                 logger.error <span class="hljs-string">"Cron.add"</span>, errorMsg
@@ -450,6 +462,10 @@ You can also pass only the <code>job</code> if it has an id property.
         
       
         
+        
+        
+      
+        
         <p>Helper to get the timeout value (ms) to the next job callback.</p>
 
         
@@ -505,6 +521,7 @@ You can also pass only the <code>job</code> if it has an id property.
           <div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-title">getCallback</span> = <span class="hljs-params">(job)</span> -&gt;</span>
         <span class="hljs-function"><span class="hljs-title">callback</span> = -&gt;</span>
             logger.debug <span class="hljs-string">"Cron"</span>, <span class="hljs-string">"Job <span class="hljs-subst">#{job.id}</span> trigger."</span>
+            job.timer = <span class="hljs-literal">null</span>
             job.startTime = moment()
             job.endTime = moment()
             job.callback job</pre></div>
@@ -561,6 +578,10 @@ You can also pass only the <code>job</code> if it has an id property.
         
         <h2 id="singleton-implementation-">Singleton implementation.</h2>
 
+        
+      
+        
+        
         
           <div class='highlight'><pre>Cron.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
     <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Cron() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?

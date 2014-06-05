@@ -120,7 +120,11 @@
       
         
         <h2 id="expresser">EXPRESSER</h2>
-<p>A platform and template for Node.js web apps, built on top of Express.
+
+        
+      
+        
+        <p>A platform and template for Node.js web apps, built on top of Express.
 If you need help, check the project page at <a href="http://expresser.codeplex.com">http://expresser.codeplex.com</a>.</p>
 
         
@@ -181,28 +185,19 @@ passed to the <code>init</code> of each module.
       
         
         <p>App must be the last thing to be started!
-The Firewall and Sockets modules are initiated inside the App module.</p>
+The Firewall and Sockets modules are initiated inside the App.</p>
 
         
           <div class='highlight'><pre>        <span class="hljs-property">@app</span>.init options?.app</pre></div>
         
       
         
-        <p>Check for deprecated / moved features.</p>
+        <h2 id="singleton-implementation">Singleton implementation</h2>
 
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> process.versions.node.indexOf(<span class="hljs-string">".6."</span>) &gt; <span class="hljs-number">0</span>
-            loggerMsg = <span class="hljs-string">"Attention! Support for Node.js 0.6 will be dropped soon, please consider upgrading to 0.10."</span>
-            <span class="hljs-property">@logger</span>.debug <span class="hljs-string">"Expresser.init"</span>, loggerMsg
-        <span class="hljs-keyword">if</span> <span class="hljs-property">@settings</span>.mail?
-            loggerMsg = <span class="hljs-string">"Attention! The 'mail' module was renamed to 'mailer', please update your code if necessary!"</span>
-            <span class="hljs-property">@logger</span>.debug <span class="hljs-string">"Expresser.init"</span>, loggerMsg
-            <span class="hljs-property">@mail</span> = <span class="hljs-property">@mailer</span></pre></div>
         
       
         
-        <h2 id="singleton-implementation">Singleton implementation</h2>
-
+        
         
           <div class='highlight'><pre>Expresser.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
     <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Expresser() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?

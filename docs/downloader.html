@@ -120,7 +120,11 @@
       
         
         <h2 id="expresser-downloader">EXPRESSER DOWNLOADER</h2>
-<p>Handles external downloads.
+
+        
+      
+        
+        <p>Handles external downloads.
 <!--
 @see Settings.downloader
 --></p>
@@ -128,6 +132,7 @@
         
           <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Downloader</span></span>
 
+    events = <span class="hljs-built_in">require</span> <span class="hljs-string">"./events.coffee"</span>
     fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
     http = <span class="hljs-built_in">require</span> <span class="hljs-string">"http"</span>
     https = <span class="hljs-built_in">require</span> <span class="hljs-string">"https"</span>
@@ -148,8 +153,130 @@
         
       
         
-        <h2 id="internal-methods">INTERNAL METHODS</h2>
+        <h2 id="constructor-and-init">CONSTRUCTOR AND INIT</h2>
 
+        
+      
+        
+        
+        
+      
+        
+        <p>Downloader constructor.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">constructor</span>:<span class="hljs-function"> -&gt;</span>
+        <span class="hljs-property">@setEvents</span>() <span class="hljs-keyword">if</span> settings.events.enabled</pre></div>
+        
+      
+        
+        <p>Bind event listeners.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">setEvents</span>:<span class="hljs-function"> =&gt;</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"downloader.download"</span>, <span class="hljs-property">@download</span></pre></div>
+        
+      
+        
+        <h2 id="methods">METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>Download an external file and save it to the specified location. The <code>callback</code>
+has the signature (error, data). Returns the downloader object which is added
+to the <code>queue</code>, which has the download properties and a <code>stop</code> helper to force
+stopping it. Returns false on error or duplicate.
+Tip: if you want to get the downloaded data without having to read the target file
+you can get the downloaded contents via the <code>options.downloadedData</code>.
+@param [String] remoteUrl The URL of the remote file to be downloaded.
+@param [String] saveTo The full local path and destination filename.
+@param [Object] options Optional, object with request options, for example auth.
+@param [Method] callback Optional, a function (err, result) to be called when download has finished.
+@return [Object] Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">download</span>: <span class="hljs-function"><span class="hljs-params">(remoteUrl, saveTo, options, callback)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> remoteUrl?
+            logger.warn <span class="hljs-string">"Downloader.download"</span>, <span class="hljs-string">"Aborted, remoteUrl is not defined."</span>
+            <span class="hljs-keyword">return</span></pre></div>
+        
+      
+        
+        <p>Check options and callback.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction options
+            callback = options
+            options = <span class="hljs-literal">null</span>
+
+        now = <span class="hljs-keyword">new</span> Date().getTime()</pre></div>
+        
+      
+        
+        <p>Create the download object.</p>
+
+        
+          <div class='highlight'><pre>        downloadObj = {<span class="hljs-attribute">timestamp</span>: now, <span class="hljs-attribute">remoteUrl</span>: remoteUrl, <span class="hljs-attribute">saveTo</span>: saveTo, <span class="hljs-attribute">options</span>: options, <span class="hljs-attribute">callback</span>: callback}</pre></div>
+        
+      
+        
+        <p>Prevent duplicates?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.downloader.preventDuplicates
+            existing = lodash.filter downloading, {<span class="hljs-attribute">remoteUrl</span>: remoteUrl, <span class="hljs-attribute">saveTo</span>: saveTo}</pre></div>
+        
+      
+        
+        <p>If downloading the same file and to the same location, abort download.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> existing.length &gt; <span class="hljs-number">0</span>
+                existing = existing[<span class="hljs-number">0</span>]
+                <span class="hljs-keyword">if</span> existing.saveTo <span class="hljs-keyword">is</span> saveTo
+                    logger.warn <span class="hljs-string">"Downloader.download"</span>, <span class="hljs-string">"Aborted, already downloading."</span>, remoteUrl, saveTo
+                    err = {<span class="hljs-attribute">message</span>: <span class="hljs-string">"Download aborted: same file is already downloading."</span>, <span class="hljs-attribute">duplicate</span>: <span class="hljs-literal">true</span>}
+                    callback(err, downloadObj) <span class="hljs-keyword">if</span> callback?
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>Create a <code>stop</code> method to force stop the download by setting the <code>stopFlag</code>.
+Accepts a <code>keep</code> boolean, if true the already downloaded data will be kept on forced stop.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-function"><span class="hljs-title">stopHelper</span> = <span class="hljs-params">(keep)</span> -&gt;</span> <span class="hljs-property">@stopFlag</span> = (<span class="hljs-keyword">if</span> keep <span class="hljs-keyword">then</span> <span class="hljs-number">1</span> <span class="hljs-keyword">else</span> <span class="hljs-number">2</span>)</pre></div>
+        
+      
+        
+        <p>Update download object with stop helper and add to queue.</p>
+
+        
+          <div class='highlight'><pre>        downloadObj.stop = stopHelper
+        queue.push downloadObj</pre></div>
+        
+      
+        
+        <p>Start download immediatelly if not exceeding the <code>maxSimultaneous</code> setting.</p>
+
+        
+          <div class='highlight'><pre>        next() <span class="hljs-keyword">if</span> downloading.length &lt; settings.downloader.maxSimultaneous
+
+        <span class="hljs-keyword">return</span> downloadObj</pre></div>
+        
+      
+        
+        <h2 id="internal-implementation">INTERNAL IMPLEMENTATION</h2>
+
+        
+      
+        
+        
         
       
         
@@ -343,7 +470,7 @@ If <code>stopFlag</code> is 2 means download was stopped and should not keep par
           <div class='highlight'><pre>                        removeDownloading obj
                         obj.callback(err, obj) <span class="hljs-keyword">if</span> obj.callback?
 
-                        logger.debug <span class="hljs-string">"Downloader.next"</span>, <span class="hljs-string">"End"</span>, obj
+                        logger.debug <span class="hljs-string">"Downloader.next"</span>, <span class="hljs-string">"End"</span>, obj.remoteUrl, obj.saveTo
 
                     fileWriter.end()
                     fileWriter.destroySoon()
@@ -433,97 +560,12 @@ If <code>stopFlag</code> is 2 means download was stopped and should not keep par
         
       
         
-        <h2 id="methods">METHODS</h2>
-
-        
-      
-        
-        <p>Download an external file and save it to the specified location. The <code>callback</code>
-has the signature (error, data). Returns the downloader object which is added
-to the <code>queue</code>, which has the download properties and a <code>stop</code> helper to force
-stopping it. Returns false on error or duplicate.
-Tip: if you want to get the downloaded data without having to read the target file
-you can get the downloaded contents via the <code>options.downloadedData</code>.
-@param [String] remoteUrl The URL of the remote file to be downloaded.
-@param [String] saveTo The full local path and destination filename.
-@param [Object] options Optional, object with request options, for example auth.
-@param [Method] callback Optional, a function (err, result) to be called when download has finished.
-@return [Object] Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.</p>
-
-        
-          <div class='highlight'><pre>    <span class="hljs-attribute">download</span>: <span class="hljs-function"><span class="hljs-params">(remoteUrl, saveTo, options, callback)</span> =&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> remoteUrl?
-            logger.warn <span class="hljs-string">"Downloader.download"</span>, <span class="hljs-string">"Aborted, remoteUrl is not defined."</span>
-            <span class="hljs-keyword">return</span></pre></div>
-        
-      
-        
-        <p>Check options and callback.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction options
-            callback = options
-            options = <span class="hljs-literal">null</span>
-
-        now = <span class="hljs-keyword">new</span> Date().getTime()</pre></div>
-        
-      
-        
-        <p>Create the download object.</p>
-
-        
-          <div class='highlight'><pre>        downloadObj = {<span class="hljs-attribute">timestamp</span>: now, <span class="hljs-attribute">remoteUrl</span>: remoteUrl, <span class="hljs-attribute">saveTo</span>: saveTo, <span class="hljs-attribute">options</span>: options, <span class="hljs-attribute">callback</span>: callback}</pre></div>
-        
-      
-        
-        <p>Prevent duplicates?</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.downloader.preventDuplicates
-            existing = lodash.filter downloading, {<span class="hljs-attribute">remoteUrl</span>: remoteUrl, <span class="hljs-attribute">saveTo</span>: saveTo}</pre></div>
-        
-      
-        
-        <p>If downloading the same file and to the same location, abort download.</p>
-
-        
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> existing.length &gt; <span class="hljs-number">0</span>
-                existing = existing[<span class="hljs-number">0</span>]
-                <span class="hljs-keyword">if</span> existing.saveTo <span class="hljs-keyword">is</span> saveTo
-                    logger.warn <span class="hljs-string">"Downloader.download"</span>, <span class="hljs-string">"Aborted, already downloading."</span>, remoteUrl, saveTo
-                    err = {<span class="hljs-attribute">message</span>: <span class="hljs-string">"Download aborted: same file is already downloading."</span>, <span class="hljs-attribute">duplicate</span>: <span class="hljs-literal">true</span>}
-                    callback(err, downloadObj) <span class="hljs-keyword">if</span> callback?
-                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div>
-        
-      
-        
-        <p>Create a <code>stop</code> method to force stop the download by setting the <code>stopFlag</code>.
-Accepts a <code>keep</code> boolean, if true the already downloaded data will be kept on forced stop.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-function"><span class="hljs-title">stopHelper</span> = <span class="hljs-params">(keep)</span> -&gt;</span> <span class="hljs-property">@stopFlag</span> = (<span class="hljs-keyword">if</span> keep <span class="hljs-keyword">then</span> <span class="hljs-number">1</span> <span class="hljs-keyword">else</span> <span class="hljs-number">2</span>)</pre></div>
-        
-      
-        
-        <p>Update download object with stop helper and add to queue.</p>
-
-        
-          <div class='highlight'><pre>        downloadObj.stop = stopHelper
-        queue.push downloadObj</pre></div>
-        
-      
-        
-        <p>Start download immediatelly if not exceeding the <code>maxSimultaneous</code> setting.</p>
-
-        
-          <div class='highlight'><pre>        next() <span class="hljs-keyword">if</span> downloading.length &lt; settings.downloader.maxSimultaneous
-
-        <span class="hljs-keyword">return</span> downloadObj</pre></div>
-        
-      
-        
         <h2 id="singleton-implementation">Singleton implementation</h2>
 
+        
+      
+        
+        
         
           <div class='highlight'><pre>Downloader.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
     <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Downloader() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?

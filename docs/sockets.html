@@ -120,7 +120,11 @@
       
         
         <h2 id="expresser-sockets">EXPRESSER SOCKETS</h2>
-<p>Handles sockets communication using the module Socket.IO.
+
+        
+      
+        
+        <p>Handles sockets communication using the module Socket.IO.
 ATTENTION! The Sockets module is started automatically by the App module.
 If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
 <!--
@@ -155,6 +159,10 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
         
       
         
+        
+        
+      
+        
         <p>Bind the Socket.IO object to the Express app. This will also set the counter
 to increase / decrease when users connects or disconnects from the app.
 @param [Object] options Sockets init options.
@@ -169,27 +177,7 @@ to increase / decrease when users connects or disconnects from the app.
             logger.error <span class="hljs-string">"Sockets.init"</span>, <span class="hljs-string">"App server is invalid. Abort!"</span>
             <span class="hljs-keyword">return</span>
 
-        <span class="hljs-property">@io</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">"socket.io"</span>).listen options.server</pre></div>
-        
-      
-        
-        <p>Set transports.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-property">@io</span>.set <span class="hljs-string">"transports"</span>, [<span class="hljs-string">"websocket"</span>, <span class="hljs-string">"xhr-polling"</span>, <span class="hljs-string">"htmlfile"</span>]</pre></div>
-        
-      
-        
-        <p>On production, log only critical errors. On development, log almost everything.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.general.debug
-            <span class="hljs-property">@io</span>.set <span class="hljs-string">"log level"</span>, <span class="hljs-number">2</span>
-        <span class="hljs-keyword">else</span>
-            <span class="hljs-property">@io</span>.set <span class="hljs-string">"log level"</span>, <span class="hljs-number">0</span>
-            <span class="hljs-property">@io</span>.set <span class="hljs-string">"browser client minification"</span>
-            <span class="hljs-property">@io</span>.set <span class="hljs-string">"browser client etag"</span>
-            <span class="hljs-property">@io</span>.set <span class="hljs-string">"browser client gzip"</span></pre></div>
+        <span class="hljs-property">@io</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">"socket.io"</span>) options.server</pre></div>
         
       
         
@@ -197,7 +185,7 @@ to increase / decrease when users connects or disconnects from the app.
 
         
           <div class='highlight'><pre>        <span class="hljs-property">@io</span>.sockets.<span class="hljs-literal">on</span> <span class="hljs-string">"connection"</span>, <span class="hljs-function"><span class="hljs-params">(socket)</span> =&gt;</span>
-            <span class="hljs-property">@io</span>.sockets.emit <span class="hljs-string">"connection-count"</span>, <span class="hljs-property">@getConnectionCount</span>()
+            <span class="hljs-property">@io</span>.emit <span class="hljs-string">"connection-count"</span>, <span class="hljs-property">@getConnectionCount</span>()
             socket.<span class="hljs-literal">on</span> <span class="hljs-string">"disconnect"</span>, <span class="hljs-property">@onDisconnect</span></pre></div>
         
       
@@ -215,14 +203,21 @@ to increase / decrease when users connects or disconnects from the app.
         
       
         
+        
+        
+      
+        
         <p>Emit the specified key and data to clients.
 @param [String] key The event key.
 @param [Object] data The JSON data to be sent out to clients.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">emit</span>: <span class="hljs-function"><span class="hljs-params">(key, data)</span> =&gt;</span>
-        <span class="hljs-property">@io</span>.sockets.emit key, data
-        logger.debug <span class="hljs-string">"Sockets.emit"</span>, key, JSON.stringify(data).length + <span class="hljs-string">" bytes"</span></pre></div>
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@io</span>?
+            <span class="hljs-property">@io</span>.emit key, data
+            logger.debug <span class="hljs-string">"Sockets.emit"</span>, key, JSON.stringify(data).length + <span class="hljs-string">" bytes"</span>
+        <span class="hljs-keyword">else</span>
+            logger.debug <span class="hljs-string">"Sockets.emit"</span>, key, <span class="hljs-string">"Sockets not initiated yet, abort!"</span></pre></div>
         
       
         
@@ -240,7 +235,7 @@ event from currently connected clients.
         <span class="hljs-property">@currentListeners</span>.push {<span class="hljs-attribute">key</span>: key, <span class="hljs-attribute">callback</span>: callback}
 
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> onlyNewClients
-            <span class="hljs-keyword">for</span> key, socket <span class="hljs-keyword">of</span> <span class="hljs-property">@io</span>.sockets.manager.open
+            <span class="hljs-keyword">for</span> key, socket <span class="hljs-keyword">of</span> <span class="hljs-property">@io</span>.sockets.connected
                 socket.<span class="hljs-literal">on</span> key, callback
 
         logger.debug <span class="hljs-string">"Sockets.listenTo"</span>, key</pre></div>
@@ -253,7 +248,7 @@ event from currently connected clients.
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">stopListening</span>: <span class="hljs-function"><span class="hljs-params">(key, callback)</span> =&gt;</span>
-        <span class="hljs-keyword">for</span> socketKey, socket <span class="hljs-keyword">of</span> <span class="hljs-property">@io</span>.sockets.manager.open
+        <span class="hljs-keyword">for</span> socketKey, socket <span class="hljs-keyword">of</span> <span class="hljs-property">@io</span>.sockets.connected
             <span class="hljs-keyword">if</span> callback?
                 socket.removeListener key, callback
             <span class="hljs-keyword">else</span>
@@ -285,11 +280,15 @@ event from currently connected clients.
         
       
         
+        
+        
+      
+        
         <p>Get how many users are currenly connected to the app.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">getConnectionCount</span>:<span class="hljs-function"> =&gt;</span>
-        <span class="hljs-keyword">return</span> Object.keys(<span class="hljs-property">@io</span>.sockets.manager.open).length</pre></div>
+        <span class="hljs-keyword">return</span> Object.keys(<span class="hljs-property">@io</span>.sockets.connected).length</pre></div>
         
       
         
@@ -304,6 +303,10 @@ event from currently connected clients.
         
         <h2 id="singleton-implementation">Singleton implementation</h2>
 
+        
+      
+        
+        
         
           <div class='highlight'><pre>Sockets.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
     <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Sockets() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?

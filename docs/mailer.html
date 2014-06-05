@@ -120,13 +120,17 @@
       
         
         <h2 id="expresser-mailer">EXPRESSER MAILER</h2>
-<p>Sends and manages emails, supports templates. When parsing templates, the
+
+        
+      
+        
+        <p>Sends and manages emails, supports templates. When parsing templates, the
 tags should be wrapped with normal brackets {}. Example: {contents}
 The base message template (which is loaded with every single sent message)
 must be saved as base.html, under the /emailtemplates folder (or whatever
 folder / base file name you have set on the settings).
 <!--
-@see Settings.mail
+@see Settings.mailer
 --></p>
 
         
@@ -164,11 +168,15 @@ folder / base file name you have set on the settings).
         
       
         
-        <p>Class constructor.</p>
+        
+        
+      
+        
+        <p>Mailer constructor.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">constructor</span>:<span class="hljs-function"> -&gt;</span>
-        <span class="hljs-property">@setEvents</span>()</pre></div>
+        <span class="hljs-property">@setEvents</span>() <span class="hljs-keyword">if</span> settings.events.enabled</pre></div>
         
       
         
@@ -181,35 +189,27 @@ folder / base file name you have set on the settings).
       
         
         <p>Init the Mailer module and create the SMTP objects.
-Also check if still using old “mail” instead of “mailer”.
-TODO! Old .mail references should be removed in April 2014.
 @param [Object] options Mailer init options.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">init</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
-        <span class="hljs-keyword">if</span> settings.mail?
-            settings.mailer = lodash.defaults settings.mail, settings.mailer
-            logger.warn <span class="hljs-string">"Mailer.init"</span>, <span class="hljs-string">"The module is now called Mailer, please update settings from 'mail' to 'mailer'."</span></pre></div>
-        
-      
-        
-        <p>Check and set main SMTP.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mailer.smtp.service? <span class="hljs-keyword">and</span> settings.mailer.smtp.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+        <span class="hljs-keyword">if</span> settings.mailer.smtp.service? <span class="hljs-keyword">and</span> settings.mailer.smtp.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
             <span class="hljs-property">@setSmtp</span> settings.mailer.smtp, <span class="hljs-literal">false</span>
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.mailer.smtp.host? <span class="hljs-keyword">and</span> settings.mailer.smtp.host <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> settings.mailer.smtp.port &gt; <span class="hljs-number">0</span>
-            <span class="hljs-property">@setSmtp</span> settings.mailer.smtp, <span class="hljs-literal">false</span></pre></div>
-        
-      
-        
-        <p>Check and set secondary SMTP.</p>
+            <span class="hljs-property">@setSmtp</span> settings.mailer.smtp, <span class="hljs-literal">false</span>
 
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mailer.smtp2.service? <span class="hljs-keyword">and</span> settings.mailer.smtp2.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+        <span class="hljs-keyword">if</span> settings.mailer.smtp2.service? <span class="hljs-keyword">and</span> settings.mailer.smtp2.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
             <span class="hljs-property">@setSmtp</span> settings.mailer.smtp2, <span class="hljs-literal">true</span>
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.mailer.smtp2.host? <span class="hljs-keyword">and</span> settings.mailer.smtp2.host <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> settings.mailer.smtp2.port &gt; <span class="hljs-number">0</span>
             <span class="hljs-property">@setSmtp</span> settings.mailer.smtp2, <span class="hljs-literal">true</span></pre></div>
+        
+      
+        
+        <p>Alert user if specified backup SMTP but not the main one.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> smtp? <span class="hljs-keyword">and</span> smtp2?
+            logger.warn <span class="hljs-string">"Mailer.init"</span>, <span class="hljs-string">"The secondary SMTP settings are defined but not the main one."</span>, <span class="hljs-string">"Will still work, but you should set the main one instead."</span></pre></div>
         
       
         
@@ -217,11 +217,12 @@ TODO! Old .mail references should be removed in April 2014.
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> smtp? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> smtp2? <span class="hljs-keyword">and</span> settings.general.debug
-            logger.warn <span class="hljs-string">"Mailer.init"</span>, <span class="hljs-string">"No main SMTP host/port specified."</span>, <span class="hljs-string">"No emails will be sent out!"</span></pre></div>
+            logger.warn <span class="hljs-string">"Mailer.init"</span>, <span class="hljs-string">"No main SMTP host/port specified."</span>, <span class="hljs-string">"No emails will be sent out."</span></pre></div>
         
       
         
-        <p>Check if configuration for sending emails is properly set.</p>
+        <p>Check if configuration for sending emails is properly set.
+@return [Boolean] Returns true if smtp server is active, otherwise false.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">checkConfig</span>:<span class="hljs-function"> =&gt;</span>
@@ -234,6 +235,10 @@ TODO! Old .mail references should be removed in April 2014.
         
         <h2 id="outbound">OUTBOUND</h2>
 
+        
+      
+        
+        
         
       
         
@@ -323,7 +328,7 @@ TODO! Old .mail references should be removed in April 2014.
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mailer.doNotSend
-            callback <span class="hljs-literal">null</span>, <span class="hljs-string">"Do not send is true, avoid sending!"</span> <span class="hljs-keyword">if</span> callback?
+            callback <span class="hljs-literal">null</span>, <span class="hljs-string">"The 'doNotSend' setting is true, will not send anything!"</span> <span class="hljs-keyword">if</span> callback?
             <span class="hljs-keyword">return</span></pre></div>
         
       
@@ -344,6 +349,10 @@ TODO! Old .mail references should be removed in April 2014.
         
         <h2 id="templates">TEMPLATES</h2>
 
+        
+      
+        
+        
         
       
         
@@ -426,17 +435,24 @@ to be replaced. For example if keywords is <code>{id: 1, friendlyUrl: &quot;abc&
         
       
         
+        
+        
+      
+        
         <p>Helper to send emails using the specified transport and options.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-title">smtpSend</span> = <span class="hljs-params">(transport, options, callback)</span> -&gt;</span>
-        transport.sendMail options, <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
-            <span class="hljs-keyword">if</span> err?
-                <span class="hljs-keyword">if</span> options.logError
-                    logger.error <span class="hljs-string">"Mailer.smtpSend"</span>, transport.host, <span class="hljs-string">"Could not send: <span class="hljs-subst">#{options.subject}</span> to <span class="hljs-subst">#{options.to}</span>."</span>, err
-            <span class="hljs-keyword">else</span>
-                logger.debug <span class="hljs-string">"Mailer.smtpSend"</span>, <span class="hljs-string">"OK"</span>, transport.host, options.subject, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.from}</span>."</span>
-            callback err, result</pre></div>
+        <span class="hljs-keyword">try</span>
+            transport.sendMail options, <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
+                <span class="hljs-keyword">if</span> err?
+                    <span class="hljs-keyword">if</span> options.logError
+                        logger.error <span class="hljs-string">"Mailer.smtpSend"</span>, transport.host, <span class="hljs-string">"Could not send: <span class="hljs-subst">#{options.subject}</span> to <span class="hljs-subst">#{options.to}</span>."</span>, err
+                <span class="hljs-keyword">else</span>
+                    logger.debug <span class="hljs-string">"Mailer.smtpSend"</span>, <span class="hljs-string">"OK"</span>, transport.host, options.subject, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.from}</span>."</span>
+                callback err, result
+        <span class="hljs-keyword">catch</span> ex
+            callback ex</pre></div>
         
       
         
@@ -510,6 +526,10 @@ to be replaced. For example if keywords is <code>{id: 1, friendlyUrl: &quot;abc&
         
         <h2 id="singleton-implementation">Singleton implementation</h2>
 
+        
+      
+        
+        
         
           <div class='highlight'><pre>Mailer.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
     <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Mailer() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?

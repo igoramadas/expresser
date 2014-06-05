@@ -120,16 +120,20 @@
       
         
         <h2 id="expresser-settings">EXPRESSER SETTINGS</h2>
-<p>All main settings for the Expresser platform are set and described on the
-@default.json file. Do not edit it!!! To change settings please
-create a @json file and put your values there.</p>
-<p>You can also create specific settings for different running environments.
-For example to set settings on development, create <code>@development.json</code>
-and for production a <code>@production.json</code> file. These will be parsed
-AFTER the main <code>@json</code> file.</p>
-<p>Please note that the <code>@json</code> must ne located on the root of your app!
+
+        
+      
+        
+        <p>All main settings for the Expresser platform are set and described on the
+settings.default.json file. Do not edit it!!! To change settings please
+create a settings.json file and put your values there.</p>
+<p>You can also create specific settings for different runtime environments.
+For example to set settings on development, create <code>settings.development.json</code>
+and for production a <code>settings.production.json</code> file. These will be parsed
+AFTER the main <code>settings.json</code> file.</p>
+<p>Please note that the <code>settings.json</code> must ne located on the root of your app!
 <!--
-@example Sample @json file
+@example Sample settings.json file
   {
     "general": {
       "debug": true,
@@ -159,11 +163,15 @@ AFTER the main <code>@json</code> file.</p>
         
       
         
-        <p>Load settings from @default.json, then @json, then environment specific @</p>
+        
+        
+      
+        
+        <p>Load settings from settings.default.json, then settings.json, then environment specific settings.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">load</span>:<span class="hljs-function"> =&gt;</span>
-        <span class="hljs-property">@currentEnv</span> = <span class="hljs-string">"development"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@currentEnv</span>? <span class="hljs-keyword">or</span> <span class="hljs-property">@currentEnv</span> <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+        <span class="hljs-property">@currentEnv</span> = process.env.NODE_ENV <span class="hljs-keyword">or</span> <span class="hljs-string">"development"</span>
 
         <span class="hljs-property">@loadFromJson</span> <span class="hljs-string">"settings.default.json"</span>
         <span class="hljs-property">@loadFromJson</span> <span class="hljs-string">"settings.json"</span>
@@ -233,12 +241,12 @@ AFTER the main <code>@json</code> file.</p>
         
       
         
-        <p>Reset to default @</p>
+        <p>Reset to default settings.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">reset</span>:<span class="hljs-function"> =&gt;</span>
         <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Settings()
-        <span class="hljs-property">@loadDefaults</span>()</pre></div>
+        <span class="hljs-property">@instance</span>.load()</pre></div>
         
       
         
@@ -247,9 +255,13 @@ AFTER the main <code>@json</code> file.</p>
         
       
         
+        
+        
+      
+        
         <p>Helper to encrypt or decrypt settings files. The default encryption password
-defined on the <code>Settings.coffee</code> file is “ExpresserSettings”. The default
-cipher algorithm is AES 256.
+defined on the <code>Settings.coffee</code> file is “ExpresserSettings”, which ideally you
+should change. The default cipher algorithm is AES 256.
 @param [Boolean] encrypt Pass true to encrypt, false to decrypt.
 @param [String] filename The file to be encrypted or decrypted.
 @param [Object] options Options to be passed to the cipher.
@@ -259,7 +271,7 @@ cipher algorithm is AES 256.
         
           <div class='highlight'><pre>    <span class="hljs-attribute">cryptoHelper</span>: <span class="hljs-function"><span class="hljs-params">(encrypt, filename, options)</span> =&gt;</span>
         options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-        options = lodash.defaults options, {<span class="hljs-attribute">cipher</span>: <span class="hljs-string">"aes256"</span>, <span class="hljs-attribute">password</span>: <span class="hljs-string">"ExpresserSettingsPassword"</span>}
+        options = lodash.defaults options, {<span class="hljs-attribute">cipher</span>: <span class="hljs-string">"aes256"</span>, <span class="hljs-attribute">password</span>: <span class="hljs-string">"ExpresserSettings"</span>}
 
         settingsJson = <span class="hljs-property">@loadFromJson</span> filename, <span class="hljs-literal">false</span></pre></div>
         
@@ -290,7 +302,7 @@ abort encryption and log to the console.</p>
         
           <div class='highlight'><pre>        <span class="hljs-function"><span class="hljs-title">parser</span> = <span class="hljs-params">(obj)</span> =&gt;</span>
             currentValue = <span class="hljs-literal">null</span>
-            
+
             <span class="hljs-keyword">for</span> prop, value <span class="hljs-keyword">of</span> obj
                 <span class="hljs-keyword">if</span> value?.constructor <span class="hljs-keyword">is</span> Object
                     parser obj[prop]
@@ -427,6 +439,10 @@ abort encryption and log to the console.</p>
         
       
         
+        
+        
+      
+        
         <p>Enable or disable the settings files watcher to auto reload settings when file changes.
 The <code>callback</code> is optional in case you want to notify another module about settings updates.
 @param [Boolean] enable If enabled is true activate the fs watcher, otherwise deactivate.
@@ -456,7 +472,7 @@ The <code>callback</code> is optional in case you want to notify another module 
         
       
         
-        <p>Add / remove watcher for the @node_env.json file if it exists.</p>
+        <p>Add / remove watcher for the settings.NODE_ENV.json file if it exists.</p>
 
         
           <div class='highlight'><pre>        filename = utils.getFilePath <span class="hljs-string">"settings.<span class="hljs-subst">#{<span class="hljs-property">@currentEnv</span>.toString().toLowerCase()}</span>.json"</span>
@@ -476,6 +492,10 @@ The <code>callback</code> is optional in case you want to notify another module 
         
         <h2 id="paas">PAAS</h2>
 
+        
+      
+        
+        
         
       
         
@@ -623,54 +643,21 @@ update only settings that match it, otherwise update everything.
         <h2 id="singleton-implementation">Singleton implementation</h2>
 
         
+      
+        
+        
+        
           <div class='highlight'><pre>Settings.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
     <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?
         <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Settings()</pre></div>
         
       
         
-        <p>Load from @default.json.</p>
+        <p>Load default settings and force disable console log on test.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-property">@instance</span>.load()</pre></div>
-        
-      
-        
-        <p>Disable console log on test.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-property">@instance</span>.currentEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
-            <span class="hljs-property">@instance</span>.logger.<span class="hljs-built_in">console</span> = <span class="hljs-literal">false</span></pre></div>
-        
-      
-        
-        <p>Set debug in case it has not been set.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>.general.debug?
-            <span class="hljs-keyword">if</span> <span class="hljs-property">@currentEnv</span> <span class="hljs-keyword">is</span> <span class="hljs-string">"production"</span> <span class="hljs-keyword">or</span> <span class="hljs-property">@instance</span>.currentEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
-                <span class="hljs-property">@instance</span>.general.debug = <span class="hljs-literal">false</span>
-            <span class="hljs-keyword">else</span>
-                <span class="hljs-property">@instance</span>.general.debug = <span class="hljs-literal">true</span></pre></div>
-        
-      
-        
-        <p>Set console log in case it has not been set.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>.logger.<span class="hljs-built_in">console</span>?
-            <span class="hljs-property">@instance</span>.logger.<span class="hljs-built_in">console</span> = <span class="hljs-property">@instance</span>.general.debug</pre></div>
-        
-      
-        
-        <h1 id="set-minifybuilds-in-case-it-has-not-been-set-">Set minifyBuilds in case it has not been set.</h1>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>.app.connectAssets.minifyBuilds?
-            <span class="hljs-keyword">if</span> <span class="hljs-property">@instance</span>.currentEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"development"</span>
-                <span class="hljs-property">@instance</span>.app.connectAssets.minifyBuilds = <span class="hljs-literal">false</span>
-            <span class="hljs-keyword">else</span>
-                <span class="hljs-property">@instance</span>.app.connectAssets.minifyBuilds = <span class="hljs-literal">true</span>
+          <div class='highlight'><pre>        <span class="hljs-property">@instance</span>.load()
+        <span class="hljs-property">@instance</span>.logger.<span class="hljs-built_in">console</span> = <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> <span class="hljs-property">@instance</span>.currentEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
 
     <span class="hljs-keyword">return</span> <span class="hljs-property">@instance</span>
 

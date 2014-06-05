@@ -120,7 +120,11 @@
       
         
         <h2 id="expresser-utils">EXPRESSER UTILS</h2>
-<p>General network, IO, client and server utilities. As this module can’t reference
+
+        
+      
+        
+        <p>General network, IO, client and server utilities. As this module can’t reference
 any other module but Settings, all its logging will be done to the console only.</p>
 
         
@@ -136,76 +140,12 @@ any other module but Settings, all its logging will be done to the console only.
         
       
         
-        <h2 id="settings-utils">SETTINGS UTILS</h2>
-
-        
-      
-        
-        <p>TODO! Deprecated, this method should be removed soon. Please use settings.encrypt(filename, options).</p>
-
-        
-          <div class='highlight'><pre>    <span class="hljs-attribute">encryptSettingsJson</span>: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.encryptSettingsJson"</span>, <span class="hljs-string">"Method is deprecated. Please use settings.encrypt() directly."</span>
-        settings.encrypt filename, options</pre></div>
-        
-      
-        
-        <p>TODO! Deprecated, this method should be removed soon. Please use settings.decrypt(filename, options).</p>
-
-        
-          <div class='highlight'><pre>    <span class="hljs-attribute">decryptSettingsJson</span>: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.decryptSettingsJson"</span>, <span class="hljs-string">"Method is deprecated. Please use settings.decrypt() directly."</span>
-        settings.decrypt filename, options</pre></div>
-        
-      
-        
-        <p>TODO! Deprecated, this method should be removed soon. Please use settings.load().</p>
-
-        
-          <div class='highlight'><pre>    <span class="hljs-attribute">loadDefaultSettingsFromJson</span>:<span class="hljs-function"> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.loadDefaultSettingsFromJson"</span>, <span class="hljs-string">"Method is deprecated. Please use settings.decrypt() directly."</span>
-        settings.load()</pre></div>
-        
-      
-        
-        <p>TODO! Deprecated, this method should be removed soon. Please use settings.loadFromJson(filename).</p>
-
-        
-          <div class='highlight'><pre>    <span class="hljs-attribute">loadSettingsFromJson</span>: <span class="hljs-function"><span class="hljs-params">(filename)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.loadSettingsFromJson"</span>, <span class="hljs-string">"Method is deprecated. Please use settings.loadFromJson() directly."</span>
-        settings.loadFromJson filename</pre></div>
-        
-      
-        
-        <p>TODO! Deprecated, this method should be removed soon. Please use settings.updateFromPaaS(filter).</p>
-
-        
-          <div class='highlight'><pre>    <span class="hljs-attribute">updateSettingsFromPaaS</span>: <span class="hljs-function"><span class="hljs-params">(filter)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.updateSettingsFromPaaS"</span>, <span class="hljs-string">"Method is deprecated. Please use settings.updateFromPaaS() directly."</span>
-        settings.updateFromPaaS filter</pre></div>
-        
-      
-        
-        <p>TODO! Deprecated, this method should be removed soon. Please use settings.watch(enable, callback).</p>
-
-        
-          <div class='highlight'><pre>    <span class="hljs-attribute">watchSettingsFiles</span>: <span class="hljs-function"><span class="hljs-params">(enable, callback)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.watchSettingsFiles"</span>, <span class="hljs-string">"Method is deprecated. Please use settings.watch() directly."</span>
-        settings.watch enable, callback</pre></div>
-        
-      
-        
         <h2 id="server-info-utils">SERVER INFO UTILS</h2>
 
         
       
         
-        <p>TODO! Deprecated, this method should be removed soon. Please use getFilePath.</p>
-
         
-          <div class='highlight'><pre>    <span class="hljs-attribute">getConfigFilePath</span>: <span class="hljs-function"><span class="hljs-params">(filename)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.getConfigFilePath"</span>, <span class="hljs-string">"DEPRECATED! Please use getFilePath."</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-property">@getFilePath</span> filename</pre></div>
         
       
         
@@ -313,15 +253,15 @@ return only the very first IP address found.
         <p>Save parsed OS info to the result object.</p>
 
         
-          <div class='highlight'><pre>        result.hostname = os.hostname()
-        result.pid = process.pid
-        result.title = path.getbasename process.title
+          <div class='highlight'><pre>        result.uptime = moment.duration(process.uptime, <span class="hljs-string">"s"</span>).humanize()
+        result.hostname = os.hostname()
+        result.title = path.basename process.title
         result.platform = os.platform() + <span class="hljs-string">" "</span> + os.arch() + <span class="hljs-string">" "</span> + os.release()
-        result.memoryTotal = (os.totalmem() / <span class="hljs-number">1000</span> / <span class="hljs-number">1000</span>).toFixed(<span class="hljs-number">0</span>) + <span class="hljs-string">" MB"</span>
+        result.memoryTotal = (os.totalmem() / <span class="hljs-number">1024</span> / <span class="hljs-number">1024</span>).toFixed(<span class="hljs-number">0</span>) + <span class="hljs-string">" MB"</span>
         result.memoryUsage = <span class="hljs-number">100</span> - (os.freemem() / os.totalmem() * <span class="hljs-number">100</span>).toFixed(<span class="hljs-number">0</span>)
         result.loadAvg = os.loadavg()
-        result.uptime = moment.duration(process.uptime, <span class="hljs-string">"s"</span>).humanize()
         result.ips = <span class="hljs-property">@getServerIP</span>()
+        result.process = {<span class="hljs-attribute">pid</span>: process.pid, <span class="hljs-attribute">memoryUsage</span>: (process.memoryUsage().rss / <span class="hljs-number">1024</span> / <span class="hljs-number">1024</span>).toFixed(<span class="hljs-number">0</span>) + <span class="hljs-string">" MB"</span>}
 
         <span class="hljs-keyword">return</span> result</pre></div>
         
@@ -329,6 +269,10 @@ return only the very first IP address found.
         
         <h2 id="client-info-utils">CLIENT INFO UTILS</h2>
 
+        
+      
+        
+        
         
       
         
@@ -410,6 +354,10 @@ return only the very first IP address found.
         
         <h2 id="io-and-datautils">IO AND DATAUTILS</h2>
 
+        
+      
+        
+        
         
       
         
@@ -550,8 +498,62 @@ JavaScript-style comments within them are preserved.</p>
         
       
         
+        <p>Helper to convert HSL colour to HEX. Used by Philips Hue and other colored lights.
+@param [Number] h The hue value.
+@param [Number] s The saturation value.
+@param [Number] l The brightness value.
+@return [String] The colour in HEX format.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">hslToHex</span>: <span class="hljs-function"><span class="hljs-params">(h, s, l)</span> -&gt;</span>
+        x = h
+        y = s
+        z = <span class="hljs-number">1.0</span> - x - y
+        Y = l
+        X = (Y / y) * x
+        Z = (Y / y) * z
+        r = X * <span class="hljs-number">1.612</span> - Y * <span class="hljs-number">0.203</span> - Z * <span class="hljs-number">0.302</span>
+        g = -X * <span class="hljs-number">0.509</span> + Y * <span class="hljs-number">1.412</span> + Z * <span class="hljs-number">0.066</span>
+        b = X * <span class="hljs-number">0.026</span> - Y * <span class="hljs-number">0.072</span> + Z * <span class="hljs-number">0.962</span>
+        r = (<span class="hljs-keyword">if</span> r &lt;= <span class="hljs-number">0.0031308</span> <span class="hljs-keyword">then</span> <span class="hljs-number">12.92</span> * r <span class="hljs-keyword">else</span> (<span class="hljs-number">1.0</span> + <span class="hljs-number">0.055</span>) * Math.pow(r, (<span class="hljs-number">1.0</span> / <span class="hljs-number">2.4</span>)) - <span class="hljs-number">0.055</span>)
+        g = (<span class="hljs-keyword">if</span> g &lt;= <span class="hljs-number">0.0031308</span> <span class="hljs-keyword">then</span> <span class="hljs-number">12.92</span> * g <span class="hljs-keyword">else</span> (<span class="hljs-number">1.0</span> + <span class="hljs-number">0.055</span>) * Math.pow(g, (<span class="hljs-number">1.0</span> / <span class="hljs-number">2.4</span>)) - <span class="hljs-number">0.055</span>)
+        b = (<span class="hljs-keyword">if</span> b &lt;= <span class="hljs-number">0.0031308</span> <span class="hljs-keyword">then</span> <span class="hljs-number">12.92</span> * b <span class="hljs-keyword">else</span> (<span class="hljs-number">1.0</span> + <span class="hljs-number">0.055</span>) * Math.pow(b, (<span class="hljs-number">1.0</span> / <span class="hljs-number">2.4</span>)) - <span class="hljs-number">0.055</span>)
+        <span class="hljs-function"><span class="hljs-title">cap</span> = <span class="hljs-params">(x)</span> -&gt;</span> Math.max <span class="hljs-number">0</span>, Math.min(<span class="hljs-number">1</span>, x)</pre></div>
+        
+      
+        
+        <p>Helper to convert RGB to hex.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-function"><span class="hljs-title">rgbhex</span> = <span class="hljs-params">(v)</span> -&gt;</span>
+            v = Math.round(v * <span class="hljs-number">255</span>)
+            s = <span class="hljs-string">"0"</span> + v.toString(<span class="hljs-number">16</span>)
+            <span class="hljs-keyword">return</span> s.substr -<span class="hljs-number">2</span></pre></div>
+        
+      
+        
+        <p>Cap and transform RGB values.</p>
+
+        
+          <div class='highlight'><pre>        r = rgbhex cap r
+        g = rgbhex cap g
+        b = rgbhex cap b</pre></div>
+        
+      
+        
+        <p>Convert RGB to hex and return result.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-string">"#<span class="hljs-subst">#{r}</span><span class="hljs-subst">#{g}</span><span class="hljs-subst">#{b}</span>"</span></pre></div>
+        
+      
+        
         <h2 id="singleton-implementation">Singleton implementation</h2>
 
+        
+      
+        
+        
         
           <div class='highlight'><pre>Utils.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
     <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Utils() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?

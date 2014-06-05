@@ -120,7 +120,11 @@
       
         
         <h2 id="expresser-logger">EXPRESSER LOGGER</h2>
-<p>Handles server logging using local files, Logentries or Loggly.
+
+        
+      
+        
+        <p>Handles server logging using local files, Logentries or Loggly.
 Multiple services can be enabled at the same time.
 <!--
 @see Settings.logger
@@ -201,8 +205,33 @@ Multiple services can be enabled at the same time.
         
       
         
-        <h2 id="init-and-stop">INIT AND STOP</h2>
+        <h1 id="constructor-init-and-stop">CONSTRUCTOR, INIT AND STOP</h1>
+<hr>
 
+        
+      
+        
+        
+        
+      
+        
+        <p>Logger constructor.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">constructor</span>:<span class="hljs-function"> -&gt;</span>
+        <span class="hljs-property">@setEvents</span>() <span class="hljs-keyword">if</span> settings.events.enabled</pre></div>
+        
+      
+        
+        <p>Bind event listeners.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">setEvents</span>:<span class="hljs-function"> =&gt;</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"logger.debug"</span>, <span class="hljs-property">@debug</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"logger.info"</span>, <span class="hljs-property">@info</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"logger.warn"</span>, <span class="hljs-property">@warn</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"logger.error"</span>, <span class="hljs-property">@error</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"logger.critical"</span>, <span class="hljs-property">@critical</span></pre></div>
         
       
         
@@ -253,11 +282,12 @@ exceptions using the logger, otherwise log to the console.</p>
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.logger.uncaughtException
-            process.<span class="hljs-literal">on</span> <span class="hljs-string">"uncaughtException"</span>, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+            <span class="hljs-property">@debug</span> <span class="hljs-string">"Logger.init"</span>, <span class="hljs-string">"Catching unhandled exceptions."</span>
+            process.<span class="hljs-literal">on</span> <span class="hljs-string">"uncaughtException"</span>, <span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span>
                 <span class="hljs-keyword">try</span>
-                    <span class="hljs-property">@error</span> <span class="hljs-string">"Unhandled exception!"</span>, err.stack
+                    <span class="hljs-property">@error</span> <span class="hljs-string">"Unhandled exception!"</span>, err
                 <span class="hljs-keyword">catch</span> ex
-                    <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Unhandled exception!"</span>, Date(Date.now()), err.stack, ex</pre></div>
+                    <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Unhandled exception!"</span>, err</pre></div>
         
       
         
@@ -336,7 +366,7 @@ and a timer to flush logs to disk every X milliseconds.</p>
           <div class='highlight'><pre>    <span class="hljs-attribute">initLoggly</span>:<span class="hljs-function"> =&gt;</span>
         <span class="hljs-keyword">if</span> settings.logger.loggly.enabled <span class="hljs-keyword">and</span> settings.logger.loggly.subdomain? <span class="hljs-keyword">and</span> settings.logger.loggly.token? <span class="hljs-keyword">and</span> settings.logger.loggly.token <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
             loggly = <span class="hljs-built_in">require</span> <span class="hljs-string">"loggly"</span>
-            loggerLoggly = loggly.createClient {<span class="hljs-attribute">subdomain</span>: settings.logger.loggly.subdomain, <span class="hljs-attribute">json</span>: <span class="hljs-literal">false</span>}
+            loggerLoggly = loggly.createClient {<span class="hljs-attribute">token</span>: settings.logger.loggly.token, <span class="hljs-attribute">subdomain</span>: settings.logger.loggly.subdomain, <span class="hljs-attribute">json</span>: <span class="hljs-literal">false</span>}
             activeServices.push <span class="hljs-string">"Loggly"</span>
         <span class="hljs-keyword">else</span>
             <span class="hljs-property">@stopLoggly</span>()</pre></div>
@@ -383,6 +413,10 @@ and a timer to flush logs to disk every X milliseconds.</p>
         
       
         
+        
+        
+      
+        
         <p>Generic log method.
 @param [String] logType The log type (for example: warning, error, info, security, etc).
 @param [String] logFunc Optional, the logging function name to be passed to the console and Logentries.
@@ -408,10 +442,10 @@ and a timer to flush logs to disk every X milliseconds.</p>
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.logger.local.enabled <span class="hljs-keyword">and</span> localBuffer?
             <span class="hljs-property">@logLocal</span> logType, msg
-        <span class="hljs-keyword">if</span> settings.logger.logentries.enabled <span class="hljs-keyword">and</span> logentries?
+        <span class="hljs-keyword">if</span> settings.logger.logentries.enabled <span class="hljs-keyword">and</span> loggerLogentries?
             loggerLogentries.log logFunc, msg
-        <span class="hljs-keyword">if</span> settings.logger.loggly.enabled <span class="hljs-keyword">and</span> loggly?
-            loggerLoggly.log settings.logger.loggly.token, msg, <span class="hljs-property">@logglyCallback</span></pre></div>
+        <span class="hljs-keyword">if</span> settings.logger.loggly.enabled <span class="hljs-keyword">and</span> loggerLoggly?
+            loggerLoggly.log msg, <span class="hljs-property">@logglyCallback</span></pre></div>
         
       
         
@@ -530,6 +564,10 @@ All arguments are transformed to readable strings.</p>
         
       
         
+        
+        
+      
+        
         <p>Log locally. The path is defined on <code>Settings.Path.logsDir</code>.
 @param [String] logType The log type (info, warn, error, debug, etc).
 @param [String] message Message to be logged.
@@ -634,6 +672,10 @@ Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on
         
       
         
+        
+        
+      
+        
         <p>Returns a human readable message out of the arguments.
 @return [String] The human readable, parsed JSON message.
 @private</p>
@@ -695,6 +737,10 @@ on the <code>Settings.logger.removeFields</code> won’t be added to the message
         
         <h2 id="singleton-implementation">Singleton implementation</h2>
 
+        
+      
+        
+        
         
           <div class='highlight'><pre>Logger.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
     <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Logger() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?

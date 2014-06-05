@@ -120,11 +120,15 @@
       
         
         <h2 id="expresser-app">EXPRESSER APP</h2>
-<p>The Express app server, with built-in sockets, firewall and New Relic integration.
+
+        
+      
+        
+        <p>The Express app server, with built-in sockets, firewall and New Relic integration.
 <!--
+@see Settings.app
 @see Firewall
 @see Sockets
-@see Settings.app
 --></p>
 
         
@@ -137,6 +141,13 @@
     lodash = <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
     net = <span class="hljs-built_in">require</span> <span class="hljs-string">"net"</span>
     path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span></pre></div>
+        
+      
+        
+        <p>Current node environment and HTTP server handler are set on init.</p>
+
+        
+          <div class='highlight'><pre>    nodeEnv = <span class="hljs-literal">null</span></pre></div>
         
       
         
@@ -165,15 +176,12 @@
         
       
         
-        <p>Current node environment and HTTP server handler are set on init.</p>
+        <h2 id="init">INIT</h2>
 
-        
-          <div class='highlight'><pre>    nodeEnv = <span class="hljs-literal">null</span></pre></div>
         
       
         
-        <h2 id="init">INIT</h2>
-
+        
         
       
         
@@ -286,121 +294,134 @@ Do not log the exit if running under test environment.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">configureServer</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
-        <span class="hljs-property">@server</span> = express()
+        midBodyParser = <span class="hljs-built_in">require</span> <span class="hljs-string">"body-parser"</span>
+        midCookieParser = <span class="hljs-built_in">require</span> <span class="hljs-string">"cookie-parser"</span>
+        midSession = <span class="hljs-built_in">require</span> <span class="hljs-string">"express-session"</span>
+        midCompression = <span class="hljs-built_in">require</span> <span class="hljs-string">"compression"</span>
+        midErrorHandler = <span class="hljs-built_in">require</span> <span class="hljs-string">"errorhandler"</span></pre></div>
+        
+      
+        
+        <p>Create express v4 app.</p>
 
-        <span class="hljs-property">@server</span>.configure<span class="hljs-function"> =&gt;</span>
-            settings.updateFromPaaS() <span class="hljs-keyword">if</span> settings.app.paas</pre></div>
+        
+          <div class='highlight'><pre>        <span class="hljs-property">@server</span> = express()
+
+        settings.updateFromPaaS() <span class="hljs-keyword">if</span> settings.app.paas</pre></div>
         
       
         
         <p>Set view options, use Jade for HTML templates.</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-property">@server</span>.set <span class="hljs-string">"views"</span>, settings.path.viewsDir
-            <span class="hljs-property">@server</span>.set <span class="hljs-string">"view engine"</span>, settings.app.viewEngine
-            <span class="hljs-property">@server</span>.set <span class="hljs-string">"view options"</span>, { <span class="hljs-attribute">layout</span>: <span class="hljs-literal">false</span> }</pre></div>
-        
-      
-        
-        <p>If debug is on, log requests to the console.</p>
-
-        
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> settings.general.debug
-                <span class="hljs-property">@server</span>.use <span class="hljs-function"><span class="hljs-params">(req, res, next)</span> =&gt;</span>
-                    ip = utils.getClientIP req
-                    method = req.method
-                    url = req.url</pre></div>
-        
-      
-        
-        <p>Check if request flash is present before logging.</p>
-
-        
-          <div class='highlight'><pre>                    <span class="hljs-keyword">if</span> req.flash? <span class="hljs-keyword">and</span> lodash.isFunction req.flash
-                        <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Request from <span class="hljs-subst">#{ip}</span>"</span>, method, url, req.flash()
-                    <span class="hljs-keyword">else</span>
-                        <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Request from <span class="hljs-subst">#{ip}</span>"</span>, method, url
-                    next() <span class="hljs-keyword">if</span> next?</pre></div>
+          <div class='highlight'><pre>        <span class="hljs-property">@server</span>.set <span class="hljs-string">"views"</span>, settings.path.viewsDir
+        <span class="hljs-property">@server</span>.set <span class="hljs-string">"view engine"</span>, settings.app.viewEngine
+        <span class="hljs-property">@server</span>.set <span class="hljs-string">"view options"</span>, { <span class="hljs-attribute">layout</span>: <span class="hljs-literal">false</span> }</pre></div>
         
       
         
         <p>Enable firewall?</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> settings.firewall.enabled
-                firewall = <span class="hljs-built_in">require</span> <span class="hljs-string">"./firewall.coffee"</span>
-                firewall.init <span class="hljs-property">@server</span></pre></div>
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.firewall.enabled
+            firewall = <span class="hljs-built_in">require</span> <span class="hljs-string">"./firewall.coffee"</span>
+            firewall.init <span class="hljs-property">@server</span></pre></div>
         
       
         
         <p>Use Express basic handlers.</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-property">@server</span>.use express.json()
-            <span class="hljs-property">@server</span>.use express.urlencoded()
-            <span class="hljs-property">@server</span>.use express.cookieParser settings.app.cookieSecret
-            <span class="hljs-property">@server</span>.use express.session {<span class="hljs-attribute">secret</span>: settings.app.sessionSecret}
-            <span class="hljs-property">@server</span>.use express.compress()
-            <span class="hljs-property">@server</span>.use express.methodOverride()
-            <span class="hljs-property">@server</span>.use express[<span class="hljs-string">"static"</span>] settings.path.publicDir</pre></div>
+          <div class='highlight'><pre>        <span class="hljs-property">@server</span>.use midBodyParser()
+        <span class="hljs-property">@server</span>.use midCookieParser settings.app.cookieSecret <span class="hljs-keyword">if</span> settings.app.cookieEnabled
+        <span class="hljs-property">@server</span>.use midSession {<span class="hljs-attribute">secret</span>: settings.app.sessionSecret} <span class="hljs-keyword">if</span> settings.app.sessionEnabled</pre></div>
+        
+      
+        
+        <p>Use HTTP compression only if enabled on settings.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-property">@server</span>.use midCompression <span class="hljs-keyword">if</span> settings.app.compressionEnabled</pre></div>
         
       
         
         <p>Fix connect assets helper context.</p>
 
         
-          <div class='highlight'><pre>            connectAssetsOptions = settings.app.connectAssets
-            connectAssetsOptions.helperContext = <span class="hljs-property">@server</span>.locals</pre></div>
+          <div class='highlight'><pre>        connectAssetsOptions = settings.app.connectAssets
+        connectAssetsOptions.helperContext = <span class="hljs-property">@server</span>.locals</pre></div>
         
       
         
         <p>Connect assets and dynamic compiling.</p>
 
         
-          <div class='highlight'><pre>            ConnectAssets = (<span class="hljs-built_in">require</span> <span class="hljs-string">"connect-assets"</span>) connectAssetsOptions
-            <span class="hljs-property">@server</span>.use ConnectAssets</pre></div>
+          <div class='highlight'><pre>        ConnectAssets = (<span class="hljs-built_in">require</span> <span class="hljs-string">"connect-assets"</span>) connectAssetsOptions
+        <span class="hljs-property">@server</span>.use ConnectAssets</pre></div>
         
       
         
         <p>Check for extra middlewares to be added.</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.extraMiddlewares?
-                <span class="hljs-keyword">if</span> lodash.isArray options.extraMiddlewares
-                    <span class="hljs-property">@extraMiddlewares</span>.push mw <span class="hljs-keyword">for</span> mw <span class="hljs-keyword">in</span> options.extraMiddlewares
-                <span class="hljs-keyword">else</span>
-                    <span class="hljs-property">@extraMiddlewares</span>.push options.extraMiddlewares</pre></div>
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.extraMiddlewares?
+            <span class="hljs-keyword">if</span> lodash.isArray options.extraMiddlewares
+                <span class="hljs-property">@extraMiddlewares</span>.push mw <span class="hljs-keyword">for</span> mw <span class="hljs-keyword">in</span> options.extraMiddlewares
+            <span class="hljs-keyword">else</span>
+                <span class="hljs-property">@extraMiddlewares</span>.push options.extraMiddlewares</pre></div>
         
       
         
         <p>Add more middlewares, if any (for example passport for authentication).</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-property">@extraMiddlewares</span>.length &gt; <span class="hljs-number">0</span>
-                <span class="hljs-property">@server</span>.use mw <span class="hljs-keyword">for</span> mw <span class="hljs-keyword">in</span> <span class="hljs-property">@extraMiddlewares</span></pre></div>
-        
-      
-        
-        <p>Set Express router.</p>
-
-        
-          <div class='highlight'><pre>            <span class="hljs-property">@server</span>.use <span class="hljs-property">@server</span>.router</pre></div>
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-property">@extraMiddlewares</span>.length &gt; <span class="hljs-number">0</span>
+            <span class="hljs-property">@server</span>.use mw <span class="hljs-keyword">for</span> mw <span class="hljs-keyword">in</span> <span class="hljs-property">@extraMiddlewares</span></pre></div>
         
       
         
         <p>Configure development environment to dump exceptions and show stack.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-property">@server</span>.configure <span class="hljs-string">"development"</span>,<span class="hljs-function"> =&gt;</span>
-            <span class="hljs-property">@server</span>.use express.errorHandler {<span class="hljs-attribute">dumpExceptions</span>: <span class="hljs-literal">true</span>, <span class="hljs-attribute">showStack</span>: <span class="hljs-literal">true</span>}</pre></div>
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"development"</span>
+            <span class="hljs-property">@server</span>.use midErrorHandler {<span class="hljs-attribute">dumpExceptions</span>: <span class="hljs-literal">true</span>, <span class="hljs-attribute">showStack</span>: <span class="hljs-literal">true</span>}</pre></div>
         
       
         
         <p>Configure production environment.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-property">@server</span>.configure <span class="hljs-string">"production"</span>,<span class="hljs-function"> =&gt;</span>
-            <span class="hljs-property">@server</span>.use express.errorHandler()</pre></div>
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"production"</span>
+            <span class="hljs-property">@server</span>.use midErrorHandler()</pre></div>
+        
+      
+        
+        <p>Use Express static routing.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-property">@server</span>.use express.static settings.path.publicDir</pre></div>
+        
+      
+        
+        <p>If debug is on, log requests to the console.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.general.debug
+            <span class="hljs-property">@server</span>.use <span class="hljs-function"><span class="hljs-params">(req, res, next)</span> =&gt;</span>
+                ip = utils.getClientIP req
+                method = req.method
+                url = req.url</pre></div>
+        
+      
+        
+        <p>Check if request flash is present before logging.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> req.flash? <span class="hljs-keyword">and</span> lodash.isFunction req.flash
+                    <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Request from <span class="hljs-subst">#{ip}</span>"</span>, method, url, req.flash()
+                <span class="hljs-keyword">else</span>
+                    <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Request from <span class="hljs-subst">#{ip}</span>"</span>, method, url
+                next() <span class="hljs-keyword">if</span> next?</pre></div>
         
       
         
@@ -442,29 +463,36 @@ Do not log the exit if running under test environment.</p>
         <p>Start the server and log output.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.app.ip? <span class="hljs-keyword">and</span> settings.app.ip <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
-            server.listen settings.app.port, settings.app.ip
-            logger.info <span class="hljs-string">"App <span class="hljs-subst">#{settings.general.appTitle}</span> started!"</span>, settings.app.ip, settings.app.port
-        <span class="hljs-keyword">else</span>
-            server.listen settings.app.port
-            logger.info <span class="hljs-string">"App <span class="hljs-subst">#{settings.general.appTitle}</span> started!"</span>, settings.app.port</pre></div>
+          <div class='highlight'><pre>        <span class="hljs-keyword">try</span>
+            <span class="hljs-keyword">if</span> settings.app.ip? <span class="hljs-keyword">and</span> settings.app.ip <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                server.listen settings.app.port, settings.app.ip
+                logger.info <span class="hljs-string">"App"</span>, settings.general.appTitle, <span class="hljs-string">"Listening on <span class="hljs-subst">#{settings.app.ip}</span> - <span class="hljs-subst">#{settings.app.port}</span>"</span>
+            <span class="hljs-keyword">else</span>
+                server.listen settings.app.port
+                logger.info <span class="hljs-string">"App"</span>, settings.general.appTitle, <span class="hljs-string">"Listening on <span class="hljs-subst">#{settings.app.port}</span>"</span></pre></div>
         
       
         
         <p>Using SSL and redirector port is set? Then create the http server.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.app.ssl.enabled <span class="hljs-keyword">and</span> settings.app.ssl.redirectorPort &gt; <span class="hljs-number">0</span>
-            logger.info <span class="hljs-string">"App <span class="hljs-subst">#{settings.general.appTitle}</span> will redirect HTTP <span class="hljs-subst">#{settings.app.ssl.redirectorPort}</span> to HTTPS on <span class="hljs-subst">#{settings.app.port}</span>."</span>
-            redirServer = express()
-            redirServer.get <span class="hljs-string">"*"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span> res.redirect <span class="hljs-string">"https://<span class="hljs-subst">#{req.host}</span>:<span class="hljs-subst">#{settings.app.port}</span><span class="hljs-subst">#{req.url}</span>"</span>
-            <span class="hljs-property">@redirectorServer</span> = http.createServer redirServer
-            <span class="hljs-property">@redirectorServer</span>.listen settings.app.ssl.redirectorPort</pre></div>
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> settings.app.ssl.enabled <span class="hljs-keyword">and</span> settings.app.ssl.redirectorPort &gt; <span class="hljs-number">0</span>
+                logger.info <span class="hljs-string">"App"</span>, <span class="hljs-string">"<span class="hljs-subst">#{settings.general.appTitle}</span> will redirect HTTP <span class="hljs-subst">#{settings.app.ssl.redirectorPort}</span> to HTTPS on <span class="hljs-subst">#{settings.app.port}</span>."</span>
+                redirServer = express()
+                redirServer.get <span class="hljs-string">"*"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span> res.redirect <span class="hljs-string">"https://<span class="hljs-subst">#{req.host}</span>:<span class="hljs-subst">#{settings.app.port}</span><span class="hljs-subst">#{req.url}</span>"</span>
+                <span class="hljs-property">@redirectorServer</span> = http.createServer redirServer
+                <span class="hljs-property">@redirectorServer</span>.listen settings.app.ssl.redirectorPort
+        <span class="hljs-keyword">catch</span> ex
+            logger.error <span class="hljs-string">"App"</span>, <span class="hljs-string">"Could not start the server!"</span>, ex</pre></div>
         
       
         
         <h2 id="helper-and-utils">HELPER AND UTILS</h2>
 
+        
+      
+        
+        
         
       
         
@@ -503,6 +531,10 @@ send an error response with the specified status code.
         
         <h2 id="singleton-implementation">Singleton implementation</h2>
 
+        
+      
+        
+        
         
           <div class='highlight'><pre>App.<span class="hljs-function"><span class="hljs-title">getInstance</span> = -&gt;</span>
     <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> App() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?
