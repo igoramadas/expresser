@@ -90,9 +90,10 @@ class Logger
         # exceptions using the logger, otherwise log to the console.
         if settings.logger.uncaughtException
             @debug "Logger.init", "Catching unhandled exceptions."
+
             process.on "uncaughtException", (err) =>
                 try
-                    @error "Unhandled exception!", err
+                    @error "Unhandled exception!", err.message, err.stack
                 catch ex
                     console.error "Unhandled exception!", err
 
