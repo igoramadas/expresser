@@ -92,9 +92,9 @@ class Logger
             @debug "Logger.init", "Catching unhandled exceptions."
             process.on "uncaughtException", (err) =>
                 try
-                    @error "Unhandled exception!", err
+                    @error "Unhandled exception!", err.message, err.stack
                 catch ex
-                    console.error "Unhandled exception!", err
+                    console.error "Unhandled exception!", err.message, err.stack, ex
 
         # Start logging!
         if not localBuffer? and not logentries? and not loggly?
