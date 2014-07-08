@@ -260,7 +260,7 @@ class Utils
         b = rgbhex cap b
 
         # Convert RGB to hex and return result.
-        return "##{r}#{g}#{b}"
+        return "##{r}#{g}#{b}".toUpperCase()
 
 
 # Singleton implementation
