@@ -252,12 +252,16 @@ class Utils
         rgbhex = (v) ->
             v = Math.round(v * 255)
             s = "0" + v.toString(16)
-            return s.substr -2
+            return s.substr - 2
 
         # Cap and transform RGB values.
         r = rgbhex cap r
         g = rgbhex cap g
         b = rgbhex cap b
+
+        r = "00" if r is "NaN"
+        g = "00" if g is "NaN"
+        b = "00" if b is "NaN"
 
         # Convert RGB to hex and return result.
         return "##{r}#{g}#{b}".toUpperCase()
