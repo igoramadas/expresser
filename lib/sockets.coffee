@@ -62,7 +62,6 @@ class Sockets
     # @param [String] key The event key.
     # @param [Method] callback The callback to be called when key is triggered.
     # @param [Boolean] onlyNewClients Optional, if true, listen to event only from new clients.
-    on: => @listento.apply this, arguments
     listenTo: (key, callback, onlyNewClients) =>
         return if not callback?
 
@@ -78,7 +77,6 @@ class Sockets
     # Stops listening to the specified event key.
     # @param [String] key The event key.
     # @param [Object] callback The callback to stop triggering.
-    on: => @stopListening.apply this, arguments
     stopListening: (key, callback) =>
         for socketKey, socket of @io.sockets.connected
             if callback?
