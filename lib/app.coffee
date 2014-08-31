@@ -207,12 +207,12 @@ class App
             else
                 server.listen settings.app.port
                 logger.info "App", settings.general.appTitle, "Listening on #{settings.app.port}"
-    
+
             # Using SSL and redirector port is set? Then create the http server.
             if settings.app.ssl.enabled and settings.app.ssl.redirectorPort > 0
                 logger.info "App", "#{settings.general.appTitle} will redirect HTTP #{settings.app.ssl.redirectorPort} to HTTPS on #{settings.app.port}."
                 redirServer = express()
-                redirServer.get "*", (req, res) -> res.redirect "https://#{req.host}:#{settings.app.port}#{req.url}"
+                redirServer.get "*", (req, res) -> res.redirect "https://#{req.hostname}:#{settings.app.port}#{req.url}"
                 @redirectorServer = http.createServer redirServer
                 @redirectorServer.listen settings.app.ssl.redirectorPort
         catch ex
