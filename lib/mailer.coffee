@@ -170,7 +170,7 @@ class Mailer
         # Save to cache.
         templateCache[name] = {}
         templateCache[name].template = result
-        templateCache[name].expires = moment().add "s", settings.general.ioCacheTimeout
+        templateCache[name].expires = moment().add settings.general.ioCacheTimeout, "s"
 
         return result
 

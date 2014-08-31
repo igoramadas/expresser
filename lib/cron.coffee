@@ -231,7 +231,7 @@ class Cron
 
         # If `schedule` is not an array, parse it as integer / seconds.
         if lodash.isNumber job.schedule or lodash.isString job.schedule
-            timeout = moment().add("s", job.schedule).valueOf() - now.valueOf()
+            timeout = moment().add(job.schedule, "s").valueOf() - now.valueOf()
         else
             minTime = "99:99:99"
             nextTime = "99:99:99"
@@ -243,7 +243,7 @@ class Cron
 
             # If no times were found for today then set for tomorrow, minimum time.
             if nextTime is "99:99:99"
-                nextDate = nextDate.add "d", 1
+                nextDate = nextDate.add 1, "d"
                 nextTime = minTime
 
             # Return the timeout.
@@ -282,7 +282,7 @@ class Cron
         # Set the timeout based on the defined schedule.
         timeout = getTimeout job
         job.timer = setTimeout callback, timeout
-        job.nextRun = moment().add "ms", timeout
+        job.nextRun = moment().add timeout, "ms"
 
         logger.debug "Cron.setTimer", job.id, timeout
 

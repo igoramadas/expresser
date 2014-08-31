@@ -164,7 +164,7 @@ class Firewall
         # it has reached the max retries.
         bl.count = bl.count + 1
         if bl.count >= settings.firewall.blacklistMaxRetries
-            bl.expires = moment().add "s", settings.firewall.blacklistLongExpires
+            bl.expires = moment().add settings.firewall.blacklistLongExpires, "s"
 
         return true
 
@@ -174,7 +174,7 @@ class Firewall
         bl = {} if not bl?
 
         # Set blacklist object.
-        bl.expires = moment().add "s", settings.firewall.blacklistExpires
+        bl.expires = moment().add settings.firewall.blacklistExpires, "s"
         bl.count = 1
 
         @blacklist[ip] = bl
