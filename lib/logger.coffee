@@ -245,7 +245,7 @@ class Logger
         # If the `criticalEmailTo` is set, dispatch a mail send event.
         if settings.logger.criticalEmailTo? and settings.logger.criticalEmailTo isnt ""
             body = args.join ", "
-            maxAge = moment().subtract("m", settings.logger.criticalEmailExpireMinutes).unix()
+            maxAge = moment().subtract(settings.logger.criticalEmailExpireMinutes, "m").unix()
 
             # Do not proceed if this critical email was sent recently.
             return if @criticalEmailCache[body]? and @criticalEmailCache[body] > maxAge
@@ -326,7 +326,7 @@ class Logger
 
     # Delete old log files from disk. The maximum date is defined on the settings.
     cleanLocal: ->
-        maxDate = moment().subtract "d", settings.logger.local.maxAge
+        maxDate = moment().subtract settings.logger.local.maxAge, "d"
 
         fs.readdir settings.path.logsDir, (err, files) ->
             if err?
