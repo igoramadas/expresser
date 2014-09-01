@@ -104,7 +104,7 @@ class App
     configureServer: (options) =>
         midBodyParser = require "body-parser"
         midCookieParser = require "cookie-parser"
-        midSession = require "express-session"
+        midSession = require "cookie-session"
         midCompression = require "compression"
         midErrorHandler = require "errorhandler"
 
@@ -127,7 +127,7 @@ class App
         @server.use midBodyParser.json()
         @server.use midBodyParser.urlencoded {extended: true}
         @server.use midCookieParser settings.app.cookieSecret if settings.app.cookieEnabled
-        @server.use midSession {secret: settings.app.sessionSecret, resave: true, saveUninitialized: true} if settings.app.sessionEnabled
+        @server.use midSession {secret: settings.app.sessionSecret} if settings.app.sessionEnabled
 
         # Use HTTP compression only if enabled on settings.
         @server.use midCompression if settings.app.compressionEnabled
