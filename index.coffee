@@ -8,20 +8,18 @@ class Expresser
     # Settings.
     settings: require "./lib/settings.coffee"
 
-    # App, events and logger are mandatory.
-    @app = require "./lib/app.coffee"
-    @events = require "./lib/events.coffee"
-    @logger = require "./lib/logger.coffee"
-
-    # Enable only modules which have "enabled" set to true.
-    @cron = require "./lib/cron.coffee" if settings.cron.enabled
-    @database = require "./lib/database.coffee" if settings.database.enabled
-    @downloader = require "./lib/downloader.coffee" if settings.downloader.enabled
-    @firewall = require "./lib/firewall.coffee" if settings.firewall.enabled
-    @imaging = require "./lib/imaging.coffee" if settings.imaging.enabled
-    @mailer = require "./lib/mailer.coffee" if settings.mailer.enabled
-    @sockets = require "./lib/sockets.coffee" if settings.sockets.enabled
-    @utils = require "./lib/utils.coffee" if settings.utils.enabled
+    # Modules.
+    app: require "./lib/app.coffee"
+    cron: require "./lib/cron.coffee"
+    database: require "./lib/database.coffee"
+    downloader: require "./lib/downloader.coffee"
+    events: require "./lib/events.coffee"
+    firewall: require "./lib/firewall.coffee"
+    imaging: require "./lib/imaging.coffee"
+    logger: require "./lib/logger.coffee"
+    mailer: require "./lib/mailer.coffee"
+    sockets: require "./lib/sockets.coffee"
+    utils: require "./lib/utils.coffee"
 
     # Expose 3rd party modules.
     libs:
@@ -39,11 +37,9 @@ class Expresser
     # @option options [Object] logger Pass options to the Logger init.
     # @option options [Object] mailer Pass options to the Mailer init.
     init: (options) =>
-        @logger.init options?.logger
-
-        # Init optional modules.
-        @database.init options?.database if @database?
-        @mailer.init options?.mailer if @mailer?
+        @logger.init options?.logger if @settings.logger.enabled
+        @database.init options?.database if @settings.database.enabled
+        @mailer.init options?.mailer if @settings.mailer.enabled
 
         # App must be the last thing to be started!
         # The Firewall and Sockets modules are initiated inside the App
