@@ -57,6 +57,8 @@
         // job using the same ID. If false, you'll need to remove the existing job
         // before adding otherwise it will throw an error.
         "allowReplacing": true,
+        // Enable cron scheduler? If `false` the cron module won't be initialized.
+        "enabled": true,
         // If `loadOnInit` is true, the cron.json file will be loaded and cron jobs
         // will be started on init. Otherwise you'll have to manually call `load`
         // and then `start`.
@@ -68,6 +70,8 @@
     "database": {
         // Connection string to MongoDB, using the format `user:password@hostname/dbname`.
         "connString": null,
+        // Enable database? If `false` the MongoDB database module won't be initialized.
+        "enabled": true,
         // In case you don't have failover / sharding in place on the database above
         // using MongoDB built-in features, you can set a failover connection string below.
         // It will be used ONLY if connection to the main database fails repeatedly.
@@ -95,6 +99,8 @@
     // DOWNLOADER
     // -------------------------------------------------------------------------
     "downloader": {
+        // Enable downloader? If `false` the downloader module won't be initialized.
+        "enabled": true,
         // Default headers to append to all download requests.
         // For example: {"Content-Type": "application/json"}
         "headers": null,
@@ -175,6 +181,8 @@
         // For critical emails, avoid sending duplicate messages by setting an expiry time. So it will only
         // send one email every 5 minutes (value set below) for the same error message.
         "criticalEmailExpireMinutes": 5,
+        // Enable logger? If `false` the logger module won't be initialized.
+        "enabled": true,
         // Define all log types which should be treated as error (red colour on the console).
         "errorLogTypes": "err,error,warn,warning,critical",
         // List will all field / property names to be removed from logs.
@@ -226,6 +234,8 @@
         "baseTemplateFile": "base.html",
         // If `doNotSend` is true, no email will be sent out. Useful while testing.
         "doNotSend": false,
+        // Enable mailer? If `false` the mailer module won't be initialized.
+        "enabled": true,
         // Default `from` email address.
         "from": null,
         // DKIM signing options must be set below if you want to sign emails.

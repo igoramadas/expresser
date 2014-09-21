@@ -21,8 +21,7 @@ class Mailer
     utils = require "./utils.coffee"
 
     # SMTP objects will be instantiated on `init`.
-    smtp = null
-    smtp2 = null
+    smtp = {}
 
     # Templates cache to avoid disk reads.
     templateCache = {}
@@ -36,11 +35,13 @@ class Mailer
 
     # Bind event listeners.
     setEvents: =>
-        events.on "mailer.send", @send
+        events.on "Mailer.send", @send
 
     # Init the Mailer module and create the SMTP objects.
     # @param [Object] options Mailer init options.
     init: (options) =>
+        options = lodash.assign settings.mailer, options
+
         if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
             @setSmtp settings.mailer.smtp, false
         else if settings.mailer.smtp.host? and settings.mailer.smtp.host isnt "" and settings.mailer.smtp.port > 0
@@ -215,13 +216,13 @@ class Mailer
             delete options["user"]
             delete options["password"]
 
-        # Check if `service` is set. If so, pass to the mailer, otheriwse use SMTP.
+        # Set the correct SMTP details based on the options.
         if options.service? and options.service isnt ""
             logger.info "Mailer.createSmtp", "Service", options.service
             result = mailer.createTransport options.service, options
         else
             logger.info "Mailer.createSmtp", options.host, options.port, options.secureConnection
-            result = mailer.createTransport "SMTP", options
+            result = mailer.createTransport options
 
         # Sign using DKIM?
         result.useDKIM settings.mailer.dkim if settings.mailer.dkim.enabled

@@ -8,18 +8,19 @@ class Expresser
     # Settings.
     settings: require "./lib/settings.coffee"
 
-    # Expresser modules.
-    app: require "./lib/app.coffee"
-    cron: require "./lib/cron.coffee"
-    database: require "./lib/database.coffee"
-    downloader: require "./lib/downloader.coffee"
-    events: require "./lib/events.coffee"
-    firewall: require "./lib/firewall.coffee"
-    imaging: require "./lib/imaging.coffee"
-    logger: require "./lib/logger.coffee"
-    mailer: require "./lib/mailer.coffee"
-    sockets: require "./lib/sockets.coffee"
-    utils: require "./lib/utils.coffee"
+    # Expresser modules. The app and events are mandatory.
+    @app = require "./lib/app.coffee"
+    @events = require "./lib/events.coffee"
+
+    @cron = require "./lib/cron.coffee" if settings.cron.enabled
+    @database = require "./lib/database.coffee" if settings.database.enabled
+    @downloader = require "./lib/downloader.coffee" if settings.downloader.enabled
+    @firewall = require "./lib/firewall.coffee" if settings.firewall.enabled
+    @imaging = require "./lib/imaging.coffee" if settings.imaging.enabled
+    @logger = require "./lib/logger.coffee" if settings.logger.enabled
+    @mailer = require "./lib/mailer.coffee" if settings.mailer.enabled
+    @sockets = require "./lib/sockets.coffee" if settings.sockets.enabled
+    @utils = require "./lib/utils.coffee" if settings.utils.enabled
 
     # Expose 3rd party modules.
     libs:

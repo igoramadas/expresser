@@ -258,7 +258,7 @@ class Logger
                 logError: false
 
             # Emit mail send message.
-            events.emit "mailer.send", mailOptions, (err) ->
+            events.emit "Mailer.send", mailOptions, (err) ->
                 console.error "Logger.critical", "Can't send email!", err if err?
 
             # Save to critical email cache.
