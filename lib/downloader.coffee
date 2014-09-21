@@ -30,7 +30,7 @@ class Downloader
 
     # Bind event listeners.
     setEvents: =>
-        events.on "downloader.download", @download
+        events.on "Downloader.download", @download
 
     # METHODS
     # --------------------------------------------------------------------------
@@ -47,9 +47,8 @@ class Downloader
     # @param [Method] callback Optional, a function (err, result) to be called when download has finished.
     # @return [Object] Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
     download: (remoteUrl, saveTo, options, callback) =>
-        if not remoteUrl?
-            logger.warn "Downloader.download", "Aborted, remoteUrl is not defined."
-            return
+        if not remoteUrl? or remoteUrl is ""
+            throw new Error "First parameter 'remoteUrl' is invalid"
 
         # Check options and callback.
         if not callback? and lodash.isFunction options
@@ -256,7 +255,6 @@ class Downloader
             next()
         else
             reqStart obj, options
-
 
 # Singleton implementation
 # --------------------------------------------------------------------------

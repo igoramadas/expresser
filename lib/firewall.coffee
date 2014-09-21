@@ -200,7 +200,6 @@ class Firewall
     logAttack: (module, pattern, resource, ip) =>
         logger.warn "ATTACK DETECTED!", module, pattern, resource, "From #{ip}"
 
-
 # Singleton implementation
 # --------------------------------------------------------------------------
 Firewall.getInstance = ->

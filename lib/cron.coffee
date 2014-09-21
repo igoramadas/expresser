@@ -41,15 +41,17 @@ class Cron
 
     # Bind event listeners.
     setEvents: =>
-        events.on "cron.start", @start
-        events.on "cron.stop", @stop
-        events.on "cron.add", @add
-        events.on "cron.remove", @remove
+        events.on "Cron.start", @start
+        events.on "Cron.stop", @stop
+        events.on "Cron.add", @add
+        events.on "Cron.remove", @remove
 
     # Init the cron manager. If `loadOnInit` setting is true, the `cron.json` file will be parsed
     # and loaded straight away (if there's one).
     init: (options) =>
-        logger.debug "Cron.init"
+        logger.debug "Cron.init", options
+        lodash.assign settings.cron, options if options?
+
         @load true if settings.cron.loadOnInit
 
     # Load jobs from the `cron.json` file. If `autoStart` is true, it will automatically
@@ -159,30 +161,19 @@ class Cron
     # @option job [Method] callback The callback (job) to be triggered.
     # @option job [Boolean] once If true, the job will be triggered only once no matter which schedule it has.
     # @return [Object] Returns {error, job}, where job is the job object and error is the error message (if any).
-    add: (id, job) =>
-        logger.debug "Cron.add", id, job
+    add: (job) =>
+        logger.debug "Cron.add", job
 
-        if id? and not job?
-            job = id
-            id = null
-
-        # If no `id` is passed, try getting it directly from the `job` object.
-        id = job.id if not id?
-
-        # Throw error if no `id` was provided or callback is invalid.
-        if not id? or id is ""
-            errorMsg = "No 'id' was passed. Abort!"
-            logger.error "Cron.add", errorMsg
-            return {error: errorMsg}
+        # Throw error if no `id` was provided.
+        if not job.id? or job.id is ""
+            throw new Error "Job must have an ID. Please set the job.id property."
 
         # Throw error if job callback is not a valid function.
         if not lodash.isFunction job.callback
-            errorMsg = "The job #{id} callback is not a valid function. Abort!"
-            logger.error "Cron.add", errorMsg
-            return {error: errorMsg}
+            throw new Error "Job callback is not a valid, please set job.callback as a valid Function."
 
         # Find existing job.
-        existing = lodash.find @jobs, {id: id}
+        existing = lodash.find @jobs, {id: job.id}
 
         # Handle existing jobs.
         if existing?
@@ -190,7 +181,7 @@ class Cron
                 clearTimeout existing.timer if existing.timer?
                 existing.timer = null
             else
-                errorMsg = "Job #{id} already exists and 'allowReplacing' is false. Abort!"
+                errorMsg = "Job #{job.id} already exists and 'allowReplacing' is false. Abort!"
                 logger.error "Cron.add", errorMsg
                 return {error: errorMsg}
 
@@ -198,11 +189,8 @@ class Cron
         job.startTime = moment 0 if not job.startTime?
         job.endTime = moment 0 if not job.endTime?
 
-        # Only create the timer if `autoStart` is not false.
+        # Only create the timer if `autoStart` is not false, add to the jobs list.
         setTimer job if job.autoStart isnt false
-
-        # Add to the jobs list.
-        job.id = id
         @jobs.push job
 
         return {job: job}
@@ -270,6 +258,8 @@ class Cron
 
     # Helper to get a timer / interval based on the defined options.
     setTimer = (job) ->
+        logger.debug "Cron.setTimer", job
+
         callback = getCallback job
 
         # Get the correct schedule / timeout value.
@@ -283,9 +273,6 @@ class Cron
         timeout = getTimeout job
         job.timer = setTimeout callback, timeout
         job.nextRun = moment().add timeout, "ms"
-
-        logger.debug "Cron.setTimer", job.id, timeout
-
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------

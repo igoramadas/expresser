@@ -41,7 +41,8 @@ class Mailer
     # Init the Mailer module and create the SMTP objects.
     # @param [Object] options Mailer init options.
     init: (options) =>
-        options = lodash.assign settings.mailer, options
+        logger.debug "Mailer.init", options
+        lodash.assign settings.mailer, options if options?
 
         if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
             @setSmtp settings.mailer.smtp, false
@@ -55,14 +56,14 @@ class Mailer
 
         # Alert user if specified backup SMTP but not the main one.
         if not smtp? and smtp2?
-            logger.warn "Mailer.init", "The secondary SMTP settings are defined but not the main one.", "You should set the main one instead."
+            logger.warn "Mailer.init", "The secondary SMTP is defined but not the main one.", "You should set the main one instead."
 
         # Warn if no SMTP is available for sending emails, but only when debug is enabled.
         if not @checkConfig()
             logger.warn "Mailer.init", "No default SMTP settings were provided.", "No emails will be sent out if you don't pass a SMTP server on send."
 
     # Check if configuration for sending emails is properly set.
-    # @return [Boolean] Returns true if smtp server is active, otherwise false.
+    # @return [Boolean] Returns true if any smtp server is active, otherwise false.
     checkConfig: =>
         if @smtp or @smtp2?
             return true
@@ -83,22 +84,20 @@ class Mailer
     send: (options, callback) =>
         logger.debug "Mailer.send", options
 
-        if not @checkConfig()
-            errMsg = "SMTP transport wasn't initiated. Abort!"
-            logger.warn "Mailer.send", errMsg, options
-            callback errMsg, null if callback?
-            return
+        # User has passed its own SMTP servers?
+        smtp = options.smtp or @smtp
+        smtp2 = options.smtp2 or @smtp2
+
+        # Check if SMTP server is set.
+        if smtp? and not smtp2?
+            throw new Error "Default SMTP transports were not initiated and nothing was passed on options.smtp.!"
 
         # Make sure "to" address is valid.
         if not options.to? or options.to is false or options.to is ""
-            errMsg = "Option 'to' is not valid. Abort!"
-            logger.warn "Mailer.send", errMsg, options
-            callback errMsg, null if callback?
-            return
+            throw new Error "Option 'to' is not valid. Abort!"
 
-        # Set from to default address if no `to` was set, and `logError` defaults to true.
+        # Set from to default address if no `to` was set.
         options.from = "#{settings.general.appTitle} <#{settings.mailer.from}>" if not options.from?
-        options.logError = true if not options.logError?
 
         # Set HTML to body, if passed.
         html = if options.body? then options.body.toString() else ""
@@ -127,10 +126,6 @@ class Mailer
             callback null, "The 'doNotSend' setting is true, will not send anything!" if callback?
             return
 
-        # User has passed its own SMTP servers?
-        smtp = options.smtp or @smtp
-        smtp2 = options.smtp2 or @smtp2
-
         # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.
         smtpSend smtp, options, (err, result) =>
             if err?
@@ -152,6 +147,7 @@ class Mailer
     # @param [String] name The template name, without .html.
     # @return [String] The template HTML.
     getTemplate: (name) =>
+        name = name.toString()
         name = name.replace(".html", "") if name.indexOf(".html")
 
         cached = templateCache[name]
@@ -187,6 +183,8 @@ class Mailer
     # @param [Object] keywords Object with keys to be replaced with its values.
     # @return [String] The parsed template, keywords replaced with values.
     parseTemplate: (template, keywords) =>
+        logger.debug "Mailer.parseTemplate", template, keywords
+
         template = template.toString()
 
         for key, value of keywords
@@ -198,20 +196,21 @@ class Mailer
     # --------------------------------------------------------------------------
 
     # Helper to send emails using the specified transport and options.
+    # This is NOT exposed to external modules.
     smtpSend = (transport, options, callback) ->
         try
             transport.sendMail options, (err, result) ->
-                if err?
-                    if options.logError
-                        logger.error "Mailer.smtpSend", transport.host, "Could not send: #{options.subject} to #{options.to}.", err
-                else
-                    logger.debug "Mailer.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
+                logger.debug "Mailer.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
                 callback err, result
         catch ex
             callback ex
 
     # Helper to create a SMTP object.
+    # @param [Object] options Options like service, host and port, username, password etc.
+    # @return [Object] A Nodemailer SMTP transport object, or null if a problem was found.
     createSmtp: (options) ->
+        logger.debug "Mailer.createSmtp", options
+
         options.debug = settings.general.debug if not options.debug?
         options.secureConnection = options.secure if not options.secureConnection?
         dkim = options.dkim or settings.mailer.dkim
@@ -223,25 +222,13 @@ class Mailer
             delete options["password"]
 
         # Set the correct SMTP details based on the options.
-        try
-            result = mailer.createTransport options
+        result = mailer.createTransport options
 
-            if options.service?
-                logMessage = options.service
-            else
-                logMessage = options.host + ":" + options.port
+        # Sign using DKIM?
+        if dkim.domainName? and dkim.privateKey?
+            result.useDKIM dkim
 
-            # Sign using DKIM?
-            if dkim.domainName? and dkim.privateKey?
-                result.useDKIM dkim
-                logger.info "Mailer.createSmtp", logMessage, "DKIM enabled!"
-            else
-                logger.info "Mailer.createSmtp", logMessage
-
-            return result
-        catch ex
-            logger.error "Mailer.createSmtp", options, ex.message, ex.stack
-            return null
+        return result
 
     # Use the specified options and create a new SMTP server.
     # @param [Object] options Options to be passed to SMTP creator.

@@ -21,9 +21,12 @@ class Database
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the databse module and test the connection straight away.
+    # Init the database module and test the connection straight away.
     # @param [Object] options Database init options.
     init: (options) =>
+        logger.debug "Database.init", options
+        lodash.assign settings.database, options if options?
+
         if settings.database.connString? and settings.database.connString isnt ""
             @setDb settings.database.connString, settings.database.options
         else
@@ -51,14 +54,10 @@ class Database
 
         # Callback is mandatory!
         if not callback?
-            if settings.logger.autoLogErrors
-                logger.error "Database.get", "No callback specified. Abort!", collection, filter
             throw new Error "Database.get: a callback (last argument) must be specified."
 
         # No DB set? Throw exception.
         if not @db?
-            if settings.logger.autoLogErrors
-                logger.error "Database.get", "The db is null or was not initialized. Abort!", collection, filter
             return callback "Database.insert: the db was not initialized, please check database settings and call its 'init' method."
 
         # Create the DB callback helper.
@@ -123,16 +122,12 @@ class Database
     # @param [Method] callback Callback (err, result) when operation has finished.
     insert: (collection, obj, callback) =>
         if not obj?
-            if settings.logger.autoLogErrors
-                logger.error "Database.insert", "No object specified. Abort!", collection
             if callback?
                 callback "Database.insert: no object (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @db?
-            if settings.logger.autoLogErrors
-                logger.error "Database.insert", "The db is null or was not initialized. Abort!", collection
             if callback?
                 callback "Database.insert: the db was not initialized, please check database settings and call its 'init' method."
             return false
@@ -166,16 +161,12 @@ class Database
 
         # Object or filter is mandatory.
         if not obj?
-            if settings.logger.autoLogErrors
-                logger.error "Database.update", "No object specified. Abort!", collection
             if callback?
                 callback "Database.update: no object (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @db?
-            if settings.logger.autoLogErrors
-                logger.error "Database.update", "The db is null or was not initialized. Abort!", collection
             if callback?
                 callback "Database.update: the db was not initialized, please check database settings and call its 'init' method."
             return false
@@ -237,16 +228,12 @@ class Database
 
         # Filter is mandatory.
         if not filter?
-            if settings.logger.autoLogErrors
-                logger.error "Database.remove", "No filter specified. Abort!", collection
             if callback?
                 callback "Database.remove: no filter (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @db?
-            if settings.logger.autoLogErrors
-                logger.error "Database.remove", "The db is null or was not initialized. Abort!", collection
             if callback?
                 callback "Database.remove: the db was not initialized, please check database settings and call its 'init' method."
             return false
@@ -292,8 +279,6 @@ class Database
 
         # Callback is mandatory!
         if not callback?
-            if settings.logger.autoLogErrors
-                logger.error "Database.count", "No callback specified. Abort!", collection, filter
             throw new Error "Database.count: a callback (last argument) must be specified."
 
         # Create the DB callback helper.
@@ -341,7 +326,6 @@ class Database
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
         logger.debug "Database.setDb", connStringSafe, options
-
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------

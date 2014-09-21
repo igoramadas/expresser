@@ -57,7 +57,7 @@ class App
 
         # Require logger.
         logger = require "./logger.coffee"
-        logger.debug "App", "init", options.extraMiddlewares
+        logger.debug "App", "init", options
 
         # Configure Express server and start server.
         @configureServer options
@@ -97,8 +97,8 @@ class App
                 console.warn "App", "Terminating Expresser app...", Date(Date.now()), sig
             try
                 logger.flushLocal()
-            catch err
-                console.warn "App", "Could not flush buffered logs to disk."
+            catch ex
+                console.warn "App", "Could not flush buffered logs to disk.", ex.message
 
     # Configure the server. Set views, options, use Express modules, etc.
     configureServer: (options) =>
@@ -189,7 +189,6 @@ class App
                 sslOptions = {key: sslKey, cert: sslCert}
                 server = https.createServer sslOptions, @server
             else
-                logger.error "App", "init", "Cannot find certificate files.", settings.path.sslKeyFile, settings.path.sslCertFile
                 throw new Error "The certificate files could not be found. Please check the 'Path.sslKeyFile' and 'Path.sslCertFile' settings."
         else
             server = http.createServer @server
@@ -199,25 +198,21 @@ class App
             sockets = require "./sockets.coffee"
             sockets.init server
 
-        # Start the server and log output.
-        try
-            if settings.app.ip? and settings.app.ip isnt ""
-                server.listen settings.app.port, settings.app.ip
-                logger.info "App", settings.general.appTitle, "Listening on #{settings.app.ip} - #{settings.app.port}"
-            else
-                server.listen settings.app.port
-                logger.info "App", settings.general.appTitle, "Listening on #{settings.app.port}"
+        if settings.app.ip? and settings.app.ip isnt ""
+            server.listen settings.app.port, settings.app.ip
+            logger.info "App", settings.general.appTitle, "Listening on #{settings.app.ip} - #{settings.app.port}"
+        else
+            server.listen settings.app.port
+            logger.info "App", settings.general.appTitle, "Listening on #{settings.app.port}"
 
-            # Using SSL and redirector port is set? Then create the http server.
-            if settings.app.ssl.enabled and settings.app.ssl.redirectorPort > 0
-                logger.info "App", "#{settings.general.appTitle} will redirect HTTP #{settings.app.ssl.redirectorPort} to HTTPS on #{settings.app.port}."
-                redirServer = express()
-                redirServer.get "*", (req, res) -> res.redirect "https://#{req.hostname}:#{settings.app.port}#{req.url}"
-                @redirectorServer = http.createServer redirServer
-                @redirectorServer.listen settings.app.ssl.redirectorPort
-        catch ex
-            logger.error "App", "Could not start the server!", ex
+        # Using SSL and redirector port is set? Then create the http server.
+        if settings.app.ssl.enabled and settings.app.ssl.redirectorPort > 0
+            logger.info "App", "#{settings.general.appTitle} will redirect HTTP #{settings.app.ssl.redirectorPort} to HTTPS on #{settings.app.port}."
 
+            redirServer = express()
+            redirServer.get "*", (req, res) -> res.redirect "https://#{req.hostname}:#{settings.app.port}#{req.url}"
+            @redirectorServer = http.createServer redirServer
+            @redirectorServer.listen settings.app.ssl.redirectorPort
 
     # HELPER AND UTILS
     # --------------------------------------------------------------------------
@@ -233,6 +228,7 @@ class App
         options.device = utils.getClientDevice req
         options.title = settings.general.appTitle if not options.title?
         res.render view, options
+
         logger.debug "App", "Render", view, options
 
     # Helper to send error responses. When the server can't return a valid result,
@@ -245,6 +241,7 @@ class App
         statusCode = 500 if not statusCode?
         res.statusCode = 500
         res.send "Server error: #{message}"
+
         logger.error "App", "HTTP Error", statusCode, message, res
 
 # Singleton implementation

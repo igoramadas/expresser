@@ -50,7 +50,7 @@ describe("Database Tests", function() {
 
         var obj = {simple: true};
 
-        database.set("test", obj, callback);
+        database.insert("test", obj, callback);
     });
 
     it("Add complex record to the database", function(done) {
