@@ -48,9 +48,9 @@ describe("Cron Tests", function() {
             }
         };
 
-        var job = {callback: callback, schedule: schedule, once: true};
+        var job = {id: "testjob", callback: callback, schedule: schedule, once: true};
 
-        cron.add("testAddJob", job);
+        cron.add(job);
     });
 
     it("Prevents duplicate jobs when 'allowReplacing' setting is false", function(done) {

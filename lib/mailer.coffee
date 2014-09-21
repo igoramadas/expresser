@@ -89,8 +89,8 @@ class Mailer
         smtp2 = options.smtp2 or @smtp2
 
         # Check if SMTP server is set.
-        if smtp? and not smtp2?
-            throw new Error "Default SMTP transports were not initiated and nothing was passed on options.smtp.!"
+        if not smtp? and not smtp2?
+            throw new Error "Default SMTP transports were not initiated and nothing was passed on options.smtp."
 
         # Make sure "to" address is valid.
         if not options.to? or options.to is false or options.to is ""
