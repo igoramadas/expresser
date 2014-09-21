@@ -245,7 +245,6 @@ class Mailer
         templateCache = {}
         logger.info "Mailer.clearCache", "Cleared #{count} templates."
 
-
 # Singleton implementation
 # --------------------------------------------------------------------------
 Mailer.getInstance = ->

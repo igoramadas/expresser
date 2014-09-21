@@ -380,7 +380,6 @@ class Logger
         else if @onLogSuccess?
             @onLogSuccess result
 
-
 # Singleton implementation
 # --------------------------------------------------------------------------
 Logger.getInstance = ->

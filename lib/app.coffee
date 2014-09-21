@@ -247,7 +247,6 @@ class App
         res.send "Server error: #{message}"
         logger.error "App", "HTTP Error", statusCode, message, res
 
-
 # Singleton implementation
 # --------------------------------------------------------------------------
 App.getInstance = ->

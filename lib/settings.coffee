@@ -288,48 +288,37 @@ class Settings
             @logger.loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
             @logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
-        # Update mailer settings (SendGrid, Mandrill, Mailgun).
+        # Update mailer settings (Mailgun, Mandrill, SendGrid).
         if not filter or filter.indexOf("mail") >= 0
             currentSmtpHost = @mailer.smtp.host?.toLowerCase()
             currentSmtpHost = "" if not currentSmtpHost?
 
-            # Get and set SendGrid.
-            smtpUser = env.SENDGRID_USERNAME
-            smtpPassword = env.SENDGRID_PASSWORD
-            if currentSmtpHost.indexOf("sendgrid") >= 0
-                if currentSmtpHost is "sendgrid"
-                    @mailer.smtp.host = "smtp.sendgrid.net"
-                    @mailer.smtp.port = 587
-                    @mailer.smtp.secure = false
+            # Get and set Mailgun.
+            if currentSmtpHost.indexOf("mailgun") >= 0 or smtpHost?.indexOf("mailgun") >= 0
+                @mailer.smtp.service = "mailgun"
+                smtpUser = env.MAILGUN_SMTP_LOGIN
+                smtpPassword = env.MAILGUN_SMTP_PASSWORD
+
                 if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
                     @mailer.smtp.user = smtpUser
                     @mailer.smtp.password = smtpPassword
 
             # Get and set Mandrill.
-            smtpUser = env.MANDRILL_USERNAME
-            smtpPassword = env.MANDRILL_APIKEY
-            if currentSmtpHost.indexOf("mandrill") >= 0
-                if currentSmtpHost is "mandrill"
-                    @mailer.smtp.host = "smtp.mandrillapp.com"
-                    @mailer.smtp.port = 587
-                    @mailer.smtp.secure = false
+            if currentSmtpHost.indexOf("mandrill") >= 0 or smtpHost?.indexOf("mandrill") >= 0
+                @mailer.smtp.service = "mandrill"
+                smtpUser = env.MANDRILL_USERNAME
+                smtpPassword = env.MANDRILL_APIKEY
+
                 if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
                     @mailer.smtp.user = smtpUser
                     @mailer.smtp.password = smtpPassword
 
-            # Get and set Mailgun.
-            smtpHost = env.MAILGUN_SMTP_SERVER
-            smtpPort = env.MAILGUN_SMTP_PORT
-            smtpUser = env.MAILGUN_SMTP_LOGIN
-            smtpPassword = env.MAILGUN_SMTP_PASSWORD
-            if currentSmtpHost.indexOf("mailgun") >= 0
-                if smtpHost? and smtpHost isnt "" and smtpPort? and smtpPort isnt ""
-                    @mailer.smtp.host = smtpHost
-                    @mailer.smtp.port = smtpPort
-                else if currentSmtpHost is "mailgun"
-                    @mailer.smtp.host = "smtp.mailgun.org"
-                    @mailer.smtp.port = 587
-                    @mailer.smtp.secure = false
+            # Get and set SendGrid.
+            if currentSmtpHost.indexOf("sendgrid") >= 0 or smtpHost?.indexOf("sendgrid") >= 0
+                @mailer.smtp.service = "sendgrid"
+                smtpUser = env.SENDGRID_USERNAME
+                smtpPassword = env.SENDGRID_PASSWORD
+
                 if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
                     @mailer.smtp.user = smtpUser
                     @mailer.smtp.password = smtpPassword
@@ -337,7 +326,6 @@ class Settings
         # Log to console.
         if @general.debug and @logger.console
             console.log "Settings.updateFromPaaS", "Updated!", filter
-
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

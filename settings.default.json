@@ -18,8 +18,8 @@
         // This value might be overriden by PaaS environmental values.
         "ip": null,
         // If paas is true, Expresser will figure out some settings out of environment variables
-        // like IP, ports and tokens. Leave true if you're deploying to AppFog, Heroku, OpenShift etc.
-        "paas": true,
+        // like IP, ports and tokens. Leave false if you're not deploying to AppFog, Heroku, OpenShift etc.
+        "paas": false,
         // Node.js server port. Please note that this value might be overriden by PaaS
         // environmental values (like in AppFog or OpenShift).
         "port": 8080,
@@ -181,8 +181,6 @@
         // For critical emails, avoid sending duplicate messages by setting an expiry time. So it will only
         // send one email every 5 minutes (value set below) for the same error message.
         "criticalEmailExpireMinutes": 5,
-        // Enable logger? If `false` the logger module won't be initialized.
-        "enabled": true,
         // Define all log types which should be treated as error (red colour on the console).
         "errorLogTypes": "err,error,warn,warning,critical",
         // List will all field / property names to be removed from logs.
@@ -256,25 +254,18 @@
             // Use SSL / TSL with main SMTP server?
             "secure": false,
             // The service is a shortcut / overriding setting for host, port and secure.
-            // For a list of supported services please go to http://www.nodemailer.com///well-known-services-for-smtp
+            // For a list of supported services please go to https://github.com/andris9/nodemailer-wellknown#supported-services
             "service": null,
             // The main SMTP auth user.
             "user": null
         },
-        // Secondary SMTP server.
+        // Secondary SMTP server. All settings same as the main one.
         "smtp2": {
-            // The secondary SMTP host. If set to null or blank, no emails will be sent out.
             "host": null,
-            // The secondary SMTP auth password.
             "password": null,
-            // The secondary SMTP port.
             "port": null,
-            // Use SSL / TSL with secondary SMTP server?
             "secure": false,
-            // The service is a shortcut / overriding setting for host, port and secure.
-            // For a list of supported services please go to http://www.nodemailer.com///well-known-services-for-smtp
             "service": null,
-            // The secondary SMTP auth user.
             "user": null
         }
     },
