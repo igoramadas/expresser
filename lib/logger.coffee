@@ -54,11 +54,11 @@ class Logger
 
     # Bind event listeners.
     setEvents: =>
-        events.on "logger.debug", @debug
-        events.on "logger.info", @info
-        events.on "logger.warn", @warn
-        events.on "logger.error", @error
-        events.on "logger.critical", @critical
+        events.on "Logger.debug", @debug
+        events.on "Logger.info", @info
+        events.on "Logger.warn", @warn
+        events.on "Logger.error", @error
+        events.on "Logger.critical", @critical
 
     # Init the Logger module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.

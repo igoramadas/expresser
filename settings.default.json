@@ -238,7 +238,6 @@
         "from": null,
         // DKIM signing options must be set below if you want to sign emails.
         "dkim": {
-            "enabled": false,
             "domainName": null,
             "keySelector": null,
             "privateKey": null

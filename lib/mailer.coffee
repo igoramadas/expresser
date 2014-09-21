@@ -21,7 +21,8 @@ class Mailer
     utils = require "./utils.coffee"
 
     # SMTP objects will be instantiated on `init`.
-    smtp = {}
+    smtp: null
+    smtp2: null
 
     # Templates cache to avoid disk reads.
     templateCache = {}
@@ -54,16 +55,16 @@ class Mailer
 
         # Alert user if specified backup SMTP but not the main one.
         if not smtp? and smtp2?
-            logger.warn "Mailer.init", "The secondary SMTP settings are defined but not the main one.", "Will still work, but you should set the main one instead."
+            logger.warn "Mailer.init", "The secondary SMTP settings are defined but not the main one.", "You should set the main one instead."
 
         # Warn if no SMTP is available for sending emails, but only when debug is enabled.
-        if not smtp? and not smtp2? and settings.general.debug
-            logger.warn "Mailer.init", "No main SMTP host/port specified.", "No emails will be sent out."
+        if not @checkConfig()
+            logger.warn "Mailer.init", "No default SMTP settings were provided.", "No emails will be sent out if you don't pass a SMTP server on send."
 
     # Check if configuration for sending emails is properly set.
     # @return [Boolean] Returns true if smtp server is active, otherwise false.
     checkConfig: =>
-        if smtp or smtp2?
+        if @smtp or @smtp2?
             return true
         else
             return false
@@ -126,8 +127,12 @@ class Mailer
             callback null, "The 'doNotSend' setting is true, will not send anything!" if callback?
             return
 
+        # User has passed its own SMTP servers?
+        smtp = options.smtp or @smtp
+        smtp2 = options.smtp2 or @smtp2
+
         # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.
-        smtpSend smtp, options, (err, result) ->
+        smtpSend smtp, options, (err, result) =>
             if err?
                 if smtp2?
                     smtpSend smtp2, options, (err2, result2) -> callback err2, result2
@@ -189,7 +194,7 @@ class Mailer
 
         return template
 
-    # HELPER METHODS
+    # SMTP HELPER METHODS
     # --------------------------------------------------------------------------
 
     # Helper to send emails using the specified transport and options.
@@ -206,9 +211,10 @@ class Mailer
             callback ex
 
     # Helper to create a SMTP object.
-    createSmtp = (options) ->
+    createSmtp: (options) ->
         options.debug = settings.general.debug if not options.debug?
         options.secureConnection = options.secure if not options.secureConnection?
+        dkim = options.dkim or settings.mailer.dkim
 
         # Make sure auth is properly set.
         if not options.auth? and options.user? and options.password?
@@ -217,27 +223,37 @@ class Mailer
             delete options["password"]
 
         # Set the correct SMTP details based on the options.
-        if options.service? and options.service isnt ""
-            logger.info "Mailer.createSmtp", "Service", options.service
-            result = mailer.createTransport options.service, options
-        else
-            logger.info "Mailer.createSmtp", options.host, options.port, options.secureConnection
+        try
             result = mailer.createTransport options
 
-        # Sign using DKIM?
-        result.useDKIM settings.mailer.dkim if settings.mailer.dkim.enabled
+            if options.service?
+                logMessage = options.service
+            else
+                logMessage = options.host + ":" + options.port
 
-        # Return SMTP object.
-        return result
+            # Sign using DKIM?
+            if dkim.domainName? and dkim.privateKey?
+                result.useDKIM dkim
+                logger.info "Mailer.createSmtp", logMessage, "DKIM enabled!"
+            else
+                logger.info "Mailer.createSmtp", logMessage
+
+            return result
+        catch ex
+            logger.error "Mailer.createSmtp", options, ex.message, ex.stack
+            return null
 
     # Use the specified options and create a new SMTP server.
     # @param [Object] options Options to be passed to SMTP creator.
     # @param [Boolean] secondary If false set as the main SMTP server, if true set as secondary.
     setSmtp: (options, secondary) =>
-        if secondary or secondary > 0
-            smtp2 = createSmtp options
+        if not secondary or secondary < 1
+            @smtp = @createSmtp options
         else
-            smtp = createSmtp options
+            @smtp2 = @createSmtp options
+
+    # CACHE METHODS
+    # --------------------------------------------------------------------------
 
     # Force clear the templates cache.
     clearCache: =>
