@@ -253,7 +253,11 @@ class Cron
             job.timer = null
             job.startTime = moment()
             job.endTime = moment()
-            job.callback job
+
+            try
+                job.callback job
+            catch ex
+                logger.error "Cron.getCallback", "Could not run jub.", ex.message, ex.stack
 
             # Only reset timer if once is not true.
             setTimer job if not job.once
