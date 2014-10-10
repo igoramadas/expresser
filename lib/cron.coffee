@@ -87,16 +87,21 @@ class Cron
             # Iterate jobs, but do not add if job's `enabled` is false.
             for key, data of cronJson
                 module = require(options.basePath + key)
-                for d in data
-                    if not d.enabled? or d.enabled
-                        cb = module[d.callback]
-                        job = d
-                        job.module = key
-                        job.id = key + "." + d.callback
-                        job.callback = cb
-                        @add job
-                    else
-                        logger.debug "Cron.load", filename, key, d.callback, "Enabled is false. Skip!"
+
+                # Only proceed if the cronDisabled flag is not present on the module.
+                if module.cronDisabled isnt true
+                    for d in data
+                        if not d.enabled? or d.enabled
+                            cb = module[d.callback]
+                            job = d
+                            job.module = key
+                            job.id = key + "." + d.callback
+                            job.callback = cb
+                            @add job
+                        else
+                            logger.debug "Cron.load", filename, key, d.callback, "Enabled is false. Skip!"
+                else
+                    logger.debug "Cron.load", filename, "Module has cronDisabled set. Skip!"
 
             # Start all jobs automatically if `autoStart` is true.
             @start() if options.autoStart
