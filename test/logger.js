@@ -38,6 +38,8 @@ describe("Logger Tests", function() {
     });
 
     it("Save log to local file", function(done) {
+        var isDone = false;
+
         settings.logger.loggly.enabled = false;
         settings.logger.logentries.enabled = false;
         settings.logger.local.enabled = true;
@@ -45,13 +47,13 @@ describe("Logger Tests", function() {
         logger.onLogSuccess = function(result) {
             logger.onLogSuccess = null;
             logger.onLogError = null;
-            done();
+            if (!isDone) done();
         };
 
         logger.onLogError = function(err) {
             logger.onLogSuccess = null;
             logger.onLogError = null;
-            done(err);
+            if (!isDone) done(err);
         };
 
         logger.initLocal();
@@ -62,6 +64,8 @@ describe("Logger Tests", function() {
     });
 
     it("Send log to Logentries", function(done) {
+        var isDone = false;
+
         this.timeout(10000);
 
         if (!settings.logger.logentries.token) {
@@ -75,13 +79,13 @@ describe("Logger Tests", function() {
         logger.onLogSuccess = function() {
             logger.onLogSuccess = null;
             logger.onLogError = null;
-            done();
+            if (!isDone) done();
         };
 
         logger.onLogError = function(err) {
             logger.onLogSuccess = null;
             logger.onLogError = null;
-            done(err);
+            if (!isDone) done(err);
         };
 
         logger.initLogentries();
@@ -91,6 +95,8 @@ describe("Logger Tests", function() {
     });
 
     it("Send log to Loggly", function(done) {
+        var isDone = false;
+
         this.timeout(10000);
 
         if (!settings.logger.loggly.token) {
@@ -104,13 +110,13 @@ describe("Logger Tests", function() {
         logger.onLogSuccess = function(result) {
             logger.onLogSuccess = null;
             logger.onLogError = null;
-            done();
+            if (!isDone) done();
         };
 
         logger.onLogError = function(err) {
             logger.onLogSuccess = null;
             logger.onLogError = null;
-            done(err);
+            if (!isDone) done(err);
         };
 
         logger.initLoggly();
