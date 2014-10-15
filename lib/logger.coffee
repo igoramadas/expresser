@@ -210,6 +210,7 @@ class Logger
     # All arguments are transformed to readable strings.
     debug: =>
         return if not settings.general.debug
+
         args = Array.prototype.slice.call arguments
         args.unshift "DEBUG"
         @log "debug", "info", args
@@ -217,6 +218,8 @@ class Logger
     # Log to the active transports as `log`.
     # All arguments are transformed to readable strings.
     info: =>
+        return if settings.logger.levels.indexOf("info") < 0
+
         args = Array.prototype.slice.call arguments
         args.unshift "INFO"
         @log "info", "info", args
@@ -224,6 +227,8 @@ class Logger
     # Log to the active transports as `warn`.
     # All arguments are transformed to readable strings.
     warn: =>
+        return if settings.logger.levels.indexOf("warn") < 0
+
         args = Array.prototype.slice.call arguments
         args.unshift "WARN"
         @log "warn", "warning", args
@@ -231,6 +236,8 @@ class Logger
     # Log to the active transports as `error`.
     # All arguments are transformed to readable strings.
     error: =>
+        return if settings.logger.levels.indexOf("error") < 0
+
         args = Array.prototype.slice.call arguments
         args.unshift "ERROR"
         @log "error", "err", args
@@ -238,6 +245,8 @@ class Logger
     # Log to the active transports as `critical`.
     # All arguments are transformed to readable strings.
     critical: =>
+        return if settings.logger.levels.indexOf("critical") < 0
+
         args = Array.prototype.slice.call arguments
         args.unshift "CRITICAL"
         @log "critical", "err", args

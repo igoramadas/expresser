@@ -181,8 +181,13 @@
         // For critical emails, avoid sending duplicate messages by setting an expiry time. So it will only
         // send one email every 5 minutes (value set below) for the same error message.
         "criticalEmailExpireMinutes": 5,
+        // Unless you have very specific reasons, leave enabled always true otherwise nothing will be logged.
+        "enabled": true,
         // Define all log types which should be treated as error (red colour on the console).
         "errorLogTypes": "err,error,warn,warning,critical",
+        // Define which log levels should be enabled. For example if you only want to log warnings and errors,
+        // set this value to ["warn", "error"].
+        "levels": ["info", "warn", "error", "critical"],
         // List will all field / property names to be removed from logs.
         // Default list is "Password, password, passwordHash and passwordEncrypted".
         "removeFields": "Password,password,passwordHash,passwordEncrypted",
