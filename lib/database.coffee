@@ -193,16 +193,18 @@ class Database
         if options.filter?
             filter = options.filter
         else
-            filter = {"_id": id}
+            filter = {_id: id}
+        delete options.filter
 
         # If options patch is set, replace specified document properties only instead of replacing the whole document.
         if options.patch
             docData = {$set: obj}
         else
             docData = obj
+        delete options.patch
 
         # Set default options.
-        options = lodash.defaults options, {"new": true, "insert": false}
+        options = lodash.defaults options, {upsert: false, multi: true}
 
         # Execute update!
         dbCollection.update filter, docData, options, dbCallback
