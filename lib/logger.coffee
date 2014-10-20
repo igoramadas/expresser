@@ -174,7 +174,6 @@ class Logger
         i = activeServices.indexOf "Loggly"
         activeServices.splice(i, 1) if i >= 0
 
-
     # LOG METHODS
     # --------------------------------------------------------------------------
 
@@ -300,7 +299,7 @@ class Logger
         # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
         for key, logs of localBuffer
             if logs.length > 0
-                writeData = logs.join("\n")
+                writeData = logs.join "\n"
                 filePath = path.join settings.path.logsDir, "#{date}.#{key}.log"
                 successMsg = "#{logs.length} records logged to disk."
 
