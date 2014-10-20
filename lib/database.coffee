@@ -13,7 +13,9 @@ class Database
     lodash = require "lodash"
     logger = require "./logger.coffee"
     settings = require "./settings.coffee"
-    mongo = require "mongoskin"
+
+    # Mongoskin object, set on init.
+    mongo = null
 
     # @property [Object] Database object (using mongoskin), will be set during `init`.
     db: null
@@ -28,6 +30,7 @@ class Database
         lodash.assign settings.database, options if options?
 
         if settings.database.connString? and settings.database.connString isnt ""
+            mongo = require "mongoskin" if not mongo?
             @setDb settings.database.connString, settings.database.options
         else
             logger.debug "Database.init", "No connection string set.", "Database module won't work."

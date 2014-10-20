@@ -14,11 +14,13 @@ class Mailer
     fs = require "fs"
     lodash = require "lodash"
     logger = require "./logger.coffee"
-    mailer = require "nodemailer"
     moment = require "moment"
     path = require "path"
     settings = require "./settings.coffee"
     utils = require "./utils.coffee"
+
+    # Nodemailer will be set on init.
+    nodemailer = null
 
     # SMTP objects will be instantiated on `init`.
     smtp: null
@@ -43,6 +45,8 @@ class Mailer
     init: (options) =>
         logger.debug "Mailer.init", options
         lodash.assign settings.mailer, options if options?
+
+        nodemailer = require "nodemailer" if not nodemailer?
 
         if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
             @setSmtp settings.mailer.smtp, false
@@ -222,7 +226,7 @@ class Mailer
             delete options["password"]
 
         # Set the correct SMTP details based on the options.
-        result = mailer.createTransport options
+        result = nodemailer.createTransport options
 
         # Sign using DKIM?
         if dkim.domainName? and dkim.privateKey?
