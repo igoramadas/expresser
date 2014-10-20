@@ -7,7 +7,7 @@ else
 endif
 
 test:
-	$(MOCHA) -u tdd -R TAP
+	$(MOCHA) -u tdd -R spec
 
 docs:
 	$(DOCCO) -l linear -o docs index.coffee lib/*.coffee
