@@ -36,7 +36,8 @@
             // Build directories? True or false.
             "buildDir": false,
             // Minify JS and CSS builds? True or false.
-            "minifyBuilds": true
+            "compress": true,
+            "gzip": true
         },
         // SSL options to bind server to HTTPS.
         "ssl": {
