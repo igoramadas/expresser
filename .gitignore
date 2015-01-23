@@ -2,6 +2,6 @@
 .openshift/
 .travis-secure.txt
 atlassian-ide-plugin.xml
-logs/*.log
+logs/*.*
 node_modules/
 settings.test.keys.json
