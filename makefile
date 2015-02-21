@@ -12,5 +12,9 @@ test:
 docs:
 	$(DOCCO) -l linear -o docs index.coffee lib/*.coffee
 
+clean:
+	rm -rf ./node_modules
+	rm -rf ./logs/*.log
+
 .PHONY: test
 .PHONY: docs
