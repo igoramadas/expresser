@@ -12,6 +12,9 @@ class Utils
     path = require "path"
     settings = require "./settings.coffee"
 
+    # Temporary variable used to calculate CPU usage.
+    lastCpuLoad = null
+
     # SERVER INFO UTILS
     # --------------------------------------------------------------------------
 
@@ -77,17 +80,41 @@ class Utils
         result = {}
 
         # Save parsed OS info to the result object.
-        result.uptime = moment.duration(process.uptime, "s").humanize()
+        result.uptime = moment.duration(process.uptime(), "s").humanize()
         result.hostname = os.hostname()
         result.title = path.basename process.title
         result.platform = os.platform() + " " + os.arch() + " " + os.release()
         result.memoryTotal = (os.totalmem() / 1024 / 1024).toFixed(0) + " MB"
         result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100).toFixed(0)
-        result.loadAvg = os.loadavg()
         result.ips = @getServerIP()
         result.process = {pid: process.pid, memoryUsage: (process.memoryUsage().rss / 1024 / 1024).toFixed(0) + " MB"}
+        result.cpuCores = os.cpus().length
+
+        # Calculate average CPU load.
+        lastCpuLoad = @getCpuLoad() if not lastCpuLoad?
+        currentCpuLoad = @getCpuLoad()
+        idleDifference = currentCpuLoad.idle - lastCpuLoad.idle
+        totalDifference = currentCpuLoad.total - lastCpuLoad.total
+
+        result.loadAvg = 100 - ~~(100 * idleDifference / totalDifference)
 
         return result
+
+    # Get current CPU load (used mainly by getServerInfo).
+    getCpuLoad: ->
+        totalIdle = 0
+        totalTick = 0
+        cpus = os.cpus()
+        i = 0
+        len = cpus.length
+
+        while i < len
+            cpu = cpus[i]
+            totalTick += value for t, value of cpu.times
+            totalIdle += cpu.times.idle
+            i++
+
+        return {idle: totalIdle / cpus.length, total: totalTick / cpus.length}
 
     # CLIENT INFO UTILS
     # --------------------------------------------------------------------------

@@ -107,7 +107,6 @@ class Sockets
         count = @getConnectionCount()
         logger.debug "Sockets.onDisconnect", "New count: #{count}."
 
-
 # Singleton implementation
 # --------------------------------------------------------------------------
 Sockets.getInstance = ->

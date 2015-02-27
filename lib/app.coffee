@@ -133,7 +133,7 @@ class App
         @server.use midCompression if settings.app.compressionEnabled
 
         # Fix connect assets helper context.
-        connectAssetsOptions = settings.app.connectAssets
+        connectAssetsOptions = lodash.cloneDeep settings.app.connectAssets
         connectAssetsOptions.helperContext = @server.locals
 
         # Connect assets and dynamic compiling.
