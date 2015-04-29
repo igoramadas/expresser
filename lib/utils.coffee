@@ -33,23 +33,23 @@ class Utils
             exists = path.existsSync
 
         # Check if file exists.
-        hasJson = exists filename
-        return filename if hasJson
+        hasFile = exists filename
+        return filename if hasFile
 
         # Try current path..
         filename = path.resolve __dirname, originalFilename
-        hasJson = exists filename
-        return filename if hasJson
+        hasFile = exists filename
+        return filename if hasFile
 
         # Try parent path..
         filename = path.resolve __dirname, "../", originalFilename
-        hasJson = exists filename
-        return filename if hasJson
+        hasFile = exists filename
+        return filename if hasFile
 
         # If file does not exist on local path, try application root path.
         filename = path.resolve path.dirname(require.main.filename), originalFilename
-        hasJson = exists filename
-        return filename if hasJson
+        hasFile = exists filename
+        return filename if hasFile
 
         # Nothing found, so return null.
         return null

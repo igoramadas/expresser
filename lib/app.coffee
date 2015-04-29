@@ -29,8 +29,16 @@ class App
     # @property [Object] Exposes the Express HTTP or HTTPS `server` object.
     server: null
 
-    # @property [Array<Object>] Array of additional middlewares to be use by the Express server. Please note that if you're adding middlewares manually you must do it BEFORE calling `init`.
-    extraMiddlewares: []
+    # @property [Array<Object>] Array of additional middlewares to be used
+    # by the Express server. These will be called before anything is processed,
+    # so should be used for things that need immediate processing
+    # (firewall, for example).
+    prependMiddlewares: []
+    
+    # @property [Array<Object>] Array of additional middlewares to be used
+    # by the Express server. Please note that if you're adding middlewares
+    # manually you must do it BEFORE calling `init`.
+    appendMiddlewares: []
 
     # INIT
     # --------------------------------------------------------------------------
@@ -39,10 +47,10 @@ class App
     # require and use the `newrelic` module. Firewall and Sockets modules will be
     # used only if enabled on the settings.
     # @param [Object] options App init options. If passed as an array, assume it's the array with extra middlewares.
-    # @option options [Array] extraMiddlewares Array with extra middlewares to be loaded.
+    # @option options [Array] appendMiddlewares Array with extra middlewares to be loaded.
     init: (options) =>
         if lodash.isArray options
-            options = {extraMiddlewares: options}
+            options = {appendMiddlewares: options}
         else if not options?
             options = {}
 
@@ -65,29 +73,7 @@ class App
 
     # Init new Relic, depending on its settings (enabled, appName and LicenseKey).
     initNewRelic: =>
-        enabled = settings.newRelic.enabled
-        appName = process.env.NEW_RELIC_APP_NAME or settings.newRelic.appName
-        licKey = process.env.NEW_RELIC_LICENSE_KEY or settings.newRelic.licenseKey
-
-        # Check if New Relic settings are available, and if so, start the New Relic agent.
-        if enabled and appName? and appName isnt "" and licKey? and licKey isnt ""
-            targetFile = path.resolve path.dirname(require.main.filename), "newrelic.js"
-
-            # Make sure the newrelic.js file exists on the app root, and create one if it doesn't.
-            if not fs.existsSync targetFile
-                if process.versions.node.indexOf(".10.") > 0
-                    enc = {encoding: settings.general.encoding}
-                else
-                    enc = settings.general.encoding
-
-                # Set values of newrelic.js file and write it to the app root.
-                newRelicJson = "exports.config = {app_name: ['#{appName}'], license_key: '#{licKey}', logging: {level: 'trace'}};"
-                fs.writeFileSync targetFile, newRelicJson, enc
-
-                console.log "App", "Original newrelic.js file was copied to the app root, app_name and license_key were set."
-
-            require "newrelic"
-            console.log "App", "Started New Relic agent for #{appName}."
+        console.log 111111111
 
     # Log proccess termination to the console. This will force flush any buffered logs to disk.
     # Do not log the exit if running under test environment.
@@ -118,10 +104,21 @@ class App
         @server.set "view engine", settings.app.viewEngine
         @server.set "view options", { layout: false }
 
+        # Check for extra middlewares to be added before any other middlewares.
+        if options.prependMiddlewares?
+            if lodash.isArray options.prependMiddlewares
+                @prependMiddlewares.push mw for mw in options.prependMiddlewares
+            else
+                @prependMiddlewares.push options.prependMiddlewares
+
+        # Prepend middlewares, if any was specified.
+        if @prependMiddlewares.length > 0
+            @server.use mw for mw in @prependMiddlewares
+
         # Enable firewall?
-        if settings.firewall.enabled
+        if settings.firewall?.enabled
             firewall = require "./firewall.coffee"
-            firewall.init @server
+            firewall.bind @server
 
         # Use Express basic handlers.
         @server.use midBodyParser.json()
@@ -141,15 +138,15 @@ class App
         @server.use ConnectAssets
 
         # Check for extra middlewares to be added.
-        if options.extraMiddlewares?
-            if lodash.isArray options.extraMiddlewares
-                @extraMiddlewares.push mw for mw in options.extraMiddlewares
+        if options.appendMiddlewares?
+            if lodash.isArray options.appendMiddlewares
+                @appendMiddlewares.push mw for mw in options.appendMiddlewares
             else
-                @extraMiddlewares.push options.extraMiddlewares
+                @appendMiddlewares.push options.appendMiddlewares
 
         # Add more middlewares, if any (for example passport for authentication).
-        if @extraMiddlewares.length > 0
-            @server.use mw for mw in @extraMiddlewares
+        if @appendMiddlewares.length > 0
+            @server.use mw for mw in @appendMiddlewares
 
         # Configure development environment to dump exceptions and show stack.
         if nodeEnv is "development"
@@ -196,7 +193,7 @@ class App
         # Enable sockets?
         if settings.sockets.enabled
             sockets = require "./sockets.coffee"
-            sockets.init server
+            sockets.bind server
 
         if settings.app.ip? and settings.app.ip isnt ""
             server.listen settings.app.port, settings.app.ip

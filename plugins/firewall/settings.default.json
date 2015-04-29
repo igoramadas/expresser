@@ -1,0 +1,22 @@
+// DEFAULT EXPRESSER FIREWALL SETTINGS
+
+{
+    // FIREWALL
+    // -------------------------------------------------------------------------
+    "firewall": {
+        // How long should IP be blacklisted, in seconds.
+        "blacklistExpires": 30,
+        // How long should IP be blacklisted in case it reaches the "MaxRetries" value
+        // below after being already blacklisted before?
+        "blacklistLongExpires": 3600,
+        // If a blacklisted IP keeps attacking, how many attacks till its expiry date
+        // extends to the "LongExpires" value above?
+        "blacklistMaxRetries": 5,
+        // Firewall module is enabled by default.
+        "enabled": true,
+        // Which HTTP protection patterns should be enabled? Available: lfi, sql, xss
+        "httpPatterns": "lfi,sql,xss",
+        // Which Socket protection patterns should be enabled? Available: lfi, sql, xss
+        "socketPatterns": "lfi,sql,xss"
+    }
+}

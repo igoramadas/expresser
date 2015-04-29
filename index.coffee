@@ -5,21 +5,18 @@
 
 class Expresser
 
-    # Settings.
-    settings: require "./lib/settings.coffee"
+    fs = require "fs"
+    path = require "path"
 
-    # Modules.
-    app: require "./lib/app.coffee"
-    cron: require "./lib/cron.coffee"
-    database: require "./lib/database.coffee"
-    downloader: require "./lib/downloader.coffee"
+    # Set application root path.
+    rootPath: path.dirname require.main.filename
+
+    # Preload the main modules. App must be the last module to be set.
+    settings: require "./lib/settings.coffee"
     events: require "./lib/events.coffee"
-    firewall: require "./lib/firewall.coffee"
-    imaging: require "./lib/imaging.coffee"
     logger: require "./lib/logger.coffee"
-    mailer: require "./lib/mailer.coffee"
-    sockets: require "./lib/sockets.coffee"
     utils: require "./lib/utils.coffee"
+    app: require "./lib/app.coffee"
 
     # Expose 3rd party modules.
     libs:
@@ -27,19 +24,67 @@ class Expresser
         lodash: require "lodash"
         moment: require "moment"
 
+    # Helper to load default modules. Basically everything inside the lib folder.
+    loadDefaultModules = (self, options) ->
+        modules = fs.readdirSync "#{__dirname}/lib"
+        modules.sort()
+
+        for m in modules
+            moduleId = m.substring(m.lastIndexOf("/") + 1)
+            moduleName = moduleId.replace ".coffee", ""
+            if not self[moduleName]?
+                self[moduleName] = require "./lib/#{moduleId}"
+
+            # Call module init method, if there's one present and
+            # module "enabled" is not set to false on settings.
+            # The "app" module will be initiated later.
+            if self.settings[moduleName]?.enabled isnt false and moduleName isnt "app"
+                self[moduleName].init? options?[moduleName]
+
+    # Helper to load plugins. This will look first inside a /plugins
+    # folder for local development setups, or directly under /node_modules
+    # for plugins installed via NPM.
+    loadPlugins = (self, options) ->
+        if fs.existsSync "#{__dirname}/plugins"
+            pluginsFolder = true
+            plugins = fs.readdirSync "#{__dirname}/plugins"
+        else
+            pluginsFolder = false
+            plugins = fs.readdirSync "#{self.rootPath}/node_modules"
+
+        plugins.sort()
+
+        for p in plugins
+            pluginId = p.substring(p.lastIndexOf("/") + 1)
+            if pluginId.substring(0, 10) is "expresser-"
+                pluginName = pluginId.replace("expresser-", "").split "-"
+
+                # Check if plugin was already attached.
+                if not self[pluginName[0]]
+                    if pluginsFolder
+                        self[pluginName[0]] = require "./plugins/#{pluginId}"
+                    else
+                        self[pluginName[0]] = require pluginId
+
+                    # Attach itself to the plugin.
+                    self[pluginName[0]].expresser = self
+
+                # Check if there are default settings to be loaded for the plugin.
+                pluginSettings = path.dirname(p) + "settings.default.json"
+                if fs.existsSync pluginSettings
+                    self.settings.loadFromJson pluginSettings
+
+                # Init plugin, only if enabled.
+                if self.settings[pluginName]?.enabled isnt false
+                    self[pluginName].init? options?[pluginName]
+
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App. The `options` can have properties to be
     # passed to the `init` of each module.
     # @param [Object] options Options to be passed to each init module.
-    # @option options [Object] app Pass options to the App init.
-    # @option options [Object] cron Pass options to the Mailer init.
-    # @option options [Object] database Pass options to the Database init.
-    # @option options [Object] logger Pass options to the Logger init.
-    # @option options [Object] mailer Pass options to the Mailer init.
     init: (options) =>
-        @logger.init options?.logger if @settings.logger.enabled
-        @database.init options?.database if @settings.database.enabled
-        @mailer.init options?.mailer if @settings.mailer.enabled
+        loadDefaultModules this, options
+        loadPlugins this, options
 
         # App must be the last thing to be started!
         # The Firewall and Sockets modules are initiated inside the App

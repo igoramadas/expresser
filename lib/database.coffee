@@ -1,10 +1,8 @@
 # EXPRESSER DATABASE
 # -----------------------------------------------------------------------------
-# Handles MongoDB database transactions using the `mongoskin` module. It supports
-# a very simple failover mechanism where you can specify a "backup" connection
-# string to which the module will connect in case the main database is down.
-# If you prefer tp access Mongo directly, you can use the `db` property, for example:
-# expresser.database.db.collection("mycollection").findAndModify(args...).
+# Wrapper for database drivers. By itself this module won't do anything, as you'll
+# need to add database driver plugins for your desired DB. At the moment we
+# officially support MongoDB (plugin expresser-database-mongo).
 # <!--
 # @see Settings.database
 # -->
@@ -14,323 +12,50 @@ class Database
     logger = require "./logger.coffee"
     settings = require "./settings.coffee"
 
-    # Mongoskin object, set on init.
-    mongo = null
+    # @property [Object] Available database drivers.
+    drivers: {}
 
-    # @property [Object] Database object (using mongoskin), will be set during `init`.
-    db: null
+    # @property [Object] Dictionary of database objects. For simple applications this will only have one property "default" using the first available driver with a valid connection string.
+    db: {}
 
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the database module and test the connection straight away.
+    # Init the mongo database module and test the connection straight away.
     # @param [Object] options Database init options.
     init: (options) =>
         logger.debug "Database.init", options
         lodash.assign settings.database, options if options?
 
-        if settings.database.connString? and settings.database.connString isnt ""
-            mongo = require "mongoskin" if not mongo?
-            @setDb settings.database.connString, settings.database.options
-        else
-            logger.debug "Database.init", "No connection string set.", "Database module won't work."
-
-    # CRUD IMPLEMENTATION
+    # IMPLEMENTATION
     # -------------------------------------------------------------------------
-
-    # Get data from the database. A `collection` and `callback` must be specified. The `filter` is optional.
-    # Please note that if `filter` has an _id or id field, or if it's a plain string or number, it will be used
-    # to return documents by ID. Otherwise it's used as keys-values object for filtering.
-    # @param [String] collection The collection name.
-    # @param [String, Object] filter Optional, if a string or number, assume it's the document ID. Otherwise assume keys-values filter.
-    # @param [Object] options Options to be passed to the query.
-    # @option options [Integer] limit Limits the resultset to X documents.
-    # @param [Method] callback Callback (err, result) when operation has finished.
-    get: (collection, filter, options, callback) =>
-        if not callback?
-            if lodash.isFunction options
-                callback = options
-                options = null
-            else if lodash.isFunction filter
-                callback = filter
-                filter = null
-
-        # Callback is mandatory!
-        if not callback?
-            throw new Error "Database.get: a callback (last argument) must be specified."
-
-        # No DB set? Throw exception.
-        if not @db?
-            return callback "Database.insert: the db was not initialized, please check database settings and call its 'init' method."
-
-        # Create the DB callback helper.
-        dbCallback = (err, result) =>
-            if callback?
-                result = @normalizeId result if settings.database.normalizeId
-                callback err, result
-
-        # Set collection object.
-        dbCollection = @db.collection collection
-
-        # Parse ID depending on `filter`.
-        if filter?
-            if filter._id?
-                id = filter._id
-            else if filter.id? and settings.database.normalizeId
-                id = filter.id
-            else
-                t = typeof filter
-                id = filter if t is "string" or t is "integer"
-
-        # Get `limit` option.
-        if options?.limit?
-            limit = options.limit
-        else
-            limit = 0
-
-        # Find documents depending on `filter` and `options`.
-        # If id is set, use the shorter findById.
-        if id?
-            dbCollection.findById id, dbCallback
-
-        # Create a params object for the find method.
-        else if filter?
-            findParams = {$query: filter}
-            findParams["$orderby"] = options.orderBy if options?.orderBy?
-
-            if limit > 0
-                dbCollection.find(findParams).limit(limit).toArray dbCallback
-            else
-                dbCollection.find(findParams).toArray dbCallback
-
-        # Search everything!
-        else
-            if limit > 0
-                dbCollection.find({}).limit(limit).toArray dbCallback
-            else
-                dbCollection.find({}).toArray dbCallback
-
-        if filter?
-            filterLog = filter
-            filterLog.password = "***" if filterLog.password?
-            filterLog.passwordHash = "***" if filterLog.passwordHash?
-            logger.debug "Database.get", collection, filterLog, options
-        else
-            logger.debug "Database.get", collection, "No filter.", options
-
-    # Add new documents to the database.
-    # The `options` parameter is optional.
-    # @param [String] collection The collection name.
-    # @param [Object] obj Document or array of documents to be added.
-    # @param [Method] callback Callback (err, result) when operation has finished.
-    insert: (collection, obj, callback) =>
-        if not obj?
-            if callback?
-                callback "Database.insert: no object (second argument) was specified."
-            return false
-
-        # No DB set? Throw exception.
-        if not @db?
-            if callback?
-                callback "Database.insert: the db was not initialized, please check database settings and call its 'init' method."
-            return false
-
-        # Create the DB callback helper.
-        dbCallback = (err, result) =>
-            if callback?
-                result = @normalizeId(result) if settings.database.normalizeId
-                callback err, result
-
-        # Set collection object.
-        dbCollection = @db.collection collection
-
-        # Execute insert!
-        dbCollection.insert obj, dbCallback
-        logger.debug "Database.insert", collection
-
-    # Update existing documents on the database.
-    # The `options` parameter is optional.
-    # @param [String] collection The collection name.
-    # @param [Object] obj Document or data to be updated.
-    # @param [Object] options Optional, options to control and filter the insert behaviour.
-    # @option options [Object] filter Defines the query filter. If not specified, will try using the ID of the passed object.
-    # @option options [Boolean] patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
-    # @option options [Boolean] upsert Default is false, if true it will create documents if none was found.
-    # @param [Method] callback Callback (err, result) when operation has finished.
-    update: (collection, obj, options, callback) =>
-        if not callback? and lodash.isFunction options
-            callback = options
-            options = {}
-
-        # Object or filter is mandatory.
-        if not obj?
-            if callback?
-                callback "Database.update: no object (second argument) was specified."
-            return false
-
-        # No DB set? Throw exception.
-        if not @db?
-            if callback?
-                callback "Database.update: the db was not initialized, please check database settings and call its 'init' method."
-            return false
-
-        # Create the DB callback helper.
-        dbCallback = (err, result) =>
-            if callback?
-                result = @normalizeId(result) if settings.database.normalizeId
-                callback err, result
-
-        # Set collection object.
-        dbCollection = @db.collection collection
-
-        # Make sure the ID is converted to ObjectID.
-        if obj._id?
-            id = mongo.ObjectID.createFromHexString obj._id.toString()
-        else if obj.id? and settings.database.normalizeId
-            id = mongo.ObjectID.createFromHexString obj.id.toString()
-
-        # Make sure options is valid.
-        options = {} if not options?
-
-        # If a `filter` option was set, use it as the query filter otherwise use the "_id" property.
-        if options.filter?
-            filter = options.filter
-        else
-            filter = {_id: id}
-        delete options.filter
-
-        # If options patch is set, replace specified document properties only instead of replacing the whole document.
-        if options.patch
-            docData = {$set: obj}
-        else
-            docData = obj
-        delete options.patch
-
-        # Set default options.
-        options = lodash.defaults options, {upsert: false, multi: true}
-
-        # Execute update!
-        dbCollection.update filter, docData, options, dbCallback
-
-        if id?
-            logger.debug "Database.update", collection, options, "ID: #{id}"
-        else
-            logger.debug "Database.update", collection, options, "New document."
-
-    # DEPRECATED! Alias for `update`, will be removed soon.
-    set: =>
-        console.warn "Database.set", "Method is deprecated, use .insert or .update instead!"
-        @update.apply this, arguments
-
-    # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
-    # @param [String] collection The collection name.
-    # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
-    # @param [Method] callback Callback (err, result) when operation has finished.
-    remove: (collection, filter, callback) =>
-        if not callback? and lodash.isFunction options
-            callback = options
-            options = {}
-
-        # Filter is mandatory.
-        if not filter?
-            if callback?
-                callback "Database.remove: no filter (second argument) was specified."
-            return false
-
-        # No DB set? Throw exception.
-        if not @db?
-            if callback?
-                callback "Database.remove: the db was not initialized, please check database settings and call its 'init' method."
-            return false
-
-        # Check it the `obj` is the model itself, or only the ID string / number.
-        if filter._id?
-            id = filter._id
-        else if filter.id and settings.database.normalizeId
-            id = filter.id
-        else
-            t = typeof filter
-            id = filter if t is "string" or t is "integer"
-
-        # Create the DB callback helper.
-        dbCallback = (err, result) =>
-            if callback?
-                result = @normalizeId(result) if settings.database.normalizeId
-                callback err, result
-
-        # Set collection object and remove specified object from the database.
-        dbCollection = @db.collection collection
-
-        # Remove object by ID or filter.
-        if id? and id isnt ""
-            dbCollection.removeById id, dbCallback
-        else
-            dbCollection.remove filter, dbCallback
-
-        logger.debug "Database.remove", collection, filter
-
-    # Alias for `remove`.
-    del: => @remove.apply this, arguments
-
-    # Count documents from the database. A `collection` must be specified.
-    # If no `filter` is not passed then count all documents.
-    # @param [String] collection The collection name.
-    # @param [Object] filter Optional, keys-values filter of documents to be counted.
-    # @param [Method] callback Callback (err, result) when operation has finished.
-    count: (collection, filter, callback) =>
-        if not callback? and lodash.isFunction filter
-            callback = filter
-            filter = {}
-
-        # Callback is mandatory!
-        if not callback?
-            throw new Error "Database.count: a callback (last argument) must be specified."
-
-        # Create the DB callback helper.
-        dbCallback = (err, result) =>
-            if callback?
-                logger.debug "Database.count", collection, filter, "Result #{result}"
-                callback err, result
-
-        # MongoDB has a built-in count so use it.
-        dbCollection = @db.collection collection
-        dbCollection.count filter, dbCallback
-
-    # HELPER METHODS
-    # -------------------------------------------------------------------------
-
-    # Helper to transform MongoDB document "_id" to "id".
-    # @param [Object] result The document or result to be normalized.
-    # @return [Object] Returns the normalized document.
-    normalizeId: (result) =>
-        return if not result?
-
-        isArray = lodash.isArray result or lodash.isArguments result
-
-        # Check if result is a collection / array or a single document.
-        if isArray
-            for obj in result
-                if obj["_id"]?
-                    obj["id"] = obj["_id"].toString()
-                    delete obj["_id"]
-        else if result["_id"]?
-            result["id"] = result["_id"].toString()
-            delete result["_id"]
-
-        return result
 
     # Helper to set the current DB object. Can be called externally but ideally you should control
     # the connection string by updating your app settings.json file.
+    # @param [Object] id The ID of the database to be registered. Must be unique.
+    # @param [Object] driver The database driver to be used, for example mongo.
     # @param [Object] connString The connection string, for example user:password@hostname/dbname.
     # @param [Object] options Additional options to be passed when creating the DB connection object.
-    setDb: (connString, options) =>
-        @db = mongo.db connString, options
+    register: (id, driver, connString, options) =>
+        if not @drivers[driver]?
+            logger.error "Database.register", "The driver #{driver} is not installed! Please check if plugin expresser-database-#{driver} is available on the current environment."
+            return false
+        else
+            @db[id] = @drivers[driver].setDb connString, options
 
-        # Safe logging, strip username and password.
+        # Safe logging, strip username and password from connection string.
         sep = connString.indexOf "@"
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
-        logger.debug "Database.setDb", connStringSafe, options
+        logger.info "Database.register", id, driver, connStringSafe, options
+
+    # Helper for single database applications, this will call the correspondent methods
+    # of the "defaultdb" database, if there's one.
+    get: => @db.defaultdb.get.call arguments if @db.defaultdb?
+    insert: => @db.defaultdb.insert.call arguments if @db.defaultdb?
+    update: => @db.defaultdb.update.call arguments if @db.defaultdb?
+    remove: => @db.defaultdb.remove.call arguments if @db.defaultdb?
+    count: => @db.defaultdb.count.call arguments if @db.defaultdb?
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------

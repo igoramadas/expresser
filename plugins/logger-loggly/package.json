@@ -1,0 +1,38 @@
+{
+    "name": "expresser-firewall",
+    "version": "1.0.0",
+    "description": "A simple firewall for Expresser based applications.",
+    "homepage": "http://expresser.codeplex.com",
+    "author": "Igor Ramadas <igor@devv.com>",
+    "license": "Apache License 2.0",
+    "subdomain": "expresser-firewall",
+    "main": "index",
+    "domains": [
+        "expresser.codeplex.com"
+    ],
+    "engines": {
+        "node": "*"
+    },
+	"dependencies": {
+        "coffee-script": ">= 1.7.1"
+	},
+    "devDependencies": {
+        "chai": "*",
+        "docco": "*",
+        "mocha": "*"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://git01.codeplex.com/expresser"
+    },
+    "keywords": [
+        "expresser",
+        "express",
+        "app",
+        "imagemagick",
+        "logger",
+        "mongo",
+        "sockets",
+        "twitter"
+    ]
+}

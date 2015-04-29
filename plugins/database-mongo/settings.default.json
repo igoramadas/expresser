@@ -1,0 +1,26 @@
+// DEFAULT EXPRESSER DATABASE - MONGODB SETTINGS
+
+{
+    // DATABASE - MONGODB
+    // ----------------------------------------------------------------------
+    "database": {
+        "mongo": {
+            // Enable MongoDB database by default.
+            "enabled": true,
+            // If you want to use only one database, you can set the default connection string
+            // which will be instantiated automatically on init.
+            "connString": "",
+            // Normalize documents ID (replace _id with id when returning documents)?
+            "normalizeId": true,
+            // Database connection options.
+            "options": {
+                // Auto recconect if connection is lost?
+                "auto_reconnect": true,
+                // Default pool size for connections is 12.
+                "poolSize": 12,
+                // Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.
+                "safe": false
+            }
+        }
+    }
+}

@@ -69,32 +69,12 @@
     // DATABASE
     // ----------------------------------------------------------------------
     "database": {
-        // Connection string to MongoDB, using the format `user:password@hostname/dbname`.
-        "connString": null,
         // Enable database? If `false` the MongoDB database module won't be initialized.
         "enabled": true,
-        // In case you don't have failover / sharding in place on the database above
-        // using MongoDB built-in features, you can set a failover connection string below.
-        // It will be used ONLY if connection to the main database fails repeatedly.
-        "errorNotifyEmail": null,
-        // How long to wait before trying to connect to the main database again (in seconds) in case
-        // the module switches to the secondary one.
-        "failoverTimeout": 300,
         // How many retries before switching to the failover database or aborting a database operation.
         "maxRetries": 3,
-        // Normalize documents ID (replace _id with id when returning documents)?
-        "normalizeId": true,
         // How long between connection retries, in milliseconds. Default is half a second.
-        "retryInterval": 500,
-        // Database connection options.
-        "options": {
-            // Auto recconect if connection is lost?
-            "auto_reconnect": true,
-            // Default pool size for connections is 12.
-            "poolSize": 12,
-            // Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.
-            "safe": false
-        }
+        "retryInterval": 500
     },
 
     // DOWNLOADER
@@ -125,25 +105,6 @@
         // Enable central event dispatcher? Please note that if you disable it some
         // inter-module features will not work, although it won't give you exceptions on errors.
         "enabled": true
-    },
-
-    // FIREWALL
-    // -------------------------------------------------------------------------
-    "firewall": {
-        // How long should IP be blacklisted, in seconds.
-        "blacklistExpires": 30,
-        // How long should IP be blacklisted in case it reaches the "MaxRetries" value
-        // below after being already blacklisted before?
-        "blacklistLongExpires": 3600,
-        // If a blacklisted IP keeps attacking, how many attacks till its expiry date
-        // extends to the "LongExpires" value above?
-        "blacklistMaxRetries": 5,
-        // If enabled, all requests will be checked against common attacks.
-        "enabled": true,
-        // Which HTTP protection patterns should be enabled? Available: lfi, sql, xss
-        "httpPatterns": "lfi,sql,xss",
-        // Which Socket protection patterns should be enabled? Available: lfi, sql, xss
-        "socketPatterns": "lfi,sql,xss"
     },
 
     // GENERAL

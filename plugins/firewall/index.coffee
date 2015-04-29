@@ -8,18 +8,15 @@
 # -->
 class Firewall
 
-    async = require "async"
-    lodash = require "lodash"
-    logger = require "./logger.coffee"
-    moment = require "moment"
-    settings = require "./settings.coffee"
-    sockets = "./sockets.coffee"
     util = require "util"
-    utils = require "./utils.coffee"
+
+    logger = null
+    moment = null
+    settings = null
+    utils = null
 
     # Holds a collection of blacklisted IPs.
     blacklist: null
-
 
     # PROTECTION PATTERNS
     # -------------------------------------------------------------------------
@@ -34,14 +31,20 @@ class Firewall
                     /((\%3C)|<)((\%69)|i|(\%49))((\%6D)|m|(\%4D))((\%67)|g|(\%47))[^\n]+((\%3E)|>)/i, # img src XSS
                     /((\%3C)|<)[^\n]+((\%3E)|>)/i] # all other XSS
 
-
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the firewall. This must be called AFTER the web app has started.
+    # Bind the firewall to the server. This must be called AFTER the web app has started.
     # @param [Object] Firewall init options.
     # @option options [Object] server The Express server object to bind to.
     init: (options, callback) =>
+        logger = @expresser.logger
+        moment = @expresser.libs.moment
+        settings = @expresser.settings
+        utils = @expresser.utils
+
+        logger.debug "Database.init", options
+
         options = {server: options} if not options.server?
         env = process.env
 
@@ -52,12 +55,12 @@ class Firewall
 
         # Bind HTTP protection.
         if settings.firewall.httpPatterns isnt "" and env.NODE_ENV isnt "test"
-            options.server.use @checkHttpRequest
-            logger.info "Firewall.init", "Protect HTTP requests."
+            @expresser.app.prependMiddlewares.push @checkHttpRequest
+            logger.info "Firewall.init", "Protecting HTTP requests."
 
         # Bind sockets protection.
         if settings.firewall.socketPatterns isnt "" and env.NODE_ENV isnt "test"
-            logger.info "Firewall.init", "Protect Socket requests."
+            logger.info "Firewall.init", "Protecting Socket requests."
 
         @blacklist = {}
 
@@ -99,6 +102,7 @@ class Firewall
     # Handle attacks.
     handleHttpAttack: (module, pattern, req, res) =>
         ip = utils.getClientIP req
+
         @logAttack module, pattern, req.url, ip
         @sendAccessDenied res
 

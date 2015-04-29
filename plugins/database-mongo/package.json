@@ -1,0 +1,30 @@
+{
+    "name": "expresser-database-mongo",
+    "version": "0.0.1",
+    "description": "Plugin to use MongoDB databases on Expresser applications.",
+    "homepage": "http://expresser.codeplex.com",
+    "author": "Igor Ramadas <igor@devv.com>",
+    "license": "Apache License 2.0",
+    "subdomain": "expresser-database-mongo",
+    "main": "index",
+    "domains": [
+        "expresser.codeplex.com"
+    ],
+    "engines": {
+        "node": "*"
+    },
+	"dependencies": {
+        "coffee-script": ">= 1.7.1",
+        "mongoskin": ">= 1.3.20"
+	},
+    "repository": {
+        "type": "git",
+        "url": "https://git01.codeplex.com/expresser"
+    },
+    "keywords": [
+        "expresser",
+        "database",
+        "mongo",
+        "mongodb"
+    ]
+}

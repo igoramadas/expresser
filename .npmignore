@@ -1,0 +1,7 @@
+.idea/
+.openshift/
+.travis-secure.txt
+atlassian-ide-plugin.xml
+logs/*.*
+plugins/*.*
+settings.test.keys.json

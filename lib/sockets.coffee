@@ -25,7 +25,7 @@ class Sockets
     # to increase / decrease when users connects or disconnects from the app.
     # @param [Object] options Sockets init options.
     # @option options [Object] server The Express server object to bind to.
-    init: (options) =>
+    bind: (options) =>
         options = {server: options} if not options.server?
         @currentListeners = []
 
