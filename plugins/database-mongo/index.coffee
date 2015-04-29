@@ -6,7 +6,7 @@
 # If you prefer tp access Mongo directly, you can use the `db` property, for example:
 # expresser.database.db.collection("mycollection").findAndModify(args...).
 # <!--
-# @see Settings.database
+# @see Settings.database.mongo
 # -->
 class DatabaseMongo
 
@@ -23,10 +23,10 @@ class DatabaseMongo
     # Init the database module and test the connection straight away.
     # @param [Object] options Database init options.
     init: (options) =>
-        database = expresser.database
-        lodash = expresser.libs.lodash
-        logger = expresser.logger
-        settings = expresser.settings
+        database = @expresser.database
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        settings = @expresser.settings
 
         database.drivers.mongo = this
 
@@ -48,6 +48,29 @@ class DatabaseMongo
 
         return mongoskin.db connString, options
 
+    # HELPERS
+    # -------------------------------------------------------------------------
+
+    # Helper to transform MongoDB document "_id" to "id".
+    # @param [Object] result The document or result to be normalized.
+    # @return [Object] Returns the normalized document.
+    normalizeId = (result) ->
+        return if not result?
+
+        isArray = lodash.isArray result or lodash.isArguments result
+
+        # Check if result is a collection / array or a single document.
+        if isArray
+            for obj in result
+                if obj["_id"]?
+                    obj["id"] = obj["_id"].toString()
+                    delete obj["_id"]
+        else if result["_id"]?
+            result["id"] = result["_id"].toString()
+            delete result["_id"]
+
+        return result
+
     # CRUD IMPLEMENTATION
     # -------------------------------------------------------------------------
 
@@ -59,7 +82,7 @@ class DatabaseMongo
     # @param [Object] options Options to be passed to the query.
     # @option options [Integer] limit Limits the resultset to X documents.
     # @param [Method] callback Callback (err, result) when operation has finished.
-    get: (collection, filter, options, callback) =>
+    get: (collection, filter, options, callback) ->
         if not callback?
             if lodash.isFunction options
                 callback = options
@@ -72,18 +95,14 @@ class DatabaseMongo
         if not callback?
             throw new Error "DatabaseMongo.get: a callback (last argument) must be specified."
 
-        # No DB set? Throw exception.
-        if not @db?
-            return callback "DatabaseMongo.insert: the db was not initialized, please check database settings and call its 'init' method."
-
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId result if settings.database.normalizeId
+                result = normalizeId result if settings.database.normalizeId
                 callback err, result
 
         # Set collection object.
-        dbCollection = @db.collection collection
+        dbCollection = @collection collection
 
         # Parse ID depending on `filter`.
         if filter?
@@ -136,14 +155,14 @@ class DatabaseMongo
     # @param [String] collection The collection name.
     # @param [Object] obj Document or array of documents to be added.
     # @param [Method] callback Callback (err, result) when operation has finished.
-    insert: (collection, obj, callback) =>
+    insert: (collection, obj, callback) ->
         if not obj?
             if callback?
                 callback "DatabaseMongo.insert: no object (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
-        if not @db?
+        if not db?
             if callback?
                 callback "DatabaseMongo.insert: the db was not initialized, please check database settings and call its 'init' method."
             return false
@@ -151,11 +170,11 @@ class DatabaseMongo
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId(result) if settings.database.normalizeId
+                result = normalizeId(result) if settings.database.normalizeId
                 callback err, result
 
         # Set collection object.
-        dbCollection = @db.collection collection
+        dbCollection = @collection collection
 
         # Execute insert!
         dbCollection.insert obj, dbCallback
@@ -170,7 +189,7 @@ class DatabaseMongo
     # @option options [Boolean] patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
     # @option options [Boolean] upsert Default is false, if true it will create documents if none was found.
     # @param [Method] callback Callback (err, result) when operation has finished.
-    update: (collection, obj, options, callback) =>
+    update: (collection, obj, options, callback) ->
         if not callback? and lodash.isFunction options
             callback = options
             options = {}
@@ -182,7 +201,7 @@ class DatabaseMongo
             return false
 
         # No DB set? Throw exception.
-        if not @db?
+        if not db?
             if callback?
                 callback "DatabaseMongo.update: the db was not initialized, please check database settings and call its 'init' method."
             return false
@@ -190,11 +209,11 @@ class DatabaseMongo
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId(result) if settings.database.normalizeId
+                result = normalizeId(result) if settings.database.normalizeId
                 callback err, result
 
         # Set collection object.
-        dbCollection = @db.collection collection
+        dbCollection = @collection collection
 
         # Make sure the ID is converted to ObjectID.
         if obj._id?
@@ -230,16 +249,11 @@ class DatabaseMongo
         else
             logger.debug "DatabaseMongo.update", collection, options, "New document."
 
-    # DEPRECATED! Alias for `update`, will be removed soon.
-    set: =>
-        console.warn "DatabaseMongo.set", "Method is deprecated, use .insert or .update instead!"
-        @update.apply this, arguments
-
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
     # @param [String] collection The collection name.
     # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
     # @param [Method] callback Callback (err, result) when operation has finished.
-    remove: (collection, filter, callback) =>
+    remove: (collection, filter, callback) ->
         if not callback? and lodash.isFunction options
             callback = options
             options = {}
@@ -248,12 +262,6 @@ class DatabaseMongo
         if not filter?
             if callback?
                 callback "DatabaseMongo.remove: no filter (second argument) was specified."
-            return false
-
-        # No DB set? Throw exception.
-        if not @db?
-            if callback?
-                callback "DatabaseMongo.remove: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
         # Check it the `obj` is the model itself, or only the ID string / number.
@@ -268,11 +276,11 @@ class DatabaseMongo
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = @normalizeId(result) if settings.database.normalizeId
+                result = normalizeId(result) if settings.database.normalizeId
                 callback err, result
 
         # Set collection object and remove specified object from the database.
-        dbCollection = @db.collection collection
+        dbCollection = @collection collection
 
         # Remove object by ID or filter.
         if id? and id isnt ""
@@ -282,15 +290,12 @@ class DatabaseMongo
 
         logger.debug "DatabaseMongo.remove", collection, filter
 
-    # Alias for `remove`.
-    del: => @remove.apply this, arguments
-
     # Count documents from the database. A `collection` must be specified.
     # If no `filter` is not passed then count all documents.
     # @param [String] collection The collection name.
     # @param [Object] filter Optional, keys-values filter of documents to be counted.
     # @param [Method] callback Callback (err, result) when operation has finished.
-    count: (collection, filter, callback) =>
+    count: (collection, filter, callback) ->
         if not callback? and lodash.isFunction filter
             callback = filter
             filter = {}
@@ -306,33 +311,8 @@ class DatabaseMongo
                 callback err, result
 
         # MongoDB has a built-in count so use it.
-        dbCollection = @db.collection collection
+        dbCollection = @collection collection
         dbCollection.count filter, dbCallback
-
-    # HELPER METHODS
-    # -------------------------------------------------------------------------
-
-    # Helper to transform MongoDB document "_id" to "id".
-    # @param [Object] result The document or result to be normalized.
-    # @return [Object] Returns the normalized document.
-    normalizeId: (result) =>
-        return if not result?
-
-        isArray = lodash.isArray result or lodash.isArguments result
-
-        # Check if result is a collection / array or a single document.
-        if isArray
-            for obj in result
-                if obj["_id"]?
-                    obj["id"] = obj["_id"].toString()
-                    delete obj["_id"]
-        else if result["_id"]?
-            result["id"] = result["_id"].toString()
-            delete result["_id"]
-
-        return result
-
-
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------

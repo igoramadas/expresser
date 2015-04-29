@@ -1,6 +1,6 @@
 # EXPRESSER DATABASE
 # -----------------------------------------------------------------------------
-# Wrapper for database drivers. By itself this module won't do anything, as you'll
+# Wrapper for databases. This module by itself won't do anything, as you'll
 # need to add database driver plugins for your desired DB. At the moment we
 # officially support MongoDB (plugin expresser-database-mongo).
 # <!--
@@ -15,7 +15,9 @@ class Database
     # @property [Object] Available database drivers.
     drivers: {}
 
-    # @property [Object] Dictionary of database objects. For simple applications this will only have one property "default" using the first available driver with a valid connection string.
+    # @property [Object] Dictionary of database objects.
+    # For simple applications this will only have one property using the
+    # first available driver with a valid connection string. For example "mongo".
     db: {}
 
     # INIT
@@ -41,21 +43,26 @@ class Database
             logger.error "Database.register", "The driver #{driver} is not installed! Please check if plugin expresser-database-#{driver} is available on the current environment."
             return false
         else
-            @db[id] = @drivers[driver].setDb connString, options
+            logger.info "Database.register", id, driver, options
 
-        # Safe logging, strip username and password from connection string.
-        sep = connString.indexOf "@"
-        connStringSafe = connString
-        connStringSafe = connStringSafe.substring sep if sep > 0
-        logger.info "Database.register", id, driver, connStringSafe, options
+            @db[id] = {obj: @drivers[driver].setDb connString, options}
+            @db.get = -> @drivers[driver].get
+
+    # Helper to get the first database in case there's only one registered.
+    getDefaultDb: =>
+        keys = lodash.keys @db
+        if keys.length is 1
+            return @db[keys[0]]
+        else
+            return null
 
     # Helper for single database applications, this will call the correspondent methods
     # of the "defaultdb" database, if there's one.
-    get: => @db.defaultdb.get.call arguments if @db.defaultdb?
-    insert: => @db.defaultdb.insert.call arguments if @db.defaultdb?
-    update: => @db.defaultdb.update.call arguments if @db.defaultdb?
-    remove: => @db.defaultdb.remove.call arguments if @db.defaultdb?
-    count: => @db.defaultdb.count.call arguments if @db.defaultdb?
+    get: => @getDefaultDb()?.get.call arguments
+    insert: => @getDefaultDb()?.insert.call arguments
+    update: => @getDefaultDb()?.update.call arguments
+    remove: => @getDefaultDb()?.remove.call arguments
+    count: => @getDefaultDb()?.count.call arguments
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------
