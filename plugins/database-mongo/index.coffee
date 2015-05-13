@@ -1,10 +1,7 @@
 # EXPRESSER DATABASE - MONGODB
 # -----------------------------------------------------------------------------
-# Handles MongoDB database transactions using the `mongoskin` module. It supports
-# a very simple failover mechanism where you can specify a "backup" connection
-# string to which the module will connect in case the main database is down.
-# If you prefer tp access Mongo directly, you can use the `db` property, for example:
-# expresser.database.db.collection("mycollection").findAndModify(args...).
+# Handles MongoDB database transactions using the `mongoskin` module. This
+# plugin attaches itself to the main `database` module of Expresser.
 # <!--
 # @see Settings.database.mongo
 # -->

@@ -4,7 +4,9 @@
         "appTitle": "Expresser"
     },
     "database": {
-        "connString": "mongodb://127.0.0.1/expresser?auto_reconnect"
+        "mongo": {
+            "connString": "mongodb://127.0.0.1/expresser?auto_reconnect"
+        }
     },
     "logger": {
         "console": false,
