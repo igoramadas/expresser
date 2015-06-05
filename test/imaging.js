@@ -23,7 +23,7 @@ describe("Imaging Tests", function() {
     before(function() {
         utils = require("../lib/utils.coffee");
 
-        imaging = require("../lib/imaging.coffee");
+        imaging = require("../plugins/imaging/index.coffee");
     });
 
     it("Is single instance", function() {

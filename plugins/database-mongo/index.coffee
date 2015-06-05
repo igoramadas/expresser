@@ -31,13 +31,13 @@ class DatabaseMongo
         lodash.assign settings.database.mongo, options if options?
 
         if settings.database.mongo.connString? and settings.database.mongo.connString isnt ""
-            database.register "mongo", "mongo", settings.database.mongo.connString, settings.database.mongo.options
+            return database.register "mongo", "mongo", settings.database.mongo.connString, settings.database.mongo.options
 
     # Set the current DB object. Can be called externally but ideally you should control
     # the connection string by updating your app settings.json file.
     # @param [Object] connString The connection string, for example user:password@hostname/dbname.
     # @param [Object] options Additional options to be passed when creating the DB connection object.
-    setDb: (connStri, options) =>
+    setDb: (connString, options) =>
         sep = connString.indexOf "@"
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
@@ -99,7 +99,7 @@ class DatabaseMongo
                 callback err, result
 
         # Set collection object.
-        dbCollection = @collection collection
+        dbCollection = @connObj.collection collection
 
         # Parse ID depending on `filter`.
         if filter?
@@ -159,7 +159,7 @@ class DatabaseMongo
             return false
 
         # No DB set? Throw exception.
-        if not db?
+        if not @connObj?
             if callback?
                 callback "DatabaseMongo.insert: the db was not initialized, please check database settings and call its 'init' method."
             return false
@@ -171,7 +171,7 @@ class DatabaseMongo
                 callback err, result
 
         # Set collection object.
-        dbCollection = @collection collection
+        dbCollection = @connObj.collection collection
 
         # Execute insert!
         dbCollection.insert obj, dbCallback
@@ -198,7 +198,7 @@ class DatabaseMongo
             return false
 
         # No DB set? Throw exception.
-        if not db?
+        if not @connObj?
             if callback?
                 callback "DatabaseMongo.update: the db was not initialized, please check database settings and call its 'init' method."
             return false
@@ -210,7 +210,7 @@ class DatabaseMongo
                 callback err, result
 
         # Set collection object.
-        dbCollection = @collection collection
+        dbCollection = @connObj.collection collection
 
         # Make sure the ID is converted to ObjectID.
         if obj._id?
@@ -277,7 +277,7 @@ class DatabaseMongo
                 callback err, result
 
         # Set collection object and remove specified object from the database.
-        dbCollection = @collection collection
+        dbCollection = @connObj.collection collection
 
         # Remove object by ID or filter.
         if id? and id isnt ""
@@ -308,7 +308,7 @@ class DatabaseMongo
                 callback err, result
 
         # MongoDB has a built-in count so use it.
-        dbCollection = @collection collection
+        dbCollection = @connObj.collection collection
         dbCollection.count filter, dbCallback
 
 # Singleton implementation.

@@ -23,7 +23,7 @@ describe("Firewall Tests", function() {
     before(function() {
         utils = require("../lib/utils.coffee");
 
-        firewall = require("../lib/firewall.coffee");
+        firewall = require("../plguins/firewall/index.coffee");
     });
 
     it("Is single instance", function() {

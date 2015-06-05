@@ -73,7 +73,7 @@ class App
 
     # Init new Relic, depending on its settings (enabled, appName and LicenseKey).
     initNewRelic: =>
-        console.log 111111111
+        console.log "New Relic Init - NOT IMPLEMENTED YET"
 
     # Log proccess termination to the console. This will force flush any buffered logs to disk.
     # Do not log the exit if running under test environment.

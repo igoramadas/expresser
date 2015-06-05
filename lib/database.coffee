@@ -45,8 +45,14 @@ class Database
         else
             logger.info "Database.register", id, driver, options
 
-            @db[id] = {obj: @drivers[driver].setDb connString, options}
-            @db.get = -> @drivers[driver].get
+            @db[id] = {connObj: @drivers[driver].setDb connString, options}
+            @db[id].get = @drivers[driver].get
+            @db[id].insert = @drivers[driver].insert
+            @db[id].update = @drivers[driver].update
+            @db[id].remove = @drivers[driver].remove
+            @db[id].count = @drivers[driver].count
+
+            return @db[id]
 
     # Helper to get the first database in case there's only one registered.
     getDefaultDb: =>

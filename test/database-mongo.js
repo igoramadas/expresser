@@ -14,18 +14,13 @@ describe("Database (MongoDB) Tests", function() {
         settings.testKeysLoaded = true;
     }
 
-    var expresser = null;
-    var utils = null;
-    var database = null;
     var databaseMongo = null;
+    var databaseConn = null;
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
     before(function() {
-
-        utils = require("../lib/utils.coffee");
-        database = require("../lib/database.coffee");
         databaseMongo = require("../plugins/database-mongo/index.js");
         databaseMongo.expresser = require("../index.coffee");
     });
@@ -35,9 +30,8 @@ describe("Database (MongoDB) Tests", function() {
     });
 
     it("Inits", function() {
-        expresser.init();
-        database.init();
-        databaseMongo.init();
+        databaseMongo.expresser.init();
+        databaseConn = databaseMongo.init();
     });
 
     it("Add simple record to the database", function(done) {
@@ -51,7 +45,7 @@ describe("Database (MongoDB) Tests", function() {
 
         var obj = {simple: true};
 
-        databaseMongo.insert("test", obj, callback);
+        databaseConn.insert("test", obj, callback);
     });
 
     it("Add complex record to the database", function(done) {
@@ -65,7 +59,7 @@ describe("Database (MongoDB) Tests", function() {
 
         var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
 
-        database.insert("test", obj, callback);
+        databaseConn.insert("test", obj, callback);
     });
 
     it("Add 500 records to the database", function(done) {
@@ -85,7 +79,7 @@ describe("Database (MongoDB) Tests", function() {
         };
 
         for (var i = 0; i < counter; i++) {
-            databaseMongo.insert("test", {counter: i}, callback);
+            databaseConn.insert("test", {counter: i}, callback);
         }
     });
 
@@ -98,8 +92,8 @@ describe("Database (MongoDB) Tests", function() {
             }
         };
 
-        var obj = {updated: true};
+        var obj = {$set: {updated: true}};
 
-        databaseMongo.update("test", obj, callback);
+        databaseConn.update("test", obj, callback);
     });
 });
