@@ -37,7 +37,7 @@ class DatabaseMongo
     # the connection string by updating your app settings.json file.
     # @param [Object] connString The connection string, for example user:password@hostname/dbname.
     # @param [Object] options Additional options to be passed when creating the DB connection object.
-    setDb: (connString, options) =>
+    setDb: (connStri, options) =>
         sep = connString.indexOf "@"
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
