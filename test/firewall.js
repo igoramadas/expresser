@@ -23,13 +23,7 @@ describe("Firewall Tests", function() {
     before(function() {
         utils = require("../lib/utils.coffee");
 
-        firewall = require("../plguins/firewall/index.coffee");
-    });
-
-    it("Is single instance", function() {
-        firewall.singleInstance = true;
-        var firewall2 = require("../lib/firewall.coffee");
-        firewall.singleInstance.should.equal(firewall2.singleInstance);
+        firewall = require("../plugins/firewall/index.coffee");
     });
 
     it("Has settings defined", function() {

@@ -23,6 +23,7 @@ describe("Database (MongoDB) Tests", function() {
     before(function() {
         databaseMongo = require("../plugins/database-mongo/index.js");
         databaseMongo.expresser = require("../index.coffee");
+        databaseMongo.expresser.database = require("../lib/database.coffee");
     });
 
     it("Has settings defined", function() {
@@ -30,7 +31,7 @@ describe("Database (MongoDB) Tests", function() {
     });
 
     it("Inits", function() {
-        databaseMongo.expresser.init();
+        databaseMongo.expresser.database.init();
         databaseConn = databaseMongo.init();
     });
 
