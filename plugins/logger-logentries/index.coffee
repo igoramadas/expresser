@@ -1,35 +1,178 @@
-# EXPRESSER LOGGER - LOGGLY
+# EXPRESSER LOGGER
 # --------------------------------------------------------------------------
-# Logger plugin to log to Loggly (www.loggly.com).
+# Handles server logging using local files, Logentries or Logentries.
+# Multiple services can be enabled at the same time.
 # <!--
-# @see Settings.logger.loggly
+# @see Settings.logger
 # -->
-class LoggerLoggly
+class LoggerLogentries
 
+    events = require "./events.coffee"
     fs = require "fs"
-    loggly = require "loggly"
+    lodash = require "lodash"
+    moment = require "moment"
     path = require "path"
-    lodash = null
-    logger = null
-    settings = null
-    utils = null
-    
-    # Wrapper for the Loggly client.
-    logglyClient = null
+    settings = require "./settings.coffee"
+    utils = require "./utils.coffee"
 
-    # INIT
+    # Local logging objects will be set on `init`.
+    bufferDispatcher = null
+    localBuffer = null
+    flushing = false
+
+    # Remote logging providers will be set on `init`.
+    logentries = null
+    loggly = null
+    loggerLogentries = null
+    loggerLogentries = null
+
+    # The `serverIP` will be set on init, but only if `settings.logger.sendIP` is true.
+    serverIP = null
+
+    # Timer used for automatic logs cleaning.
+    timerCleanLocal = null
+
+    # @property [Method] Custom method to call when logs are sent to logging server or flushed to disk.
+    onLogSuccess: null
+
+    # @property [Method] Custom method to call when errors are triggered by the logging transport.
+    onLogError: null
+
+    # @property [Array] Holds a list of current active logging services.
+    # @private
+    activeServices = []
+
+    # Holds a copy of emails sent for critical logs.
+    criticalEmailCache: {}
+
+    # # CONSTRUCTOR, INIT AND STOP
     # --------------------------------------------------------------------------
 
-    # Init the Loggly module. Verify which services are set, and add the necessary transports.
-    # IP address and timestamp will be appended to logs depending on the settings.
-    # @param [Object] options LoggerLoggly init options.
-    init: (options) =>
-        lodash = @expresser.libs.lodash
-        logger = @expresser.logger
-        settings = @expresser.settings
+    # LoggerLogentries constructor.
+    constructor: ->
+        @setEvents() if settings.events.enabled
 
+    # Bind event listeners.
+    setEvents: =>
+        events.on "LoggerLogentries.debug", @debug
+        events.on "LoggerLogentries.info", @info
+        events.on "LoggerLogentries.warn", @warn
+        events.on "LoggerLogentries.error", @error
+        events.on "LoggerLogentries.critical", @critical
+
+    # Init the LoggerLogentries module. Verify which services are set, and add the necessary transports.
+    # IP address and timestamp will be appended to logs depending on the settings.
+    # @param [Object] options LoggerLogentries init options.
+    init: (options) =>
+        bufferDispatcher = null
+        localBuffer = null
+        logentries = null
+        loggly = null
+        serverIP = null
+        activeServices = []
+
+        # Get a valid server IP to be appended to logs.
+        if settings.logger.sendIP
+            serverIP = utils.getServerIP true
+
+        # Define server IP.
+        if serverIP?
+            ipInfo = "IP #{serverIP}"
+        else
+            ipInfo = "No server IP set."
+
+        # Init transports.
+        @initLocal()
+        @initLogentries()
+        @initLogentries()
+
+        # Check if uncaught exceptions should be logged. If so, try logging unhandled
+        # exceptions using the logger, otherwise log to the console.
+        if settings.logger.uncaughtException
+            @debug "LoggerLogentries.init", "Catching unhandled exceptions."
+
+            process.on "uncaughtException", (err) =>
+                try
+                    @error "Unhandled exception!", err.message, err.stack
+                catch ex
+                    console.error "Unhandled exception!", err.message, err.stack, ex
+
+        # Start logging!
+        if not localBuffer? and not logentries? and not loggly?
+            @warn "LoggerLogentries.init", "No transports enabled.", "LoggerLogentries module will only log to the console!"
+        else
+            @info "LoggerLogentries.init", activeServices.join(), ipInfo
+
+    # Init the Local transport. Check if logs should be saved locally. If so, create the logs buffer
+    # and a timer to flush logs to disk every X milliseconds.
+    initLocal: =>
+        if settings.logger.local.enabled
+            if fs.existsSync?
+                folderExists = fs.existsSync settings.path.logsDir
+            else
+                folderExists = path.existsSync settings.path.logsDir
+
+            # Create logs folder, if it doesn't exist.
+            if not folderExists
+                fs.mkdirSync settings.path.logsDir
+                if settings.general.debug
+                    console.log "LoggerLogentries.initLocal", "Created #{settings.path.logsDir} folder."
+
+            # Set local buffer.
+            localBuffer = {info: [], warn: [], error: []}
+            bufferDispatcher = setInterval @flushLocal, settings.logger.local.bufferInterval
+            activeServices.push "Local"
+
+            # Check the maxAge of local logs.
+            if settings.logger.local.maxAge? and settings.logger.local.maxAge > 0
+                if timerCleanLocal?
+                    clearInterval timerCleanLocal
+                timerCleanLocal = setInterval @cleanLocal, 86400
+        else
+            @stopLocal()
+
+    # Init the Logentries transport. Check if Logentries should be used, and create the Logentries objects.
+    initLogentries: =>
+        if settings.logger.logentries.enabled and settings.logger.logentries.token? and settings.logger.logentries.token isnt ""
+            logentries = require "node-logentries"
+            loggerLogentries = logentries.logger {token: settings.logger.logentries.token, timestamp: settings.logger.sendTimestamp}
+            loggerLogentries.on("log", @onLogSuccess) if lodash.isFunction @onLogSuccess
+            loggerLogentries.on("error", @onLogError) if lodash.isFunction @onLogError
+            activeServices.push "Logentries"
+        else
+            @stopLogentries()
+
+    # Init the Logentries transport. Check if Logentries should be used, and create the Logentries objects.
+    initLogentries: =>
         if settings.logger.loggly.enabled and settings.logger.loggly.subdomain? and settings.logger.loggly.token? and settings.logger.loggly.token isnt ""
-            logglyClient = loggly.createClient {token: settings.logger.loggly.token, subdomain: settings.logger.loggly.subdomain, json: false}
+            loggly = require "loggly"
+            loggerLogentries = loggly.createClient {token: settings.logger.loggly.token, subdomain: settings.logger.loggly.subdomain, json: false}
+            activeServices.push "Logentries"
+        else
+            @stopLogentries()
+
+    # Disable and remove Local transport from the list of active services.
+    stopLocal: =>
+        @flushLocal()
+        clearInterval bufferDispatcher if bufferDispatcher?
+        bufferDispatcher = null
+        localBuffer = null
+        i = activeServices.indexOf "Local"
+        activeServices.splice(i, 1) if i >= 0
+
+    # Disable and remove Logentries transport from the list of active services.
+    stopLogentries: =>
+        logentries = null
+        loggerLogentries = null
+        i = activeServices.indexOf "Logentries"
+        activeServices.splice(i, 1) if i >= 0
+
+    # Disable and remove Logentries transport from the list of active services.
+    stopLogentries: =>
+        loggly = null
+        loggerLogentries = null
+        i = activeServices.indexOf "Logentries"
+        activeServices.splice(i, 1) if i >= 0
 
     # LOG METHODS
     # --------------------------------------------------------------------------
@@ -51,8 +194,8 @@ class LoggerLoggly
             @logLocal logType, msg
         if settings.logger.logentries.enabled and loggerLogentries?
             loggerLogentries.log logFunc, msg
-        if settings.logger.loggly.enabled and logglyClient?
-            logglyClient.log msg, @logglyCallback
+        if settings.logger.loggly.enabled and loggerLogentries?
+            loggerLogentries.log msg, @logglyCallback
 
         # Log to the console depending on `console` setting.
         if settings.logger.console
@@ -124,7 +267,7 @@ class LoggerLoggly
 
             # Emit mail send message.
             events.emit "Mailer.send", mailOptions, (err) ->
-                console.error "LoggerLoggly.critical", "Can't send email!", err if err?
+                console.error "LoggerLogentries.critical", "Can't send email!", err if err?
 
             # Save to critical email cache.
             @criticalEmailCache[body] = moment().unix()
@@ -168,7 +311,7 @@ class LoggerLoggly
                     fs.appendFile filePath, writeData, (err) =>
                         flushing = false
                         if err?
-                            console.error "LoggerLoggly.flushLocal", err
+                            console.error "LoggerLogentries.flushLocal", err
                             @onLogError err if @onLogError?
                         else
                             @onLogSuccess successMsg if @onLogSuccess?
@@ -177,13 +320,13 @@ class LoggerLoggly
                     fs.open filePath, "a", 666, (err1, fd) =>
                         if err1?
                             flushing = false
-                            console.error "LoggerLoggly.flushLocal.open", err1
+                            console.error "LoggerLogentries.flushLocal.open", err1
                             @onLogError err1 if @onLogError?
                         else
                             fs.write fd, writeData, null, settings.general.encoding, (err2) =>
                                 flushing = false
                                 if err2?
-                                    console.error "LoggerLoggly.flushLocal.write", err2
+                                    console.error "LoggerLogentries.flushLocal.write", err2
                                     @onLogError err2 if @onLogError?
                                 else
                                     @onLogSuccess successMsg if @onLogSuccess?
@@ -195,13 +338,13 @@ class LoggerLoggly
 
         fs.readdir settings.path.logsDir, (err, files) ->
             if err?
-                console.error "LoggerLoggly.cleanLocal", err
+                console.error "LoggerLogentries.cleanLocal", err
             else
                 for f in files
                     date = moment f.split(".")[1], "yyyyMMdd"
                     if date.isBefore maxDate
                         fs.unlink path.join(settings.path.logsDir, f), (err) ->
-                            console.error "LoggerLoggly.cleanLocal", err if err?
+                            console.error "LoggerLogentries.cleanLocal", err if err?
 
     # HELPER METHODS
     # --------------------------------------------------------------------------
@@ -235,9 +378,9 @@ class LoggerLoggly
         # Return single string log message.
         return separated.join " | "
 
-    # Wrapper callback for `onLogSuccess` and `onLogError` to be used by Loggly.
-    # @param [String] err The Loggly error.
-    # @param [String] result The Loggly logging result.
+    # Wrapper callback for `onLogSuccess` and `onLogError` to be used by Logentries.
+    # @param [String] err The Logentries error.
+    # @param [String] result The Logentries logging result.
     # @private
     logglyCallback: (err, result) =>
         if err? and @onLogError?
@@ -247,8 +390,8 @@ class LoggerLoggly
 
 # Singleton implementation
 # --------------------------------------------------------------------------
-LoggerLoggly.getInstance = ->
-    @instance = new LoggerLoggly() if not @instance?
+LoggerLogentries.getInstance = ->
+    @instance = new LoggerLogentries() if not @instance?
     return @instance
 
-module.exports = exports = LoggerLoggly.getInstance()
+module.exports = exports = LoggerLogentries.getInstance()

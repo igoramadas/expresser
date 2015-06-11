@@ -7,12 +7,11 @@
 # -->
 class DatabaseMongo
 
+    mongoskin = require "mongoskin"
+    database = null
     lodash = null
     logger = null
     settings = null
-
-    # Mongoskin object, set on init.
-    mongoskin = require "mongoskin"
 
     # INIT
     # -------------------------------------------------------------------------
@@ -30,7 +29,7 @@ class DatabaseMongo
         logger.debug "DatabaseMongo.init", options
         lodash.assign settings.database.mongo, options if options?
 
-        if settings.database.mongo.connString? and settings.database.mongo.connString isnt ""
+        if settings.database.mongo?.enabled and settings.database.mongo?.connString?
             return database.register "mongo", "mongo", settings.database.mongo.connString, settings.database.mongo.options
 
     # Set the current DB object. Can be called externally but ideally you should control

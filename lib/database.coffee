@@ -29,7 +29,7 @@ class Database
         logger.debug "Database.init", options
         lodash.assign settings.database, options if options?
 
-    # IMPLEMENTATION
+    # IMPLEMENTATION 5487828864
     # -------------------------------------------------------------------------
 
     # Helper to set the current DB object. Can be called externally but ideally you should control
