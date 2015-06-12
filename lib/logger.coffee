@@ -20,12 +20,6 @@ class Logger
     localBuffer = null
     flushing = false
 
-    # Remote logging providers will be set on `init`.
-    logentries = null
-    loggly = null
-    loggerLogentries = null
-    loggerLoggly = null
-
     # The `serverIP` will be set on init, but only if `settings.logger.sendIP` is true.
     serverIP = null
 
@@ -38,9 +32,9 @@ class Logger
     # @property [Method] Custom method to call when errors are triggered by the logging transport.
     onLogError: null
 
-    # @property [Array] Holds a list of current active logging services.
+    # @property [Object] Holds a list of current active logging transports.
     # @private
-    activeServices = []
+    transports: {}
 
     # Holds a copy of emails sent for critical logs.
     criticalEmailCache: {}

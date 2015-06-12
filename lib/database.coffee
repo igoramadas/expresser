@@ -54,22 +54,6 @@ class Database
 
             return @db[id]
 
-    # Helper to get the first database in case there's only one registered.
-    getDefaultDb: =>
-        keys = lodash.keys @db
-        if keys.length is 1
-            return @db[keys[0]]
-        else
-            return null
-
-    # Helper for single database applications, this will call the correspondent methods
-    # of the "defaultdb" database, if there's one.
-    get: => @getDefaultDb()?.get.call arguments
-    insert: => @getDefaultDb()?.insert.call arguments
-    update: => @getDefaultDb()?.update.call arguments
-    remove: => @getDefaultDb()?.remove.call arguments
-    count: => @getDefaultDb()?.count.call arguments
-
 # Singleton implementation.
 # -----------------------------------------------------------------------------
 Database.getInstance = ->
