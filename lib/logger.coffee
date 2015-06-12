@@ -26,33 +26,23 @@ class Logger
     # Timer used for automatic logs cleaning.
     timerCleanLocal = null
 
+    # PUBLIC PROPERTIES
+    # --------------------------------------------------------------------------
+
+    # @property [Object] Holds a list of available logging transports.
+    transports: {}
+
+    # @property [Object] log Dictionary of target logs.
+    log: {}
+
     # @property [Method] Custom method to call when logs are sent to logging server or flushed to disk.
     onLogSuccess: null
 
     # @property [Method] Custom method to call when errors are triggered by the logging transport.
     onLogError: null
 
-    # @property [Object] Holds a list of current active logging transports.
-    # @private
-    transports: {}
-
-    # Holds a copy of emails sent for critical logs.
-    criticalEmailCache: {}
-
-    # # CONSTRUCTOR, INIT AND STOP
+    # INIT
     # --------------------------------------------------------------------------
-
-    # Logger constructor.
-    constructor: ->
-        @setEvents() if settings.events.enabled
-
-    # Bind event listeners.
-    setEvents: =>
-        events.on "Logger.debug", @debug
-        events.on "Logger.info", @info
-        events.on "Logger.warn", @warn
-        events.on "Logger.error", @error
-        events.on "Logger.critical", @critical
 
     # Init the Logger module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
@@ -63,7 +53,6 @@ class Logger
         logentries = null
         loggly = null
         serverIP = null
-        activeServices = []
 
         # Get a valid server IP to be appended to logs.
         if settings.logger.sendIP
@@ -77,8 +66,6 @@ class Logger
 
         # Init transports.
         @initLocal()
-        @initLogentries()
-        @initLoggly()
 
         # Check if uncaught exceptions should be logged. If so, try logging unhandled
         # exceptions using the logger, otherwise log to the console.
@@ -96,6 +83,17 @@ class Logger
             @warn "Logger.init", "No transports enabled.", "Logger module will only log to the console!"
         else
             @info "Logger.init", activeServices.join(), ipInfo
+
+        # Bind Logger events to global event handler.
+        @setEvents() if settings.events.enabled
+
+    # Bind event listeners.
+    setEvents: =>
+        events.on "Logger.debug", @debug
+        events.on "Logger.info", @info
+        events.on "Logger.warn", @warn
+        events.on "Logger.error", @error
+        events.on "Logger.critical", @critical
 
     # Init the Local transport. Check if logs should be saved locally. If so, create the logs buffer
     # and a timer to flush logs to disk every X milliseconds.
@@ -167,6 +165,22 @@ class Logger
         loggerLoggly = null
         i = activeServices.indexOf "Loggly"
         activeServices.splice(i, 1) if i >= 0
+
+    register: (id, transport, options) =>
+        if not @drivers[driver]?
+            logger.error "Database.register", "The driver #{driver} is not installed! Please check if plugin expresser-database-#{driver} is available on the current environment."
+            return false
+        else
+            logger.info "Database.register", id, driver, options
+
+            @db[id] = {connObj: @drivers[driver].setDb connString, options}
+            @db[id].get = @drivers[driver].get
+            @db[id].insert = @drivers[driver].insert
+            @db[id].update = @drivers[driver].update
+            @db[id].remove = @drivers[driver].remove
+            @db[id].count = @drivers[driver].count
+
+            return @db[id]
 
     # LOG METHODS
     # --------------------------------------------------------------------------

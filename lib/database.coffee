@@ -12,12 +12,13 @@ class Database
     logger = require "./logger.coffee"
     settings = require "./settings.coffee"
 
+    # PUBLIC PROPERTIES
+    # --------------------------------------------------------------------------
+
     # @property [Object] Available database drivers.
     drivers: {}
 
-    # @property [Object] Dictionary of database objects.
-    # For simple applications this will only have one property using the
-    # first available driver with a valid connection string. For example "mongo".
+    # @property [Object] db Dictionary of database objects.
     db: {}
 
     # INIT
@@ -29,11 +30,10 @@ class Database
         logger.debug "Database.init", options
         lodash.assign settings.database, options if options?
 
-    # IMPLEMENTATION 5487828864
+    # IMPLEMENTATION
     # -------------------------------------------------------------------------
 
-    # Helper to set the current DB object. Can be called externally but ideally you should control
-    # the connection string by updating your app settings.json file.
+    # Helper to register database objects.
     # @param [Object] id The ID of the database to be registered. Must be unique.
     # @param [Object] driver The database driver to be used, for example mongo.
     # @param [Object] connString The connection string, for example user:password@hostname/dbname.

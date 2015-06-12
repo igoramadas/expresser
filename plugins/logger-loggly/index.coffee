@@ -29,6 +29,7 @@ class LoggerLoggly
         settings = @expresser.settings
 
         if settings.logger.loggly?.enabled and settings.logger.loggly?.subdomain? and settings.logger.loggly?.token?
+            return logger.register ""
             logglyClient = loggly.createClient {token: settings.logger.loggly.token, subdomain: settings.logger.loggly.subdomain, json: false}
 
     # LOG METHODS
