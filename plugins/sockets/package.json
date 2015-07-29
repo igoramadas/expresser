@@ -1,0 +1,29 @@
+{
+    "name": "expresser-sockets",
+    "version": "0.0.1",
+    "description": "Add web sockets support to Expresser using Socket.IO.",
+    "homepage": "http://expresser.codeplex.com",
+    "author": "Igor Ramadas <igor@devv.com>",
+    "license": "Apache License 2.0",
+    "subdomain": "expresser-sockets",
+    "main": "index",
+    "domains": [
+        "expresser.codeplex.com"
+    ],
+    "engines": {
+        "node": "*"
+    },
+	"dependencies": {
+        "coffee-script": ">= 1.9.3"
+	},
+    "repository": {
+        "type": "git",
+        "url": "https://git01.codeplex.com/expresser"
+    },
+    "keywords": [
+        "ajax",
+        "expresser",
+        "sockets",
+        "web sockets"
+    ]
+}
