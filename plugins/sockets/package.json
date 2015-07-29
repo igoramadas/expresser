@@ -14,7 +14,8 @@
         "node": "*"
     },
 	"dependencies": {
-        "coffee-script": ">= 1.9.3"
+        "coffee-script": ">= 1.9.3",
+        "socket.io": ">= 0.9.16"
 	},
     "repository": {
         "type": "git",

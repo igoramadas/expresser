@@ -31,8 +31,6 @@
         "moment": ">= 2.5.1",
         "newrelic": ">= 1.2.0",
         "nodemailer": ">= 0.6.1",
-        "node-logentries": ">= 0.1.2",
-        "socket.io": ">= 0.9.16",
         "stylus": ">= 0.42.3"
 	},
     "devDependencies": {
