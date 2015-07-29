@@ -1,0 +1,29 @@
+{
+    "name": "expresser-cron",
+    "version": "0.0.1",
+    "description": "Task scheduler plugin for Expresser apps.",
+    "homepage": "http://expresser.codeplex.com",
+    "author": "Igor Ramadas <igor@devv.com>",
+    "license": "Apache License 2.0",
+    "subdomain": "expresser-cron",
+    "main": "index",
+    "domains": [
+        "expresser.codeplex.com"
+    ],
+    "engines": {
+        "node": "*"
+    },
+	"dependencies": {
+        "coffee-script": ">= 1.9.3"
+	},
+    "repository": {
+        "type": "git",
+        "url": "https://git01.codeplex.com/expresser"
+    },
+    "keywords": [
+        "background workers",
+        "cron",
+        "expresser",
+        "task scheduler"
+    ]
+}

@@ -22,12 +22,12 @@ class Cron
 
     events = require "./events.coffee"
     fs = require "fs"
-    lodash = require "lodash"
-    logger = require "./logger.coffee"
-    moment = require "moment"
+    lodash = null
+    logger = null
+    moment = null
     path = require "path"
-    settings = require "./settings.coffee"
-    utils = require "./utils.coffee"
+    settings = null
+    utils = null
 
     # @property [Array] The jobs collection, please do not edit this object manually!
     jobs: []
@@ -35,9 +35,21 @@ class Cron
     # CONSTRUCTOR AND INIT
     # -------------------------------------------------------------------------
 
-    # Cron constructor.
-    constructor: ->
+    # Init the cron manager. If `loadOnInit` setting is true, the `cron.json` file will be parsed
+    # and loaded straight away (if there's one).
+    init: (options) =>
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        moment = @expresser.libs.moment
+        settings = @expresser.settings
+        utils = @expresser.utils
+
+        logger.debug "Cron.init", options
+        lodash.assign settings.cron, options if options?
+
         @setEvents() if settings.events.enabled
+        @load true if settings.cron.loadOnInit
 
     # Bind event listeners.
     setEvents: =>
@@ -45,14 +57,6 @@ class Cron
         events.on "Cron.stop", @stop
         events.on "Cron.add", @add
         events.on "Cron.remove", @remove
-
-    # Init the cron manager. If `loadOnInit` setting is true, the `cron.json` file will be parsed
-    # and loaded straight away (if there's one).
-    init: (options) =>
-        logger.debug "Cron.init", options
-        lodash.assign settings.cron, options if options?
-
-        @load true if settings.cron.loadOnInit
 
     # Load jobs from the `cron.json` file. If `autoStart` is true, it will automatically
     # call the `start` method after loading.
