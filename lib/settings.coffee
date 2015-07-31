@@ -330,12 +330,15 @@ class Settings
 # Singleton implementation
 # -----------------------------------------------------------------------------
 Settings.getInstance = ->
+    if process.env is "test"
+        obj = new Settings()
+        obj.load()
+        obj.logger.console = false
+        return obj
+
     if not @instance?
         @instance = new Settings()
-
-        # Load default settings and force disable console log on test.
         @instance.load()
-        @instance.logger.console = false if @instance.currentEnv is "test"
 
     return @instance
 

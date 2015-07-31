@@ -22,13 +22,10 @@ describe("Cron Tests", function() {
 
     before(function() {
         utils = require("../lib/utils.coffee");
-        cron = require("../lib/cron.coffee");
-    });
-
-    it("Is single instance", function() {
-        cron.singleInstance = true;
-        var cron2 = require("../lib/cron.coffee");
-        cron.singleInstance.should.equal(cron2.singleInstance);
+        cron = require("../plugins/cron/index.coffee");
+        cron.expresser = require("../index.coffee");
+        cron.expresser.events = require("../lib/events.coffee");
+        cron.expresser.logger = require("../lib/logger.coffee");
     });
 
     it("Has settings defined", function() {

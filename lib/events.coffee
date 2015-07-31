@@ -38,6 +38,7 @@ class Events
 # Singleton implementation.
 # -----------------------------------------------------------------------------
 Events.getInstance = ->
+    return new Events() if process.env is "test"
     @instance = new Events() if not @instance?
     return @instance
 

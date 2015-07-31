@@ -3,6 +3,7 @@
 # Handle scheduled cron jobs. You can use intervals (seconds) or specific
 # times to trigger jobs, and the module will take care of setting the proper timers.
 # Jobs are added using "job" objects with id, schedule, callback and other options.
+#
 # <!--
 # @example Sample job object, alerts user every minute (60 seconds).
 #   var myJob = {
@@ -16,11 +17,15 @@
 #     schedule: ["10:00:00", "17:00:00"],
 #     callback: function(job) { mail.send(something); }
 #   }
+#
+# This module will load scheduled tasks from the "cron.json" file if the
+# setting `loadOnInit` is true.
+#
 # @see Settings.cron
 # -->
 class Cron
 
-    events = require "./events.coffee"
+    events = null
     fs = require "fs"
     lodash = null
     logger = null
@@ -290,6 +295,7 @@ class Cron
 # Singleton implementation.
 # -----------------------------------------------------------------------------
 Cron.getInstance = ->
+    return new Cron() if process.env is "test"
     @instance = new Cron() if not @instance?
     return @instance
 

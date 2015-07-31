@@ -2,7 +2,6 @@
 # -----------------------------------------------------------------------------
 # A platform for Node.js web apps, built on top of Express.
 # If you need help check the project page at http://expresser.codeplex.com.
-
 class Expresser
 
     fs = require "fs"
@@ -32,18 +31,20 @@ class Expresser
         for m in modules
             moduleId = m.substring(m.lastIndexOf("/") + 1)
             moduleName = moduleId.replace ".coffee", ""
+
+            # Avoid registering the same module twice in case `loadDefaultModules` is called again.
             if not self[moduleName]?
                 self[moduleName] = require "./lib/#{moduleId}"
 
             # Call module init method, if there's one present and
             # module "enabled" is not set to false on settings.
-            # The "app" module will be initiated later.
+            # The "app" module will be initiated later so bypass it here.
             if self.settings[moduleName]?.enabled isnt false and moduleName isnt "app"
                 self[moduleName].init? options?[moduleName]
 
     # Helper to load plugins. This will look first inside a /plugins
     # folder for local development setups, or directly under /node_modules
-    # for plugins installed via NPM.
+    # for plugins installed via NPM (most production scenarios).
     loadPlugins = (self, options) ->
         if fs.existsSync "#{__dirname}/plugins"
             pluginsFolder = true
@@ -54,6 +55,7 @@ class Expresser
 
         plugins.sort()
 
+        # Iterate plugins and get it's ID by removing the "expresser-" prefix.
         for p in plugins
             pluginId = p.substring(p.lastIndexOf("/") + 1)
             if pluginId.substring(0, 10) is "expresser-"
@@ -74,7 +76,7 @@ class Expresser
                 if fs.existsSync pluginSettings
                     self.settings.loadFromJson pluginSettings
 
-                # Init plugin, only if enabled.
+                # Init plugin only if enabled is not set to false on its settings.
                 if self.settings[pluginName]?.enabled isnt false
                     self[pluginName].init? options?[pluginName]
 
