@@ -9,10 +9,8 @@ describe("Cron Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    if (!settings.testKeysLoaded) {
-        settings.loadFromJson("settings.test.keys.json");
-        settings.testKeysLoaded = true;
-    }
+    settings.loadFromJson("settings.test.keys.json");
+    settings.loadFromJson("../plugins/cron/settings.default.json");
 
     var utils = null;
     var cron = null;
@@ -26,6 +24,7 @@ describe("Cron Tests", function() {
         cron.expresser = require("../index.coffee");
         cron.expresser.events = require("../lib/events.coffee");
         cron.expresser.logger = require("../lib/logger.coffee");
+        cron.init();
     });
 
     it("Has settings defined", function() {

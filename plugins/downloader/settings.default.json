@@ -1,0 +1,23 @@
+// EXPRESSER DOWNLOADER SETTINGS
+
+{
+    "downloader": {
+        // Enable downloader? If `false` the downloader module won't be initialized.
+        "enabled": true,
+        // Default headers to append to all download requests.
+        // For example: {"Content-Type": "application/json"}
+        "headers": null,
+        // How many simultaneous downloads to allow?
+        "maxSimultaneous": 4,
+        // If true, the downloader will cancel duplicates. A duplicate is considered a download
+        // from the same remote URL and the same save location.
+        "preventDuplicates": true,
+        // Reject unathourized requests (when SSL certificate has expired for example)?
+        // Set this to true for increased security.
+        "rejectUnauthorized": false,
+        // The temp extension used while downloading files. Default is ".download".
+        "tempExtension": ".download",
+        // Download timeout, in seconds.
+        "timeout": 1800
+    },
+}

@@ -34,7 +34,6 @@ the source code and available under the `/docs/` folder.
 
 ### App
 *   Pre-configured Express server ready to run on most PaaS providers.
-*   Built-in support and automatic setup of New Relic (http://newrelic.com) agent.
 
 More info at https://expresser.codeplex.com/wikipage?title=App
 

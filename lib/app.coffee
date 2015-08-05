@@ -1,10 +1,8 @@
 # EXPRESSER APP
 # -----------------------------------------------------------------------------
-# The Express app server, with built-in sockets, firewall and New Relic integration.
+# The Express app server. By default it will run on HTTP port 8080
 # <!--
-# @see Settings.app
-# @see Firewall
-# @see Sockets
+# @see settings.app
 # -->
 class App
 
@@ -43,9 +41,8 @@ class App
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Express server. If New Relic settings are set it will automatically
-    # require and use the `newrelic` module. Firewall and Sockets modules will be
-    # used only if enabled on the settings.
+    # Init the Express server. Firewall and Sockets modules will be
+    # used only if available and enabled on the settings.
     # @param [Object] options App init options. If passed as an array, assume it's the array with extra middlewares.
     # @option options [Array] appendMiddlewares Array with extra middlewares to be loaded.
     init: (options) =>
@@ -70,10 +67,6 @@ class App
         # Configure Express server and start server.
         @configureServer options
         @startServer()
-
-    # Init new Relic, depending on its settings (enabled, appName and LicenseKey).
-    initNewRelic: =>
-        console.log "New Relic Init - NOT IMPLEMENTED YET"
 
     # Log proccess termination to the console. This will force flush any buffered logs to disk.
     # Do not log the exit if running under test environment.

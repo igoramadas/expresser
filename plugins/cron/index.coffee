@@ -21,7 +21,7 @@
 # This module will load scheduled tasks from the "cron.json" file if the
 # setting `loadOnInit` is true.
 #
-# @see Settings.cron
+# @see settings.cron
 # -->
 class Cron
 
@@ -37,7 +37,7 @@ class Cron
     # @property [Array] The jobs collection, please do not edit this object manually!
     jobs: []
 
-    # CONSTRUCTOR AND INIT
+    # INIT
     # -------------------------------------------------------------------------
 
     # Init the cron manager. If `loadOnInit` setting is true, the `cron.json` file will be parsed
@@ -56,7 +56,7 @@ class Cron
         @setEvents() if settings.events.enabled
         @load true if settings.cron.loadOnInit
 
-    # Bind event listeners.
+    # Bind event.
     setEvents: =>
         events.on "Cron.start", @start
         events.on "Cron.stop", @stop

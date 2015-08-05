@@ -224,9 +224,9 @@ class Utils
                                 # Advance the scanner's position past the end of the comment.
                                 index = position += 2
                                 break
-                            throw SyntaxError("Unterminated block comment.")
+                            throw SyntaxError "Unterminated block comment."
                         else
-                            throw SyntaxError("Invalid comment.")
+                            throw SyntaxError "Invalid comment."
 
                 # Parse strings separately to ensure that any whitespace characters and
                 # JavaScript-style comments within them are preserved.
@@ -242,7 +242,7 @@ class Utils
                     if source.charAt(index) is "\""
                         result += source.slice(position, index += 1)
                         break
-                    throw SyntaxError("Unterminated string.")
+                    throw SyntaxError "Unterminated string."
 
                 # Preserve all other characters.
                 else
@@ -254,6 +254,16 @@ class Utils
             return result
         else
             return JSON.parse result
+
+    # Generates a RFC1422-compliant unique ID using random numbers.
+    uuid: =>
+        baseStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        generator = (c) ->
+            r = Math.random() * 16 | 0
+            v = if c is "x" then r else (r & 0x3|0x8)
+            v.toString 16
+
+        return baseStr.replace(/[xy]/g, generator)
 
 # Singleton implementation
 # --------------------------------------------------------------------------

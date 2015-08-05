@@ -1,34 +1,39 @@
 # EXPRESSER DOWNLOADER
 # --------------------------------------------------------------------------
-# Handles external downloads.
+# Helper to manage downloads from external sources. Supports downloading
+# throttling, avoids duplicates, etc.
 # <!--
-# @see Settings.downloader
+# @see settings.downloader
 # -->
 class Downloader
 
-    events = require "./events.coffee"
+    events = null
     fs = require "fs"
     http = require "http"
     https = require "https"
-    lodash = require "lodash"
-    logger = require "./logger.coffee"
-    moment = require "moment"
+    lodash = null
+    logger = null
+    moment = null
     path = require "path"
-    settings = require "./settings.coffee"
+    settings = null
     url = require "url"
 
     # The download queue and simultaneous count.
     queue = []
     downloading = []
 
-    # CONSTRUCTOR AND INIT
+    # INIT
     # --------------------------------------------------------------------------
 
-    # Downloader constructor.
-    constructor: ->
-        @setEvents() if settings.events.enabled
+    # Init the module.
+    init: (options) =>
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        moment = @expresser.libs.moment
+        settings = @expresser.settings
 
-    # Bind event listeners.
+    # Bind events.
     setEvents: =>
         events.on "Downloader.download", @download
 
@@ -48,7 +53,7 @@ class Downloader
     # @return [Object] Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
     download: (remoteUrl, saveTo, options, callback) =>
         if not remoteUrl? or remoteUrl is ""
-            throw new Error "First parameter 'remoteUrl' is invalid"
+            throw new Error "First parameter 'remoteUrl' is mandatory!"
 
         # Check options and callback.
         if not callback? and lodash.isFunction options

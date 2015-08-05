@@ -1,0 +1,45 @@
+// EXPRESSER MAILER SETTINGS
+{
+    "mailer": {
+        // The name of the base template file when loading and parsing email templates.
+        // The base path is defined under `settings.path.emailTemplatesDir`.
+        "baseTemplateFile": "base.html",
+        // If `doNotSend` is true, no email will be sent out. Useful while testing.
+        "doNotSend": false,
+        // Enable mailer? If `false` the mailer module won't be initialized.
+        "enabled": true,
+        // Default `from` email address.
+        "from": null,
+        // DKIM signing options must be set below if you want to sign emails.
+        "dkim": {
+            "domainName": null,
+            "keySelector": null,
+            "privateKey": null
+        },
+        // Main SMTP server.
+        "smtp": {
+            // The main SMTP host. If set to null or blank, no emails will be sent out.
+            "host": null,
+            // The main SMTP auth password.
+            "password": null,
+            // The main SMTP port.
+            "port": null,
+            // Use SSL / TSL with main SMTP server?
+            "secure": false,
+            // The service is a shortcut / overriding setting for host, port and secure.
+            // For a list of supported services please go to https://github.com/andris9/nodemailer-wellknown#supported-services
+            "service": null,
+            // The main SMTP auth user.
+            "user": null
+        },
+        // Secondary SMTP server. All settings same as the main one.
+        "smtp2": {
+            "host": null,
+            "password": null,
+            "port": null,
+            "secure": false,
+            "service": null,
+            "user": null
+        }
+    }
+}

@@ -1,11 +1,11 @@
 {
-    "name": "expresser-cron",
+    "name": "expresser-downloader",
     "version": "0.0.1",
-    "description": "Task scheduler plugin for Expresser.",
+    "description": "Download manager plugin for Expresser.",
     "homepage": "http://expresser.codeplex.com",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache License 2.0",
-    "subdomain": "expresser-cron",
+    "subdomain": "expresser-downloader",
     "main": "index",
     "domains": [
         "expresser.codeplex.com"
@@ -21,9 +21,9 @@
         "url": "https://git01.codeplex.com/expresser"
     },
     "keywords": [
-        "background worker",
-        "cron",
+        "download manager",
+        "downloader",
         "expresser",
-        "task scheduler"
+        "wget"
     ]
 }
