@@ -101,7 +101,7 @@ class Mailer
             throw new Error "Option 'to' is not valid. Abort!"
 
         # Set from to default address if no `to` was set.
-        options.from = "#{settings.general.appTitle} <#{settings.mailer.from}>" if not options.from?
+        options.from = "#{settings.app.title} <#{settings.mailer.from}>" if not options.from?
 
         # Set HTML to body, if passed.
         html = if options.body? then options.body.toString() else ""
@@ -122,7 +122,7 @@ class Mailer
                 html = @parseTemplate html, options.keywords
 
         # Parse final template and set it on the `options`.
-        html = @parseTemplate html, {to: toName, appTitle: settings.general.appTitle, appUrl: settings.general.appUrl}
+        html = @parseTemplate html, {to: toName, appTitle: settings.app.title, appUrl: settings.app.url}
         options.html = html
 
         # Check if `doNotSend` flag is set, and if so, do not send anything.

@@ -197,14 +197,14 @@ class App
 
         if settings.app.ip? and settings.app.ip isnt ""
             server.listen settings.app.port, settings.app.ip
-            logger.info "App", settings.general.appTitle, "Listening on #{settings.app.ip} - #{settings.app.port}"
+            logger.info "App", settings.app.title, "Listening on #{settings.app.ip} - #{settings.app.port}"
         else
             server.listen settings.app.port
-            logger.info "App", settings.general.appTitle, "Listening on #{settings.app.port}"
+            logger.info "App", settings.app.title, "Listening on #{settings.app.port}"
 
         # Using SSL and redirector port is set? Then create the http server.
         if settings.app.ssl.enabled and settings.app.ssl.redirectorPort > 0
-            logger.info "App", "#{settings.general.appTitle} will redirect HTTP #{settings.app.ssl.redirectorPort} to HTTPS on #{settings.app.port}."
+            logger.info "App", "#{settings.app.title} will redirect HTTP #{settings.app.ssl.redirectorPort} to HTTPS on #{settings.app.port}."
 
             redirServer = express()
             redirServer.get "*", (req, res) -> res.redirect "https://#{req.hostname}:#{settings.app.port}#{req.url}"
@@ -223,7 +223,7 @@ class App
     renderView: (req, res, view, options) =>
         options = {} if not options?
         options.device = utils.getClientDevice req
-        options.title = settings.general.appTitle if not options.title?
+        options.title = settings.app.title if not options.title?
         res.render view, options
 
         logger.debug "App", "Render", view, options

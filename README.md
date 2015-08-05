@@ -21,7 +21,7 @@ and values. Detailed instructions are available on the top of the `settings.coff
 
 You can also change settings directly on runtime, via the `settings` property of Expresser, for example:
 
-    require("expresser").settings.general.appTitle = "My App".
+    require("expresser").settings.app.title = "My App".
 
 More info can be found at https://expresser.codeplex.com/wikipage?title=Settings
 
@@ -127,7 +127,7 @@ Create a `settings.json` file with the specific keys and values that you want to
 You can also change settings programatically:
 
     var expresser = require("expresser");
-    expresser.settings.general.appTitle = "MyApp";
+    expresser.settings.app.title = "MyApp";
 
 #### I have a problem!
 

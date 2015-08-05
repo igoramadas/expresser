@@ -48,7 +48,11 @@
             // This is the port number of the HTTP redirector server. Leave 0, blank
             // or null to disable this feature.
             "redirectorPort": 0
-        }
+        },
+        // The app title. This must be set so Expresser can properly identify your app.
+        "title": "Expresser",
+        // The app's base URL, including http://.
+        "url": "http://expresser.codeplex.com",
     },
 
     // DATABASE
@@ -102,10 +106,10 @@
     // GENERAL
     // -------------------------------------------------------------------------
     "general": {
-        // The app title. This must be set so Expresser can properly identify your app.
-        "appTitle": "Expresser",
-        // The app's base URL, including http://.
-        "appUrl": "http://expresser.codeplex.com",
+        // DEPRECATED (appTitle) Use settings.app.title instead.
+        "appTitle": null,
+        // DEPRECATED (appUrl) Use settings.app.url instead.
+        "appUrl": null,
         // Enable or disable debugging messages. Should be false on production environments.
         "debug": false,
         // Default encoding to be used on IO and web requests.
