@@ -1,8 +1,5 @@
-// DEFAULT EXPRESSER FIREWALL SETTINGS
-
+// EXPRESSER FIREWALL SETTINGS
 {
-    // FIREWALL
-    // -------------------------------------------------------------------------
     "firewall": {
         // How long should IP be blacklisted, in seconds.
         "blacklistExpires": 30,

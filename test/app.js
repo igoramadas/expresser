@@ -9,10 +9,9 @@ describe("App Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    if (!settings.testKeysLoaded) {
-        settings.loadFromJson("settings.test.keys.json");
-        settings.testKeysLoaded = true;
-    }
+    settings.loadFromJson("settings.test.json");
+    settings.loadFromJson("settings.test.keys.json");
+    settings.sockets.enabled = false;
 
     var app;
 
@@ -21,12 +20,6 @@ describe("App Tests", function() {
 
     before(function() {
         app = require("../lib/app.coffee");
-    });
-
-    it("Is single instance", function() {
-        app.singleInstance = true;
-        var app2 = require("../lib/app.coffee");
-        app.singleInstance.should.equal(app2.singleInstance);
     });
 
     it("Has settings defined", function() {

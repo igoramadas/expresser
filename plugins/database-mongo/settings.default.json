@@ -1,15 +1,12 @@
-// DEFAULT EXPRESSER DATABASE - MONGODB SETTINGS
-
+// EXPRESSER DATABASE - MONGO SETTINGS
 {
-    // DATABASE - MONGODB
-    // ----------------------------------------------------------------------
     "database": {
         "mongo": {
-            // Enable MongoDB database by default.
+            // Enable Mongo module by default.
             "enabled": true,
             // If you want to use only one database, you can set the default connection string
             // which will be instantiated automatically on init.
-            "connString": "",
+            "connString": null,
             // Normalize documents ID (replace _id with id when returning documents)?
             "normalizeId": true,
             // Database connection options.

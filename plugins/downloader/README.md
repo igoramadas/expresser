@@ -1,3 +1,4 @@
-# Expresser: Cron
+# Expresser: Downloader
 
-Task scheduler plugin for Expresser apps.
+Download manager plugin for Expresser. It supports parallel downloads,
+downloads limiting, duplicates avoidance and some other options.

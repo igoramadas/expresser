@@ -2,6 +2,9 @@
 # -----------------------------------------------------------------------------
 # Central event manager to dispatch events to all Expresser modules.
 # This module acts as a wrapper to Node's EventEmitter class.
+# <!--
+# @see settings.events
+# -->
 class Events
 
     evt = require "events"

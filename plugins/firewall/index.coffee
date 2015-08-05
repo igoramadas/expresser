@@ -1,10 +1,9 @@
 # EXPRESSER FIREWALL
 # -----------------------------------------------------------------------------
 # Firewall to protect the server against well known HTTP and socket attacks.
-# ATTENTION! The Firewall module is started automatically by the App module. If you wish to
-# disable it, set `Settings.firewall.enabled` to false.
+# It attaches itself automatically to the internal Express app when enabled.
 # <!--
-# @see Settings.firewall
+# @see settings.firewall
 # -->
 class Firewall
 
@@ -35,31 +34,30 @@ class Firewall
     # -------------------------------------------------------------------------
 
     # Bind the firewall to the server. This must be called AFTER the web app has started.
-    # @param [Object] Firewall init options.
-    # @option options [Object] server The Express server object to bind to.
-    init: (options, callback) =>
+    # @param [Object] options Firewall init options.
+    # @option options [Object] server The Express server object to bind.
+    init: (options) =>
         logger = @expresser.logger
         moment = @expresser.libs.moment
         settings = @expresser.settings
         utils = @expresser.utils
 
-        logger.debug "Database.init", options
+        logger.debug "Firewall.init", options
 
         options = {server: options} if not options.server?
-        env = process.env
 
         # Server is mandatory!
         if not options.server?
             logger.error "Firewall.init", "App server is invalid. Abort!"
-            return
+            return null
 
         # Bind HTTP protection.
-        if settings.firewall.httpPatterns isnt "" and env.NODE_ENV isnt "test"
+        if settings.firewall.httpPatterns isnt ""
             @expresser.app.prependMiddlewares.push @checkHttpRequest
             logger.info "Firewall.init", "Protecting HTTP requests."
 
         # Bind sockets protection.
-        if settings.firewall.socketPatterns isnt "" and env.NODE_ENV isnt "test"
+        if settings.firewall.socketPatterns isnt ""
             logger.info "Firewall.init", "Protecting Socket requests."
 
         @blacklist = {}

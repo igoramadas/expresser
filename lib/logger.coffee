@@ -3,7 +3,7 @@
 # Handles server logging using local files, Logentries or Loggly.
 # Multiple services can be enabled at the same time.
 # <!--
-# @see Settings.logger
+# @see settings.logger
 # -->
 class Logger
 
@@ -20,7 +20,7 @@ class Logger
     localBuffer = null
     flushing = false
 
-    # The `serverIP` will be set on init, but only if `settings.logger.sendIP` is true.
+    # The `serverIP` will be set on init but only if `settings.logger.sendIP` is true.
     serverIP = null
 
     # Timer used for automatic logs cleaning.
@@ -48,11 +48,8 @@ class Logger
     # IP address and timestamp will be appended to logs depending on the settings.
     # @param [Object] options Logger init options.
     init: (options) =>
-        bufferDispatcher = null
-        localBuffer = null
         logentries = null
         loggly = null
-        serverIP = null
 
         # Get a valid server IP to be appended to logs.
         if settings.logger.sendIP
@@ -84,10 +81,9 @@ class Logger
         else
             @info "Logger.init", activeServices.join(), ipInfo
 
-        # Bind Logger events to global event handler.
         @setEvents() if settings.events.enabled
 
-    # Bind event listeners.
+    # Bind events
     setEvents: =>
         events.on "Logger.debug", @debug
         events.on "Logger.info", @info
@@ -122,49 +118,6 @@ class Logger
                 timerCleanLocal = setInterval @cleanLocal, 86400
         else
             @stopLocal()
-
-    # Init the Logentries transport. Check if Logentries should be used, and create the Logentries objects.
-    initLogentries: =>
-        if settings.logger.logentries.enabled and settings.logger.logentries.token? and settings.logger.logentries.token isnt ""
-            logentries = require "node-logentries"
-            loggerLogentries = logentries.logger {token: settings.logger.logentries.token, timestamp: settings.logger.sendTimestamp}
-            loggerLogentries.on("log", @onLogSuccess) if lodash.isFunction @onLogSuccess
-            loggerLogentries.on("error", @onLogError) if lodash.isFunction @onLogError
-            activeServices.push "Logentries"
-        else
-            @stopLogentries()
-
-    # Init the Loggly transport. Check if Loggly should be used, and create the Loggly objects.
-    initLoggly: =>
-        if settings.logger.loggly.enabled and settings.logger.loggly.subdomain? and settings.logger.loggly.token? and settings.logger.loggly.token isnt ""
-            loggly = require "loggly"
-            loggerLoggly = loggly.createClient {token: settings.logger.loggly.token, subdomain: settings.logger.loggly.subdomain, json: false}
-            activeServices.push "Loggly"
-        else
-            @stopLoggly()
-
-    # Disable and remove Local transport from the list of active services.
-    stopLocal: =>
-        @flushLocal()
-        clearInterval bufferDispatcher if bufferDispatcher?
-        bufferDispatcher = null
-        localBuffer = null
-        i = activeServices.indexOf "Local"
-        activeServices.splice(i, 1) if i >= 0
-
-    # Disable and remove Logentries transport from the list of active services.
-    stopLogentries: =>
-        logentries = null
-        loggerLogentries = null
-        i = activeServices.indexOf "Logentries"
-        activeServices.splice(i, 1) if i >= 0
-
-    # Disable and remove Loggly transport from the list of active services.
-    stopLoggly: =>
-        loggly = null
-        loggerLoggly = null
-        i = activeServices.indexOf "Loggly"
-        activeServices.splice(i, 1) if i >= 0
 
     register: (id, transport, options) =>
         if not @drivers[driver]?

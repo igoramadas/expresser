@@ -3,7 +3,7 @@
 # Handles MongoDB database transactions using the `mongoskin` module. This
 # plugin attaches itself to the main `database` module of Expresser.
 # <!--
-# @see Settings.database.mongo
+# @see settings.database.mongo
 # -->
 class DatabaseMongo
 
@@ -16,7 +16,7 @@ class DatabaseMongo
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the database module and test the connection straight away.
+    # Init the MongoDB database module.
     # @param [Object] options Database init options.
     init: (options) =>
         database = @expresser.database

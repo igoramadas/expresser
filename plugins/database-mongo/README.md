@@ -1,3 +1,4 @@
 # Expresser: Mongo Database
 
-This plugin enables the app to use MongoDB databases.
+This is a plugin for MongoDB databases on Expresser. It attaches
+itself to the main database module.

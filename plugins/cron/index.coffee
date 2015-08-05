@@ -40,8 +40,9 @@ class Cron
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the cron manager. If `loadOnInit` setting is true, the `cron.json` file will be parsed
-    # and loaded straight away (if there's one).
+    # Init the cron manager. If `loadOnInit` setting is true, the `cron.json
+    # file will be parsed and loaded straight away (if there's one).
+    # @param [Object] options Cron init options.
     init: (options) =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -56,7 +57,7 @@ class Cron
         @setEvents() if settings.events.enabled
         @load true if settings.cron.loadOnInit
 
-    # Bind event.
+    # Bind events.
     setEvents: =>
         events.on "Cron.start", @start
         events.on "Cron.stop", @stop

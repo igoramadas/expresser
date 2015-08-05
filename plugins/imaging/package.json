@@ -1,11 +1,11 @@
 {
     "name": "expresser-imaging",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "A ImageMagick wrapper for Expresser.",
     "homepage": "http://expresser.codeplex.com",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache License 2.0",
-    "subdomain": "expresser-firewall",
+    "subdomain": "expresser-imaging",
     "main": "index",
     "domains": [
         "expresser.codeplex.com"
@@ -23,12 +23,10 @@
     },
     "keywords": [
         "expresser",
-        "express",
-        "app",
+        "gif",
         "imagemagick",
-        "logger",
-        "mongo",
-        "sockets",
-        "twitter"
+        "imaging",
+        "jpg",
+        "png"
     ]
 }

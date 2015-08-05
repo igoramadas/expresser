@@ -4,10 +4,11 @@
 # need to add database driver plugins for your desired DB. At the moment we
 # officially support MongoDB (plugin expresser-database-mongo).
 # <!--
-# @see Settings.database
+# @see settings.database
 # -->
 class Database
 
+    events = require "./events.coffee"
     lodash = require "lodash"
     logger = require "./logger.coffee"
     settings = require "./settings.coffee"
@@ -24,11 +25,17 @@ class Database
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the mongo database module and test the connection straight away.
+    # Init the database module.
     # @param [Object] options Database init options.
     init: (options) =>
         logger.debug "Database.init", options
         lodash.assign settings.database, options if options?
+
+        @setEvents() if settings.events.enabled
+
+    # Bind events.
+    setEvents: =>
+        events.on "Database.register", @register
 
     # IMPLEMENTATION
     # -------------------------------------------------------------------------

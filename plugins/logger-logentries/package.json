@@ -1,11 +1,11 @@
 {
-    "name": "expresser-logger-loggly",
+    "name": "expresser-logger-logentries",
     "version": "0.0.1",
-    "description": "Loggly plugin for Expresser apps.",
+    "description": "Loggly plugin for Expresser.",
     "homepage": "http://expresser.codeplex.com",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache License 2.0",
-    "subdomain": "expresser-logger-loggly",
+    "subdomain": "expresser-logger-logentries",
     "main": "index",
     "domains": [
         "expresser.codeplex.com"
@@ -15,7 +15,7 @@
     },
 	"dependencies": {
         "coffee-script": ">= 1.9.3",
-        "node-logentries": ">= 0.1.2"
+        "node-logentries": ">= 0.1.4"
 	},
     "repository": {
         "type": "git",
@@ -23,12 +23,9 @@
     },
     "keywords": [
         "expresser",
-        "express",
-        "app",
-        "imagemagick",
+        "logentries",
         "logger",
-        "mongo",
-        "sockets",
-        "twitter"
+        "logging",
+        "logs"
     ]
 }

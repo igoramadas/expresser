@@ -1,5 +1,4 @@
 // EXPRESSER CRON SETTINGS
-
 {
     "cron": {
         // If `allowReplacing` is true, cron will allow replacing jobs by adding a new

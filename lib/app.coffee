@@ -56,8 +56,7 @@ class App
         utils = require "./utils.coffee"
         nodeEnv = process.env.NODE_ENV
 
-        # Init New Relic, if enabled, and set default error handler.
-        @initNewRelic()
+        # Set default error handler.
         @setErrorHandler()
 
         # Require logger.
@@ -185,7 +184,6 @@ class App
 
         # Enable sockets?
         if settings.sockets.enabled
-            sockets = require "./sockets.coffee"
             sockets.bind server
 
         if settings.app.ip? and settings.app.ip isnt ""

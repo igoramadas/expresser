@@ -19,5 +19,5 @@
         "tempExtension": ".download",
         // Download timeout, in seconds.
         "timeout": 1800
-    },
+    }
 }

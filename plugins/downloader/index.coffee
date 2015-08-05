@@ -26,6 +26,7 @@ class Downloader
     # --------------------------------------------------------------------------
 
     # Init the module.
+    # @param [Object] options Downloader init options.
     init: (options) =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -67,16 +68,14 @@ class Downloader
 
         # Prevent duplicates?
         if settings.downloader.preventDuplicates
-            existing = lodash.filter downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
+            existing = lodash.find downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
 
             # If downloading the same file and to the same location, abort download.
-            if existing.length > 0
-                existing = existing[0]
-                if existing.saveTo is saveTo
-                    logger.warn "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
-                    err = {message: "Download aborted: same file is already downloading.", duplicate: true}
-                    callback(err, downloadObj) if callback?
-                    return false
+            if existing?.saveTo is saveTo
+                logger.warn "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
+                err = {message: "Download aborted: same file is already downloading.", duplicate: true}
+                callback(err, downloadObj) if callback?
+                return false
 
         # Create a `stop` method to force stop the download by setting the `stopFlag`.
         # Accepts a `keep` boolean, if true the already downloaded data will be kept on forced stop.
@@ -90,6 +89,20 @@ class Downloader
         next() if downloading.length < settings.downloader.maxSimultaneous
 
         return downloadObj
+
+    # Force stop a current download.
+    # @param [String] remoteUrl The URL of the download to stop.
+    # @param [String] saveTo The full local path of the download to stop.
+    # @return [Boolean] Returns true if a match was found, or false if no matching download to stop.
+    stop: (remoteUrl, saveTo) =>
+        existing = lodash.find downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
+
+        # Download exists? If so set its stop flag and return true, otherwise false.
+        if existing?
+            existing.stop()
+            return true
+        else
+            return false
 
     # INTERNAL IMPLEMENTATION
     # --------------------------------------------------------------------------

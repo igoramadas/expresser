@@ -9,13 +9,14 @@ describe("Database Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    if (!settings.testKeysLoaded) {
-        settings.loadFromJson("settings.test.keys.json");
-        settings.testKeysLoaded = true;
-    }
-    
+    settings.loadFromJson("settings.test.json");
+    settings.loadFromJson("settings.test.keys.json");
+    settings.loadFromJson("../plugins/database-mongo/settings.default.json");
+
     var utils = null;
     var database = null;
+    var databaseMongo = null;
+    var dbMongo = null;
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
@@ -23,19 +24,87 @@ describe("Database Tests", function() {
     before(function() {
         utils = require("../lib/utils.coffee");
         database = require("../lib/database.coffee");
-    });
-
-    it("Is single instance", function() {
-        database.singleInstance = true;
-        var database2 = require("../lib/database.coffee");
-        database.singleInstance.should.equal(database2.singleInstance);
+        databaseMongo = require("../plugins/database-mongo/index.coffee");
+        databaseMongo.expresser = require("../index.coffee");
+        databaseMongo.expresser.events = require("../lib/events.coffee");
+        databaseMongo.expresser.logger = require("../lib/logger.coffee");
+        databaseMongo.expresser.database = database;
     });
 
     it("Has settings defined", function() {
         settings.should.have.property("database");
+        settings.database.should.have.property("mongo");
     });
 
     it("Inits", function() {
         database.init();
+        dbMongo = databaseMongo.init();
+    });
+
+    it("Add simple record to the database", function(done) {
+        this.timeout(5000);
+
+        var callback = function(err, result) {
+            if (err) {
+                throw err;
+            } else {
+                done();
+            }
+        };
+
+        var obj = {simple: true};
+
+        dbMongo.insert("test", obj, callback);
+    });
+
+    it("Add complex record to the database", function(done) {
+        this.timeout(5000);
+
+        var callback = function(err, result) {
+            if (err) {
+                throw err;
+            } else {
+                done();
+            }
+        };
+
+        var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
+
+        dbMongo.insert("test", obj, callback);
+    });
+
+    it("Add 500 records to the database", function(done) {
+        this.timeout(10000);
+
+        var counter = 500;
+        var current = 1;
+
+        var callback = function(err, result) {
+            if (err) {
+                done(err);
+            } else if (current == counter) {
+                done();
+            }
+
+            current++;
+        };
+
+        for (var i = 0; i < counter; i++) {
+            dbMongo.insert("test", {counter: i}, callback);
+        }
+    });
+
+    it("Updates all previously created records on the database", function(done) {
+        var callback = function(err, result) {
+            if (err) {
+                throw err;
+            } else {
+                done();
+            }
+        };
+
+        var obj = {$set: {updated: true}};
+
+        dbMongo.update("test", obj, callback);
     });
 });

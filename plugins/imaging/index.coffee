@@ -2,16 +2,34 @@
 # --------------------------------------------------------------------------
 # Handles and manipulates images on the server using ImageMagick.
 # <!--
-# @see Settings.imaging
+# @see settings.imaging
 # -->
 class Imaging
 
+    events = null
     fs = require "fs"
     im = require "imagemagick"
-    logger = require "./logger.coffee"
+    logger = null
     path = require "path"
-    settings = require "./settings.coffee"
+    settings = null
 
+    # INIT
+    # -------------------------------------------------------------------------
+
+    # Init the Imaging module.
+    # @param [Object] options Imaging init options.
+    init: (options) =>
+        events = @expresser.events
+        logger = @expresser.logger
+        settings = @expresser.settings
+
+        @setEvents() if settings.events.enabled
+
+    # Bind events.
+    setEvents: =>
+        events.on "Imaging.toGif", @toGif
+        events.on "Imaging.toJpg", @toJpg
+        events.on "Imaging.toPng", @toPng
 
     # IMAGE METHODS
     # --------------------------------------------------------------------------
@@ -19,6 +37,8 @@ class Imaging
     # Internal method to convert image filetypes. Image will also be resized and scale to the specified
     # dimensions (width and height). A callback (err, stdout) can be passed as well.
     convert = (source, filetype, options, callback) =>
+        logger.debug "Imaging.convert", source, filetype, options
+
         fs.exists source, (exists) ->
             if exists
                 try
@@ -68,7 +88,7 @@ class Imaging
 
                 # Source file does not exist, so log the warning and trigger
                 # the `callback` if one was passed.
-                logger.warn "Imaging.convert", "Abort, source file does not exist.", source
+                logger.error "Imaging.convert", "Abort, source file does not exist.", source
                 callback("Source file does not exist.", false) if callback?
 
     # Converts the specified image to GIF.

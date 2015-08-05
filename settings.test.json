@@ -1,7 +1,6 @@
 {
     "general": {
-        "debug": false,
-        "appTitle": "Expresser"
+        "debug": false
     },
     "database": {
         "mongo": {

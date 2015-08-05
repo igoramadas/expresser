@@ -9,10 +9,8 @@ describe("Downloader Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    if (!settings.testKeysLoaded) {
-        settings.loadFromJson("settings.test.keys.json");
-        settings.testKeysLoaded = true;
-    }
+    settings.loadFromJson("settings.test.keys.json");
+    settings.loadFromJson("../plugins/downloader/settings.default.json");
 
     var fs = require("fs");
     var utils = null;
@@ -23,18 +21,18 @@ describe("Downloader Tests", function() {
 
     before(function() {
         utils = require("../lib/utils.coffee");
-
-        downloader = require("../lib/downloader.coffee");
-    });
-
-    it("Is single instance", function() {
-        downloader.singleInstance = true;
-        var downloader2 = require("../lib/downloader.coffee");
-        downloader.singleInstance.should.equal(downloader2.singleInstance);
+        downloader = require("../plugins/downloader/index.coffee");
+        downloader.expresser = require("../index.coffee");
+        downloader.expresser.events = require("../lib/events.coffee");
+        downloader.expresser.logger = require("../lib/logger.coffee");
     });
 
     it("Has settings defined", function() {
         settings.should.have.property("downloader");
+    });
+
+    it("Inits", function() {
+        downloader.init();
     });
 
     it("Download with redirect (Google index html)", function(done) {

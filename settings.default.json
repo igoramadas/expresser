@@ -98,13 +98,6 @@
         "ioCacheTimeout": 60
     },
 
-    // IMAGING
-    // -------------------------------------------------------------------------
-    "imaging": {
-        // Set to false to disable the imaging module.
-        "enabled": true
-    },
-
     // LOGGER
     // -------------------------------------------------------------------------
     "logger": {
@@ -150,12 +143,7 @@
             "maxAge": 30
         },
         // Please inform your Logentries token below (http://logentries.com).
-        "logentries": {
-            // Enable Logentries? If true, please set the token below.
-            "enabled": false,
-            // Your Logentries default token.
-            "token": null
-        },
+
         // Inform your Loggly subdomain and token below (http://loggly.com).
         "loggly": {
             // Enable Loggly? If true, please set the subdomain and default token below.

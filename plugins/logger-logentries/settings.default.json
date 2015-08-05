@@ -1,0 +1,11 @@
+// EXPRESSER LOGGER - LOGENTRIES SETTINGS
+{
+    "logger": {
+        "logentries": {
+            // Enable Logentries plugin?
+            "enabled": false,
+            // Your Logentries default token.
+            "token": null
+        },
+    }
+}
