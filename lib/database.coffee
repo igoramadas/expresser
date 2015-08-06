@@ -19,7 +19,7 @@ class Database
     # @property [Object] Available database drivers.
     drivers: {}
 
-    # @property [Object] db Dictionary of database objects.
+    # @property [Object] Dictionary of database objects.
     db: {}
 
     # INIT
@@ -50,9 +50,9 @@ class Database
             logger.error "Database.register", "The driver #{driver} is not installed! Please check if plugin expresser-database-#{driver} is available on the current environment."
             return false
         else
-            logger.info "Database.register", id, driver, options
+            logger.debug "Database.register", id, driver, options
 
-            @db[id] = {connObj: @drivers[driver].setDb connString, options}
+            @db[id] = {connection: @drivers[driver].getConnection connString, options}
             @db[id].get = @drivers[driver].get
             @db[id].insert = @drivers[driver].insert
             @db[id].update = @drivers[driver].update

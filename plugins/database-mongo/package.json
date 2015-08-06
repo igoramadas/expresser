@@ -8,7 +8,7 @@
     "subdomain": "expresser-database-mongo",
     "main": "index",
     "domains": [
-        "github.com/igoramadas/expresser"
+        "expresser.devv.com"
     ],
     "engines": {
         "node": "*"

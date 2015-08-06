@@ -1,0 +1,13 @@
+// EXPRESSER LOGGER - LOGGLY SETTINGS
+{
+    "logger": {
+        "loggly": {
+            // Enable Loggly? If true, please set the subdomain and default token below.
+            "enabled": false,
+            // Your Loggly subdomain.
+            "subdomain": null,
+            // Your Loggly default token.
+            "token": null
+        }
+    }
+}

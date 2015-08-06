@@ -8,7 +8,7 @@
     "subdomain": "expresser-logger-loggly",
     "main": "index",
     "domains": [
-        "github.com/igoramadas/expresser"
+        "expresser.devv.com"
     ],
     "engines": {
         "node": "*"

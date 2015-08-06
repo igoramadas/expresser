@@ -106,12 +106,6 @@
         "autoLogErrors": false,
         // Output logs to the console? True or false.
         "console": true,
-        // If the mail module is properly configured then all critical logs (logger.critical()) will
-        // be sent to the email address specified below. Leave blank or null to not send emails.
-        "criticalEmailTo": null,
-        // For critical emails, avoid sending duplicate messages by setting an expiry time. So it will only
-        // send one email every 5 minutes (value set below) for the same error message.
-        "criticalEmailExpireMinutes": 5,
         // Unless you have very specific reasons, leave enabled always true otherwise nothing will be logged.
         "enabled": true,
         // Define all log types which should be treated as error (red colour on the console).
@@ -131,28 +125,7 @@
         "sendTimestamp": true,
         // Set `uncaughtException` to true to bind the logger to the `uncaughtException`
         // event on the process and log all uncaught expcetions as errors.
-        "uncaughtException": true,
-        // Save logs locally. The path to the logs folder is set above under the `path.logsDir` key.
-        "local": {
-            // Enable local logging?
-            "enabled": true,
-            // The bufferInterval defines the delay in between disk saves, in milliseconds.
-            "bufferInterval": 6000,
-            // Sets the max age of log files, in days. Default is 30 days. Setting the
-            // maxAge to to 0 or null will cancel the automatic log cleaning.
-            "maxAge": 30
-        },
-        // Please inform your Logentries token below (http://logentries.com).
-
-        // Inform your Loggly subdomain and token below (http://loggly.com).
-        "loggly": {
-            // Enable Loggly? If true, please set the subdomain and default token below.
-            "enabled": false,
-            // Your Loggly subdomain.
-            "subdomain": null,
-            // Your Loggly default token.
-            "token": null
-        }
+        "uncaughtException": true
     },
 
     // PATH

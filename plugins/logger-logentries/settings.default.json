@@ -6,6 +6,6 @@
             "enabled": false,
             // Your Logentries default token.
             "token": null
-        },
+        }
     }
 }

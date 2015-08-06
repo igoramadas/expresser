@@ -15,25 +15,14 @@ class Logger
     settings = require "./settings.coffee"
     utils = require "./utils.coffee"
 
-    # Local logging objects will be set on `init`.
-    bufferDispatcher = null
-    localBuffer = null
-    flushing = false
-
-    # The `serverIP` will be set on init but only if `settings.logger.sendIP` is true.
-    serverIP = null
-
-    # Timer used for automatic logs cleaning.
-    timerCleanLocal = null
-
     # PUBLIC PROPERTIES
     # --------------------------------------------------------------------------
 
-    # @property [Object] Holds a list of available logging transports.
-    transports: {}
+    # @property [Object] Holds a list of available logging drivers.
+    drivers: {}
 
-    # @property [Object] log Dictionary of target logs.
-    log: {}
+    # @property [Object] List of registered transports.
+    transports: {}
 
     # @property [Method] Custom method to call when logs are sent to logging server or flushed to disk.
     onLogSuccess: null
@@ -48,24 +37,6 @@ class Logger
     # IP address and timestamp will be appended to logs depending on the settings.
     # @param [Object] options Logger init options.
     init: (options) =>
-        logentries = null
-        loggly = null
-
-        # Get a valid server IP to be appended to logs.
-        if settings.logger.sendIP
-            serverIP = utils.getServerIP true
-
-        # Define server IP.
-        if serverIP?
-            ipInfo = "IP #{serverIP}"
-        else
-            ipInfo = "No server IP set."
-
-        # Init transports.
-        @initLocal()
-
-        # Check if uncaught exceptions should be logged. If so, try logging unhandled
-        # exceptions using the logger, otherwise log to the console.
         if settings.logger.uncaughtException
             @debug "Logger.init", "Catching unhandled exceptions."
 
@@ -75,15 +46,9 @@ class Logger
                 catch ex
                     console.error "Unhandled exception!", err.message, err.stack, ex
 
-        # Start logging!
-        if not localBuffer? and not logentries? and not loggly?
-            @warn "Logger.init", "No transports enabled.", "Logger module will only log to the console!"
-        else
-            @info "Logger.init", activeServices.join(), ipInfo
-
         @setEvents() if settings.events.enabled
 
-    # Bind events
+    # Bind events.
     setEvents: =>
         events.on "Logger.debug", @debug
         events.on "Logger.info", @info
@@ -91,54 +56,31 @@ class Logger
         events.on "Logger.error", @error
         events.on "Logger.critical", @critical
 
-    # Init the Local transport. Check if logs should be saved locally. If so, create the logs buffer
-    # and a timer to flush logs to disk every X milliseconds.
-    initLocal: =>
-        if settings.logger.local.enabled
-            if fs.existsSync?
-                folderExists = fs.existsSync settings.path.logsDir
-            else
-                folderExists = path.existsSync settings.path.logsDir
+    # IMPLEMENTATION
+    # -------------------------------------------------------------------------
 
-            # Create logs folder, if it doesn't exist.
-            if not folderExists
-                fs.mkdirSync settings.path.logsDir
-                if settings.general.debug
-                    console.log "Logger.initLocal", "Created #{settings.path.logsDir} folder."
-
-            # Set local buffer.
-            localBuffer = {info: [], warn: [], error: []}
-            bufferDispatcher = setInterval @flushLocal, settings.logger.local.bufferInterval
-            activeServices.push "Local"
-
-            # Check the maxAge of local logs.
-            if settings.logger.local.maxAge? and settings.logger.local.maxAge > 0
-                if timerCleanLocal?
-                    clearInterval timerCleanLocal
-                timerCleanLocal = setInterval @cleanLocal, 86400
-        else
-            @stopLocal()
-
-    register: (id, transport, options) =>
-        if not @drivers[driver]?
-            logger.error "Database.register", "The driver #{driver} is not installed! Please check if plugin expresser-database-#{driver} is available on the current environment."
+    # Register a Logger transport. This is called by Logger plugins.
+    register: (id, driver, options) =>
+        if not @transports[driver]?
+            logger.error "Logger.register", "The transport #{driver} is not installed! Please check if plugin expresser-logger-#{driver} is available on the current environment."
             return false
         else
-            logger.info "Database.register", id, driver, options
+            logger.debug "Logger.register", id, driver, options
 
-            @db[id] = {connObj: @drivers[driver].setDb connString, options}
-            @db[id].get = @drivers[driver].get
-            @db[id].insert = @drivers[driver].insert
-            @db[id].update = @drivers[driver].update
-            @db[id].remove = @drivers[driver].remove
-            @db[id].count = @drivers[driver].count
+            @transports[id] = {transport: @drivers[driver].getTransport options}
+            @transports[id].log = @drivers[driver].log
+            @transports[id].debug = @debug
+            @transports[id].info = @info
+            @transports[id].warn = @warn
+            @transports[id].error = @error
+            @transports[id].critical = @critical
 
-            return @db[id]
+            return @transports[id]
 
     # LOG METHODS
     # --------------------------------------------------------------------------
 
-    # Generic log method.
+    # Internal generic log method.
     # @param [String] logType The log type (for example: warning, error, info, security, etc).
     # @param [String] logFunc Optional, the logging function name to be passed to the console and Logentries.
     # @param [Array] args Array of arguments to be stringified and logged.
@@ -147,20 +89,20 @@ class Logger
             args = logFunc
             logFunc = "info"
 
+        # Abort if the log type is not present on the `settings.logger.levels`.
+        return if settings.logger.levels.indexOf(logType) < 0
+
         # Get message out of the arguments.
         msg = @getMessage args
 
-        # Log to different transports.
-        if settings.logger.local.enabled and localBuffer?
-            @logLocal logType, msg
-        if settings.logger.logentries.enabled and loggerLogentries?
-            loggerLogentries.log logFunc, msg
-        if settings.logger.loggly.enabled and loggerLoggly?
-            loggerLoggly.log msg, @logglyCallback
+        # Dispatch to all registered transports.
+        for key, obj of @transports
+            obj.log logType, logFunc, msg
 
         # Log to the console depending on `console` setting.
         if settings.logger.console
             args.unshift moment().format "HH:mm:ss.SS"
+
             if settings.logger.errorLogTypes.indexOf(logType) >= 0
                 console.error.apply this, args
             else
@@ -168,144 +110,40 @@ class Logger
 
     # Log to the active transports as `debug`, only if the debug flag is enabled.
     # All arguments are transformed to readable strings.
-    debug: =>
+    debug: ->
         return if not settings.general.debug
 
         args = Array.prototype.slice.call arguments
         args.unshift "DEBUG"
         @log "debug", "info", args
 
-    # Log to the active transports as `log`.
+    # Log to the active transports as `info`.
     # All arguments are transformed to readable strings.
-    info: =>
-        return if settings.logger.levels.indexOf("info") < 0
-
+    info: ->
         args = Array.prototype.slice.call arguments
         args.unshift "INFO"
         @log "info", "info", args
 
     # Log to the active transports as `warn`.
     # All arguments are transformed to readable strings.
-    warn: =>
-        return if settings.logger.levels.indexOf("warn") < 0
-
+    warn: ->
         args = Array.prototype.slice.call arguments
         args.unshift "WARN"
         @log "warn", "warning", args
 
     # Log to the active transports as `error`.
     # All arguments are transformed to readable strings.
-    error: =>
-        return if settings.logger.levels.indexOf("error") < 0
-
+    error: ->
         args = Array.prototype.slice.call arguments
         args.unshift "ERROR"
         @log "error", "err", args
 
     # Log to the active transports as `critical`.
     # All arguments are transformed to readable strings.
-    critical: =>
-        return if settings.logger.levels.indexOf("critical") < 0
-
+    critical: ->
         args = Array.prototype.slice.call arguments
         args.unshift "CRITICAL"
         @log "critical", "err", args
-
-        # If the `criticalEmailTo` is set, dispatch a mail send event.
-        if settings.logger.criticalEmailTo? and settings.logger.criticalEmailTo isnt ""
-            body = args.join ", "
-            maxAge = moment().subtract(settings.logger.criticalEmailExpireMinutes, "m").unix()
-
-            # Do not proceed if this critical email was sent recently.
-            return if @criticalEmailCache[body]? and @criticalEmailCache[body] > maxAge
-
-            # Set mail options.
-            mailOptions =
-                subject: "CRITICAL: #{args[1]}"
-                body: body
-                to: settings.logger.criticalEmailTo
-                logError: false
-
-            # Emit mail send message.
-            events.emit "Mailer.send", mailOptions, (err) ->
-                console.error "Logger.critical", "Can't send email!", err if err?
-
-            # Save to critical email cache.
-            @criticalEmailCache[body] = moment().unix()
-
-    # LOCAL LOGGING
-    # --------------------------------------------------------------------------
-
-    # Log locally. The path is defined on `Settings.Path.logsDir`.
-    # @param [String] logType The log type (info, warn, error, debug, etc).
-    # @param [String] message Message to be logged.
-    # @private
-    logLocal: (logType, message) ->
-        now = moment()
-        message = now.format("HH:mm:ss.SSS") + " - " + message
-        localBuffer[logType] = [] if not localBuffer[logType]?
-        localBuffer[logType].push message
-
-    # Flush all local buffered log messages to disk. This is usually called by the `bufferDispatcher` timer.
-    flushLocal: ->
-        return if flushing
-
-        # Set flushing and current date.
-        flushing = true
-        now = moment()
-        date = now.format "YYYYMMDD"
-
-        # Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
-        # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
-        # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
-        for key, logs of localBuffer
-            if logs.length > 0
-                writeData = logs.join "\n"
-                filePath = path.join settings.path.logsDir, "#{date}.#{key}.log"
-                successMsg = "#{logs.length} records logged to disk."
-
-                # Reset this local buffer.
-                localBuffer[key] = []
-
-                # Only use `appendFile` on new versions of Node.
-                if fs.appendFile?
-                    fs.appendFile filePath, writeData, (err) =>
-                        flushing = false
-                        if err?
-                            console.error "Logger.flushLocal", err
-                            @onLogError err if @onLogError?
-                        else
-                            @onLogSuccess successMsg if @onLogSuccess?
-
-                else
-                    fs.open filePath, "a", 666, (err1, fd) =>
-                        if err1?
-                            flushing = false
-                            console.error "Logger.flushLocal.open", err1
-                            @onLogError err1 if @onLogError?
-                        else
-                            fs.write fd, writeData, null, settings.general.encoding, (err2) =>
-                                flushing = false
-                                if err2?
-                                    console.error "Logger.flushLocal.write", err2
-                                    @onLogError err2 if @onLogError?
-                                else
-                                    @onLogSuccess successMsg if @onLogSuccess?
-                                fs.closeSync fd
-
-    # Delete old log files from disk. The maximum date is defined on the settings.
-    cleanLocal: ->
-        maxDate = moment().subtract settings.logger.local.maxAge, "d"
-
-        fs.readdir settings.path.logsDir, (err, files) ->
-            if err?
-                console.error "Logger.cleanLocal", err
-            else
-                for f in files
-                    date = moment f.split(".")[1], "yyyyMMdd"
-                    if date.isBefore maxDate
-                        fs.unlink path.join(settings.path.logsDir, f), (err) ->
-                            console.error "Logger.cleanLocal", err if err?
 
     # HELPER METHODS
     # --------------------------------------------------------------------------
@@ -334,20 +172,11 @@ class Logger
                     separated.push a
 
         # Append IP address, if `serverIP` is set.
+        serverIP = utils.getServerIP true if settings.logger.sendIP
         separated.push "IP #{serverIP}" if serverIP?
 
         # Return single string log message.
         return separated.join " | "
-
-    # Wrapper callback for `onLogSuccess` and `onLogError` to be used by Loggly.
-    # @param [String] err The Loggly error.
-    # @param [String] result The Loggly logging result.
-    # @private
-    logglyCallback: (err, result) =>
-        if err? and @onLogError?
-            @onLogError err
-        else if @onLogSuccess?
-            @onLogSuccess result
 
 # Singleton implementation
 # --------------------------------------------------------------------------

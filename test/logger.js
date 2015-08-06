@@ -9,32 +9,54 @@ describe("Logger Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    if (!settings.testKeysLoaded) {
-        settings.loadFromJson("settings.test.keys.json");
-        settings.testKeysLoaded = true;
-    }
+    settings.loadFromJson("settings.test.json");
+    settings.loadFromJson("settings.test.keys.json");
+    settings.loadFromJson("../plugins/logger-local/settings.default.json");
+    settings.loadFromJson("../plugins/logger-logentries/settings.default.json");
+    settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
 
     var logger = null;
+    var loggerLocal = null;
+    var loggerLogentries = null;
+    var loggerLoggly = null;
+    var transportLocal = null;
+    var transportLogentries = null;
+    var transportLoggly = null;
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
     before(function(){
         logger = require("../lib/logger.coffee");
-    });
 
-    it("Is single instance", function() {
-        logger.singleInstance = true;
-        var logger2 = require("../lib/logger.coffee");
-        logger.singleInstance.should.equal(logger2.singleInstance);
+        loggerLocal = require("../plugins/logger-local/index.coffee");
+        loggerLocal.expresser = require("../index.coffee");
+        loggerLocal.expresser.events = require("../lib/events.coffee");
+        loggerLocal.expresser.logger = require("../lib/logger.coffee");
+
+        loggerLogentries = require("../plugins/logger-logentries/index.coffee");
+        loggerLogentries.expresser = require("../index.coffee");
+        loggerLogentries.expresser.events = require("../lib/events.coffee");
+        loggerLogentries.expresser.logger = require("../lib/logger.coffee");
+
+        loggerLoggly = require("../plugins/logger-loggly/index.coffee");
+        loggerLoggly.expresser = require("../index.coffee");
+        loggerLoggly.expresser.events = require("../lib/events.coffee");
+        loggerLoggly.expresser.logger = require("../lib/logger.coffee");
     });
 
     it("Has settings defined", function() {
         settings.should.have.property("logger");
+        settings.logger.should.have.property("local");
+        settings.logger.should.have.property("logentries");
+        settings.logger.should.have.property("loggly");
     });
 
     it("Inits", function() {
         logger.init();
+        transportLocal = loggerLocal.init();
+        loggerLogentries = loggerLogentries.init();
+        loggerLoggly = loggerLoggly.init();
     });
 
     it("Save log to local file", function(done) {
