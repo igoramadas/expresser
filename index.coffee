@@ -1,7 +1,7 @@
 # EXPRESSER
 # -----------------------------------------------------------------------------
 # A platform for Node.js web apps, built on top of Express.
-# If you need help check the project page at http://expresser.codeplex.com.
+# If you need help check the project page at http://github.com/igoramadas/expresser.
 class Expresser
 
     fs = require "fs"

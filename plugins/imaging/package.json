@@ -2,13 +2,13 @@
     "name": "expresser-imaging",
     "version": "0.0.1",
     "description": "A ImageMagick wrapper for Expresser.",
-    "homepage": "http://expresser.codeplex.com",
+    "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache License 2.0",
     "subdomain": "expresser-imaging",
     "main": "index",
     "domains": [
-        "expresser.codeplex.com"
+        "github.com/igoramadas/expresser"
     ],
     "engines": {
         "node": "*"

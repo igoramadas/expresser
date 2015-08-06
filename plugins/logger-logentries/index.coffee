@@ -1,6 +1,6 @@
 # EXPRESSER LOGGER - LOGENTRIES
 # --------------------------------------------------------------------------
-# Logentries plugin for Expresser's Logger module.
+# Logentries plugin for Expresser.
 # <!--
 # @see settings.logger.logentries
 # -->

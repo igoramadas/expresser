@@ -2,13 +2,13 @@
     "name": "expresser-database-mongo",
     "version": "0.0.1",
     "description": "MongoDB database plugin for Expresser.",
-    "homepage": "http://expresser.codeplex.com",
+    "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache License 2.0",
     "subdomain": "expresser-database-mongo",
     "main": "index",
     "domains": [
-        "expresser.codeplex.com"
+        "github.com/igoramadas/expresser"
     ],
     "engines": {
         "node": "*"
