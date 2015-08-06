@@ -1,56 +1,78 @@
-# EXPRESSER LOGGER - LOGENTRIES
+# EXPRESSER LOGGER - FILE
 # --------------------------------------------------------------------------
-# Logentries plugin for Expresser.
+# File logging plugin for Expresser.
 # <!--
-# @see settings.logger.logentries
+# @see settings.logger.file
 # -->
-class LoggerLogentries
+class LoggerFile
 
     events = null
     fs = require "fs"
     lodash = null
-    logentries = require "node-logentries"
     moment = null
     path = require "path"
     settings = null
-    utils = null
-
-    # The Logentries transport object.
-    loggerLogentries = null
 
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Logentries module. Verify which services are set, and add the necessary transports.
+    # Init the File module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
-    # @param [Object] options Logentries init options.
+    # @param [Object] options File init options.
     init: (options) =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         moment = @expresser.libs.moment
         settings = @expresser.settings
-        utils = @expresser.utils
 
-        if settings.logger.logentries.enabled and settings.logger.logentries.token? and settings.logger.logentries.token isnt ""
-            loggerLogentries = logentries.logger {token: settings.logger.logentries.token, timestamp: settings.logger.sendTimestamp}
-            loggerLogentries.on("log", logger.onLogSuccess) if lodash.isFunction @onLogSuccess
-            loggerLogentries.on("error", logger.onLogError) if lodash.isFunction @onLogError
-            logger.activeServices.push "Logentries"
+        logger.drivers.file = this
+
+        if settings.logger.file.enabled and settings.logger.file.path?
+            return logger.register "file", "file", settings.logger.file
+
+    # Get the file transport object.
+    # @param [Object] options Transport options including the token.
+    getTransport: (options) =>
+        if not options.path? or options.path is ""
+            throw new Error "The options.path is mandatory! Please specify a valid path to the logs folder."
+
+        options = lodash.defaults options, settings.logger.file
+
+        # Create logs folder if it doesn't exist.
+        folderExists = fs.existsSync options.path
+
+        if not folderExists
+            fs.mkdirSync options.path
+            if settings.general.debug
+                console.log "LoggerFile.getTransport", "Created #{options.path} folder."
+
+        # Set local buffer.
+        transport = {flushing: false, buffer: {}}
+        transport.bufferDispatcher = setInterval @flushLocal, options.bufferInterval
+
+        # Check the maxAge of local logs and set up auto clean.
+        if options.maxAge? and options.maxAge > 0
+            transport.timerCleanLocal = setInterval @cleanLocal, options.bufferInterval * 20
+
+        return transport
+
+    # LOG METHODS
+    # --------------------------------------------------------------------------
 
     # Log locally. The path is defined on `Settings.Path.logsDir`.
     # @param [String] logType The log type (info, warn, error, debug, etc).
     # @param [String] message Message to be logged.
     # @private
-    logLocal: (logType, message) ->
+    log: (logType, message) ->
         now = moment()
         message = now.format("HH:mm:ss.SSS") + " - " + message
-        localBuffer[logType] = [] if not localBuffer[logType]?
-        localBuffer[logType].push message
+        buffer[logType] = [] if not buffer[logType]?
+        buffer[logType].push message
 
     # Flush all local buffered log messages to disk. This is usually called by the `bufferDispatcher` timer.
     flushLocal: ->
-        return if flushing
+        return if @flushing
 
         # Set flushing and current date.
         flushing = true
@@ -60,14 +82,14 @@ class LoggerLogentries
         # Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
         # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
         # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
-        for key, logs of localBuffer
+        for key, logs of buffer
             if logs.length > 0
                 writeData = logs.join "\n"
                 filePath = path.join settings.path.logsDir, "#{date}.#{key}.log"
                 successMsg = "#{logs.length} records logged to disk."
 
                 # Reset this local buffer.
-                localBuffer[key] = []
+                buffer[key] = []
 
                 # Only use `appendFile` on new versions of Node.
                 if fs.appendFile?
@@ -97,7 +119,7 @@ class LoggerLogentries
 
     # Delete old log files from disk. The maximum date is defined on the settings.
     cleanLocal: ->
-        maxDate = moment().subtract settings.logger.local.maxAge, "d"
+        maxDate = moment().subtract settings.logger.file.maxAge, "d"
 
         fs.readdir settings.path.logsDir, (err, files) ->
             if err?
@@ -111,8 +133,8 @@ class LoggerLogentries
 
 # Singleton implementation
 # --------------------------------------------------------------------------
-LoggerLogentries.getInstance = ->
-    @instance = new LoggerLogentries() if not @instance?
+LoggerFile.getInstance = ->
+    @instance = new LoggerFile() if not @instance?
     return @instance
 
-module.exports = exports = LoggerLogentries.getInstance()
+module.exports = exports = LoggerFile.getInstance()

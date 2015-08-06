@@ -133,8 +133,6 @@
     "path": {
         // Path to the email templates folder.
         "emailTemplatesDir": "./emailtemplates/",
-        // Path to local logs folder.
-        "logsDir": "./logs/",
         // Path to the public folder used by Express.
         "publicDir": "./public/",
         // Path to the SSL key file.

@@ -27,28 +27,23 @@ class Utils
     getFilePath: (filename) ->
         originalFilename = "./" + filename.toString()
 
-        if fs.existsSync?
-            exists = fs.existsSync
-        else
-            exists = path.existsSync
-
         # Check if file exists.
-        hasFile = exists filename
+        hasFile = fs.existsSync filename
         return filename if hasFile
 
-        # Try current path..
+        # Try current path...
         filename = path.resolve __dirname, originalFilename
-        hasFile = exists filename
+        hasFile = fs.existsSync filename
         return filename if hasFile
 
-        # Try parent path..
+        # Try parent path...
         filename = path.resolve __dirname, "../", originalFilename
-        hasFile = exists filename
+        hasFile = fs.existsSync filename
         return filename if hasFile
 
         # If file does not exist on local path, try application root path.
         filename = path.resolve path.dirname(require.main.filename), originalFilename
-        hasFile = exists filename
+        hasFile = fs.existsSync filename
         return filename if hasFile
 
         # Nothing found, so return null.

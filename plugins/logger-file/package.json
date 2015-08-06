@@ -1,11 +1,11 @@
 {
-    "name": "expresser-logger-logentries",
+    "name": "expresser-logger-file",
     "version": "0.0.1",
-    "description": "Loggly plugin for Expresser.",
+    "description": "File logging plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache License 2.0",
-    "subdomain": "expresser-logger-logentries",
+    "subdomain": "expresser-logger-file",
     "main": "index",
     "domains": [
         "expresser.devv.com"
@@ -23,7 +23,7 @@
     },
     "keywords": [
         "expresser",
-        "logentries",
+        "file",
         "logger",
         "logging",
         "logs"

@@ -195,10 +195,7 @@ class Downloader
                     fileWriter.addListener "close", ->
 
                         # Check if temp file exists.
-                        if fs.existsSync?
-                            tempExists = fs.existsSync saveToTemp
-                        else
-                            tempExists = path.existsSync saveToTemp
+                        tempExists = fs.existsSync saveToTemp
 
                         # If temp download file can't be found, set error message.
                         # If `stopFlag` is 2 means download was stopped and should not keep partial data.
@@ -208,10 +205,7 @@ class Downloader
                             fs.unlinkSync saveToTemp if obj.stopFlag is 2
 
                         # Check if destination file already exists.
-                        if fs.existsSync?
-                            fileExists = fs.existsSync obj.saveTo
-                        else
-                            fileExists = path.existsSync obj.saveTo
+                        fileExists = fs.existsSync obj.saveTo
 
                         # Only proceed with renaming if `stopFlag` wasn't set and destionation is valid.
                         if not obj.stopFlag? or obj.stopFlag < 1
