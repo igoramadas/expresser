@@ -24,6 +24,7 @@ class LoggerLoggly
     # IP address and timestamp will be appended to logs depending on the settings.
     # @param [Object] options LoggerLoggly init options.
     init: (options) =>
+        return
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings

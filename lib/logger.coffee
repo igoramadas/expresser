@@ -1,6 +1,7 @@
 # EXPRESSER LOGGER
 # --------------------------------------------------------------------------
-# Handles server logging using local files, Logentries or Loggly.
+# Handles server logging using local files, Logentries, Loggly and other
+# transports available as plugins.
 # Multiple services can be enabled at the same time.
 # <!--
 # @see settings.logger
@@ -24,10 +25,10 @@ class Logger
     # @property [Object] List of registered transports.
     transports: {}
 
-    # @property [Method] Custom method to call when logs are sent to logging server or flushed to disk.
+    # @property [Method] Custom (result) method to call when logs are sent to logging server or flushed to disk.
     onLogSuccess: null
 
-    # @property [Method] Custom method to call when errors are triggered by the logging transport.
+    # @property [Method] Custom (err) method to call when errors are triggered by the logging transport.
     onLogError: null
 
     # INIT
@@ -62,10 +63,11 @@ class Logger
     # Register a Logger transport. This is called by Logger plugins.
     register: (id, driver, options) =>
         if not @transports[driver]?
-            logger.error "Logger.register", "The transport #{driver} is not installed! Please check if plugin expresser-logger-#{driver} is available on the current environment."
+            console.error "Logger.register", "The transport #{driver} is not installed! Please check if plugin expresser-logger-#{driver} is available on the current environment."
             return false
         else
-            logger.debug "Logger.register", id, driver, options
+            if settings.general.debug
+                console.log "Logger.register", id, driver, options
 
             @transports[id] = {transport: @drivers[driver].getTransport options}
             @transports[id].log = @drivers[driver].log
@@ -84,12 +86,7 @@ class Logger
     # @param [String] logType The log type (for example: warning, error, info, security, etc).
     # @param [String] logFunc Optional, the logging function name to be passed to the console and Logentries.
     # @param [Array] args Array of arguments to be stringified and logged.
-    log: (logType, logFunc, args) =>
-        if not args? and logFunc?
-            args = logFunc
-            logFunc = "info"
-
-        # Abort if the log type is not present on the `settings.logger.levels`.
+    log: (logType, args) =>
         return if settings.logger.levels.indexOf(logType) < 0
 
         # Get message out of the arguments.
@@ -97,7 +94,7 @@ class Logger
 
         # Dispatch to all registered transports.
         for key, obj of @transports
-            obj.log logType, logFunc, msg
+            obj.log logType, msg
 
         # Log to the console depending on `console` setting.
         if settings.logger.console
@@ -115,35 +112,35 @@ class Logger
 
         args = Array.prototype.slice.call arguments
         args.unshift "DEBUG"
-        @log "debug", "info", args
+        @log "debug", args
 
     # Log to the active transports as `info`.
     # All arguments are transformed to readable strings.
     info: ->
         args = Array.prototype.slice.call arguments
         args.unshift "INFO"
-        @log "info", "info", args
+        @log "info", args
 
     # Log to the active transports as `warn`.
     # All arguments are transformed to readable strings.
     warn: ->
         args = Array.prototype.slice.call arguments
         args.unshift "WARN"
-        @log "warn", "warning", args
+        @log "warn", args
 
     # Log to the active transports as `error`.
     # All arguments are transformed to readable strings.
     error: ->
         args = Array.prototype.slice.call arguments
         args.unshift "ERROR"
-        @log "error", "err", args
+        @log "error", args
 
     # Log to the active transports as `critical`.
     # All arguments are transformed to readable strings.
     critical: ->
         args = Array.prototype.slice.call arguments
         args.unshift "CRITICAL"
-        @log "critical", "err", args
+        @log "critical", args
 
     # HELPER METHODS
     # --------------------------------------------------------------------------

@@ -25,6 +25,7 @@ class LoggerLogentries
     # IP address and timestamp will be appended to logs depending on the settings.
     # @param [Object] options Logentries init options.
     init: (options) =>
+        return
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger

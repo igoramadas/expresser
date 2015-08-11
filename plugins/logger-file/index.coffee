@@ -1,6 +1,7 @@
 # EXPRESSER LOGGER - FILE
 # --------------------------------------------------------------------------
-# File logging plugin for Expresser.
+# File logging plugin for Expresser. Supports saving directly to the disk
+# using one file per log type per day, and includes auto cleaning features.
 # <!--
 # @see settings.logger.file
 # -->
@@ -32,7 +33,7 @@ class LoggerFile
             return logger.register "file", "file", settings.logger.file
 
     # Get the file transport object.
-    # @param [Object] options Transport options including the token.
+    # @param [Object] options File logging options.
     getTransport: (options) =>
         if not options.path? or options.path is ""
             throw new Error "The options.path is mandatory! Please specify a valid path to the logs folder."
@@ -42,6 +43,7 @@ class LoggerFile
         # Create logs folder if it doesn't exist.
         folderExists = fs.existsSync options.path
 
+        # Make sure the log folder exists.
         if not folderExists
             fs.mkdirSync options.path
             if settings.general.debug
@@ -49,11 +51,11 @@ class LoggerFile
 
         # Set local buffer.
         transport = {flushing: false, buffer: {}}
-        transport.bufferDispatcher = setInterval @flushLocal, options.bufferInterval
+        transport.bufferDispatcher = setInterval @flush, options.bufferInterval
 
         # Check the maxAge of local logs and set up auto clean.
         if options.maxAge? and options.maxAge > 0
-            transport.timerCleanLocal = setInterval @cleanLocal, options.bufferInterval * 20
+            transport.timerCleanLocal = setInterval @clean, options.bufferInterval * 20
 
         return transport
 
@@ -64,18 +66,27 @@ class LoggerFile
     # @param [String] logType The log type (info, warn, error, debug, etc).
     # @param [String] message Message to be logged.
     # @private
-    log: (logType, message) ->
+    log: (logType, args) ->
+        return if settings.logger.levels.indexOf(logType) < 0
+
+        # Get message out of the arguments if not a string.
+        if lodash.isString args
+            message = args
+        else
+            message = logger.getMessage args
+
+        # Set log props and send to buffer.
         now = moment()
         message = now.format("HH:mm:ss.SSS") + " - " + message
         buffer[logType] = [] if not buffer[logType]?
         buffer[logType].push message
 
     # Flush all local buffered log messages to disk. This is usually called by the `bufferDispatcher` timer.
-    flushLocal: ->
+    flush: ->
         return if @flushing
 
-        # Set flushing and current date.
-        flushing = true
+        # Set flushing and get current date.
+        @flushing = true
         now = moment()
         date = now.format "YYYYMMDD"
 
@@ -94,42 +105,27 @@ class LoggerFile
                 # Only use `appendFile` on new versions of Node.
                 if fs.appendFile?
                     fs.appendFile filePath, writeData, (err) =>
-                        flushing = false
+                        @flushing = false
                         if err?
-                            console.error "Logger.flushLocal", err
-                            @onLogError err if @onLogError?
+                            console.error "Logger.flush", err
+                            logger.onLogError? err
                         else
-                            @onLogSuccess successMsg if @onLogSuccess?
-
-                else
-                    fs.open filePath, "a", 666, (err1, fd) =>
-                        if err1?
-                            flushing = false
-                            console.error "Logger.flushLocal.open", err1
-                            @onLogError err1 if @onLogError?
-                        else
-                            fs.write fd, writeData, null, settings.general.encoding, (err2) =>
-                                flushing = false
-                                if err2?
-                                    console.error "Logger.flushLocal.write", err2
-                                    @onLogError err2 if @onLogError?
-                                else
-                                    @onLogSuccess successMsg if @onLogSuccess?
-                                fs.closeSync fd
+                            @onLogSuccess? successMsg
 
     # Delete old log files from disk. The maximum date is defined on the settings.
-    cleanLocal: ->
+    clean: ->
         maxDate = moment().subtract settings.logger.file.maxAge, "d"
 
         fs.readdir settings.path.logsDir, (err, files) ->
             if err?
-                console.error "Logger.cleanLocal", err
+                console.error "Logger.clean", err
             else
                 for f in files
                     date = moment f.split(".")[1], "yyyyMMdd"
                     if date.isBefore maxDate
                         fs.unlink path.join(settings.path.logsDir, f), (err) ->
-                            console.error "Logger.cleanLocal", err if err?
+                            if err?
+                                console.error "Logger.clean", err
 
 # Singleton implementation
 # --------------------------------------------------------------------------

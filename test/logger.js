@@ -11,17 +11,33 @@ describe("Logger Tests", function() {
     var settings = require("../lib/settings.coffee");
     settings.loadFromJson("settings.test.json");
     settings.loadFromJson("settings.test.keys.json");
-    settings.loadFromJson("../plugins/logger-local/settings.default.json");
+    settings.loadFromJson("../plugins/logger-file/settings.default.json");
     settings.loadFromJson("../plugins/logger-logentries/settings.default.json");
     settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
 
     var logger = null;
-    var loggerLocal = null;
+    var loggerFile = null;
     var loggerLogentries = null;
     var loggerLoggly = null;
-    var transportLocal = null;
+    var transportFile = null;
     var transportLogentries = null;
     var transportLoggly = null;
+
+    var helperLogOnSuccess = function(transport, done) {
+        return function(result) {
+            transport.expresser.logger.onLogSuccess = null;
+            transport.expresser.logger.onLogError = null;
+            done();
+        };
+    };
+
+    var helperLogOnError = function(transport, done) {
+        return function(err) {
+            transport.expresser.logger.onLogSuccess = null;
+            transport.expresser.logger.onLogError = null;
+            done(err);
+        };
+    };
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
@@ -29,10 +45,10 @@ describe("Logger Tests", function() {
     before(function(){
         logger = require("../lib/logger.coffee");
 
-        loggerLocal = require("../plugins/logger-local/index.coffee");
-        loggerLocal.expresser = require("../index.coffee");
-        loggerLocal.expresser.events = require("../lib/events.coffee");
-        loggerLocal.expresser.logger = require("../lib/logger.coffee");
+        loggerFile = require("../plugins/logger-file/index.coffee");
+        loggerFile.expresser = require("../index.coffee");
+        loggerFile.expresser.events = require("../lib/events.coffee");
+        loggerFile.expresser.logger = require("../lib/logger.coffee");
 
         loggerLogentries = require("../plugins/logger-logentries/index.coffee");
         loggerLogentries.expresser = require("../index.coffee");
@@ -47,42 +63,25 @@ describe("Logger Tests", function() {
 
     it("Has settings defined", function() {
         settings.should.have.property("logger");
-        settings.logger.should.have.property("local");
+        settings.logger.should.have.property("file");
         settings.logger.should.have.property("logentries");
         settings.logger.should.have.property("loggly");
     });
 
     it("Inits", function() {
         logger.init();
-        transportLocal = loggerLocal.init();
-        loggerLogentries = loggerLogentries.init();
-        loggerLoggly = loggerLoggly.init();
+
+        transportFile = loggerFile.init();
+        transportLogentries = loggerLogentries.init();
+        transportLoggly = loggerLoggly.init();
     });
 
-    it("Save log to local file", function(done) {
-        var isDone = false;
+    it("Save log to file", function(done) {
+        loggerFile.expresser.logger.onLogSuccess = helperLogOnSuccess(loggerFile, done);
+        loggerFile.expresser.logger.onLogError = helperLogOnError(loggerFile, done);
 
-        settings.logger.loggly.enabled = false;
-        settings.logger.logentries.enabled = false;
-        settings.logger.local.enabled = true;
-
-        logger.onLogSuccess = function(result) {
-            logger.onLogSuccess = null;
-            logger.onLogError = null;
-            if (!isDone) done();
-        };
-
-        logger.onLogError = function(err) {
-            logger.onLogSuccess = null;
-            logger.onLogError = null;
-            if (!isDone) done(err);
-        };
-
-        logger.initLocal();
-        logger.info("Expresser local disk log test.", new Date());
-        logger.flushLocal();
-
-        settings.logger.local.enabled = false;
+        transportFile.info("Expresser local disk log test.", new Date());
+        transportFile.flush();
     });
 
     it("Send log to Logentries", function(done) {

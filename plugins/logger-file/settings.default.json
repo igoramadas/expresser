@@ -1,11 +1,11 @@
-// EXPRESSER LOGGER - LOGENTRIES SETTINGS
+// EXPRESSER LOGGER - FILE SETTINGS
 {
     "logger": {
         "file": {
             // Enable local file logging?
             "enabled": true,
-            // The bufferInterval defines the delay in between disk saves, in milliseconds.
-            "bufferInterval": 10000,
+            // The bufferInterval defines the delay between disk saves, in milliseconds.
+            "bufferInterval": 20000,
             // Sets the max age of log files, in days. Default is 30 days. Setting the
             // maxAge to to 0 or null will cancel the automatic log cleaning.
             "maxAge": 30,
