@@ -62,14 +62,14 @@ class Logger
 
     # Register a Logger transport. This is called by Logger plugins.
     register: (id, driver, options) =>
-        if not @transports[driver]?
+        if not @drivers[driver]?
             console.error "Logger.register", "The transport #{driver} is not installed! Please check if plugin expresser-logger-#{driver} is available on the current environment."
             return false
         else
             if settings.general.debug
                 console.log "Logger.register", id, driver, options
 
-            @transports[id] = {transport: @drivers[driver].getTransport options}
+            @transports[id] = @drivers[driver].getTransport options
             @transports[id].log = @drivers[driver].log
             @transports[id].debug = @debug
             @transports[id].info = @info
@@ -82,10 +82,20 @@ class Logger
     # LOG METHODS
     # --------------------------------------------------------------------------
 
+    # Log to the console.
+    # @param [String] logType The log type (for example: warning, error, info, security, etc).
+    # @param [Array] args Array of arguments to be stringified and logged.
+    console: (logType, args) =>
+        args.unshift moment().format "HH:mm:ss.SS"
+
+        if settings.logger.errorLogTypes.indexOf(logType) >= 0
+            console.error.apply this, args
+        else
+            console.log.apply this, args
+
     # Internal generic log method.
     # @param [String] logType The log type (for example: warning, error, info, security, etc).
-    # @param [String] logFunc Optional, the logging function name to be passed to the console and Logentries.
-    # @param [Array] args Array of arguments to be stringified and logged.
+    # @param [Array] args Array to be stringified and logged.
     log: (logType, args) =>
         return if settings.logger.levels.indexOf(logType) < 0
 
@@ -94,16 +104,11 @@ class Logger
 
         # Dispatch to all registered transports.
         for key, obj of @transports
-            obj.log logType, msg
+            obj.log logType, msg, true
 
         # Log to the console depending on `console` setting.
         if settings.logger.console
-            args.unshift moment().format "HH:mm:ss.SS"
-
-            if settings.logger.errorLogTypes.indexOf(logType) >= 0
-                console.error.apply this, args
-            else
-                console.log.apply this, args
+            @console logType, args
 
     # Log to the active transports as `debug`, only if the debug flag is enabled.
     # All arguments are transformed to readable strings.

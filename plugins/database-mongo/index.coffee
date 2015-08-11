@@ -41,7 +41,7 @@ class DatabaseMongo
         connStringSafe = connStringSafe.substring sep if sep > 0
         logger.debug "DatabaseMongo.getConnection", connStringSafe, options
 
-        return mongoskin.db connString, options
+        return {connection: mongoskin.db connString, options}
 
     # HELPERS
     # -------------------------------------------------------------------------

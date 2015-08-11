@@ -10,6 +10,7 @@ class LoggerFile
     events = null
     fs = require "fs"
     lodash = null
+    logger = null
     moment = null
     path = require "path"
     settings = null
@@ -50,12 +51,12 @@ class LoggerFile
                 console.log "LoggerFile.getTransport", "Created #{options.path} folder."
 
         # Set local buffer.
-        transport = {flushing: false, buffer: {}}
-        transport.bufferDispatcher = setInterval @flush, options.bufferInterval
+        transport = {flushing: false, buffer: {}, flush: @flush, clean: @clean}
+        transport.bufferDispatcher = setInterval transport.flush, options.bufferInterval
 
         # Check the maxAge of local logs and set up auto clean.
         if options.maxAge? and options.maxAge > 0
-            transport.timerCleanLocal = setInterval @clean, options.bufferInterval * 20
+            transport.timerCleanLocal = setInterval transport.clean, options.bufferInterval * 20
 
         return transport
 
@@ -64,9 +65,9 @@ class LoggerFile
 
     # Log locally. The path is defined on `Settings.Path.logsDir`.
     # @param [String] logType The log type (info, warn, error, debug, etc).
-    # @param [String] message Message to be logged.
-    # @private
-    log: (logType, args) ->
+    # @param [Array] args Array to be stringified and logged.
+    # @param [Boolean] avoidConsole If true it will NOT log to the console.
+    log: (logType, args, avoidConsole) ->
         return if settings.logger.levels.indexOf(logType) < 0
 
         # Get message out of the arguments if not a string.
@@ -78,8 +79,12 @@ class LoggerFile
         # Set log props and send to buffer.
         now = moment()
         message = now.format("HH:mm:ss.SSS") + " - " + message
-        buffer[logType] = [] if not buffer[logType]?
-        buffer[logType].push message
+        @buffer[logType] = [] if not @buffer[logType]?
+        @buffer[logType].push message
+
+        # Log to the console depending on `console` setting.
+        if settings.logger.console and not avoidConsole
+            parent.console logType, args
 
     # Flush all local buffered log messages to disk. This is usually called by the `bufferDispatcher` timer.
     flush: ->
@@ -93,14 +98,14 @@ class LoggerFile
         # Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
         # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
         # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
-        for key, logs of buffer
+        for key, logs of @buffer
             if logs.length > 0
                 writeData = logs.join "\n"
-                filePath = path.join settings.path.logsDir, "#{date}.#{key}.log"
+                filePath = path.join settings.logger.file.path, "#{date}.#{key}.log"
                 successMsg = "#{logs.length} records logged to disk."
 
                 # Reset this local buffer.
-                buffer[key] = []
+                @buffer[key] = []
 
                 # Only use `appendFile` on new versions of Node.
                 if fs.appendFile?
@@ -110,20 +115,23 @@ class LoggerFile
                             console.error "Logger.flush", err
                             logger.onLogError? err
                         else
-                            @onLogSuccess? successMsg
+                            logger.onLogSuccess? successMsg
 
-    # Delete old log files from disk. The maximum date is defined on the settings.
-    clean: ->
-        maxDate = moment().subtract settings.logger.file.maxAge, "d"
+    # Delete old log files from disk. The maximum date is taken from the settings
+    # if not passed.
+    # @param [Integer] maxAge Max age of logs, in days.
+    clean: (maxAge) ->
+        maxAge = settings.logger.file.maxAge if not maxAge?
+        maxDate = moment().subtract maxAge, "d"
 
-        fs.readdir settings.path.logsDir, (err, files) ->
+        fs.readdir settings.logger.file.path, (err, files) ->
             if err?
                 console.error "Logger.clean", err
             else
                 for f in files
                     date = moment f.split(".")[1], "yyyyMMdd"
                     if date.isBefore maxDate
-                        fs.unlink path.join(settings.path.logsDir, f), (err) ->
+                        fs.unlink path.join(settings.logger.file.path, f), (err) ->
                             if err?
                                 console.error "Logger.clean", err
 

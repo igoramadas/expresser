@@ -52,7 +52,7 @@ class Database
         else
             logger.debug "Database.register", id, driver, options
 
-            @db[id] = {connection: @drivers[driver].getConnection connString, options}
+            @db[id] = @drivers[driver].getConnection connString, options
             @db[id].get = @drivers[driver].get
             @db[id].insert = @drivers[driver].insert
             @db[id].update = @drivers[driver].update
