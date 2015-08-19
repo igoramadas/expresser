@@ -85,64 +85,20 @@ describe("Logger Tests", function() {
     });
 
     it("Send log to Logentries", function(done) {
-        var isDone = false;
-
         this.timeout(10000);
 
-        if (!settings.logger.logentries.token) {
-            return done(new Error("The Logentries token was not set (settings.logger.logentries.token)."));
-        }
+        loggerLogentries.expresser.logger.onLogSuccess = helperLogOnSuccess(loggerLogentries, done);
+        loggerLogentries.expresser.logger.onLogError = helperLogOnError(loggerLogentries, done);
 
-        settings.logger.loggly.enabled = false;
-        settings.logger.local.enabled = false;
-        settings.logger.logentries.enabled = true;
-
-        logger.onLogSuccess = function() {
-            logger.onLogSuccess = null;
-            logger.onLogError = null;
-            if (!isDone) done();
-        };
-
-        logger.onLogError = function(err) {
-            logger.onLogSuccess = null;
-            logger.onLogError = null;
-            if (!isDone) done(err);
-        };
-
-        logger.initLogentries();
-        logger.info("Expresser Logentries test.", new Date());
-
-        settings.logger.logentries.enabled = false;
+        transportLogentries.info("Expresser Logentries log test.", new Date());
     });
 
     it("Send log to Loggly", function(done) {
-        var isDone = false;
-
         this.timeout(10000);
 
-        if (!settings.logger.loggly.token) {
-            return done(new Error("The Logentries token was not set (settings.logger.loggly.token)."));
-        }
+        loggerLoggly.expresser.logger.onLogSuccess = helperLogOnSuccess(loggerLoggly, done);
+        loggerLoggly.expresser.logger.onLogError = helperLogOnError(loggerLoggly, done);
 
-        settings.logger.logentries.enabled = false;
-        settings.logger.local.enabled = false;
-        settings.logger.loggly.enabled = true;
-
-        logger.onLogSuccess = function(result) {
-            logger.onLogSuccess = null;
-            logger.onLogError = null;
-            if (!isDone) done();
-        };
-
-        logger.onLogError = function(err) {
-            logger.onLogSuccess = null;
-            logger.onLogError = null;
-            if (!isDone) done(err);
-        };
-
-        logger.initLoggly();
-        logger.info("Expresser Loggly test.", new Date());
-
-        settings.logger.loggly.enabled = false;
+        transportLoggly.info("Expresser Loggly log test.", new Date());
     });
 });
