@@ -1,4 +1,7 @@
 {
+    "app": {
+        "title": "Expresser Test"
+    },
     "general": {
         "debug": false
     },

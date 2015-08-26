@@ -38,16 +38,6 @@ describe("Mailer Tests", function() {
     it("Sends a test email using Mandrill", function(done) {
         this.timeout(20000);
 
-        if (!settings.mailer.smtp.password) {
-            return done(new Error("The mailer SMTP password was not set (settings.mailer.smtp.password)."));
-        }
-
-        var smtpOptions = {
-            password: settings.mailer.smtp.password,
-            user: "devv@devv.com",
-            service: "mandrill"
-        };
-
         var msgOptions = {
             body: "Mail testing: app {appTitle}, to {to}.",
             subject: "Test mail",
@@ -63,7 +53,6 @@ describe("Mailer Tests", function() {
             }
         };
 
-        mailer.setSmtp(smtpOptions);
         mailer.send(msgOptions, callback);
     });
 });

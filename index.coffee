@@ -91,6 +91,7 @@ class Expresser
         # App must be the last thing to be started!
         # The Firewall and Sockets modules are initiated inside the App
         # depending on their settings.
+        @app.expresser = self
         @app.init options?.app
 
 # Singleton implementation

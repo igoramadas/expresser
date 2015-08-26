@@ -8,9 +8,10 @@
 # -->
 class Sockets
 
-    lodash = require "lodash"
-    logger = require "./logger.coffee"
-    settings = require "./settings.coffee"
+    events = null
+    lodash =  null
+    logger = null
+    settings = null
 
     # @property [Array] Holds a list of current event listeners.
     currentListeners: null
@@ -20,6 +21,13 @@ class Sockets
 
     # INIT
     # --------------------------------------------------------------------------
+
+    # Init the Sockets plugin.
+    init: (options) =>
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        settings = @expresser.settings
 
     # Bind the Socket.IO object to the Express app. This will also set the counter
     # to increase / decrease when users connects or disconnects from the app.

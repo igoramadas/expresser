@@ -24,8 +24,4 @@ describe("App Tests", function() {
     it("Has settings defined", function() {
         settings.should.have.property("app");
     });
-
-    it("Inits", function() {
-        app.init();
-    });
 });

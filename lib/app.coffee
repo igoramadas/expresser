@@ -184,6 +184,7 @@ class App
 
         # Enable sockets?
         if settings.sockets.enabled
+            sockets = @expresser.sockets
             sockets.bind server
 
         if settings.app.ip? and settings.app.ip isnt ""
