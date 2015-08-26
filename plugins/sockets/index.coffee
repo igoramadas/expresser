@@ -4,7 +4,7 @@
 # ATTENTION! The Sockets module is started automatically by the App module.
 # If you wish to disable it, set `Settings.sockets.enabled` to false.
 # <!--
-# @see Settings.sockets
+# @see settings.sockets
 # -->
 class Sockets
 

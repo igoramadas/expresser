@@ -9,10 +9,9 @@ describe("Mailer Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    if (!settings.testKeysLoaded) {
-        settings.loadFromJson("settings.test.keys.json");
-        settings.testKeysLoaded = true;
-    }
+    settings.loadFromJson("../plugins/mailer/settings.default.json");
+    settings.loadFromJson("settings.test.json");
+    settings.loadFromJson("settings.test.keys.json");
 
     var utils = null;
     var mailer = null;
@@ -22,13 +21,10 @@ describe("Mailer Tests", function() {
 
     before(function(){
         utils = require("../lib/utils.coffee");
-        mailer = require("../lib/mailer.coffee");
-    });
-
-    it("Is single instance", function() {
-        mailer.singleInstance = true;
-        var mailer2 = require("../lib/mailer.coffee");
-        mailer.singleInstance.should.equal(mailer2.singleInstance);
+        mailer = require("../plugins/mailer/index.coffee");
+        mailer.expresser = require("../index.coffee");
+        mailer.expresser.events = require("../lib/events.coffee");
+        mailer.expresser.logger = require("../lib/logger.coffee");
     });
 
     it("Has settings defined", function() {

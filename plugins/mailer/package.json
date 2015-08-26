@@ -1,11 +1,11 @@
 {
-    "name": "expresser-downloader",
+    "name": "expresser-mailer",
     "version": "0.0.1",
-    "description": "Download manager plugin for Expresser.",
+    "description": "Email sender plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache License 2.0",
-    "subdomain": "expresser-downloader",
+    "subdomain": "expresser-mailer",
     "main": "index",
     "domains": [
         "expresser.devv.com"
@@ -21,9 +21,9 @@
         "url": "https://git01.codeplex.com/expresser"
     },
     "keywords": [
-        "download manager",
-        "downloader",
+        "email",
         "expresser",
-        "wget"
+        "mailer",
+        "smtp"
     ]
 }

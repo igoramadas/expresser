@@ -1,3 +1,3 @@
-# Expresser: Cron
+# Expresser: Mailer
 
-Task scheduler plugin for Expresser apps.
+Email (SMTP and REST) sender plugin for Expresser.

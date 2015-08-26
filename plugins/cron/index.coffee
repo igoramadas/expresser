@@ -52,10 +52,11 @@ class Cron
         utils = @expresser.utils
 
         logger.debug "Cron.init", options
-        lodash.assign settings.cron, options if options?
+        options = {} if not options?
+        options = lodash.defaultsDeep options, settings.cron
 
         @setEvents() if settings.events.enabled
-        @load true if settings.cron.loadOnInit
+        @load true if options.loadOnInit
 
     # Bind events.
     setEvents: =>

@@ -54,7 +54,6 @@
         // The app's base URL, including http://.
         "url": "http://github.com/igoramadas/expresser"
     },
-
     // DATABASE
     // ----------------------------------------------------------------------
     "database": {
@@ -65,9 +64,6 @@
         // How long between connection retries, in milliseconds. Default is half a second.
         "retryInterval": 500
     },
-
-
-
     // EVENTS
     // -------------------------------------------------------------------------
     "events": {
@@ -75,14 +71,12 @@
         // inter-module features will not work, although it won't give you exceptions on errors.
         "enabled": true
     },
-
     // FIREWALL
     // -------------------------------------------------------------------------
     "firewall": {
         // Built-in firewall is disable by default.
         "enabled": false
     },
-
     // GENERAL
     // -------------------------------------------------------------------------
     "general": {
@@ -97,7 +91,6 @@
         // How long (seconds) should files read from disk (email templates for example) stay in cache?
         "ioCacheTimeout": 60
     },
-
     // LOGGER
     // -------------------------------------------------------------------------
     "logger": {
@@ -112,7 +105,12 @@
         "errorLogTypes": "err,error,warn,warning,critical",
         // Define which log levels should be enabled. For example if you only want to log warnings and errors,
         // set this value to ["warn", "error"].
-        "levels": ["info", "warn", "error", "critical"],
+        "levels": [
+            "info",
+            "warn",
+            "error",
+            "critical"
+        ],
         // List will all field / property names to be removed from logs.
         // Default list is "Password, password, passwordHash and passwordEncrypted".
         "removeFields": "Password,password,passwordHash,passwordEncrypted",
@@ -127,7 +125,6 @@
         // event on the process and log all uncaught expcetions as errors.
         "uncaughtException": true
     },
-
     // PATH
     // -------------------------------------------------------------------------
     "path": {
@@ -141,12 +138,5 @@
         "sslCertFile": null,
         // Path where the .jade views are stored.
         "viewsDir": "./views/"
-    },
-
-    // SOCKETS
-    // -------------------------------------------------------------------------
-    "sockets": {
-        // Enable the Sockets module?
-        "enabled": true
     }
 }

@@ -9,9 +9,9 @@ describe("Cron Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("../plugins/cron/settings.default.json");
     settings.loadFromJson("settings.test.json");
     settings.loadFromJson("settings.test.keys.json");
-    settings.loadFromJson("../plugins/cron/settings.default.json");
 
     var utils = null;
     var cron = null;
@@ -27,12 +27,12 @@ describe("Cron Tests", function() {
         cron.expresser.logger = require("../lib/logger.coffee");
     });
 
-    it("Inits", function() {
-        cron.init();
-    });
-
     it("Has settings defined", function() {
         settings.should.have.property("cron");
+    });
+
+    it("Inits", function() {
+        cron.init();
     });
 
     it("Add and run a cron job, passing itself to the callback", function(done) {

@@ -6,21 +6,19 @@
 # must be saved as base.html, under the /emailtemplates folder (or whatever
 # folder / base file name you have set on the settings).
 # <!--
-# @see Settings.mailer
+# @see settings.mailer
 # -->
 class Mailer
 
-    events = require "./events.coffee"
+    events = null
     fs = require "fs"
-    lodash = require "lodash"
-    logger = require "./logger.coffee"
-    moment = require "moment"
+    lodash = null
+    logger = null
+    moment = null
+    nodemailer = require "nodemailer"
     path = require "path"
-    settings = require "./settings.coffee"
-    utils = require "./utils.coffee"
-
-    # Nodemailer will be set on init.
-    nodemailer = null
+    settings = null
+    utils = null
 
     # SMTP objects will be instantiated on `init`.
     smtp: null
@@ -29,50 +27,44 @@ class Mailer
     # Templates cache to avoid disk reads.
     templateCache = {}
 
-    # CONSTRUCTOR AND INIT
+    # INIT
     # --------------------------------------------------------------------------
-
-    # Mailer constructor.
-    constructor: ->
-        @setEvents() if settings.events.enabled
-
-    # Bind event listeners.
-    setEvents: =>
-        events.on "Mailer.send", @send
 
     # Init the Mailer module and create the SMTP objects.
     # @param [Object] options Mailer init options.
     init: (options) =>
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        moment = @expresser.libs.moment
+        settings = @expresser.settings
+        utils = @expresser.utils
+
         logger.debug "Mailer.init", options
-        lodash.assign settings.mailer, options if options?
+        options = {} if not options?
+        options = lodash.defaultsDeep options, settings.mailer
 
-        nodemailer = require "nodemailer" if not nodemailer?
+        if options.smtp.service? and options.smtp.service isnt ""
+            @setSmtp options.smtp, false
+        else if options.smtp.host? and options.smtp.host isnt "" and options.smtp.port > 0
+            @setSmtp options.smtp, false
 
-        if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
-            @setSmtp settings.mailer.smtp, false
-        else if settings.mailer.smtp.host? and settings.mailer.smtp.host isnt "" and settings.mailer.smtp.port > 0
-            @setSmtp settings.mailer.smtp, false
-
-        if settings.mailer.smtp2.service? and settings.mailer.smtp2.service isnt ""
-            @setSmtp settings.mailer.smtp2, true
-        else if settings.mailer.smtp2.host? and settings.mailer.smtp2.host isnt "" and settings.mailer.smtp2.port > 0
-            @setSmtp settings.mailer.smtp2, true
+        if options.smtp2.service? and options.smtp2.service isnt ""
+            @setSmtp options.smtp2, true
+        else if options.smtp2.host? and options.smtp2.host isnt "" and options.smtp2.port > 0
+            @setSmtp options.smtp2, true
 
         # Alert user if specified backup SMTP but not the main one.
-        if not smtp? and smtp2?
-            logger.warn "Mailer.init", "The secondary SMTP is defined but not the main one.", "You should set the main one instead."
+        if not @smtp? and @smtp2?
+            logger.warn "Mailer.init", "The secondary SMTP is defined but not the main one.", "You should set the main one instead, but we'll still use the secondary."
 
         # Warn if no SMTP is available for sending emails, but only when debug is enabled.
-        if not @checkConfig()
+        if options.enabled and not @smtp? and not @smtp2?
             logger.warn "Mailer.init", "No default SMTP settings were provided.", "No emails will be sent out if you don't pass a SMTP server on send."
 
-    # Check if configuration for sending emails is properly set.
-    # @return [Boolean] Returns true if any smtp server is active, otherwise false.
-    checkConfig: =>
-        if @smtp or @smtp2?
-            return true
-        else
-            return false
+    # Bind event listeners.
+    setEvents: =>
+        events.on "Mailer.send", @send
 
     # OUTBOUND
     # --------------------------------------------------------------------------

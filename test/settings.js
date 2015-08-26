@@ -9,10 +9,8 @@ describe("Settings Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    if (!settings.testKeysLoaded) {
-        settings.loadFromJson("settings.test.keys.json");
-        settings.testKeysLoaded = true;
-    }
+    settings.loadFromJson("settings.test.json");
+    settings.loadFromJson("settings.test.keys.json");
 
     var fs = require("fs");
     var utils = null;
@@ -106,8 +104,8 @@ describe("Settings Tests", function() {
 
         if (decrypted.encrypted) {
             return callback("Property 'encrypted' was not unset / deleted.")
-        } if (decrypted.general.appTitle != "Expresser") {
-            return callback("Decryption failed, settings.general.appTitle is still encrypted.")
+        } if (decrypted.app.title != "Expresser") {
+            return callback("Decryption failed, settings.app.title is still encrypted.")
         }
 
         callback();

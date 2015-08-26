@@ -27,10 +27,11 @@ class DatabaseMongo
         database.drivers.mongo = this
 
         logger.debug "DatabaseMongo.init", options
-        lodash.assign settings.database.mongo, options if options?
+        options = {} if not options?
+        options = lodash.defaultsDeep options, settings.database.mongo
 
-        if settings.database.mongo.enabled and settings.database.mongo.connString?
-            return database.register "mongo", "mongo", settings.database.mongo.connString, settings.database.mongo.options
+        if options.enabled and options.connString?
+            return database.register "mongo", "mongo", options.connString, options.options
 
     # Get the DB connection object.
     # @param [Object] connString The connection string, for example user:password@hostname/dbname.

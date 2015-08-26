@@ -9,9 +9,9 @@ describe("Database Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("../plugins/database-mongo/settings.default.json");
     settings.loadFromJson("settings.test.json");
     settings.loadFromJson("settings.test.keys.json");
-    settings.loadFromJson("../plugins/database-mongo/settings.default.json");
 
     var utils = null;
     var database = null;

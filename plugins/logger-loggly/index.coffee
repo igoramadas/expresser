@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------------
 # Logger plugin to log to Loggly (www.loggly.com).
 # <!--
-# @see Settings.logger.loggly
+# @see settings.logger.loggly
 # -->
 class LoggerLoggly
 

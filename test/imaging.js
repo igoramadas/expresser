@@ -9,8 +9,9 @@ describe("Imaging Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    settings.loadFromJson("settings.test.json");
     settings.loadFromJson("../plugins/imaging/settings.default.json");
+    settings.loadFromJson("settings.test.json");
+    settings.loadFromJson("settings.test.keys.json");
 
     var path = require("path");
     var imaging = null;
