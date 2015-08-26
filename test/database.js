@@ -42,7 +42,7 @@ describe("Database Tests", function() {
     });
 
     it("Add simple record to the database", function(done) {
-        this.timeout(5000);
+        this.timeout(10000);
 
         var callback = function(err, result) {
             if (err) {
@@ -58,7 +58,7 @@ describe("Database Tests", function() {
     });
 
     it("Add complex record to the database", function(done) {
-        this.timeout(5000);
+        this.timeout(10000);
 
         var callback = function(err, result) {
             if (err) {
@@ -74,7 +74,7 @@ describe("Database Tests", function() {
     });
 
     it("Add 500 records to the database", function(done) {
-        this.timeout(10000);
+        this.timeout(15000);
 
         var counter = 500;
         var current = 1;

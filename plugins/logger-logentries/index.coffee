@@ -6,14 +6,12 @@
 # -->
 class LoggerLogentries
 
-    events = null
     fs = require "fs"
     lodash = null
     logentries = require "node-logentries"
-    moment = null
+    logger = null
     path = require "path"
     settings = null
-    utils = null
 
     # The Logentries transport object.
     loggerLogentries = null
@@ -25,43 +23,55 @@ class LoggerLogentries
     # IP address and timestamp will be appended to logs depending on the settings.
     # @param [Object] options Logentries init options.
     init: (options) =>
-        return
-        events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
-        moment = @expresser.libs.moment
         settings = @expresser.settings
-        utils = @expresser.utils
 
         logger.drivers.logentries = this
 
-        if settings.logger.logentries.enabled and settings.logger.logentries.token?
-            return logger.register "logentries", "logentries", settings.logger.logentries.token
+        options = lodash.defaultsDeep options, settings.logger.logentries
+
+        if options.enabled and options.token?
+            return logger.register "logentries", "logentries", options
 
     # Get the transport object.
     # @param [Object] options Transport options including the token.
     getTransport: (options) =>
-        options.sendTimestamp = settings.logger.sendTimestamp if not options.sendTimestamp
+        if not options.token? or options.token is ""
+            throw new Error "The options.token is mandatory! Please specify a valid Logentries token."
 
-        transport = logentries.logger {token: options.token, timestamp: options.sendTimestamp}
-        transport.on("log", logger.onLogSuccess) if lodash.isFunction @onLogSuccess
-        transport.on("error", logger.onLogError) if lodash.isFunction @onLogError
+        options = lodash.defaults options, settings.logger.logentries
+        options.sendTimestamp = settings.logger.sendTimestamp if not options.sendTimestamp?
+        options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
+        options.onLogError = logger.onLogError if not options.onLogError?
+
+        transport = {client: logentries.logger {token: options.token, timestamp: options.sendTimestamp}}
+        transport.client.on("log", options.onLogSuccess) if lodash.isFunction options.onLogSuccess
+        transport.client.on("error", options.onLogError) if lodash.isFunction options.onLogError
 
         return transport
 
     # LOG METHODS
     # --------------------------------------------------------------------------
 
-    # Generic log method.
-    # @param [String] logType The log type (for example: warning, error, info, security, etc).
-    # @param [String] logFunc Optional, the logging function name to be passed to Logentries.
-    # @param [Array] args Array of arguments to be stringified and logged.
-    log: (logFunc, msg) =>
-        if not msg?
-            msg = logFunc
-            logFunc = "info"
+    # Logentries log method.
+    # @param [String] logType The log type (info, warn, error, debug, etc).
+    # @param [Array] args Array or string to be logged.
+    # @param [Boolean] avoidConsole If true it will NOT log to the console.
+    log: (logType, args, avoidConsole) ->
+        return if settings.logger.levels.indexOf(logType) < 0
 
-        loggerLogentries.log logFunc, msg
+        # Get message out of the arguments if not a string.
+        if lodash.isString args
+            message = args
+        else
+            message = logger.getMessage args
+
+        @client.log logType, message
+
+        # Log to the console depending on `console` setting.
+        if settings.logger.console and not avoidConsole
+            logger.console logType, args
 
 # Singleton implementation
 # --------------------------------------------------------------------------

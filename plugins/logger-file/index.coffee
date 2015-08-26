@@ -30,8 +30,10 @@ class LoggerFile
 
         logger.drivers.file = this
 
-        if settings.logger.file.enabled and settings.logger.file.path?
-            return logger.register "file", "file", settings.logger.file
+        options = lodash.defaultsDeep options, settings.logger.file
+
+        if options.enabled and options.path?
+            return logger.register "file", "file", options
 
     # Get the file transport object.
     # @param [Object] options File logging options.
@@ -40,6 +42,8 @@ class LoggerFile
             throw new Error "The options.path is mandatory! Please specify a valid path to the logs folder."
 
         options = lodash.defaults options, settings.logger.file
+        options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
+        options.onLogError = logger.onLogError if not options.onLogError?
 
         # Create logs folder if it doesn't exist.
         folderExists = fs.existsSync options.path
@@ -52,6 +56,8 @@ class LoggerFile
 
         # Set local buffer.
         transport = {flushing: false, buffer: {}, flush: @flush, clean: @clean}
+        transport.onLogSuccess = options.onLogSuccess
+        transport.onLogError = options.onLogError
         transport.bufferDispatcher = setInterval transport.flush, options.bufferInterval
 
         # Check the maxAge of local logs and set up auto clean.
@@ -65,7 +71,7 @@ class LoggerFile
 
     # Log locally. The path is defined on `Settings.Path.logsDir`.
     # @param [String] logType The log type (info, warn, error, debug, etc).
-    # @param [Array] args Array to be stringified and logged.
+    # @param [Array] args Array or string to be logged.
     # @param [Boolean] avoidConsole If true it will NOT log to the console.
     log: (logType, args, avoidConsole) ->
         return if settings.logger.levels.indexOf(logType) < 0
@@ -79,12 +85,13 @@ class LoggerFile
         # Set log props and send to buffer.
         now = moment()
         message = now.format("HH:mm:ss.SSS") + " - " + message
+
         @buffer[logType] = [] if not @buffer[logType]?
         @buffer[logType].push message
 
         # Log to the console depending on `console` setting.
         if settings.logger.console and not avoidConsole
-            parent.console logType, args
+            logger.console logType, args
 
     # Flush all local buffered log messages to disk. This is usually called by the `bufferDispatcher` timer.
     flush: ->
@@ -112,10 +119,10 @@ class LoggerFile
                     fs.appendFile filePath, writeData, (err) =>
                         @flushing = false
                         if err?
-                            console.error "Logger.flush", err
-                            logger.onLogError? err
+                            console.error "Logger.LoggerFile.flush", err
+                            @onLogError? err
                         else
-                            logger.onLogSuccess? successMsg
+                            @onLogSuccess? successMsg
 
     # Delete old log files from disk. The maximum date is taken from the settings
     # if not passed.
@@ -126,14 +133,14 @@ class LoggerFile
 
         fs.readdir settings.logger.file.path, (err, files) ->
             if err?
-                console.error "Logger.clean", err
+                console.error "Logger.LoggerFile.clean", err
             else
                 for f in files
                     date = moment f.split(".")[1], "yyyyMMdd"
                     if date.isBefore maxDate
                         fs.unlink path.join(settings.logger.file.path, f), (err) ->
                             if err?
-                                console.error "Logger.clean", err
+                                console.error "Logger.LoggerFile.clean", err
 
 # Singleton implementation
 # --------------------------------------------------------------------------

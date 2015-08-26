@@ -12,7 +12,6 @@ class LoggerLoggly
     lodash = null
     logger = null
     settings = null
-    utils = null
     
     # Wrapper for the Loggly client.
     logglyClient = null
@@ -24,41 +23,63 @@ class LoggerLoggly
     # IP address and timestamp will be appended to logs depending on the settings.
     # @param [Object] options LoggerLoggly init options.
     init: (options) =>
-        return
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
 
-        if settings.logger.loggly?.enabled and settings.logger.loggly?.subdomain? and settings.logger.loggly?.token?
-            return logger.register ""
-            logglyClient = loggly.createClient {token: settings.logger.loggly.token, subdomain: settings.logger.loggly.subdomain, json: false}
+        logger.drivers.loggly = this
+
+        options = lodash.defaultsDeep options, settings.logger.loggly
+
+        if options.enabled and options.token?
+            return logger.register "loggly", "loggly", options
+
+    # Get the transport object.
+    # @param [Object] options Transport options including the token.
+    getTransport: (options) =>
+        if not options.token? or options.token is ""
+            throw new Error "The options.token is mandatory! Please specify a valid Loggly token."
+
+        if not options.subdomain? or options.subdomain is ""
+            throw new Error "The options.subdomain is mandatory! Please specify a valid Loggly subdomain."
+
+        options = lodash.defaults options, settings.logger.loggly
+        options.sendTimestamp = settings.logger.sendTimestamp if not options.sendTimestamp
+        options.json = false if not options.json?
+        options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
+        options.onLogError = logger.onLogError if not options.onLogError?
+
+        transport = {client: loggly.createClient {token: options.token, subdomain: options.subdomain, json: options.json}}
+        transport.onLogSuccess = options.onLogSuccess
+        transport.onLogError = options.onLogError
+
+        return transport
 
     # LOG METHODS
     # --------------------------------------------------------------------------
 
-    # Loggly main log method.
-    # @param [String] logType The log type (for example: warning, error, info, security, etc).
-    # @param [String] logFunc Optional, the logging function name to be passed to the console and Logentries.
-    # @param [Array] args Array of arguments to be stringified and logged.
-    log: (logFunc, msg) =>
-        if not args? and logFunc?
-            msg = logFunc
-            logFunc = "info"
+    # Loggly log method.
+    # @param [String] logType The log type (info, warn, error, debug, etc).
+    # @param [Array] args Array or string to be logged.
+    # @param [Boolean] avoidConsole If true it will NOT log to the console.
+    log: (logType, args, avoidConsole) ->
+        return if settings.logger.levels.indexOf(logType) < 0
 
-        logglyClient.log msg, @logglyCallback
+        # Get message out of the arguments if not a string.
+        if lodash.isString args
+            message = args
+        else
+            message = logger.getMessage args
 
-    # HELPER METHODS
-    # --------------------------------------------------------------------------
+        @client.log message, (err, result) =>
+            if err?
+                @onLogError? err
+            else
+                @onLogSuccess? result
 
-    # Wrapper callback for `onLogSuccess` and `onLogError` to be used by Loggly.
-    # @param [String] err The Loggly error.
-    # @param [String] result The Loggly logging result.
-    # @private
-    logglyCallback: (err, result) =>
-        if err? and @onLogError?
-            @onLogError err
-        else if @onLogSuccess?
-            @onLogSuccess result
+        # Log to the console depending on `console` setting.
+        if settings.logger.console and not avoidConsole
+            logger.console logType, args
 
 # Singleton implementation
 # --------------------------------------------------------------------------

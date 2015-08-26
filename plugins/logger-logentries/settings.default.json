@@ -3,8 +3,8 @@
     "logger": {
         "logentries": {
             // Enable Logentries plugin?
-            "enabled": false,
-            // Your Logentries default token.
+            "enabled": true,
+            // Your Logentries main or default token.
             "token": null
         }
     }

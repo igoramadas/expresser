@@ -23,18 +23,14 @@ describe("Logger Tests", function() {
     var transportLogentries = null;
     var transportLoggly = null;
 
-    var helperLogOnSuccess = function(transport, done) {
+    var helperLogOnSuccess = function(done) {
         return function(result) {
-            transport.expresser.logger.onLogSuccess = null;
-            transport.expresser.logger.onLogError = null;
             done();
         };
     };
 
-    var helperLogOnError = function(transport, done) {
+    var helperLogOnError = function(done) {
         return function(err) {
-            transport.expresser.logger.onLogSuccess = null;
-            transport.expresser.logger.onLogError = null;
             done(err);
         };
     };
@@ -70,15 +66,13 @@ describe("Logger Tests", function() {
 
     it("Inits", function() {
         logger.init();
-
-        transportFile = loggerFile.init();
-        transportLogentries = loggerLogentries.init();
-        transportLoggly = loggerLoggly.init();
     });
 
     it("Save log to file", function(done) {
-        loggerFile.expresser.logger.onLogSuccess = helperLogOnSuccess(loggerFile, done);
-        loggerFile.expresser.logger.onLogError = helperLogOnError(loggerFile, done);
+        transportFile = loggerFile.init({
+            onLogSuccess: helperLogOnSuccess(done),
+            onLogError: helperLogOnError(done)
+        });
 
         transportFile.info("Expresser local disk log test.", new Date());
         transportFile.flush();
@@ -87,8 +81,10 @@ describe("Logger Tests", function() {
     it("Send log to Logentries", function(done) {
         this.timeout(10000);
 
-        loggerLogentries.expresser.logger.onLogSuccess = helperLogOnSuccess(loggerLogentries, done);
-        loggerLogentries.expresser.logger.onLogError = helperLogOnError(loggerLogentries, done);
+        transportLogentries = loggerLogentries.init({
+            onLogSuccess: helperLogOnSuccess(done),
+            onLogError: helperLogOnError(done)
+        });
 
         transportLogentries.info("Expresser Logentries log test.", new Date());
     });
@@ -96,8 +92,10 @@ describe("Logger Tests", function() {
     it("Send log to Loggly", function(done) {
         this.timeout(10000);
 
-        loggerLoggly.expresser.logger.onLogSuccess = helperLogOnSuccess(loggerLoggly, done);
-        loggerLoggly.expresser.logger.onLogError = helperLogOnError(loggerLoggly, done);
+        transportLoggly = loggerLoggly.init({
+            onLogSuccess: helperLogOnSuccess(done),
+            onLogError: helperLogOnError(done)
+        });
 
         transportLoggly.info("Expresser Loggly log test.", new Date());
     });

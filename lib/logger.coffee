@@ -35,7 +35,7 @@ class Logger
     # --------------------------------------------------------------------------
 
     # Init the Logger module. Verify which services are set, and add the necessary transports.
-    # IP address and timestamp will be appended to logs depending on the settings.
+    # IP address will be appended to logs depending on the settings.
     # @param [Object] options Logger init options.
     init: (options) =>
         if settings.logger.uncaughtException
