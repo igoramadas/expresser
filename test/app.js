@@ -10,7 +10,6 @@ describe("App Tests", function() {
 
     var settings = require("../lib/settings.coffee");
     settings.loadFromJson("settings.test.json");
-    settings.loadFromJson("settings.test.keys.json");
 
     var app;
 

@@ -29,7 +29,6 @@
         "jade": ">= 1.11.0",
         "lodash": ">= 3.10.1",
         "moment": ">= 2.10.6",
-        "nodemailer": ">= 1.4.0",
         "stylus": ">= 0.52.0"
 	},
     "devDependencies": {

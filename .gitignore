@@ -4,4 +4,3 @@
 atlassian-ide-plugin.xml
 logs/*.*
 node_modules/
-settings.test.keys.json

@@ -2,7 +2,11 @@ sudo: false
 language: node_js
 node_js:
   - "0.12"
+  - "0.10"
 services:
   - mongodb
-env:
-  - secure: "LDIp+0vfky4jcmEricbXiUUDs9uhELV5CWZQwksiXyLQh6snzTUkq0DZ1ci1j/OjZxcxxqv97RlNbzdU2q3GCpcwgKhu/8m3FDehbN2yM9erzAeVV3wahYnmbi8dN6wCa8fMv94YOwQZvSnGEQISvH8bWcnG3893Z9O8XdUZLW8="
+before_script:
+  - npm install imagemagick
+  - npm install mongoskin
+  - npm install node-logentries
+  - npm install sockets

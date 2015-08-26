@@ -13,7 +13,10 @@ describe("Logger Tests", function() {
     settings.loadFromJson("../plugins/logger-logentries/settings.default.json");
     settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
     settings.loadFromJson("settings.test.json");
-    settings.loadFromJson("settings.test.keys.json");
+
+    settings.logger.logentries.token = env["logentries.token"];
+    settings.logger.loggly.token = env["loggly.token"];
+    settings.logger.loggly.subdomain = env["loggly.subdomain"];
 
     var logger = null;
     var loggerFile = null;

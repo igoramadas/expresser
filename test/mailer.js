@@ -11,7 +11,9 @@ describe("Mailer Tests", function() {
     var settings = require("../lib/settings.coffee");
     settings.loadFromJson("../plugins/mailer/settings.default.json");
     settings.loadFromJson("settings.test.json");
-    settings.loadFromJson("settings.test.keys.json");
+
+    settings.mailer.smtp.user = env["mandrill.user"];
+    settings.mailer.smtp.password = env["mandrill.password"];
 
     var utils = null;
     var mailer = null;

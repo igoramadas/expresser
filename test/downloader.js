@@ -11,7 +11,6 @@ describe("Downloader Tests", function() {
     var settings = require("../lib/settings.coffee");
     settings.loadFromJson("../plugins/downloader/settings.default.json");
     settings.loadFromJson("settings.test.json");
-    settings.loadFromJson("settings.test.keys.json");
 
     var fs = require("fs");
     var utils = null;

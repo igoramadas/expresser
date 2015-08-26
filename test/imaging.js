@@ -11,7 +11,6 @@ describe("Imaging Tests", function() {
     var settings = require("../lib/settings.coffee");
     settings.loadFromJson("../plugins/imaging/settings.default.json");
     settings.loadFromJson("settings.test.json");
-    settings.loadFromJson("settings.test.keys.json");
 
     var path = require("path");
     var imaging = null;

@@ -11,7 +11,6 @@ describe("Sockets Tests", function() {
     var settings = require("../lib/settings.coffee");
     settings.loadFromJson("../plugins/sockets/settings.default.json");
     settings.loadFromJson("settings.test.json");
-    settings.loadFromJson("settings.test.keys.json");
 
     var utils = null;
     var sockets = null;
