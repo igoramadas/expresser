@@ -15,6 +15,9 @@
     },
     "mailer": {
         "smtp": {
+            "host": "smtp.mandrillapp.com",
+            "port": 587,
+            "secure": false,
             "service": "mandrill"
         }
     },

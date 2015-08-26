@@ -40,7 +40,7 @@ class LoggerLogentries
         if not options.token? or options.token is ""
             throw new Error "The options.token is mandatory! Please specify a valid Logentries token."
 
-        options = lodash.defaults options, settings.logger.logentries
+        options = lodash.defaultsDeep options, settings.logger.logentries
         options.sendTimestamp = settings.logger.sendTimestamp if not options.sendTimestamp?
         options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
         options.onLogError = logger.onLogError if not options.onLogError?
