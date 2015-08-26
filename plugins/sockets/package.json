@@ -4,7 +4,7 @@
     "description": "Add web sockets support to Expresser using Socket.IO.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
-    "license": "Apache License 2.0",
+    "license": "Apache-2.0",
     "subdomain": "expresser-sockets",
     "main": "index",
     "domains": [

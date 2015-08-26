@@ -4,7 +4,7 @@
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
-    "license": "Apache License 2.0",
+    "license": "Apache-2.0",
     "subdomain": "expresser",
     "main": "index",
     "domains": [

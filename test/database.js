@@ -12,7 +12,7 @@ describe("Database Tests", function() {
     settings.loadFromJson("../plugins/database-mongo/settings.default.json");
     settings.loadFromJson("settings.test.json");
 
-    settings.database.mongo.connString = env["mongo.connString";
+    settings.database.mongo.connString = env["mongo.connString"];
 
     var utils = null;
     var database = null;
