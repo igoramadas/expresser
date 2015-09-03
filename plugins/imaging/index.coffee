@@ -62,7 +62,7 @@ class Imaging
                             size += "x" + height
 
                     # Resize?
-                    if size? and size is ""
+                    if size? and size isnt ""
                         args.push "-resize"
                         args.push size
 

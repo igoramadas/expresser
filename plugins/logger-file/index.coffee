@@ -41,7 +41,7 @@ class LoggerFile
         if not options.path? or options.path is ""
             throw new Error "The options.path is mandatory! Please specify a valid path to the logs folder."
 
-        options = lodash.defaults options, settings.logger.file
+        options = lodash.defaultsDeep options, settings.logger.file
         options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
         options.onLogError = logger.onLogError if not options.onLogError?
 

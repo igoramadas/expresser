@@ -43,7 +43,7 @@ class LoggerLoggly
         if not options.subdomain? or options.subdomain is ""
             throw new Error "The options.subdomain is mandatory! Please specify a valid Loggly subdomain."
 
-        options = lodash.defaults options, settings.logger.loggly
+        options = lodash.defaultsDeep options, settings.logger.loggly
         options.sendTimestamp = settings.logger.sendTimestamp if not options.sendTimestamp
         options.json = false if not options.json?
         options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
