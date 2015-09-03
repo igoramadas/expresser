@@ -1,6 +1,5 @@
 .idea/
 .openshift/
-.travis-secure.txt
 atlassian-ide-plugin.xml
 logs/*.*
 node_modules/

@@ -183,7 +183,7 @@ class App
             server = http.createServer @server
 
         # Enable sockets?
-        if settings.sockets.enabled
+        if settings.sockets?.enabled
             sockets = @expresser.sockets
             sockets.bind server
 

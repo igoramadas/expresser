@@ -1,7 +1,7 @@
 {
     "name": "expresser-firewall",
-    "version": "0.0.1",
-    "description": "A simple firewall for Expresser based applications.",
+    "version": "1.0.0-alpha.1",
+    "description": "A simple firewall for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache-2.0",

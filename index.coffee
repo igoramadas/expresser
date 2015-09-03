@@ -4,6 +4,8 @@
 # If you need help check the project page at http://github.com/igoramadas/expresser.
 class Expresser
 
+    self = this
+
     fs = require "fs"
     path = require "path"
 
