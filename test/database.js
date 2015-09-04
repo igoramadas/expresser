@@ -12,8 +12,6 @@ describe("Database Tests", function() {
     settings.loadFromJson("../plugins/database-mongo/settings.default.json");
     settings.loadFromJson("settings.test.json");
 
-    settings.database.mongo.connString = env["mongo.connString"];
-
     var utils = null;
     var database = null;
     var databaseMongo = null;
@@ -32,6 +30,12 @@ describe("Database Tests", function() {
         databaseMongo.expresser.database = database;
     });
 
+    after(function()
+    {
+        try { dbMongo.connection.close(); } catch (ex) { }
+
+    });
+
     it("Has settings defined", function() {
         settings.should.have.property("database");
         settings.database.should.have.property("mongo");
@@ -40,22 +44,6 @@ describe("Database Tests", function() {
     it("Inits", function() {
         database.init();
         dbMongo = databaseMongo.init();
-    });
-
-    it("Add simple record to the database", function(done) {
-        this.timeout(10000);
-
-        var callback = function(err, result) {
-            if (err) {
-                throw err;
-            } else {
-                done();
-            }
-        };
-
-        var obj = {simple: true};
-
-        dbMongo.insert("test", obj, callback);
     });
 
     it("Add complex record to the database", function(done) {

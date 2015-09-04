@@ -1,7 +1,0 @@
-// EXPRESSER IMAGING SETTINGS
-{
-    "imaging": {
-        // Enable the Imaging module?
-        "enabled": true
-    }
-}

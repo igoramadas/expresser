@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "2.0.0-alpha.2",
+    "version": "2.0.0-alpha.3",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -46,7 +46,6 @@
         "app",
         "firewall",
         "framework",
-        "imagemagick",
         "logger",
         "mongo",
         "sockets"
