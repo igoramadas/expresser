@@ -43,7 +43,7 @@ describe("Mailer Tests", function() {
         var msgOptions = {
             body: "Mail testing: app {appTitle}, to {to}.",
             subject: "Test mail",
-            to: "devv@devv.com",
+            to: "expresser@mailinator.com",
             from: "devv@devv.com"
         };
 
