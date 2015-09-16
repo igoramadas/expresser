@@ -30,6 +30,7 @@ class LoggerFile
 
         logger.drivers.file = this
 
+        options = {} if not options?
         options = lodash.defaultsDeep options, settings.logger.file
 
         if options.enabled and options.path?

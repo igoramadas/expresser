@@ -29,6 +29,7 @@ class LoggerLoggly
 
         logger.drivers.loggly = this
 
+        options = {} if not options?
         options = lodash.defaultsDeep options, settings.logger.loggly
 
         if options.enabled and options.token?

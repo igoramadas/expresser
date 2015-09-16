@@ -41,6 +41,7 @@ class Mailer
         utils = @expresser.utils
 
         logger.debug "Mailer.init", options
+
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.mailer
 

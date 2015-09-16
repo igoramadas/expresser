@@ -29,6 +29,7 @@ class LoggerLogentries
 
         logger.drivers.logentries = this
 
+        options = {} if not options?
         options = lodash.defaultsDeep options, settings.logger.logentries
 
         if options.enabled and options.token?
