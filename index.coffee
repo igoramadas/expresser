@@ -54,16 +54,17 @@ class Expresser
                 if not self[pluginName]?
                     if pluginsFolder
                         self[pluginName] = require "./plugins/#{pluginId}"
+                        pluginSettingsPath = path.dirname(p) + "settings.default.json"
                     else
                         self[pluginName] = require pluginId
+                        pluginSettingsPath = "#{self.rootPath}/node_modules/#{pluginId}/settings.default.json"
 
                     # Attach itself to the plugin.
                     self[pluginName].expresser = self
 
                 # Check if there are default settings to be loaded for the plugin.
-                pluginSettings = path.dirname(p) + "settings.default.json"
-                if fs.existsSync pluginSettings
-                    self.settings.loadFromJson pluginSettings
+                if fs.existsSync pluginSettingsPath
+                    self.settings.loadFromJson pluginSettingsPath
 
                 # Init plugin only if enabled is not set to false on its settings.
                 if self.settings[pluginName]?.enabled
