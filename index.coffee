@@ -4,8 +4,6 @@
 # If you need help check the project page at http://github.com/igoramadas/expresser.
 class Expresser
 
-    self = this
-
     fs = require "fs"
     path = require "path"
 
@@ -14,9 +12,10 @@ class Expresser
 
     # Preload the main modules. App must be the last module to be set.
     settings: require "./lib/settings.coffee"
+    utils: require "./lib/utils.coffee"
     events: require "./lib/events.coffee"
     logger: require "./lib/logger.coffee"
-    utils: require "./lib/utils.coffee"
+    database: require "./lib/database.coffee"
     app: require "./lib/app.coffee"
 
     # Expose 3rd party modules.
@@ -26,23 +25,10 @@ class Expresser
         moment: require "moment"
 
     # Helper to load default modules. Basically everything inside the lib folder.
-    loadDefaultModules = (self, options) ->
-        modules = fs.readdirSync "#{__dirname}/lib"
-        modules.sort()
-
-        for m in modules
-            moduleId = m.substring(m.lastIndexOf("/") + 1)
-            moduleName = moduleId.replace ".coffee", ""
-
-            # Avoid registering the same module twice in case `loadDefaultModules` is called again.
-            if not self[moduleName]?
-                self[moduleName] = require "./lib/#{moduleId}"
-
-            # Call module init method, if there's one present and
-            # module "enabled" is not set to false on settings.
-            # The "app" module will be initiated later so bypass it here.
-            if self.settings[moduleName]?.enabled isnt false and moduleName isnt "app"
-                self[moduleName].init? options?[moduleName]
+    initDefaultModules = (self, options) ->
+        for id, m of self
+            if id isnt "app" and m?.init? and self.settings[id]?.enabled
+                self[id].init? options?[id]
 
     # Helper to load plugins. This will look first inside a /plugins
     # folder for local development setups, or directly under /node_modules
@@ -80,7 +66,7 @@ class Expresser
                     self.settings.loadFromJson pluginSettings
 
                 # Init plugin only if enabled is not set to false on its settings.
-                if self.settings[pluginName]?.enabled isnt false
+                if self.settings[pluginName]?.enabled
                     self[pluginName].init? options?[pluginName]
 
     # Helper to init all modules. Load settings first, then Logger, then general
@@ -88,13 +74,15 @@ class Expresser
     # passed to the `init` of each module.
     # @param [Object] options Options to be passed to each init module.
     init: (options) =>
-        loadDefaultModules this, options
+        options = {} if not options?
+
+        initDefaultModules this, options
         loadPlugins this, options
 
         # App must be the last thing to be started!
         # The Firewall and Sockets modules are initiated inside the App
         # depending on their settings.
-        @app.expresser = self
+        @app.expresser = this
         @app.init options?.app
 
 # Singleton implementation
