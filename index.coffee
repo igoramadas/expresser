@@ -60,18 +60,19 @@ class Expresser
         # Iterate plugins and get it's ID by removing the "expresser-" prefix.
         for p in plugins
             pluginId = p.substring(p.lastIndexOf("/") + 1)
+
             if pluginId.substring(0, 10) is "expresser-"
-                pluginName = pluginId.replace("expresser-", "").split "-"
+                pluginName = pluginId.replace "expresser-", ""
 
                 # Check if plugin was already attached.
-                if not self[pluginName[0]]
+                if not self[pluginName]?
                     if pluginsFolder
-                        self[pluginName[0]] = require "./plugins/#{pluginId}"
+                        self[pluginName] = require "./plugins/#{pluginId}"
                     else
-                        self[pluginName[0]] = require pluginId
+                        self[pluginName] = require pluginId
 
                     # Attach itself to the plugin.
-                    self[pluginName[0]].expresser = self
+                    self[pluginName].expresser = self
 
                 # Check if there are default settings to be loaded for the plugin.
                 pluginSettings = path.dirname(p) + "settings.default.json"
