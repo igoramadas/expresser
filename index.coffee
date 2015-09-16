@@ -64,7 +64,7 @@ class Expresser
 
                 # Check if there are default settings to be loaded for the plugin.
                 if fs.existsSync pluginSettingsPath
-                    self.settings.loadFromJson pluginSettingsPath
+                    self.settings.loadFromJson pluginSettingsPath, true
 
                 # Init plugin only if enabled is not set to false on its settings.
                 if self.settings[pluginName]?.enabled

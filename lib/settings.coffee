@@ -45,20 +45,17 @@ class Settings
 
     # Helper to load values from the specified settings file.
     # @param [String] filename The filename or path to the settings file.
-    # @param [Boolean] doNotUpdateSettings If true it won't update the Settings class, default is false.
+    # @param [Boolean] extend If true it won't update settings that are already existing.
     # @return [Object] Returns the JSON representation of the loaded file.
-    loadFromJson: (filename) =>
+    loadFromJson: (filename, extend) =>
+        extend = false if not extend?
         filename = utils.getFilePath filename
         settingsJson = null
 
         # Has json? Load it. Try using UTF8 first, if failed, use ASCII.
         if filename?
-            if process.versions.node.indexOf(".10.") > 0
-                encUtf8 = {encoding: "utf8"}
-                encAscii = {encoding: "ascii"}
-            else
-                encUtf8 = "utf8"
-                encAscii = "ascii"
+            encUtf8 = {encoding: "utf8"}
+            encAscii = {encoding: "ascii"}
 
             # Try parsing the file with UTF8 first, if fails, try ASCII.
             try
@@ -74,7 +71,7 @@ class Settings
                     if value?.constructor is Object
                         target[prop] = {} if not target[prop]?
                         xtend source[prop], target[prop]
-                    else
+                    else if not extend or not target[prop]?
                         target[prop] = source[prop]
 
             xtend settingsJson, this
@@ -184,10 +181,7 @@ class Settings
 
         # Stringify and save the new settings file.
         newSettingsJson = JSON.stringify settingsJson, null, 4
-        if process.versions.node.indexOf(".10.") > 0
-            fs.writeFileSync filename, newSettingsJson, {encoding: @general.encoding}
-        else
-            fs.writeFileSync filename, newSettingsJson, @general.encoding
+        fs.writeFileSync filename, newSettingsJson, {encoding: @general.encoding}
         return true
 
     # Helper to encrypt the specified settings file. Please see `cryptoHelper` above.
