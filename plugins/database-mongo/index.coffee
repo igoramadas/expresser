@@ -27,6 +27,7 @@ class DatabaseMongo
         database.drivers.mongo = this
 
         logger.debug "DatabaseMongo.init", options
+
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.database.mongo
 

@@ -14,9 +14,17 @@ describe("Logger Tests", function() {
     settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
     settings.loadFromJson("settings.test.json");
 
-    settings.logger.logentries.token = env["logentries.token"];
-    settings.logger.loggly.token = env["loggly.token"];
-    settings.logger.loggly.subdomain = env["loggly.subdomain"];
+    if (env["logentries.token"]) {
+        settings.logger.logentries.token = env["logentries.token"];
+    }
+
+    if (env["loggly.token"]) {
+        settings.logger.loggly.token = env["loggly.token"];
+    }
+
+    if (env["loggly.subdomain"]) {
+        settings.logger.loggly.subdomain = env["loggly.subdomain"];
+    }
 
     var logger = null;
     var loggerFile = null;
@@ -81,25 +89,33 @@ describe("Logger Tests", function() {
         transportFile.flush();
     });
 
-    it("Send log to Logentries", function(done) {
-        this.timeout(10000);
+    if (settings.logger.logentries.token) {
+        it("Send log to Logentries", function(done) {
+            this.timeout(10000);
 
-        transportLogentries = loggerLogentries.init({
-            onLogSuccess: helperLogOnSuccess(done),
-            onLogError: helperLogOnError(done)
+            transportLogentries = loggerLogentries.init({
+                onLogSuccess: helperLogOnSuccess(done),
+                onLogError: helperLogOnError(done)
+            });
+
+            transportLogentries.info("Expresser Logentries log test.", new Date());
         });
+    } else {
+        it.skip("Send log to Logentries (skipped, no token set).");
+    }
 
-        transportLogentries.info("Expresser Logentries log test.", new Date());
-    });
+    if (settings.logger.logentries.token && settings.logger.loggly.subdomain) {
+        it("Send log to Loggly", function(done) {
+            this.timeout(10000);
 
-    it("Send log to Loggly", function(done) {
-        this.timeout(10000);
+            transportLoggly = loggerLoggly.init({
+                onLogSuccess: helperLogOnSuccess(done),
+                onLogError: helperLogOnError(done)
+            });
 
-        transportLoggly = loggerLoggly.init({
-            onLogSuccess: helperLogOnSuccess(done),
-            onLogError: helperLogOnError(done)
+            transportLoggly.info("Expresser Loggly log test.", new Date());
         });
-
-        transportLoggly.info("Expresser Loggly log test.", new Date());
-    });
+    } else {
+        it.skip("Send log to Loggly (skipped, no token or subdomain set).");
+    }
 });

@@ -12,8 +12,13 @@ describe("Mailer Tests", function() {
     settings.loadFromJson("../plugins/mailer/settings.default.json");
     settings.loadFromJson("settings.test.json");
 
-    settings.mailer.smtp.user = env["mandrill.user"];
-    settings.mailer.smtp.password = env["mandrill.password"];
+    if (env["mandrill.user"]) {
+        settings.mailer.smtp.user = env["mandrill.user"];
+    }
+
+    if (env["mandrill.password"]) {
+        settings.mailer.smtp.password = env["mandrill.password"];
+    }
 
     var utils = null;
     var mailer = null;

@@ -14,7 +14,7 @@
         "node": "*"
     },
 	"dependencies": {
-        "coffee-script": ">= 1.9.3",
+        "coffee-script": ">= 1.10.0",
         "loggly": ">= 1.0.3"
 	},
     "repository": {
