@@ -14,16 +14,16 @@ describe("Logger Tests", function() {
     settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
     settings.loadFromJson("settings.test.json");
 
-    if (env["logentries.token"]) {
-        settings.logger.logentries.token = env["logentries.token"];
+    if (env["LOGENTRIES_TOKEN"]) {
+        settings.logger.logentries.token = env["LOGENTRIES_TOKEN"];
     }
 
-    if (env["loggly.token"]) {
-        settings.logger.loggly.token = env["loggly.token"];
+    if (env["LOGGLY_TOKEN"]) {
+        settings.logger.loggly.token = env["LOGGLY_TOKEN"];
     }
 
-    if (env["loggly.subdomain"]) {
-        settings.logger.loggly.subdomain = env["loggly.subdomain"];
+    if (env["LOGGLY_SUBDOMAIN"]) {
+        settings.logger.loggly.subdomain = env["LOGGLY_SUBDOMAIN"];
     }
 
     var logger = null;
@@ -101,7 +101,7 @@ describe("Logger Tests", function() {
             transportLogentries.info("Expresser Logentries log test.", new Date());
         });
     } else {
-        it.skip("Send log to Logentries (skipped, no token set).");
+        it.skip("Send log to Logentries (skipped, no token set)");
     }
 
     if (settings.logger.logentries.token && settings.logger.loggly.subdomain) {
@@ -116,6 +116,6 @@ describe("Logger Tests", function() {
             transportLoggly.info("Expresser Loggly log test.", new Date());
         });
     } else {
-        it.skip("Send log to Loggly (skipped, no token or subdomain set).");
+        it.skip("Send log to Loggly (skipped, no token or subdomain set)");
     }
 });

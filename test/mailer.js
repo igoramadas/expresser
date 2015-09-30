@@ -12,12 +12,12 @@ describe("Mailer Tests", function() {
     settings.loadFromJson("../plugins/mailer/settings.default.json");
     settings.loadFromJson("settings.test.json");
 
-    if (env["mandrill.user"]) {
-        settings.mailer.smtp.user = env["mandrill.user"];
+    if (env["MANDRILL_USER"]) {
+        settings.mailer.smtp.user = env["MANDRILL_USER"];
     }
 
-    if (env["mandrill.password"]) {
-        settings.mailer.smtp.password = env["mandrill.password"];
+    if (env["MANDRILL_PASSWORD"]) {
+        settings.mailer.smtp.password = env["MANDRILL_PASSWORD"];
     }
 
     var utils = null;
@@ -42,24 +42,28 @@ describe("Mailer Tests", function() {
         mailer.init();
     });
 
-    it("Sends a test email using Mandrill", function(done) {
-        this.timeout(20000);
+    if (settings.mailer.smtp.user && settings.mailer.smtp.password) {
+        it("Sends a test email using Mandrill", function(done) {
+            this.timeout(20000);
 
-        var msgOptions = {
-            body: "Mail testing: app {appTitle}, to {to}.",
-            subject: "Test mail",
-            to: "expresser@mailinator.com",
-            from: "devv@devv.com"
-        };
+            var msgOptions = {
+                body: "Mail testing: app {appTitle}, to {to}.",
+                subject: "Test mail",
+                to: "expresser@mailinator.com",
+                from: "devv@devv.com"
+            };
 
-        var callback = function(err) {
-            if (!err) {
-                done();
-            } else {
-                done(err);
-            }
-        };
+            var callback = function(err) {
+                if (!err) {
+                    done();
+                } else {
+                    done(err);
+                }
+            };
 
-        mailer.send(msgOptions, callback);
-    });
+            mailer.send(msgOptions, callback);
+        });
+    } else {
+        it.skip("Sends a test email using Mandrill (skipped, no user or password set)");
+    }
 });

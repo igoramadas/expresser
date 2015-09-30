@@ -12,8 +12,8 @@ describe.skip("Database Tests", function() {
     settings.loadFromJson("../plugins/database-mongo/settings.default.json");
     settings.loadFromJson("settings.test.json");
 
-    if (env["mongo"]) {
-        settings.database.mongo.connString = env["mongo"];
+    if (env["MONGO"]) {
+        settings.database.mongo.connString = env["MONGO"];
     }
 
     var utils = null;
