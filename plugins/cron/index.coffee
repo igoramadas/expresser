@@ -56,7 +56,7 @@ class Cron
         options = lodash.defaultsDeep options, settings.cron
 
         @setEvents() if settings.events.enabled
-        @load true if options.loadOnInit
+        @load true, options if options.loadOnInit
 
     # Bind events.
     setEvents: =>
@@ -97,7 +97,7 @@ class Cron
 
             # Iterate jobs, but do not add if job's `enabled` is false.
             for key, data of cronJson
-                module = require(options.basePath + key)
+                module = require("./../../" + options.basePath + key)
 
                 # Only proceed if the cronDisabled flag is not present on the module.
                 if module.cronDisabled isnt true
