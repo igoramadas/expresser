@@ -65,10 +65,21 @@ class Expresser
                 # Check if there are default settings to be loaded for the plugin.
                 if fs.existsSync pluginSettingsPath
                     self.settings.loadFromJson pluginSettingsPath, true
+                    options = self.libs.lodash.defaults options, self.settings
+
+                # Get options accordingly to plugin name. For example the expresser-database-mongo
+                # should have its options set under settings.database.mongo.
+                pluginArr = pluginName.split "-"
+                optionsRef = options
+                i = 0
+
+                while i < pluginArr.length
+                    optionsRef = optionsRef?[pluginArr[i]]
+                    i++
 
                 # Init plugin only if enabled is not set to false on its settings.
-                if self.settings[pluginName]?.enabled
-                    self[pluginName].init? options?[pluginName]
+                if optionsRef?.enabled
+                    self[pluginName].init? optionsRef
 
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App. The `options` can have properties to be
