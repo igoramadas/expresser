@@ -7,7 +7,7 @@
     },
     "database": {
         "mongo": {
-            "connString": "mongodb://127.0.0.1/expresser?auto_reconnect"
+            "connString": "mongodb://127.0.0.1/expresser"
         }
     },
     "logger": {
