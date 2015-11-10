@@ -97,7 +97,7 @@ class Logger
     # @param [String] logType The log type (for example: warning, error, info, security, etc).
     # @param [Array] args Array to be stringified and logged.
     log: (logType, args) =>
-        return if settings.logger.levels.indexOf(logType) < 0
+        return if settings.logger.levels.indexOf(logType) < 0 and not settings.general.debug
 
         # Get message out of the arguments.
         msg = @getMessage args
@@ -113,8 +113,6 @@ class Logger
     # Log to the active transports as `debug`, only if the debug flag is enabled.
     # All arguments are transformed to readable strings.
     debug: ->
-        return if not settings.general.debug
-
         args = Array.prototype.slice.call arguments
         args.unshift "DEBUG"
         @log "debug", args
