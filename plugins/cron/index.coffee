@@ -117,9 +117,9 @@ class Cron
             # Start all jobs automatically if `autoStart` is true.
             @start() if options.autoStart
 
-            logger.info "Cron.load", "#{basename} loaded."
+            logger.info "Cron.load", "#{basename} loaded.", options
         else if not doNotWarn
-            logger.warn "Cron.load", "#{basename} not found."
+            logger.warn "Cron.load", "#{basename} not found.", options
 
     # METHODS
     # -------------------------------------------------------------------------
