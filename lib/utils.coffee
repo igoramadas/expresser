@@ -172,6 +172,32 @@ class Utils
         srcContents = fs.readFileSync src
         fs.writeFileSync target, srcContents
 
+    # Make sure the "target" directory exists by recursively iterating through its parents
+    # and creating the directories. Returns nothing if all good or error.
+    mkdirRecursive: (target) =>
+        callback = (p, made) ->
+            made = null if not made
+
+            p = path.resolve p
+
+            try
+                fs.mkdirSync p
+            catch ex
+                if ex.code is "ENOENT"
+                    made = callback path.dirname(p), made
+                    callback p, made
+                else
+                    try
+                        stat = fs.statSync p
+                    catch ex1
+                        throw ex
+                    if not stat.isDirectory()
+                        throw ex
+
+            return made
+
+        return callback target
+
     # Minify the passed JSON value. Removes comments, unecessary white spaces etc.
     # @param [String] source The JSON text to be minified.
     # @param [Boolean] asString If true, return as string instead of JSON object.

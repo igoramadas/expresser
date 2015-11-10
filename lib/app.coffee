@@ -84,7 +84,9 @@ class App
         midCookieParser = require "cookie-parser"
         midSession = require "cookie-session"
         midCompression = require "compression"
-        midErrorHandler = require "errorhandler"
+
+        if nodeEnv is "development"
+            midErrorHandler = require "errorhandler"
 
         # Create express v4 app.
         @server = express()
