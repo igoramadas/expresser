@@ -44,6 +44,10 @@
             // Is SSL enabled? Please note that you must specify the path to the
             // certificate files under the `Path` settings.
             "enabled": false,
+            // Path to the SSL key file.
+            "keyFile": null,
+            // Path to the SSL certificate file.
+            "certFile": null,
             // Create a redirector server to redirect requests from HTTP to HTTPS.
             // This is the port number of the HTTP redirector server. Leave 0, blank
             // or null to disable this feature.
@@ -132,9 +136,9 @@
         "emailTemplatesDir": "./emailtemplates/",
         // Path to the public folder used by Express.
         "publicDir": "./public/",
-        // Path to the SSL key file.
+        // DEPRECATED!!! Please use settings.app.ssl.keyFile!
         "sslKeyFile": null,
-        // Path to the SSL certificate file.
+        // DEPRECATED!!! Please use settings.app.ssl.certFile!
         "sslCertFile": null,
         // Path where the .jade views are stored.
         "viewsDir": "./views/"

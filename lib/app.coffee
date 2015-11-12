@@ -169,9 +169,9 @@ class App
 
     # Start the server using HTTP or HTTPS, depending on the settings.
     startServer: =>
-        if settings.app.ssl.enabled and settings.path.sslKeyFile? and settings.path.sslCertFile?
-            sslKeyFile = utils.getFilePath settings.path.sslKeyFile
-            sslCertFile = utils.getFilePath settings.path.sslCertFile
+        if settings.app.ssl.enabled and settings.app.ssl.keyFile? and settings.app.ssl.certFile?
+            sslKeyFile = utils.getFilePath settings.app.ssl.keyFile
+            sslCertFile = utils.getFilePath settings.app.ssl.certFile
 
             # Certificate files were found? Proceed, otherwise alert the user and throw an error.
             if sslKeyFile? and sslCertFile?
