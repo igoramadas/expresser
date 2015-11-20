@@ -202,6 +202,7 @@ class App
 
             redirServer = express()
             redirServer.get "*", (req, res) -> res.redirect "https://#{req.hostname}:#{settings.app.port}#{req.url}"
+
             @redirectorServer = http.createServer redirServer
             @redirectorServer.listen settings.app.ssl.redirectorPort
 
