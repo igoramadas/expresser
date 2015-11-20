@@ -180,7 +180,7 @@ class App
                 sslOptions = {key: sslKey, cert: sslCert}
                 server = https.createServer sslOptions, @server
             else
-                throw new Error "The certificate files could not be found. Please check the 'Path.sslKeyFile' and 'Path.sslCertFile' settings."
+                throw new Error "The certificate files could not be found. Please check the 'settings.app.ssl' path settings."
         else
             server = http.createServer @server
 
