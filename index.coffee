@@ -47,14 +47,14 @@ class Expresser
         for p in plugins
             pluginId = p.substring(p.lastIndexOf("/") + 1)
 
-            if pluginId.substring(0, 10) is "expresser-"
+            if pluginsFolder or pluginId.substring(0, 10) is "expresser-"
                 pluginName = pluginId.replace "expresser-", ""
 
                 # Check if plugin was already attached.
                 if not self[pluginName]?
                     if pluginsFolder
                         self[pluginName] = require "./plugins/#{pluginId}"
-                        pluginSettingsPath = path.dirname(p) + "settings.default.json"
+                        pluginSettingsPath = "#{__dirname}/plugins/#{p}/settings.default.json"
                     else
                         self[pluginName] = require pluginId
                         pluginSettingsPath = "#{self.rootPath}/node_modules/#{pluginId}/settings.default.json"

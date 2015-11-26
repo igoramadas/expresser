@@ -44,10 +44,7 @@
         "expresser",
         "express",
         "app",
-        "firewall",
         "framework",
-        "logger",
-        "mongo",
-        "sockets"
+        "node"
     ]
 }

@@ -67,12 +67,11 @@ class App
         @configureServer options
         @startServer()
 
-    # Log proccess termination to the console. This will force flush any buffered logs to disk.
-    # Do not log the exit if running under test environment.
+    # Log process termination to the console. This will force flush any buffered logs to disk.
     setErrorHandler: =>
         process.on "exit", (sig) ->
-            if nodeEnv? and nodeEnv.indexOf("test") < 0
-                console.warn "App", "Terminating Expresser app...", Date(Date.now()), sig
+            console.warn "App", "Terminating Expresser app...", Date(Date.now()), sig
+
             try
                 logger.flushLocal()
             catch ex
