@@ -174,12 +174,15 @@ class App
 
             # Certificate files were found? Proceed, otherwise alert the user and throw an error.
             if sslKeyFile? and sslCertFile?
-                sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
-                sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
-                sslOptions = {key: sslKey, cert: sslCert}
-                server = https.createServer sslOptions, @server
+                if fs.existsSync(sslKeyFile) and fs.existsSync(sslCertFile)
+                    sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
+                    sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
+                    sslOptions = {key: sslKey, cert: sslCert}
+                    server = https.createServer sslOptions, @server
+                else
+                    throw new Error "The certificate files could not be found. Please check the 'settings.app.ssl' settings."
             else
-                throw new Error "The certificate files could not be found. Please check the 'settings.app.ssl' path settings."
+                throw new Error "SSL is enabled but no key and certificate files were defined. Please check the 'settings.app.ssl' settings."
         else
             server = http.createServer @server
 

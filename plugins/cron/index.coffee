@@ -278,7 +278,7 @@ class Cron
 
     # Helper to get a timer / interval based on the defined options.
     setTimer = (job) ->
-        logger.debug "Cron.setTimer", job
+        logger.debug "Cron.setTimer", job.id, job.description.job.schedule
 
         callback = getCallback job
 
