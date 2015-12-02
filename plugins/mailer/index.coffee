@@ -99,6 +99,10 @@ class Mailer
         # Set HTML to body, if passed.
         html = if options.body? then options.body.toString() else ""
 
+        # If to is an array, make it a string separated by commas.
+        if lodash.isArray options.to
+            options.to = options.to.join ", "
+
         # Get the name of recipient based on the `to` option.
         if options.to.indexOf("<") < 3
             toName = options.to
