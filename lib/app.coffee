@@ -114,8 +114,8 @@ class App
             firewall.bind @server
 
         # Use Express basic handlers.
-        @server.use midBodyParser.json()
-        @server.use midBodyParser.urlencoded {extended: true}
+        @server.use midBodyParser.json {limit: settings.app.bodyParser.limit}
+        @server.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
         @server.use midCookieParser settings.app.cookieSecret if settings.app.cookieEnabled
         @server.use midSession {secret: settings.app.sessionSecret} if settings.app.sessionEnabled
 

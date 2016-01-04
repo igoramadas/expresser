@@ -29,7 +29,14 @@
         "sessionSecret": "ExpresserSession",
         // The view engine used by Express. Default is jade.
         "viewEngine": "jade",
-        // Connect Assets options.
+        // Body parser module options.
+        "bodyParser": {
+            // Extended URL encoded?
+            "extended": true,
+            // Default post data limit is set to 10MB by default.
+            "limit": "10mb"
+        },
+        // Connect Assets module options.
         "connectAssets": {
             // Build assets? True or false.
             "build": true,
