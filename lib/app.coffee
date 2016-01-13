@@ -145,10 +145,6 @@ class App
         if nodeEnv is "development"
             @server.use midErrorHandler {dumpExceptions: true, showStack: true}
 
-        # Configure production environment.
-        if nodeEnv is "production"
-            @server.use midErrorHandler()
-
         # Use Express static routing.
         @server.use express.static settings.path.publicDir
 
