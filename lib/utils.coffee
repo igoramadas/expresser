@@ -198,6 +198,17 @@ class Utils
 
         return callback target
 
+    # Removes all the specified characters from a string. For example you can cleanup
+    # telephone numbers by using removeFromString(phone, [" ", "-", "(", ")"]).
+    # @param [String] value The original value / string.
+    # @param {array] charsToRemove List of characters to be removed from the original string.
+    # @return [String] Resulting value with the characters removed.
+    removeFromString: (value, charsToRemove) =>
+        result = value
+        result = result.replace(RegExp(c, "g"), "") for c in charsToRemove
+
+        return result
+
     # Minify the passed JSON value. Removes comments, unecessary white spaces etc.
     # @param [String] source The JSON text to be minified.
     # @param [Boolean] asString If true, return as string instead of JSON object.
