@@ -124,7 +124,7 @@
         ],
         // List will all field / property names to be removed from logs. This is useful to mask out
         // passwords, secret keys and tokens from logs.
-        "removeFields": "Password,password,passwordHash,passwordEncrypted,accessToken,refreshToken,Token,token",
+        "removeFields": "Password,password,passwordHash,passwordEncrypted,accessToken,refreshToken,Token,token,Auth,auth",
         // If `sendIP` is true, the IP address of the machine will be added to logs events.
         // Useful when you have different instances of the app running on different services.
         "sendIP": true,

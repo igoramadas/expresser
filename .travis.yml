@@ -9,6 +9,7 @@ services:
 before_script:
   - npm install imagemagick
   - npm install loggly
+  - npm install mongodb
   - npm install mongoskin
   - npm install node-logentries
   - npm install nodemailer

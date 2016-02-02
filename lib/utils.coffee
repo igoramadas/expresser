@@ -205,7 +205,8 @@ class Utils
     # @return [String] Resulting value with the characters removed.
     removeFromString: (value, charsToRemove) =>
         result = value
-        result = result.replace(RegExp(c, "g"), "") for c in charsToRemove
+        result = result.toString() if not lodash.isString result
+        result = result.split(c).join("") for c in charsToRemove
 
         return result
 
