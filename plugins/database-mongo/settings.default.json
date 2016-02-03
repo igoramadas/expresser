@@ -13,8 +13,8 @@
             "options": {
                 // Auto recconect if connection is lost?
                 "auto_reconnect": true,
-                // Default pool size for connections is 12.
-                "poolSize": 12,
+                // Default pool size for connections is 14.
+                "poolSize": 14,
                 // Safe writes? Setting this to true makes sure that Mongo aknowledges disk writes.
                 "safe": false
             }
