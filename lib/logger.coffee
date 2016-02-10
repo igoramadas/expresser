@@ -47,6 +47,11 @@ class Logger
                 catch ex
                     console.error "Unhandled exception!", err.message, err.stack, ex
 
+        # TODO! Remove deprecation notice soon!
+        # The old `removeFields` setting is now called `settings.logger.obfuscateFields`.
+        if settings.logger.removeFields?
+            console.warn "Logger.init", "The logger.removeFields setting is deprecated, please use logger.obfuscateFields!"
+
         @setEvents() if settings.events.enabled
 
     # Bind events.
@@ -87,17 +92,15 @@ class Logger
     # @param [Array] args Array of arguments to be stringified and logged.
     # @return [String] The human readable log sent to the console.
     console: (logType, args) =>
+        args = @argsCleaner args
         args.unshift moment().format "HH:mm:ss.SS"
 
-        # Get message out of the arguments.
-        msg = @getMessage args
-
-        if console[logType]
-            console[logType] msg
+        if console[logType]?
+            console[logType].apply this, args
         else
-            console.log msg
+            console.log.apply this, args
 
-        return msg
+        return args
 
     # Internal generic log method.
     # @param [String] logType The log type (for example: warning, error, info, security, etc).
@@ -115,6 +118,8 @@ class Logger
         # Log to the console depending on `console` setting.
         if settings.logger.console
             @console logType, args
+
+        return msg
 
     # Log to the active transports as `debug`, only if the debug flag is enabled.
     # All arguments are transformed to readable strings.
@@ -154,38 +159,49 @@ class Logger
     # HELPER METHODS
     # --------------------------------------------------------------------------
 
-    # Returns a human readable message out of the arguments.
-    # @return [String] The human readable, parsed JSON message.
+    # Cleans the arguments passed according to the `removeFields` setting.
+    # @return [Arguments] Arguments with private fields obfuscated.
     # @private
-    getMessage: ->
-        separated = []
-        args = arguments
+    argsCleaner: ->
+        args = []
 
-        # Cleaner helper function to remove unwanted fields from logs.
+        # Recursive cleaning function.
         cleaner = (obj) ->
             if lodash.isArray obj
                 cleaner b for b in obj
-            if lodash.isObject obj
+            else if lodash.isObject obj
                 for key, value of obj
-                    if settings.logger.removeFields.indexOf(key) >=0
+                    if settings.logger.obfuscateFields.indexOf(key) >=0
                         obj[key] = "***"
                     else if lodash.isArray value
                         cleaner b for b in value
                     else if lodash.isObject value
                         cleaner value
 
-        # Parse all arguments and stringify objects. Please note that fields defined
-        # on the `removeFields` setting won't be added to the message.
-        for a in args
+        # Iterate arguments and execute cleaner on objects.
+        for a in arguments
             if lodash.isObject a or lodash.isArray a
                 cloned = lodash.cloneDeep a
                 cleaner cloned
-
-                try
-                    separated.push JSON.stringify cloned
-                catch ex
-                    separated.push cloned
+                args.push cloned
             else
+                args.push a
+
+        return args
+
+    # Returns a human readable message out of the arguments.
+    # @return [String] The human readable, parsed JSON message.
+    # @private
+    getMessage: ->
+        separated = []
+        args = @argsCleaner arguments
+
+        # Parse all arguments and stringify objects. Please note that fields defined
+        # on the `removeFields` setting won't be added to the message.
+        for a in args
+            try
+                separated.push JSON.stringify a
+            catch ex
                 separated.push a.toString()
 
         # Append IP address, if `serverIP` is set.
@@ -193,7 +209,7 @@ class Logger
         separated.push "IP #{serverIP}" if serverIP?
 
         # Return single string log message.
-        return separated.join " | "
+        return separated.join settings.logger.separator
 
 # Singleton implementation
 # --------------------------------------------------------------------------

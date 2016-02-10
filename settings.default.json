@@ -120,9 +120,8 @@
             "error",
             "critical"
         ],
-        // List will all field / property names to be removed from logs. This is useful to mask out
-        // passwords, secret keys and tokens from logs.
-        "removeFields": "Password,password,passwordHash,passwordEncrypted,accessToken,refreshToken,Token,token,Auth,auth",
+        // List will all properties to be obfuscated. This is useful to mask out passwords, secret keys, etc.
+        "obfuscateFields": "Password,password,passwordHash,passwordEncrypted,accessToken,refreshToken,Token,token,Auth,auth",
         // If `sendIP` is true, the IP address of the machine will be added to logs events.
         // Useful when you have different instances of the app running on different services.
         "sendIP": true,
@@ -130,6 +129,8 @@
         // Please note that Loggly and Logentries already have a timestamp, so in these
         // cases you can leave this value set to false.
         "sendTimestamp": true,
+        // Default separator for arguments logged to file and transports.
+        "separator": " | ",
         // Set `uncaughtException` to true to bind the logger to the `uncaughtException`
         // event on the process and log all uncaught expcetions as errors.
         "uncaughtException": true

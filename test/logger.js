@@ -93,7 +93,7 @@ describe("Logger Tests", function() {
 
         var someMessage = "Some more stuff here.";
 
-        var loggedMessage = logger.console("info", [privateObj, someMessage]);
+        var loggedMessage = JSON.stringify(logger.console("info", [privateObj, someMessage]));
 
         if (loggedMessage.indexOf("Welcome123") > 0 || loggedMessage.indexOf("lalala") > 0) {
             done("Fields were not hidden from log message.");
