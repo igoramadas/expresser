@@ -92,8 +92,13 @@ class Cron
 
         # Found the cron.json file? Read it.
         if filepath?
-            cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
-            cronJson = utils.minifyJson cronJson
+            cronJson = ""
+
+            try
+                cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
+                cronJson = utils.minifyJson cronJson
+            catch ex
+                throw new Error("Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}")
 
             # Iterate jobs, but do not add if job's `enabled` is false.
             for key, data of cronJson

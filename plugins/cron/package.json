@@ -1,6 +1,6 @@
 {
     "name": "expresser-cron",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Task scheduler plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
