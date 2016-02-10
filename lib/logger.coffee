@@ -85,13 +85,19 @@ class Logger
     # Log to the console.
     # @param [String] logType The log type (for example: warning, error, info, security, etc).
     # @param [Array] args Array of arguments to be stringified and logged.
+    # @return [String] The human readable log sent to the console.
     console: (logType, args) =>
         args.unshift moment().format "HH:mm:ss.SS"
 
-        if settings.logger.errorLogTypes.indexOf(logType) >= 0
-            console.error.apply this, args
+        # Get message out of the arguments.
+        msg = @getMessage args
+
+        if console[logType]
+            console[logType] msg
         else
-            console.log.apply this, args
+            console.log msg
+
+        return msg
 
     # Internal generic log method.
     # @param [String] logType The log type (for example: warning, error, info, security, etc).
@@ -154,22 +160,33 @@ class Logger
     getMessage: ->
         separated = []
         args = arguments
-        args = args[0] if args.length is 1
+
+        # Cleaner helper function to remove unwanted fields from logs.
+        cleaner = (obj) ->
+            if lodash.isArray obj
+                cleaner b for b in obj
+            if lodash.isObject obj
+                for key, value of obj
+                    if settings.logger.removeFields.indexOf(key) >=0
+                        obj[key] = "***"
+                    else if lodash.isArray value
+                        cleaner b for b in value
+                    else if lodash.isObject value
+                        cleaner value
 
         # Parse all arguments and stringify objects. Please note that fields defined
-        # on the `Settings.logger.removeFields` won't be added to the message.
+        # on the `removeFields` setting won't be added to the message.
         for a in args
-            if settings.logger.removeFields.indexOf(a) < 0
-                if lodash.isArray a
-                    for b in a
-                        separated.push b if settings.logger.removeFields.indexOf(b) < 0
-                else if lodash.isObject a
-                    try
-                        separated.push JSON.stringify a
-                    catch ex
-                        separated.push a
-                else
-                    separated.push a
+            if lodash.isObject a or lodash.isArray a
+                cloned = lodash.cloneDeep a
+                cleaner cloned
+
+                try
+                    separated.push JSON.stringify cloned
+                catch ex
+                    separated.push cloned
+            else
+                separated.push a.toString()
 
         # Append IP address, if `serverIP` is set.
         serverIP = utils.getServerIP true if settings.logger.sendIP

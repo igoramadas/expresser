@@ -117,7 +117,7 @@ class LoggerFile
 
                 # Only use `appendFile` on new versions of Node.
                 if fs.appendFile?
-                    fs.appendFile filePath, writeData, (err) =>
+                    fs.appendFile filePath, "\n" + writeData, (err) =>
                         @flushing = false
                         if err?
                             console.error "Logger.LoggerFile.flush", err

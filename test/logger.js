@@ -79,13 +79,36 @@ describe("Logger Tests", function() {
         logger.init();
     });
 
+    it("Check if removed fields are hidden from log", function(done) {
+        var privateObj = {
+            password: "Welcome123",
+            username: "jondoe",
+            comments: "This should appear on log",
+            deep: {
+                auth: {
+                    credentials: "lalala"
+                }
+            }
+        };
+
+        var someMessage = "Some more stuff here.";
+
+        var loggedMessage = logger.console("info", [privateObj, someMessage]);
+
+        if (loggedMessage.indexOf("Welcome123") > 0 || loggedMessage.indexOf("lalala") > 0) {
+            done("Fields were not hidden from log message.");
+        } else {
+            done();
+        }
+    });
+
     it("Save log to file", function(done) {
         transportFile = loggerFile.init({
             onLogSuccess: helperLogOnSuccess(done),
             onLogError: helperLogOnError(done)
         });
 
-        transportFile.info("Expresser local disk log test.", new Date());
+        transportFile.info("Expresser local disk log test.", {password: "obfuscated"}, new Date());
         transportFile.flush();
     });
 
