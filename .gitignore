@@ -2,4 +2,4 @@
 .openshift/
 atlassian-ide-plugin.xml
 logs/*.*
-node_modules/
+node_modules

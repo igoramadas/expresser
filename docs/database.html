@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>database.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>database.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-database">EXPRESSER DATABASE</h2>
+
+        
+      
+        
+        <p>Wrapper for databases. This module by itself won’t do anything, as you’ll
+need to add database driver plugins for your desired DB. At the moment we
+officially support MongoDB (plugin expresser-database-mongo).
+<!--
+@see settings.database
+--></p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Database</span></span>
+
+    events = <span class="hljs-built_in">require</span> <span class="hljs-string">"./events.coffee"</span>
+    lodash = <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
+    logger = <span class="hljs-built_in">require</span> <span class="hljs-string">"./logger.coffee"</span>
+    settings = <span class="hljs-built_in">require</span> <span class="hljs-string">"./settings.coffee"</span></pre></div>
+        
+      
+        
+        <h2 id="public-properties">PUBLIC PROPERTIES</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>@property [Object] Available database drivers.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">drivers</span>: {}</pre></div>
+        
+      
+        
+        <p>@property [Object] Dictionary of database objects.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">db</span>: {}</pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>Init the database module.
+@param [Object] options Database init options.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">init</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Database.init"</span>, options
+        lodash.assign settings.database, options <span class="hljs-keyword">if</span> options?
+
+        <span class="hljs-property">@setEvents</span>() <span class="hljs-keyword">if</span> settings.events.enabled</pre></div>
+        
+      
+        
+        <p>Bind events.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">setEvents</span>: <span class="hljs-function">=&gt;</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"Database.register"</span>, <span class="hljs-property">@register</span></pre></div>
+        
+      
+        
+        <h2 id="implementation">IMPLEMENTATION</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>Helper to register database objects.
+@param [Object] id The ID of the database to be registered. Must be unique.
+@param [Object] driver The database driver to be used, for example mongo.
+@param [Object] connString The connection string, for example user:password@hostname/dbname.
+@param [Object] options Additional options to be passed when creating the DB connection object.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">register</span>: <span class="hljs-function"><span class="hljs-params">(id, driver, connString, options)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@drivers</span>[driver]?
+            logger.error <span class="hljs-string">"Database.register"</span>, <span class="hljs-string">"The driver <span class="hljs-subst">#{driver}</span> is not installed! Please check if plugin expresser-database-<span class="hljs-subst">#{driver}</span> is available on the current environment."</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+        <span class="hljs-keyword">else</span>
+            logger.debug <span class="hljs-string">"Database.register"</span>, id, driver, options
+
+            <span class="hljs-property">@db</span>[id] = <span class="hljs-property">@drivers</span>[driver].getConnection connString, options
+            <span class="hljs-property">@db</span>[id].get = <span class="hljs-property">@drivers</span>[driver].get
+            <span class="hljs-property">@db</span>[id].insert = <span class="hljs-property">@drivers</span>[driver].insert
+            <span class="hljs-property">@db</span>[id].update = <span class="hljs-property">@drivers</span>[driver].update
+            <span class="hljs-property">@db</span>[id].remove = <span class="hljs-property">@drivers</span>[driver].remove
+            <span class="hljs-property">@db</span>[id].count = <span class="hljs-property">@drivers</span>[driver].count
+
+            <span class="hljs-keyword">return</span> <span class="hljs-property">@db</span>[id]</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation-">Singleton implementation.</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Database.getInstance = <span class="hljs-function">-&gt;</span>
+    <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Database() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@instance</span>
+
+<span class="hljs-built_in">module</span>.exports = exports = Database.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

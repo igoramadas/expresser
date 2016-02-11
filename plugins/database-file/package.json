@@ -1,11 +1,11 @@
 {
-    "name": "expresser-database-mongo",
-    "version": "1.0.2",
-    "description": "MongoDB database plugin for Expresser.",
+    "name": "expresser-database-file",
+    "version": "1.0.0-beta1",
+    "description": "JSON file based database plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache-2.0",
-    "subdomain": "expresser-database-mongo",
+    "subdomain": "expresser-database-file",
     "main": "index",
     "domains": [
         "expresser.devv.com"
@@ -15,8 +15,6 @@
     },
 	"dependencies": {
         "coffee-script": ">= 1.10.0",
-        "mongodb": "= 2.0.53",
-        "mongoskin": "= 2.0.3"
 	},
     "repository": {
         "type": "git",
@@ -26,7 +24,7 @@
         "database",
         "db",
         "expresser",
-        "mongo",
-        "mongodb"
+        "file",
+        "json"
     ]
 }

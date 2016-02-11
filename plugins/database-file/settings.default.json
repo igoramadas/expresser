@@ -1,0 +1,11 @@
+// EXPRESSER DATABASE - FILE SETTINGS
+{
+    "database": {
+        "file": {
+            // Enable File Database module by default.
+            "enabled": true,
+            // Path where files should be stored, default is /database on app folder.
+            "path": "database"
+        }
+    }
+}

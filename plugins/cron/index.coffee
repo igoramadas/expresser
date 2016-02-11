@@ -115,9 +115,9 @@ class Cron
                             job.callback = cb
                             @add job
                         else
-                            logger.debug "Cron.load", filename, key, d.callback, "Enabled is false. Skip!"
+                            logger.debug "Cron.load", filename, key, d.callback, "Job 'enabled' is false. Skip!"
                 else
-                    logger.debug "Cron.load", filename, "Module has cronDisabled set. Skip!"
+                    logger.debug "Cron.load", filename, "Module has 'cronDisabled' set. Skip!"
 
             # Start all jobs automatically if `autoStart` is true.
             @start() if options.autoStart

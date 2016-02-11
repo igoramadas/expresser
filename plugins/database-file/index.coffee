@@ -1,72 +1,55 @@
-# EXPRESSER DATABASE - MONGODB
+# EXPRESSER DATABASE - FILE
 # -----------------------------------------------------------------------------
-# Handles MongoDB database transactions using the `mongoskin` module. This
-# plugin attaches itself to the main `database` module of Expresser.
+# Simple implementation of databases stored as JSON files on the file system.
+#
+# The plugin attaches itself to the main `database` module of Expresser.
 # <!--
-# @see settings.database.mongo
+# @see settings.database.file
 # -->
-class DatabaseMongo
+class DatabaseFile
 
-    mongoskin = require "mongoskin"
+    fs = require "fs"
     database = null
     lodash = null
     logger = null
     settings = null
+    utils = null
 
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the MongoDB database module.
+    # Init the File database module.
     # @param [Object] options Database init options.
     init: (options) =>
         database = @expresser.database
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
+        utils = @expresser.utils
 
-        database.drivers.mongo = this
+        database.drivers.file = this
 
-        logger.debug "DatabaseMongo.init", options
+        logger.debug "DatabaseFile.init", options
 
         options = {} if not options?
-        options = lodash.defaultsDeep options, settings.database.mongo
+        options = lodash.defaultsDeep options, settings.database.file
 
-        if options.enabled and options.connString?
-            return database.register "mongo", "mongo", options.connString, options.options
+        if options.enabled and options.path?
+            return database.register "file", "file", options.path, options.options
 
     # Get the DB connection object.
-    # @param [Object] connString The connection string, for example user:password@hostname/dbname.
+    # @param [Object] dbPath Path where database files should be stored.
     # @param [Object] options Additional options to be passed when creating the DB connection object.
-    getConnection: (connString, options) =>
+    getConnection: (dbPath, options) =>
         sep = connString.indexOf "@"
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
-        logger.debug "DatabaseMongo.getConnection", connStringSafe, options
+        logger.debug "DatabaseFile.getConnection", connStringSafe, options
 
-        return {connection: mongoskin.db(connString, options)}
+        # DB path must end with a slash.
+        dbPath += "/" if dbPath.substr(dbPath.length - 1) isnt "/"
 
-    # HELPERS
-    # -------------------------------------------------------------------------
-
-    # Helper to transform MongoDB document "_id" to "id".
-    # @param [Object] result The document or result to be normalized.
-    # @return [Object] Returns the normalized document.
-    normalizeId = (result) ->
-        return if not result?
-
-        isArray = lodash.isArray result or lodash.isArguments result
-
-        # Check if result is a collection / array or a single document.
-        if isArray
-            for obj in result
-                if obj["_id"]?
-                    obj["id"] = obj["_id"].toString()
-                    delete obj["_id"]
-        else if result["_id"]?
-            result["id"] = result["_id"].toString()
-            delete result["_id"]
-
-        return result
+        return {dbPath: dbPath}
 
     # CRUD IMPLEMENTATION
     # -------------------------------------------------------------------------
@@ -79,7 +62,7 @@ class DatabaseMongo
     # @param [Object] options Options to be passed to the query.
     # @option options [Integer] limit Limits the resultset to X documents.
     # @param [Method] callback Callback (err, result) when operation has finished.
-    get: (collection, filter, options, callback) ->
+    get: (collection, filter, callback) ->
         if not callback?
             if lodash.isFunction options
                 callback = options
@@ -90,32 +73,38 @@ class DatabaseMongo
 
         # Callback is mandatory!
         if not callback?
-            throw new Error "DatabaseMongo.get: a callback (last argument) must be specified."
-
-        # Create the DB callback helper.
-        dbCallback = (err, result) =>
-            if callback?
-                result = normalizeId result if settings.database.normalizeId
-                callback err, result
-
-        # Set collection object.
-        dbCollection = @connection.collection collection
-
-        # Parse ID depending on `filter`.
-        if filter?
-            if filter._id?
-                id = filter._id
-            else if filter.id? and settings.database.normalizeId
-                id = filter.id
-            else
-                t = typeof filter
-                id = filter if t is "string" or t is "integer"
+            throw new Error "DatabaseFile.get: a callback (last argument) must be specified."
 
         # Get `limit` option.
         if options?.limit?
             limit = options.limit
         else
             limit = 0
+
+        filepath = utils.getFilePath @dbPath + collection + ".json"
+
+        # Check if file exists.
+        fs.exists filepath, (exists) ->
+            if not exists
+                return callback null, null
+            else
+
+                # Try reading and parsing the collection (file) as JSON.
+                fs.readFileSync filename, {encoding: settings.general.encoding}, (err, data) ->
+                    if err?
+                        return callback {message: "Could not read #{filepath}", error: err}
+
+                    try
+                        data = JSON.parse data
+                    catch ex
+                        return callback {message: "Could not parse #{filepath}", error: ex}
+
+
+
+
+
+
+
 
         # Find documents depending on `filter` and `options`.
         # If id is set, use the shorter findById.
@@ -143,9 +132,9 @@ class DatabaseMongo
             filterLog = filter
             filterLog.password = "***" if filterLog.password?
             filterLog.passwordHash = "***" if filterLog.passwordHash?
-            logger.debug "DatabaseMongo.get", collection, filterLog, options
+            logger.debug "DatabaseFile.get", collection, filterLog, options
         else
-            logger.debug "DatabaseMongo.get", collection, "No filter.", options
+            logger.debug "DatabaseFile.get", collection, "No filter.", options
 
     # Add new documents to the database.
     # The `options` parameter is optional.
@@ -155,13 +144,13 @@ class DatabaseMongo
     insert: (collection, obj, callback) ->
         if not obj?
             if callback?
-                callback "DatabaseMongo.insert: no object (second argument) was specified."
+                callback "DatabaseFile.insert: no object (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @connection?
             if callback?
-                callback "DatabaseMongo.insert: the db was not initialized, please check database settings and call its 'init' method."
+                callback "DatabaseFile.insert: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
         # Create the DB callback helper.
@@ -175,7 +164,7 @@ class DatabaseMongo
 
         # Execute insert!
         dbCollection.insert obj, dbCallback
-        logger.debug "DatabaseMongo.insert", collection
+        logger.debug "DatabaseFile.insert", collection
 
     # Update existing documents on the database.
     # The `options` parameter is optional.
@@ -194,13 +183,13 @@ class DatabaseMongo
         # Object or filter is mandatory.
         if not obj?
             if callback?
-                callback "DatabaseMongo.update: no object (second argument) was specified."
+                callback "DatabaseFile.update: no object (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @connection?
             if callback?
-                callback "DatabaseMongo.update: the db was not initialized, please check database settings and call its 'init' method."
+                callback "DatabaseFile.update: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
         # Create the DB callback helper.
@@ -242,9 +231,9 @@ class DatabaseMongo
         dbCollection.update filter, docData, options, dbCallback
 
         if id?
-            logger.debug "DatabaseMongo.update", collection, options, "ID: #{id}"
+            logger.debug "DatabaseFile.update", collection, options, "ID: #{id}"
         else
-            logger.debug "DatabaseMongo.update", collection, options, "New document."
+            logger.debug "DatabaseFile.update", collection, options, "New document."
 
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
     # @param [String] collection The collection name.
@@ -258,7 +247,7 @@ class DatabaseMongo
         # Filter is mandatory.
         if not filter?
             if callback?
-                callback "DatabaseMongo.remove: no filter (second argument) was specified."
+                callback "DatabaseFile.remove: no filter (second argument) was specified."
             return false
 
         # Check it the `obj` is the model itself, or only the ID string / number.
@@ -285,7 +274,7 @@ class DatabaseMongo
         else
             dbCollection.remove filter, dbCallback
 
-        logger.debug "DatabaseMongo.remove", collection, filter
+        logger.debug "DatabaseFile.remove", collection, filter
 
     # Count documents from the database. A `collection` must be specified.
     # If no `filter` is not passed then count all documents.
@@ -299,22 +288,22 @@ class DatabaseMongo
 
         # Callback is mandatory!
         if not callback?
-            throw new Error "DatabaseMongo.count: a callback (last argument) must be specified."
+            throw new Error "DatabaseFile.count: a callback (last argument) must be specified."
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                logger.debug "DatabaseMongo.count", collection, filter, "Result #{result}"
+                logger.debug "DatabaseFile.count", collection, filter, "Result #{result}"
                 callback err, result
 
-        # MongoDB has a built-in count so use it.
+        # File has a built-in count so use it.
         dbCollection = @connection.collection collection
         dbCollection.count filter, dbCallback
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------
-DatabaseMongo.getInstance = ->
-    @instance = new DatabaseMongo() if not @instance?
+DatabaseFile.getInstance = ->
+    @instance = new DatabaseFile() if not @instance?
     return @instance
 
-module.exports = exports = DatabaseMongo.getInstance()
+module.exports = exports = DatabaseFile.getInstance()

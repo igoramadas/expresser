@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>settings.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>settings.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="database.html">
+                    database.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-settings">EXPRESSER SETTINGS</h2>
+
+        
+      
+        
+        <p>All main settings for the Expresser platform are set and described on the
+settings.default.json file. Do not edit it!!! To change settings please
+create a settings.json file and put your values there.</p>
+<p>You can also create specific settings for different runtime environments.
+For example to set settings on development, create <code>settings.development.json</code>
+and for production a <code>settings.production.json</code> file. These will be parsed
+AFTER the main <code>settings.json</code> file.</p>
+<p>Please note that the <code>settings.json</code> must ne located on the root of your app!
+<!--
+@example Sample settings.json file
+  {
+    "general": {
+      "debug": true,
+      "appTitle": "A Super Cool App"
+    },
+    "firewall" {
+      "enabled": false
+    }
+  }
+--></p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Settings</span></span>
+
+    crypto = <span class="hljs-built_in">require</span> <span class="hljs-string">"crypto"</span>
+    fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+    lodash = <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
+    path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
+    utils = <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils.coffee"</span>
+
+    <span class="hljs-attribute">currentEnv</span>: process.env.NODE_ENV</pre></div>
+        
+      
+        
+        <h2 id="main-methods">MAIN METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>Load settings from settings.default.json, then settings.json, then environment specific settings.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">load</span>: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-property">@currentEnv</span> = process.env.NODE_ENV <span class="hljs-keyword">or</span> <span class="hljs-string">"development"</span>
+
+        <span class="hljs-property">@loadFromJson</span> <span class="hljs-string">"settings.default.json"</span>
+        <span class="hljs-property">@loadFromJson</span> <span class="hljs-string">"settings.json"</span>
+        <span class="hljs-property">@loadFromJson</span> <span class="hljs-string">"settings.<span class="hljs-subst">#{<span class="hljs-property">@currentEnv</span>.toString().toLowerCase()}</span>.json"</span></pre></div>
+        
+      
+        
+        <p>Helper to load values from the specified settings file.
+@param [String] filename The filename or path to the settings file.
+@param [Boolean] extend If true it won’t update settings that are already existing.
+@return [Object] Returns the JSON representation of the loaded file.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">loadFromJson</span>: <span class="hljs-function"><span class="hljs-params">(filename, extend)</span> =&gt;</span>
+        extend = <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> extend?
+        filename = utils.getFilePath filename
+        settingsJson = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>Has json? Load it. Try using UTF8 first, if failed, use ASCII.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> filename?
+            encUtf8 = {<span class="hljs-attribute">encoding</span>: <span class="hljs-string">"utf8"</span>}
+            encAscii = {<span class="hljs-attribute">encoding</span>: <span class="hljs-string">"ascii"</span>}</pre></div>
+        
+      
+        
+        <p>Try parsing the file with UTF8 first, if fails, try ASCII.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">try</span>
+                settingsJson = fs.readFileSync filename, encUtf8
+                settingsJson = utils.minifyJson settingsJson
+            <span class="hljs-keyword">catch</span> ex
+                settingsJson = fs.readFileSync filename, encAscii
+                settingsJson = utils.minifyJson settingsJson</pre></div>
+        
+      
+        
+        <p>Helper function to overwrite properties.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">            <span class="hljs-title">xtend</span> = <span class="hljs-params">(source, target)</span> -&gt;</span>
+                <span class="hljs-keyword">for</span> prop, value <span class="hljs-keyword">of</span> source
+                    <span class="hljs-keyword">if</span> value?.constructor <span class="hljs-keyword">is</span> Object
+                        target[prop] = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> target[prop]?
+                        xtend source[prop], target[prop]
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> extend <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> target[prop]?
+                        target[prop] = source[prop]
+
+            xtend settingsJson, <span class="hljs-keyword">this</span>
+
+        <span class="hljs-keyword">if</span> <span class="hljs-property">@general</span>.debug <span class="hljs-keyword">and</span> <span class="hljs-property">@logger</span>.<span class="hljs-built_in">console</span>
+            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Settings.loadFromJson"</span>, filename</pre></div>
+        
+      
+        
+        <p>Return the JSON representation of the file (or null if not found / empty).</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">return</span> settingsJson</pre></div>
+        
+      
+        
+        <p>Reset to default settings.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">reset</span>: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Settings()
+        <span class="hljs-property">@instance</span>.load()</pre></div>
+        
+      
+        
+        <h2 id="encryption">ENCRYPTION</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>Helper to encrypt or decrypt settings files. The default encryption password
+defined on the <code>Settings.coffee</code> file is “ExpresserSettings”, which ideally you
+should change. The default cipher algorithm is AES 256.
+@param [Boolean] encrypt Pass true to encrypt, false to decrypt.
+@param [String] filename The file to be encrypted or decrypted.
+@param [Object] options Options to be passed to the cipher.
+@option options [String] cipher The cipher to be used, default is aes256.
+@option options [String] password The default encryption password.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">cryptoHelper</span>: <span class="hljs-function"><span class="hljs-params">(encrypt, filename, options)</span> =&gt;</span>
+        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
+        options = lodash.defaults options, {<span class="hljs-attribute">cipher</span>: <span class="hljs-string">"aes256"</span>, <span class="hljs-attribute">password</span>: <span class="hljs-string">"ExpresserSettings"</span>}
+
+        settingsJson = <span class="hljs-property">@loadFromJson</span> filename, <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>Settings file not found or invalid? Stop here.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settingsJson? <span class="hljs-keyword">and</span> <span class="hljs-property">@logger</span>.<span class="hljs-built_in">console</span>
+            <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Settings.cryptoHelper"</span>, encrypt, filename, <span class="hljs-string">"File not found or invalid, abort!"</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>If trying to encrypt and settings property <code>encrypted</code> is true,
+abort encryption and log to the console.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settingsJson.encrypted <span class="hljs-keyword">is</span> <span class="hljs-literal">true</span> <span class="hljs-keyword">and</span> encrypt
+            <span class="hljs-keyword">if</span> <span class="hljs-property">@logger</span>.<span class="hljs-built_in">console</span>
+                <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Settings.cryptoHelper"</span>, encrypt, filename, <span class="hljs-string">"Property 'encrypted' is true, abort!"</span>
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>Helper to parse and encrypt / decrypt settings data.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">parser</span> = <span class="hljs-params">(obj)</span> =&gt;</span>
+            currentValue = <span class="hljs-literal">null</span>
+
+            <span class="hljs-keyword">for</span> prop, value <span class="hljs-keyword">of</span> obj
+                <span class="hljs-keyword">if</span> value?.constructor <span class="hljs-keyword">is</span> Object
+                    parser obj[prop]
+                <span class="hljs-keyword">else</span>
+                    <span class="hljs-keyword">try</span>
+                        currentValue = obj[prop]
+
+                        <span class="hljs-keyword">if</span> encrypt</pre></div>
+        
+      
+        
+        <p>Check the property data type and prefix the new value.</p>
+
+        
+          <div class='highlight'><pre>                            <span class="hljs-keyword">if</span> lodash.isBoolean currentValue
+                                newValue = <span class="hljs-string">"bool:"</span>
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isNumber currentValue
+                                newValue = <span class="hljs-string">"number:"</span>
+                            <span class="hljs-keyword">else</span>
+                                newValue = <span class="hljs-string">"string:"</span></pre></div>
+        
+      
+        
+        <p>Create cipher amd encrypt data.</p>
+
+        
+          <div class='highlight'><pre>                            c = crypto.createCipher options.cipher, options.password
+                            newValue += c.update currentValue.toString(), <span class="hljs-property">@general</span>.encoding, <span class="hljs-string">"hex"</span>
+                            newValue += c.final <span class="hljs-string">"hex"</span>
+
+                        <span class="hljs-keyword">else</span></pre></div>
+        
+      
+        
+        <p>Split the data as “datatype:encryptedValue”.</p>
+
+        
+          <div class='highlight'><pre>                            arrValue = currentValue.split <span class="hljs-string">":"</span>
+                            newValue = <span class="hljs-string">""</span></pre></div>
+        
+      
+        
+        <p>Create cipher and decrypt.</p>
+
+        
+          <div class='highlight'><pre>                            c = crypto.createDecipher options.cipher, options.password
+                            newValue += c.update arrValue[<span class="hljs-number">1</span>], <span class="hljs-string">"hex"</span>, <span class="hljs-property">@general</span>.encoding
+                            newValue += c.final <span class="hljs-property">@general</span>.encoding</pre></div>
+        
+      
+        
+        <p>Cast data type (boolean, number or string).</p>
+
+        
+          <div class='highlight'><pre>                            <span class="hljs-keyword">if</span> arrValue[<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-string">"bool"</span>
+                                <span class="hljs-keyword">if</span> newValue <span class="hljs-keyword">is</span> <span class="hljs-string">"true"</span> <span class="hljs-keyword">or</span> newValue <span class="hljs-keyword">is</span> <span class="hljs-string">"1"</span>
+                                    newValue = <span class="hljs-literal">true</span>
+                                <span class="hljs-keyword">else</span>
+                                    newValue = <span class="hljs-literal">false</span>
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> arrValue[<span class="hljs-number">0</span>] <span class="hljs-keyword">is</span> <span class="hljs-string">"number"</span>
+                                newValue = parseFloat newValue
+                    <span class="hljs-keyword">catch</span> ex
+                        <span class="hljs-keyword">if</span> <span class="hljs-property">@logger</span>.<span class="hljs-built_in">console</span>
+                            <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Settings.cryptoHelper"</span>, encrypt, filename, ex, currentValue</pre></div>
+        
+      
+        
+        <p>Update settings property value.</p>
+
+        
+          <div class='highlight'><pre>                    obj[prop] = newValue</pre></div>
+        
+      
+        
+        <p>Remove <code>encrypted</code> property prior to decrypting.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> encrypt
+            <span class="hljs-keyword">delete</span> settingsJson[<span class="hljs-string">"encrypted"</span>]</pre></div>
+        
+      
+        
+        <p>Process settings data.</p>
+
+        
+          <div class='highlight'><pre>        parser settingsJson</pre></div>
+        
+      
+        
+        <p>Add <code>encrypted</code> property after file is encrypted.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> encrypt
+            settingsJson.encrypted = <span class="hljs-literal">true</span></pre></div>
+        
+      
+        
+        <p>Stringify and save the new settings file.</p>
+
+        
+          <div class='highlight'><pre>        newSettingsJson = JSON.stringify settingsJson, <span class="hljs-literal">null</span>, <span class="hljs-number">4</span>
+        fs.writeFileSync filename, newSettingsJson, {<span class="hljs-attribute">encoding</span>: <span class="hljs-property">@general</span>.encoding}
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span></pre></div>
+        
+      
+        
+        <p>Helper to encrypt the specified settings file. Please see <code>cryptoHelper</code> above.
+@param [String] filename The file to be encrypted.
+@param [Object] options Options to be passed to the cipher.
+@return [Boolean] Returns true if encryption OK, false if something went wrong.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">encrypt</span>: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> =&gt;</span>
+        <span class="hljs-property">@cryptoHelper</span> <span class="hljs-literal">true</span>, filename, options</pre></div>
+        
+      
+        
+        <p>Helper to decrypt the specified settings file. Please see <code>cryptoHelper</code> above.
+@param [String] filename The file to be decrypted.
+@param [Object] options Options to be passed to the cipher.
+@return [Boolean] Returns true if decryption OK, false if something went wrong.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">decrypt</span>: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> =&gt;</span>
+        <span class="hljs-property">@cryptoHelper</span> <span class="hljs-literal">false</span>, filename, options</pre></div>
+        
+      
+        
+        <h2 id="file-watcher">FILE WATCHER</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>Enable or disable the settings files watcher to auto reload settings when file changes.
+The <code>callback</code> is optional in case you want to notify another module about settings updates.
+@param [Boolean] enable If enabled is true activate the fs watcher, otherwise deactivate.
+@param [Method] callback A function (event, filename) triggered when a settings file changes.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">watch</span>: <span class="hljs-function"><span class="hljs-params">(enable, callback)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> callback? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> lodash.isFunction callback
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> TypeError <span class="hljs-string">"The callback must be a valid function, or null/undefined."</span>
+
+        logToConsole = <span class="hljs-property">@general</span>.debug <span class="hljs-keyword">and</span> <span class="hljs-property">@logger</span>.<span class="hljs-built_in">console</span></pre></div>
+        
+      
+        
+        <p>Add / remove watcher for the @json file if it exists.</p>
+
+        
+          <div class='highlight'><pre>        filename = utils.getFilePath <span class="hljs-string">"settings.json"</span>
+        <span class="hljs-keyword">if</span> filename?
+            <span class="hljs-keyword">if</span> enable
+                fs.watchFile filename, {<span class="hljs-attribute">persistent</span>: <span class="hljs-literal">true</span>}, <span class="hljs-function"><span class="hljs-params">(evt, filename)</span> =&gt;</span>
+                    <span class="hljs-property">@loadFromJson</span> filename
+                    <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Settings.watch"</span>, filename, <span class="hljs-string">"Reloaded!"</span> <span class="hljs-keyword">if</span> logToConsole
+                    callback(evt, filename) <span class="hljs-keyword">if</span> callback?
+            <span class="hljs-keyword">else</span>
+                fs.unwatchFile filename, callback</pre></div>
+        
+      
+        
+        <p>Add / remove watcher for the settings.NODE_ENV.json file if it exists.</p>
+
+        
+          <div class='highlight'><pre>        filename = utils.getFilePath <span class="hljs-string">"settings.<span class="hljs-subst">#{<span class="hljs-property">@currentEnv</span>.toString().toLowerCase()}</span>.json"</span>
+        <span class="hljs-keyword">if</span> filename?
+            <span class="hljs-keyword">if</span> enable
+                fs.watchFile filename, {<span class="hljs-attribute">persistent</span>: <span class="hljs-literal">true</span>}, <span class="hljs-function"><span class="hljs-params">(evt, filename)</span> =&gt;</span>
+                    <span class="hljs-property">@loadFromJson</span> filename
+                    <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Settings.watch"</span>, filename, <span class="hljs-string">"Reloaded!"</span> <span class="hljs-keyword">if</span> logToConsole
+                    callback(evt, filename) <span class="hljs-keyword">if</span> callback?
+            <span class="hljs-keyword">else</span>
+                fs.unwatchFile filename, callback
+
+        <span class="hljs-keyword">if</span> logToConsole
+            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Settings.watch"</span>, enable, (<span class="hljs-keyword">if</span> callback? <span class="hljs-keyword">then</span> <span class="hljs-string">"With callback"</span> <span class="hljs-keyword">else</span> <span class="hljs-string">"No callback"</span>)</pre></div>
+        
+      
+        
+        <h2 id="paas">PAAS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>Update settings based on Cloud Environmental variables. If a <code>filter</code> is specified,
+update only settings that match it, otherwise update everything.
+@param [String] filter Filter settings to be updated, for example “mailer” or “database”.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">updateFromPaaS</span>: <span class="hljs-function"><span class="hljs-params">(filter)</span> =&gt;</span>
+        env = process.env
+        filter = <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter? <span class="hljs-keyword">or</span> filter <span class="hljs-keyword">is</span> <span class="hljs-string">""</span></pre></div>
+        
+      
+        
+        <p>Update app IP and port (OpenShift, AppFog).</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter <span class="hljs-keyword">or</span> filter.indexOf(<span class="hljs-string">"app"</span>) &gt;= <span class="hljs-number">0</span>
+            ip = env.OPENSHIFT_NODEJS_IP <span class="hljs-keyword">or</span> env.IP
+            port = env.OPENSHIFT_NODEJS_PORT <span class="hljs-keyword">or</span> env.VCAP_APP_PORT <span class="hljs-keyword">or</span> env.PORT
+            <span class="hljs-property">@app</span>.ip = ip <span class="hljs-keyword">if</span> ip? <span class="hljs-keyword">and</span> ip <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            <span class="hljs-property">@app</span>.port = port <span class="hljs-keyword">if</span> port? <span class="hljs-keyword">and</span> port <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span></pre></div>
+        
+      
+        
+        <p>Update database settings (AppFog, MongoLab, MongoHQ).</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter <span class="hljs-keyword">or</span> filter.indexOf(<span class="hljs-string">"database"</span>) &gt;= <span class="hljs-number">0</span>
+            vcap = env.VCAP_SERVICES
+            vcap = JSON.parse vcap <span class="hljs-keyword">if</span> vcap?</pre></div>
+        
+      
+        
+        <p>Check for AppFog MongoDB variables.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> vcap? <span class="hljs-keyword">and</span> vcap <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                mongo = vcap[<span class="hljs-string">"mongodb-1.8"</span>]
+                mongo = mongo[<span class="hljs-number">0</span>][<span class="hljs-string">"credentials"</span>] <span class="hljs-keyword">if</span> mongo?
+                <span class="hljs-keyword">if</span> mongo?
+                    <span class="hljs-property">@database</span>.connString = <span class="hljs-string">"mongodb://<span class="hljs-subst">#{mongo.hostname}</span>:<span class="hljs-subst">#{mongo.port}</span>/<span class="hljs-subst">#{mongo.db}</span>"</span></pre></div>
+        
+      
+        
+        <p>Check for MongoLab variables.</p>
+
+        
+          <div class='highlight'><pre>            mongoLab = env.MONGOLAB_URI
+            <span class="hljs-property">@database</span>.connString = mongoLab <span class="hljs-keyword">if</span> mongoLab? <span class="hljs-keyword">and</span> mongoLab <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span></pre></div>
+        
+      
+        
+        <p>Check for MongoHQ variables.</p>
+
+        
+          <div class='highlight'><pre>            mongoHq = env.MONGOHQ_URL
+            <span class="hljs-property">@database</span>.connString = mongoHq <span class="hljs-keyword">if</span> mongoHq? <span class="hljs-keyword">and</span> mongoHq <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span></pre></div>
+        
+      
+        
+        <p>Update logger settings (Logentries and Loggly).</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter <span class="hljs-keyword">or</span> filter.indexOf(<span class="hljs-string">"logger"</span>) &gt;= <span class="hljs-number">0</span>
+            logentriesToken = env.LOGENTRIES_TOKEN
+            logglyToken = env.LOGGLY_TOKEN
+            logglySubdomain = env.LOGGLY_SUBDOMAIN
+            <span class="hljs-property">@logger</span>.logentries.token = logentriesToken <span class="hljs-keyword">if</span> logentriesToken? <span class="hljs-keyword">and</span> logentriesToken <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            <span class="hljs-property">@logger</span>.loggly.token = logglyToken <span class="hljs-keyword">if</span> logglyToken? <span class="hljs-keyword">and</span> logglyToken <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            <span class="hljs-property">@logger</span>.loggly.subdomain = logglySubdomain <span class="hljs-keyword">if</span> logglySubdomain? <span class="hljs-keyword">and</span> logglySubdomain <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span></pre></div>
+        
+      
+        
+        <p>Update mailer settings (Mailgun, Mandrill, SendGrid).</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter <span class="hljs-keyword">or</span> filter.indexOf(<span class="hljs-string">"mail"</span>) &gt;= <span class="hljs-number">0</span>
+            currentSmtpHost = <span class="hljs-property">@mailer</span>.smtp.host?.toLowerCase()
+            currentSmtpHost = <span class="hljs-string">""</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> currentSmtpHost?</pre></div>
+        
+      
+        
+        <p>Get and set Mailgun.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> currentSmtpHost.indexOf(<span class="hljs-string">"mailgun"</span>) &gt;= <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> smtpHost?.indexOf(<span class="hljs-string">"mailgun"</span>) &gt;= <span class="hljs-number">0</span>
+                <span class="hljs-property">@mailer</span>.smtp.service = <span class="hljs-string">"mailgun"</span>
+                smtpUser = env.MAILGUN_SMTP_LOGIN
+                smtpPassword = env.MAILGUN_SMTP_PASSWORD
+
+                <span class="hljs-keyword">if</span> smtpUser? <span class="hljs-keyword">and</span> smtpUser <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> smtpPassword? <span class="hljs-keyword">and</span> smtpPassword <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                    <span class="hljs-property">@mailer</span>.smtp.user = smtpUser
+                    <span class="hljs-property">@mailer</span>.smtp.password = smtpPassword</pre></div>
+        
+      
+        
+        <p>Get and set Mandrill.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> currentSmtpHost.indexOf(<span class="hljs-string">"mandrill"</span>) &gt;= <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> smtpHost?.indexOf(<span class="hljs-string">"mandrill"</span>) &gt;= <span class="hljs-number">0</span>
+                <span class="hljs-property">@mailer</span>.smtp.service = <span class="hljs-string">"mandrill"</span>
+                smtpUser = env.MANDRILL_USERNAME
+                smtpPassword = env.MANDRILL_APIKEY
+
+                <span class="hljs-keyword">if</span> smtpUser? <span class="hljs-keyword">and</span> smtpUser <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> smtpPassword? <span class="hljs-keyword">and</span> smtpPassword <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                    <span class="hljs-property">@mailer</span>.smtp.user = smtpUser
+                    <span class="hljs-property">@mailer</span>.smtp.password = smtpPassword</pre></div>
+        
+      
+        
+        <p>Get and set SendGrid.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> currentSmtpHost.indexOf(<span class="hljs-string">"sendgrid"</span>) &gt;= <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> smtpHost?.indexOf(<span class="hljs-string">"sendgrid"</span>) &gt;= <span class="hljs-number">0</span>
+                <span class="hljs-property">@mailer</span>.smtp.service = <span class="hljs-string">"sendgrid"</span>
+                smtpUser = env.SENDGRID_USERNAME
+                smtpPassword = env.SENDGRID_PASSWORD
+
+                <span class="hljs-keyword">if</span> smtpUser? <span class="hljs-keyword">and</span> smtpUser <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> smtpPassword? <span class="hljs-keyword">and</span> smtpPassword <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                    <span class="hljs-property">@mailer</span>.smtp.user = smtpUser
+                    <span class="hljs-property">@mailer</span>.smtp.password = smtpPassword</pre></div>
+        
+      
+        
+        <p>Log to console.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-property">@general</span>.debug <span class="hljs-keyword">and</span> <span class="hljs-property">@logger</span>.<span class="hljs-built_in">console</span>
+            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Settings.updateFromPaaS"</span>, <span class="hljs-string">"Updated!"</span>, filter</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Settings.getInstance = <span class="hljs-function">-&gt;</span>
+    <span class="hljs-keyword">if</span> process.env <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
+        obj = <span class="hljs-keyword">new</span> Settings()
+        obj.load()
+        obj.logger.<span class="hljs-built_in">console</span> = <span class="hljs-literal">false</span>
+        <span class="hljs-keyword">return</span> obj
+
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?
+        <span class="hljs-property">@instance</span> = <span class="hljs-keyword">new</span> Settings()
+        <span class="hljs-property">@instance</span>.load()
+
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@instance</span>
+
+<span class="hljs-built_in">module</span>.exports = exports = Settings.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
