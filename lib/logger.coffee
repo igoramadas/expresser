@@ -159,6 +159,11 @@ class Logger
     # HELPER METHODS
     # --------------------------------------------------------------------------
 
+    # Helper wrapper to auto log errors depending on the `autoLogErrors` setting.
+    autoLogError: =>
+        if settings.logger.autoLogErrors
+            @error.apply this, arguments
+
     # Cleans the arguments passed according to the `removeFields` setting.
     # @return [Arguments] Arguments with private fields obfuscated.
     # @private

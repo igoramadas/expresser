@@ -141,8 +141,6 @@ class DatabaseMongo
 
         if filter?
             filterLog = filter
-            filterLog.password = "***" if filterLog.password?
-            filterLog.passwordHash = "***" if filterLog.passwordHash?
             logger.debug "DatabaseMongo.get", collection, filterLog, options
         else
             logger.debug "DatabaseMongo.get", collection, "No filter.", options
