@@ -9,9 +9,11 @@
 class DatabaseFile
 
     fs = require "fs"
+    path = require "path"
     database = null
     lodash = null
     logger = null
+    moment = null
     settings = null
     utils = null
 
@@ -24,6 +26,7 @@ class DatabaseFile
         database = @expresser.database
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
+        moment = @expresser.libs.moment
         settings = @expresser.settings
         utils = @expresser.utils
 
@@ -41,15 +44,12 @@ class DatabaseFile
     # @param [Object] dbPath Path where database files should be stored.
     # @param [Object] options Additional options to be passed when creating the DB connection object.
     getConnection: (dbPath, options) =>
-        sep = connString.indexOf "@"
-        connStringSafe = connString
-        connStringSafe = connStringSafe.substring sep if sep > 0
-        logger.debug "DatabaseFile.getConnection", connStringSafe, options
+        logger.debug "DatabaseFile.getConnection", dbPath, options
 
         # DB path must end with a slash.
         dbPath += "/" if dbPath.substr(dbPath.length - 1) isnt "/"
 
-        return {dbPath: dbPath}
+        return {dbPath: dbPath, cache: {}, readFromDisk: @readFromDisk, writeToDisk: @writeToDisk}
 
     # FILE OPERATIONS
     # -------------------------------------------------------------------------
@@ -59,16 +59,21 @@ class DatabaseFile
     # @param [Method] callback Callback (err, result) with collection data.
     # @private
     readFromDisk: (collection, callback) ->
-        filepath = utils.getFilePath @dbPath + collection + ".json"
+        filepath = @dbPath + collection + ".json"
+        logger.debug "DatabaseFile.readFromDisk", filepath
+
+        # Check if file is already open and on cache.
+        if @cache[collection]?
+            return callback null, @cache[collection]
 
         # Check if file exists before proceeding.
-        fs.exists filepath, (exists) ->
+        fs.exists filepath, (exists) =>
             if not exists
                 return callback null, null
             else
 
                 # Try reading and parsing the collection (file) as JSON.
-                fs.readFileSync filename, {encoding: settings.general.encoding}, (err, data) ->
+                fs.readFileSync filepath, {encoding: settings.general.encoding}, (err, data) =>
                     if err?
                         logger.autoLogError "DatabaseFile.readFromDisk", filepath, err
                         return callback {message: "Could not read #{filepath}", error: err}
@@ -79,16 +84,36 @@ class DatabaseFile
                         logger.autoLogError "DatabaseFile.readFromDisk", filepath, ex
                         return callback {message: "Could not parse #{filepath}", error: ex}
 
+                    # Add data to in-memory cache and st its deletion timeout.
+                    @cache[collection] = data
+                    deleteTimeout = -> delete @cache[collection]
+                    setTimeout deleteTimeout, settings.database.file.cacheExpires * 1000
+
+                    callback null, data
+
     # Save data to disk.
     writeToDisk: (collection, data, callback) ->
-        filepath = utils.getFilePath @dbPath + collection + ".json"
+        filepath = @dbPath + collection + ".json"
+        logger.debug "DatabaseFile.writeToDisk", filepath, data
 
-        fs.writeFile filepath, data, {encoding: settings.general.encoding}, (err, result) ->
-            if err?
-                logger.autoLogError "DatabaseFile.writeToDisk", filepath, err
-                return callback {message: "Could not write to #{filepath}", error: err}
+        # Make sure database directory exists.
+        dirname = path.dirname filepath
+        fs.exists dirname, (exists) =>
+            fs.mkdirSync dirname if not exists
 
-            callback null, true
+            # Stringify the data to be written.
+            data = JSON.stringify data, null, 1
+
+            # Try writing the data to the disk.
+            fs.writeFile filepath, data, {encoding: settings.general.encoding}, (err) =>
+                if err?
+                    logger.autoLogError "DatabaseFile.writeToDisk", filepath, err
+                    return callback {message: "Could not write to #{filepath}", error: err}
+
+                # Update cache.
+                @cache[collection] = data if @cache[collection]?
+
+                callback null, true
 
     # CRUD IMPLEMENTATION
     # -------------------------------------------------------------------------
@@ -112,7 +137,7 @@ class DatabaseFile
             throw err
 
         # Get collection data from disk.
-        @readFromDisk collection, (err, data) ->
+        @readFromDisk collection, (err, data) =>
             if err?
                 return callback {message: "Could not read data from #{collection}.", error: err}
 
@@ -136,7 +161,7 @@ class DatabaseFile
             throw err
 
         # Get collection data from disk.
-        @readFromDisk collection, (err, data) ->
+        @readFromDisk collection, (err, data) =>
             if err?
                 return callback {message: "Could not read data from #{collection}.", error: err}
 
@@ -145,11 +170,11 @@ class DatabaseFile
                 data = [obj]
 
             # Save changes to disk!
-            @writeToDisk collection, data, (err, ok) ->
+            @writeToDisk collection, data, (err) =>
                 if err?
                     return callback {message: "Could not write to #{collection}.", error: err}
 
-                return callback null, obj
+                callback null, obj
 
     # Update existing data on the JSON file. The `collection` and `obj` are mandatory.
     # Values are merged with the
@@ -175,7 +200,7 @@ class DatabaseFile
             throw err
 
         # Get collection data from disk.
-        @readFromDisk collection, (err, data) ->
+        @readFromDisk collection, (err, data) =>
             if err?
                 return callback {message: "Could not read data from #{collection}.", error: err}
 
@@ -192,11 +217,11 @@ class DatabaseFile
                 lodash.assignIn i, obj
 
             # Save changes to disk!
-            @writeToDisk collection, data, (err, ok) ->
+            @writeToDisk collection, data, (err, ok) =>
                 if err?
                     return callback {message: "Could not write to #{collection}.", error: err}
 
-                return callback null, filtered
+                callback null, filtered
 
     # Delete an object from the JSON file. The `obj` argument is mandatory.
     # This uses the lodash `remove` helper.
@@ -217,7 +242,7 @@ class DatabaseFile
             throw err
 
         # Get collection data from disk.
-        @readFromDisk collection, (err, data) ->
+        @readFromDisk collection, (err, data) =>
             if err?
                 return callback {message: "Could not read data from #{collection}.", error: err}
 
@@ -225,11 +250,11 @@ class DatabaseFile
             removed = lodash.remove data, filter
 
             # Save changes to disk!
-            @writeToDisk collection, data, (err, ok) ->
+            @writeToDisk collection, data, (err, ok) =>
                 if err?
                     return callback {message: "Could not write to #{collection}.", error: err}
 
-                return callback null, removed
+                callback null, removed
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------

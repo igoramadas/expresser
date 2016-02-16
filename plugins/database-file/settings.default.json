@@ -4,6 +4,8 @@
         "file": {
             // Enable File Database module by default.
             "enabled": true,
+            // How long database file should be cached in memory (seconds). Default is 1 minute.
+            "cacheExpires": 60,
             // Path where files should be stored, default is /database on app folder.
             "path": "database"
         }
