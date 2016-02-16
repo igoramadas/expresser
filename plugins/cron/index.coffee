@@ -203,7 +203,7 @@ class Cron
                 existing.timer = null
             else
                 errorMsg = "Job #{job.id} already exists and 'allowReplacing' is false. Abort!"
-                logger.error "Cron.add", errorMsg
+                logger.autoLogError "Cron.add", errorMsg
                 return {error: errorMsg}
 
         # Set `startTime` and `endTime` if not set.

@@ -85,7 +85,21 @@ describe("Database Tests", function() {
             arr.push(text);
         }
 
-        dbFile.insert("test", arr, callback);
+        dbFile.insert("test", {id: "testArray", data: arr}, callback);
+    });
+
+    it("File - Remove test array created on previous test", function(done) {
+        var callback = function(err, result) {
+            if (err) {
+                done(err);
+            } else if (result == null) {
+                done("Data was not found so couldn't be removed.");
+            } else {
+                done();
+            }
+        };
+
+        dbFile.remove("test", {id: "testArray"}, callback);
     });
 
     it("Mongo - Add complex record to the database", function(done) {

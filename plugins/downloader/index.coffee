@@ -72,7 +72,7 @@ class Downloader
 
             # If downloading the same file and to the same location, abort download.
             if existing?.saveTo is saveTo
-                logger.warn "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
+                logger.autoLogError "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
                 err = {message: "Download aborted: same file is already downloading.", duplicate: true}
                 callback(err, downloadObj) if callback?
                 return false

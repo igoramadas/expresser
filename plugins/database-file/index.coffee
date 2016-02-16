@@ -73,7 +73,7 @@ class DatabaseFile
             else
 
                 # Try reading and parsing the collection (file) as JSON.
-                fs.readFileSync filepath, {encoding: settings.general.encoding}, (err, data) =>
+                fs.readFile filepath, {encoding: settings.general.encoding}, (err, data) =>
                     if err?
                         logger.autoLogError "DatabaseFile.readFromDisk", filepath, err
                         return callback {message: "Could not read #{filepath}", error: err}
@@ -167,7 +167,12 @@ class DatabaseFile
 
             # No data yet? Initiate the collection with a new array.
             if not data?
-                data = [obj]
+                if lodash.isArray obj
+                    data = obj
+                else
+                    data = [obj]
+            else
+                data.push obj
 
             # Save changes to disk!
             @writeToDisk collection, data, (err) =>
@@ -206,7 +211,10 @@ class DatabaseFile
 
             # No data yet? Initiate the collection with a new array.
             if not data?
-                filtered = [obj]
+                if lodash.isArray obj
+                    filtered = obj
+                else
+                    filtered = [obj]
             else
                 if options.filter?
                     filtered = lodash.filter data, options.filter
@@ -249,7 +257,10 @@ class DatabaseFile
             # Remove from data original.
             removed = lodash.remove data, filter
 
-            # Save changes to disk!
+            # Nothing to remove? Call back with null.
+            if not removed?
+                callback null, null
+
             @writeToDisk collection, data, (err, ok) =>
                 if err?
                     return callback {message: "Could not write to #{collection}.", error: err}
