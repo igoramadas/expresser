@@ -1,6 +1,6 @@
 # EXPRESSER APP
 # -----------------------------------------------------------------------------
-# The Express app server. By default it will run on HTTP port 8080
+# The Express server. By default it will run on HTTP port 8080
 # <!--
 # @see settings.app
 # -->
@@ -189,10 +189,10 @@ class App
 
         if settings.app.ip? and settings.app.ip isnt ""
             server.listen settings.app.port, settings.app.ip
-            logger.info "App", settings.app.title, "Listening on #{settings.app.ip} - #{settings.app.port}"
+            logger.info "App", settings.app.title, "Listening on #{settings.app.ip} port #{settings.app.port}"
         else
             server.listen settings.app.port
-            logger.info "App", settings.app.title, "Listening on #{settings.app.port}"
+            logger.info "App", settings.app.title, "Listening on port #{settings.app.port}"
 
         # Using SSL and redirector port is set? Then create the http server.
         if settings.app.ssl.enabled and settings.app.ssl.redirectorPort > 0
@@ -207,32 +207,93 @@ class App
     # HELPER AND UTILS
     # --------------------------------------------------------------------------
 
-    # Helper to render pages. The request, response and view are mandatory,
+    # Helper to render Jade views. The request, response and view are mandatory,
     # and the options argument is optional.
     # @param [Object] req The request object.
     # @param [Object] res The response object.
-    # @param [String] view The view name.
+    # @param [String] view The Jade filename.
     # @param [Object] options Options passed to the view, optional.
     renderView: (req, res, view, options) =>
         options = {} if not options?
         options.device = utils.getClientDevice req
         options.title = settings.app.title if not options.title?
+
+        # View filename must jave .jade extension.
+        view += ".jade" if view.indexOf(".jade") < 0
+
         res.render view, options
 
-        logger.debug "App", "Render", view, options
+        logger.debug "App.renderView", req.originalUrl, view, options
 
-    # Helper to send error responses. When the server can't return a valid result,
-    # send an error response with the specified status code.
-    # @param [Object] req The response object.
-    # @param [String] message The message to be sent to the client.
-    # @param [Integer] statusCode The response status code, optional, default is 500.
-    renderError: (res, message, statusCode) =>
-        message = JSON.stringify message
-        statusCode = 500 if not statusCode?
-        res.statusCode = 500
-        res.send "Server error: #{message}"
+    # Render response as human readable JSON data.
+    # @param [Object] req The request object.
+    # @param [Object] res The response object.
+    # @param [Object] data The JSON data to be sent.
+    renderJson: (req, res, data) =>
+        if lodash.isString data
+            try
+                data = JSON.parse data
+            catch ex
+                return @renderError req, res, ex, 500
 
-        logger.error "App", "HTTP Error", statusCode, message, res
+        # Remove methods from JSON before rendering.
+        cleanJson = (obj) ->
+            if lodash.isArray obj
+                cleanJson i for i in obj
+            else if lodash.isObject obj
+                for k, v of obj
+                    if lodash.isFunction v
+                        delete obj[k]
+                    else
+                        cleanJson v
+
+        cleanJson data
+
+        # Add Access-Control-Allow-Origin to all when debug is true.
+        if settings.general.debug
+            res.setHeader "Access-Control-Allow-Origin", "*"
+
+        # Send JSON response.
+        res.json data
+
+        logger.debug "App.renderJson", req.originalUrl, data
+
+    # Render response as image.
+    # @param [Object] req The request object.
+    # @param [Object] res The response object.
+    # @param [String] filename The full path to the image file.
+    # @param [Object] options Options passed to the image renderer, for example the "mimetype".
+    renderImage: (req, res, filename, options) ->
+        mimetype = options?.mimetype
+
+        # Try to figure out the mime type in case it wasn't passed along the options.
+        if not mimetype?
+            extname = path.extname(filename).toLowerCase().replace(".","")
+            extname = "jpeg" if extname is "jpg"
+            mimetype = "image/#{extname}"
+
+        res.contentType mimetype
+        res.sendFile filename
+
+        logger.debug "App.renderImage", req.originalUrl, filename, options
+
+    # Send error response as JSON. When the server can't return a valid result,
+    # send an error response with the specified status code and error output.
+    # @param [Object] req The request object.
+    # @param [Object] res The response object.
+    # @param [Object] error The error object or message to be sent to the client.
+    # @param [Integer] status The response status code, optional, default is 500.
+    renderError: (req, res, error, status) =>
+        status = 408 if status is "ETIMEDOUT"
+
+        # Set default status to 500 and stringify message if necessary.
+        status = status or err?.statusCode or 500
+        error = JSON.stringify err if not lodash.isString err
+
+        res.status status
+        res.json {error: error, url: req.originalUrl}
+
+        logger.error "App.renderError", req.originalUrl, status, error
 
 # Singleton implementation
 # --------------------------------------------------------------------------
