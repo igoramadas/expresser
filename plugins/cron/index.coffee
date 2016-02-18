@@ -98,6 +98,7 @@ class Cron
                 cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
                 cronJson = utils.minifyJson cronJson
             catch ex
+                logger.autoLogError "Cron.load", filename, ex
                 throw new Error("Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}")
 
             # Iterate jobs, but do not add if job's `enabled` is false.

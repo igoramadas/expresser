@@ -79,16 +79,21 @@ class DatabaseFile
                         logger.autoLogError "DatabaseFile.readFromDisk", filepath, err
                         return callback {message: "Could not read #{filepath}", error: err}
 
-                    try
-                        data = JSON.parse data
-                    catch ex
-                        logger.autoLogError "DatabaseFile.readFromDisk", filepath, ex
-                        return callback {message: "Could not parse #{filepath}", error: ex}
+                    # Set data to null if file is empty.
+                    data = null if data is ""
 
-                    # Add data to in-memory cache and st its deletion timeout.
-                    @cache[collection] = data
-                    deleteTimeout = -> delete @cache[collection]
-                    setTimeout deleteTimeout, settings.database.file.cacheExpires * 1000
+                    # File has data? Try to parse it as JSON.
+                    if data?
+                        try
+                            data = JSON.parse data
+                        catch ex
+                            logger.autoLogError "DatabaseFile.readFromDisk", filepath, ex
+                            return callback {message: "Could not parse #{filepath}", error: ex}
+
+                        # Add data to in-memory cache and st its deletion timeout.
+                        @cache[collection] = data
+                        deleteTimeout = -> delete @cache[collection]
+                        setTimeout deleteTimeout, settings.database.file.cacheExpires * 1000
 
                     callback null, data
 
@@ -107,7 +112,8 @@ class DatabaseFile
             fs.mkdirSync dirname if not exists
 
             # Stringify the data to be written.
-            data = JSON.stringify data, null, 1
+            if not lodash.isString data
+                data = JSON.stringify data, null, 1
 
             # Try writing the data to the disk.
             fs.writeFile filepath, data, {encoding: settings.general.encoding}, (err) =>
