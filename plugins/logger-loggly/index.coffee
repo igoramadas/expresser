@@ -32,6 +32,7 @@ class LoggerLoggly
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.logger.loggly
 
+        # Auto register as "loggly" if a default token is defined on the settings.
         if options.enabled and options.token?
             return logger.register "loggly", "loggly", options
 
@@ -39,10 +40,14 @@ class LoggerLoggly
     # @param [Object] options Transport options including the token.
     getTransport: (options) =>
         if not options.token? or options.token is ""
-            throw new Error "The options.token is mandatory! Please specify a valid Loggly token."
+            err = new Error "The options.token is mandatory! Please specify a valid Loggly token."
+            logger.error "LoggerLoggly.getTransport", err, options
+            throw err
 
         if not options.subdomain? or options.subdomain is ""
-            throw new Error "The options.subdomain is mandatory! Please specify a valid Loggly subdomain."
+            err = new Error "The options.subdomain is mandatory! Please specify a valid Loggly subdomain."
+            logger.error "LoggerLoggly.getTransport", err, options
+            throw err
 
         options = lodash.defaultsDeep options, settings.logger.loggly
         options.sendTimestamp = settings.logger.sendTimestamp if not options.sendTimestamp

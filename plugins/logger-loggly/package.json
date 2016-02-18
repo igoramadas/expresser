@@ -1,6 +1,6 @@
 {
     "name": "expresser-logger-loggly",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Loggly plugin for Expresser apps.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -15,7 +15,7 @@
     },
 	"dependencies": {
         "coffee-script": ">= 1.10.0",
-        "loggly": ">= 1.0.9"
+        "loggly": "1.1.x"
 	},
     "repository": {
         "type": "git",

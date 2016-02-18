@@ -1,6 +1,6 @@
 {
     "name": "expresser-logger-logentries",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Logentries plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -15,7 +15,7 @@
     },
 	"dependencies": {
         "coffee-script": ">= 1.10.0",
-        "node-logentries": ">= 0.1.4"
+        "node-logentries": "0.1.x"
 	},
     "repository": {
         "type": "git",

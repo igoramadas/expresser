@@ -281,6 +281,7 @@ class DatabaseFile
 # Singleton implementation.
 # -----------------------------------------------------------------------------
 DatabaseFile.getInstance = ->
+    return new DatabaseFile() if process.env is "test"
     @instance = new DatabaseFile() if not @instance?
     return @instance
 

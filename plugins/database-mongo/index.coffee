@@ -313,6 +313,7 @@ class DatabaseMongo
 # Singleton implementation.
 # -----------------------------------------------------------------------------
 DatabaseMongo.getInstance = ->
+    return new DatabaseMongo() if process.env is "test"
     @instance = new DatabaseMongo() if not @instance?
     return @instance
 

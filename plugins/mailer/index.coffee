@@ -1,7 +1,8 @@
 # EXPRESSER MAILER
 # --------------------------------------------------------------------------
-# Sends and manages emails, supports templates. When parsing templates, the
-# tags should be wrapped with normal brackets {}. Example: {contents}
+# Sends and manages emails, with template and tags replacement support.
+# When parsing templates, the tags should be wrapped with normal brackets {}.
+# Example: {contents}
 # The base message template (which is loaded with every single sent message)
 # must be saved as base.html, under the /emailtemplates folder (or whatever
 # folder / base file name you have set on the settings).
@@ -57,11 +58,13 @@ class Mailer
 
         # Alert user if specified backup SMTP but not the main one.
         if not @smtp? and @smtp2?
-            logger.warn "Mailer.init", "The secondary SMTP is defined but not the main one.", "You should set the main one instead, but we'll still use the secondary."
+            logger.warn "Mailer.init", "The secondary SMTP is defined but not the main one.", "You should set the main one instead, but we'll still use the secondary for now."
 
         # Warn if no SMTP is available for sending emails, but only when debug is enabled.
         if options.enabled and not @smtp? and not @smtp2?
-            logger.warn "Mailer.init", "No default SMTP settings were provided.", "No emails will be sent out if you don't pass a SMTP server on send."
+            logger.warn "Mailer.init", "No default SMTP settings found.", "No emails will be sent out if you don't pass a SMTP server on `send`."
+
+        @setEvents() if settings.events.enabled
 
     # Bind event listeners.
     setEvents: =>
@@ -81,17 +84,21 @@ class Mailer
     send: (options, callback) =>
         logger.debug "Mailer.send", options
 
-        # User has passed its own SMTP servers?
+        # Get passed SMTP servers or the default ones.
         smtp = options.smtp or @smtp
         smtp2 = options.smtp2 or @smtp2
 
         # Check if SMTP server is set.
         if not smtp? and not smtp2?
-            throw new Error "Default SMTP transports were not initiated and nothing was passed on options.smtp."
+            err = new Error "Default SMTP transports were not initiated and nothing was passed on options.smtp."
+            logger.error "Mailer.send", err, options
+            throw err
 
         # Make sure "to" address is valid.
         if not options.to? or options.to is false or options.to is ""
-            throw new Error "Option 'to' is not valid. Abort!"
+            err = new Error "Option 'to' is mandatory and cannot be empty."
+            logger.error "Mailer.send", err, options
+            throw err
 
         # Set from to default address if no `to` was set.
         options.from = "#{settings.app.title} <#{settings.mailer.from}>" if not options.from?

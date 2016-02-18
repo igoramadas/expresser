@@ -33,6 +33,7 @@ class LoggerFile
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.logger.file
 
+        # Auto register as "file" if a default path is defined on the settings.
         if options.enabled and options.path?
             return logger.register "file", "file", options
 
@@ -40,7 +41,9 @@ class LoggerFile
     # @param [Object] options File logging options.
     getTransport: (options) =>
         if not options.path? or options.path is ""
-            throw new Error "The options.path is mandatory! Please specify a valid path to the logs folder."
+            err = new Error "The options.path is mandatory! Please specify a valid path to the logs folder."
+            logger.error "LoggerFile.getTransport", err, options
+            throw err
 
         options = lodash.defaultsDeep options, settings.logger.file
         options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?

@@ -32,6 +32,7 @@ class LoggerLogentries
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.logger.logentries
 
+        # Auto register as "logentries" if a default token is defined on the settings.
         if options.enabled and options.token?
             return logger.register "logentries", "logentries", options
 
@@ -39,7 +40,9 @@ class LoggerLogentries
     # @param [Object] options Transport options including the token.
     getTransport: (options) =>
         if not options.token? or options.token is ""
-            throw new Error "The options.token is mandatory! Please specify a valid Logentries token."
+            err = new Error "The options.token is mandatory! Please specify a valid Logentries token."
+            logger.error "LoggerLogentries.getTransport", err, options
+            throw err
 
         options = lodash.defaultsDeep options, settings.logger.logentries
         options.sendTimestamp = settings.logger.sendTimestamp if not options.sendTimestamp?

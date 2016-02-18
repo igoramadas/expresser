@@ -7,16 +7,17 @@
 # -->
 class Downloader
 
-    events = null
     fs = require "fs"
     http = require "http"
     https = require "https"
+    path = require "path"
+    url = require "url"
+
+    events = null
     lodash = null
     logger = null
     moment = null
-    path = require "path"
     settings = null
-    url = require "url"
 
     # The download queue and simultaneous count.
     queue = []
@@ -39,6 +40,7 @@ class Downloader
     # Bind events.
     setEvents: =>
         events.on "Downloader.download", @download
+        events.on "Downloader.stop", @stop
 
     # METHODS
     # --------------------------------------------------------------------------
@@ -56,7 +58,9 @@ class Downloader
     # @return [Object] Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
     download: (remoteUrl, saveTo, options, callback) =>
         if not remoteUrl? or remoteUrl is ""
-            throw new Error "First parameter 'remoteUrl' is mandatory!"
+            err = new Error "First parameter 'remoteUrl' is mandatory!"
+            logger.error "Downloader.download", err
+            throw err
 
         # Check options and callback.
         if not callback? and lodash.isFunction options
@@ -254,13 +258,8 @@ class Downloader
         else
             headers = null
 
-        # Set default options.
-        options =
-            headers: headers
-            rejectUnauthorized: settings.downloader.rejectUnauthorized
-
-        # Extend options.
-        options = lodash.assign options, obj.options, parseUrlOptions(obj)
+        # Set and extend default options.
+        options = lodash.assign {headers: headers, rejectUnauthorized: settings.downloader.rejectUnauthorized}, obj.options, parseUrlOptions(obj)
 
         # Start download
         if obj.stopFlag? and obj.stopFlag > 0
@@ -273,6 +272,7 @@ class Downloader
 # Singleton implementation
 # --------------------------------------------------------------------------
 Downloader.getInstance = ->
+    return new Downloader() if process.env is "test"
     @instance = new Downloader() if not @instance?
     return @instance
 
