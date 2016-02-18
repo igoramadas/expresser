@@ -588,11 +588,16 @@ update only settings that match it, otherwise update everything.
         
         
         
-          <div class='highlight'><pre>Settings.getInstance = <span class="hljs-function">-&gt;</span>
-    <span class="hljs-keyword">if</span> process.env <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
+          <div class='highlight'><pre>Settings.getInstance = <span class="hljs-function">-&gt;</span></pre></div>
+        
+      
+        
+        <p>On test we need a new instance each time the module is called!</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> process.env <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
         obj = <span class="hljs-keyword">new</span> Settings()
         obj.load()
-        obj.logger.<span class="hljs-built_in">console</span> = <span class="hljs-literal">false</span>
         <span class="hljs-keyword">return</span> obj
 
     <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@instance</span>?

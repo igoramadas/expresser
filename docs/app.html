@@ -82,7 +82,7 @@
         
       
         
-        <p>The Express app server. By default it will run on HTTP port 8080
+        <p>The Express server. By default it will run on HTTP port 8080
 <!--
 @see settings.app
 --></p>
@@ -399,10 +399,10 @@ used only if available and enabled on the settings.
 
         <span class="hljs-keyword">if</span> settings.app.ip? <span class="hljs-keyword">and</span> settings.app.ip <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
             server.listen settings.app.port, settings.app.ip
-            logger.info <span class="hljs-string">"App"</span>, settings.app.title, <span class="hljs-string">"Listening on <span class="hljs-subst">#{settings.app.ip}</span> - <span class="hljs-subst">#{settings.app.port}</span>"</span>
+            logger.info <span class="hljs-string">"App"</span>, settings.app.title, <span class="hljs-string">"Listening on <span class="hljs-subst">#{settings.app.ip}</span> port <span class="hljs-subst">#{settings.app.port}</span>"</span>
         <span class="hljs-keyword">else</span>
             server.listen settings.app.port
-            logger.info <span class="hljs-string">"App"</span>, settings.app.title, <span class="hljs-string">"Listening on <span class="hljs-subst">#{settings.app.port}</span>"</span></pre></div>
+            logger.info <span class="hljs-string">"App"</span>, settings.app.title, <span class="hljs-string">"Listening on port <span class="hljs-subst">#{settings.app.port}</span>"</span></pre></div>
         
       
         
@@ -429,38 +429,131 @@ used only if available and enabled on the settings.
         
       
         
-        <p>Helper to render pages. The request, response and view are mandatory,
+        <p>Helper to render Jade views. The request, response and view are mandatory,
 and the options argument is optional.
 @param [Object] req The request object.
 @param [Object] res The response object.
-@param [String] view The view name.
+@param [String] view The Jade filename.
 @param [Object] options Options passed to the view, optional.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-attribute">renderView</span>: <span class="hljs-function"><span class="hljs-params">(req, res, view, options)</span> =&gt;</span>
         options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
         options.device = utils.getClientDevice req
-        options.title = settings.app.title <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.title?
-        res.render view, options
-
-        logger.debug <span class="hljs-string">"App"</span>, <span class="hljs-string">"Render"</span>, view, options</pre></div>
+        options.title = settings.app.title <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.title?</pre></div>
         
       
         
-        <p>Helper to send error responses. When the server can’t return a valid result,
-send an error response with the specified status code.
-@param [Object] req The response object.
-@param [String] message The message to be sent to the client.
-@param [Integer] statusCode The response status code, optional, default is 500.</p>
+        <p>View filename must jave .jade extension.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-attribute">renderError</span>: <span class="hljs-function"><span class="hljs-params">(res, message, statusCode)</span> =&gt;</span>
-        message = JSON.stringify message
-        statusCode = <span class="hljs-number">500</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> statusCode?
-        res.statusCode = <span class="hljs-number">500</span>
-        res.send <span class="hljs-string">"Server error: <span class="hljs-subst">#{message}</span>"</span>
+          <div class='highlight'><pre>        view += <span class="hljs-string">".jade"</span> <span class="hljs-keyword">if</span> view.indexOf(<span class="hljs-string">".jade"</span>) &lt; <span class="hljs-number">0</span>
 
-        logger.error <span class="hljs-string">"App"</span>, <span class="hljs-string">"HTTP Error"</span>, statusCode, message, res</pre></div>
+        res.render view, options
+
+        logger.debug <span class="hljs-string">"App.renderView"</span>, req.originalUrl, view, options</pre></div>
+        
+      
+        
+        <p>Render response as human readable JSON data.
+@param [Object] req The request object.
+@param [Object] res The response object.
+@param [Object] data The JSON data to be sent.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">renderJson</span>: <span class="hljs-function"><span class="hljs-params">(req, res, data)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> lodash.isString data
+            <span class="hljs-keyword">try</span>
+                data = JSON.parse data
+            <span class="hljs-keyword">catch</span> ex
+                <span class="hljs-keyword">return</span> <span class="hljs-property">@renderError</span> req, res, ex, <span class="hljs-number">500</span></pre></div>
+        
+      
+        
+        <p>Remove methods from JSON before rendering.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">cleanJson</span> = <span class="hljs-params">(obj)</span> -&gt;</span>
+            <span class="hljs-keyword">if</span> lodash.isArray obj
+                cleanJson i <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> obj
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject obj
+                <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">of</span> obj
+                    <span class="hljs-keyword">if</span> lodash.isFunction v
+                        <span class="hljs-keyword">delete</span> obj[k]
+                    <span class="hljs-keyword">else</span>
+                        cleanJson v
+
+        cleanJson data</pre></div>
+        
+      
+        
+        <p>Add Access-Control-Allow-Origin to all when debug is true.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.general.debug
+            res.setHeader <span class="hljs-string">"Access-Control-Allow-Origin"</span>, <span class="hljs-string">"*"</span></pre></div>
+        
+      
+        
+        <p>Send JSON response.</p>
+
+        
+          <div class='highlight'><pre>        res.json data
+
+        logger.debug <span class="hljs-string">"App.renderJson"</span>, req.originalUrl, data</pre></div>
+        
+      
+        
+        <p>Render response as image.
+@param [Object] req The request object.
+@param [Object] res The response object.
+@param [String] filename The full path to the image file.
+@param [Object] options Options passed to the image renderer, for example the “mimetype”.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">renderImage</span>: <span class="hljs-function"><span class="hljs-params">(req, res, filename, options)</span> -&gt;</span>
+        mimetype = options?.mimetype</pre></div>
+        
+      
+        
+        <p>Try to figure out the mime type in case it wasn’t passed along the options.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> mimetype?
+            extname = path.extname(filename).toLowerCase().replace(<span class="hljs-string">"."</span>,<span class="hljs-string">""</span>)
+            extname = <span class="hljs-string">"jpeg"</span> <span class="hljs-keyword">if</span> extname <span class="hljs-keyword">is</span> <span class="hljs-string">"jpg"</span>
+            mimetype = <span class="hljs-string">"image/<span class="hljs-subst">#{extname}</span>"</span>
+
+        res.contentType mimetype
+        res.sendFile filename
+
+        logger.debug <span class="hljs-string">"App.renderImage"</span>, req.originalUrl, filename, options</pre></div>
+        
+      
+        
+        <p>Send error response as JSON. When the server can’t return a valid result,
+send an error response with the specified status code and error output.
+@param [Object] req The request object.
+@param [Object] res The response object.
+@param [Object] error The error object or message to be sent to the client.
+@param [Integer] status The response status code, optional, default is 500.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-attribute">renderError</span>: <span class="hljs-function"><span class="hljs-params">(req, res, error, status)</span> =&gt;</span>
+        status = <span class="hljs-number">408</span> <span class="hljs-keyword">if</span> status <span class="hljs-keyword">is</span> <span class="hljs-string">"ETIMEDOUT"</span></pre></div>
+        
+      
+        
+        <p>Set default status to 500 and stringify message if necessary.</p>
+
+        
+          <div class='highlight'><pre>        status = status <span class="hljs-keyword">or</span> err?.statusCode <span class="hljs-keyword">or</span> <span class="hljs-number">500</span>
+        error = JSON.stringify err <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString err
+
+        res.status status
+        res.json {<span class="hljs-attribute">error</span>: error, <span class="hljs-attribute">url</span>: req.originalUrl}
+
+        logger.error <span class="hljs-string">"App.renderError"</span>, req.originalUrl, status, error</pre></div>
         
       
         
