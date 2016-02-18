@@ -139,25 +139,31 @@ class Utils
         ua = req.headers["user-agent"]
 
         # Find mobile devices.
-        return "mobile-wp-8" if ua.indexOf("Windows Phone 8") > 0
-        return "mobile-wp-7" if ua.indexOf("Windows Phone 7") > 0
-        return "mobile-wp" if ua.indexOf("Windows Phone") > 0
+        return "mobile-windows-10" if ua.indexOf("Windows Phone 10") > 0
+        return "mobile-windows-8" if ua.indexOf("Windows Phone 8") > 0
+        return "mobile-windows-7" if ua.indexOf("Windows Phone 7") > 0
+        return "mobile-windows" if ua.indexOf("Windows Phone") > 0
+        return "mobile-iphone-7" if ua.indexOf("iPhone7") > 0
+        return "mobile-iphone-6" if ua.indexOf("iPhone6") > 0
         return "mobile-iphone-5" if ua.indexOf("iPhone5") > 0
         return "mobile-iphone-4" if ua.indexOf("iPhone4") > 0
         return "mobile-iphone" if ua.indexOf("iPhone") > 0
+        return "mobile-android-7" if ua.indexOf("Android 7") > 0
+        return "mobile-android-6" if ua.indexOf("Android 6") > 0
         return "mobile-android-5" if ua.indexOf("Android 5") > 0
         return "mobile-android-4" if ua.indexOf("Android 4") > 0
         return "mobile-android" if ua.indexOf("Android") > 0
 
         # Find desktop browsers.
+        return "desktop-edge" if ua.indexOf("Edge/") > 0
+        return "desktop-opera" if ua.indexOf("Opera/") > 0
         return "desktop-chrome" if ua.indexOf("Chrome/") > 0
         return "desktop-firefox" if ua.indexOf("Firefox/") > 0
         return "desktop-safari" if ua.indexOf("Safari/") > 0
-        return "desktop-opera" if ua.indexOf("Opera/") > 0
         return "desktop-ie-11" if ua.indexOf("MSIE 11") > 0
         return "desktop-ie-10" if ua.indexOf("MSIE 10") > 0
         return "desktop-ie-9" if ua.indexOf("MSIE 9") > 0
-        return "desktop-ie" if ua.indexOf("MSIE") > 0
+        return "desktop-ie" if ua.indexOf("MSIE") > 0 or if ua.indexOf("Trident") > 0
 
         # Return default desktop value if no specific devices were found on user agent.
         return "desktop"
