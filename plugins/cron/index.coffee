@@ -98,8 +98,9 @@ class Cron
                 cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
                 cronJson = utils.minifyJson cronJson
             catch ex
-                logger.autoLogError "Cron.load", filename, ex
-                throw new Error("Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}")
+                err = new Error "Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}"
+                logger.error "Cron.load", err
+                throw err
 
             # Iterate jobs, but do not add if job's `enabled` is false.
             for key, data of cronJson
@@ -188,11 +189,15 @@ class Cron
 
         # Throw error if no `id` was provided.
         if not job.id? or job.id is ""
-            throw new Error "Job must have an ID. Please set the job.id property."
+            err = Error "Job must have an ID. Please set the job.id property."
+            logger.error "Cron.add", err
+            throw err
 
         # Throw error if job callback is not a valid function.
         if not lodash.isFunction job.callback
-            throw new Error "Job callback is not a valid, please set job.callback as a valid Function."
+            err = new Error "Job #{job.id} callback is not a valid, please set job.callback as a valid Function."
+            logger.error "Cron.add", err
+            throw err
 
         # Find existing job.
         existing = lodash.find @jobs, {id: job.id}
@@ -204,7 +209,7 @@ class Cron
                 existing.timer = null
             else
                 errorMsg = "Job #{job.id} already exists and 'allowReplacing' is false. Abort!"
-                logger.autoLogError "Cron.add", errorMsg
+                logger.error "Cron.add", errorMsg
                 return {error: errorMsg}
 
         # Set `startTime` and `endTime` if not set.
@@ -235,6 +240,7 @@ class Cron
     # -------------------------------------------------------------------------
 
     # Helper to get the timeout value (ms) to the next job callback.
+    # @private
     getTimeout = (job) ->
         now = moment()
         nextDate = moment()
@@ -264,6 +270,7 @@ class Cron
         return timeout
 
     # Helper to prepare and get a job callback function.
+    # @private
     getCallback = (job) ->
         callback = ->
             logger.debug "Cron", "Job #{job.id} trigger."
@@ -283,6 +290,7 @@ class Cron
         return callback
 
     # Helper to get a timer / interval based on the defined options.
+    # @private
     setTimer = (job) ->
         logger.debug "Cron.setTimer", job.id, job.description, job.schedule
 

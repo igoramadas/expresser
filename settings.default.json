@@ -105,9 +105,6 @@
     // LOGGER
     // -------------------------------------------------------------------------
     "logger": {
-        // If true, other modules will use the Logger to log errors before throwing them as exceptions.
-        // By default it's NOW TRUE.
-        "autoLogErrors": true,
         // Output logs to the console? True or false.
         "console": true,
         // Unless you have very specific reasons, leave enabled always true otherwise nothing will be logged.

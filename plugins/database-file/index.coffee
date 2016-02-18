@@ -76,7 +76,7 @@ class DatabaseFile
                 # Try reading and parsing the collection (file) as JSON.
                 fs.readFile filepath, {encoding: settings.general.encoding}, (err, data) =>
                     if err?
-                        logger.autoLogError "DatabaseFile.readFromDisk", filepath, err
+                        logger.error "DatabaseFile.readFromDisk", filepath, err
                         return callback {message: "Could not read #{filepath}", error: err}
 
                     # Set data to null if file is empty.
@@ -87,7 +87,7 @@ class DatabaseFile
                         try
                             data = JSON.parse data
                         catch ex
-                            logger.autoLogError "DatabaseFile.readFromDisk", filepath, ex
+                            logger.error "DatabaseFile.readFromDisk", filepath, ex
                             return callback {message: "Could not parse #{filepath}", error: ex}
 
                         # Add data to in-memory cache and st its deletion timeout.
@@ -118,7 +118,7 @@ class DatabaseFile
             # Try writing the data to the disk.
             fs.writeFile filepath, data, {encoding: settings.general.encoding}, (err) =>
                 if err?
-                    logger.autoLogError "DatabaseFile.writeToDisk", filepath, err
+                    logger.error "DatabaseFile.writeToDisk", filepath, err
                     return callback {message: "Could not write to #{filepath}", error: err}
 
                 # Update cache.
@@ -144,7 +144,7 @@ class DatabaseFile
         # Callback is mandatory!
         if not callback?
             err = new Error "DatabaseFile.get: a callback (last argument) must be specified."
-            logger.autoLogError "DatabaseFile.get", collection, err
+            logger.error "DatabaseFile.get", collection, err
             throw err
 
         # Get collection data from disk.
@@ -168,7 +168,7 @@ class DatabaseFile
 
         if not obj?
             err = new Error "DatabaseFile.insert: an object (second argument) must be passed."
-            logger.autoLogError "DatabaseFile.insert", collection, err
+            logger.error "DatabaseFile.insert", collection, err
             throw err
 
         # Get collection data from disk.
@@ -212,7 +212,7 @@ class DatabaseFile
         # Object or filter is mandatory.
         if not obj?
             err = new Error "DatabaseFile.update: an object (second argument) must be passed."
-            logger.autoLogError "DatabaseFile.update", collection, err
+            logger.error "DatabaseFile.update", collection, err
             throw err
 
         # Get collection data from disk.
@@ -257,7 +257,7 @@ class DatabaseFile
         # Filter is mandatory.
         if not filter?
             err = new Error "DatabaseFile.remove: a filter (second argument) must be passed."
-            logger.autoLogError "DatabaseFile.remove", collection, err
+            logger.error "DatabaseFile.remove", collection, err
             throw err
 
         # Get collection data from disk.
