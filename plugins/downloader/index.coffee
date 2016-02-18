@@ -34,6 +34,8 @@ class Downloader
         moment = @expresser.libs.moment
         settings = @expresser.settings
 
+        @setEvents() if settings.events.enabled
+
     # Bind events.
     setEvents: =>
         events.on "Downloader.download", @download

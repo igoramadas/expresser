@@ -31,6 +31,7 @@ class DatabaseMongo
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.database.mongo
 
+        # Auto register as "mongo" if a `connString` is defined on the settings.
         if options.enabled and options.connString?
             return database.register "mongo", "mongo", options.connString, options.options
 

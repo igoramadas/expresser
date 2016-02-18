@@ -37,6 +37,7 @@ class DatabaseFile
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.database.file
 
+        # Auto register as "file" if a default path is specified on the settings.
         if options.enabled and options.path?
             return database.register "file", "file", options.path, options.options
 
@@ -54,7 +55,7 @@ class DatabaseFile
     # FILE OPERATIONS
     # -------------------------------------------------------------------------
 
-    # Helper to read and get the contents of a collection.
+    # Helper to read and get the contents of a database file.
     # @param [String] collection The collection (file name) to be read.
     # @param [Method] callback Callback (err, result) with collection data.
     # @private
@@ -91,7 +92,11 @@ class DatabaseFile
 
                     callback null, data
 
-    # Save data to disk.
+    # Helper to write data to a database file.
+    # @param [String] collection The collection (file name) to be read.
+    # @param [Object] data JSON data to be written on the file.
+    # @param [Method] callback Callback (err, result) with collection data.
+    # @private
     writeToDisk: (collection, data, callback) ->
         filepath = @dbPath + collection + ".json"
         logger.debug "DatabaseFile.writeToDisk", filepath, data
@@ -113,7 +118,7 @@ class DatabaseFile
                 # Update cache.
                 @cache[collection] = data if @cache[collection]?
 
-                callback null, true
+                callback null, data
 
     # CRUD IMPLEMENTATION
     # -------------------------------------------------------------------------

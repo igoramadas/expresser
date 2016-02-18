@@ -1,6 +1,6 @@
 {
     "name": "expresser-database-file",
-    "version": "1.0.0-beta2",
+    "version": "1.0.0",
     "description": "JSON file based database plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
