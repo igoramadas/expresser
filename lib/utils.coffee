@@ -165,7 +165,7 @@ class Utils
         return "desktop-ie-11" if ua.indexOf("MSIE 11") > 0
         return "desktop-ie-10" if ua.indexOf("MSIE 10") > 0
         return "desktop-ie-9" if ua.indexOf("MSIE 9") > 0
-        return "desktop-ie" if ua.indexOf("MSIE") > 0 or if ua.indexOf("Trident") > 0
+        return "desktop-ie" if ua.indexOf("MSIE") > 0 or ua.indexOf("Trident") > 0
 
         # Return default desktop value if no specific devices were found on user agent.
         return "desktop"
