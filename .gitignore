@@ -1,3 +1,4 @@
+.coveralls.yml
 .idea/
 .openshift/
 atlassian-ide-plugin.xml

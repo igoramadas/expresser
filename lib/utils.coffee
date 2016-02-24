@@ -136,6 +136,8 @@ class Utils
     # @param [Object] req The request object.
     # @return [String] The client's device.
     getClientDevice: (req) ->
+        return "unknown" if not req?.headers?
+
         ua = req.headers["user-agent"]
 
         # Find mobile devices.
