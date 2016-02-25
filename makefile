@@ -10,7 +10,7 @@ test:
 	$(MOCHA) -u tdd -R spec
 
 docs:
-	$(DOCCO) -l linear -o docs index.coffee lib/*.coffee
+	$(DOCCO) -l linear -o docs/source index.coffee lib/*.coffee
 
 clean:
 	rm -rf ./node_modules
