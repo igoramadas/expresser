@@ -62,3 +62,7 @@ black is at `expresser.settings.theme.colours[2]`.
 
 The `settings.reset()` method will create a new instance and reset all settings to their default initial state.
 Custom values set programmatically will be cleared out.
+
+---
+
+*For detailed info on specific features, check the annotated source on /docs folder.*
