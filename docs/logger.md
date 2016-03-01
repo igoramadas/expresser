@@ -8,7 +8,7 @@ but you can add additional transports via plugins (for example logger-file, logg
 At the moment the Logger offers 4 default log types: info, warn, error and critical. These methods support N number
 of arguments, which will be parsed and transformed to a single log line.
 
-For example to log an exception:
+For example to log an exception as "error":
 
     expresser = require "expresser"
     
@@ -17,36 +17,15 @@ For example to log an exception:
     catch ex
         expresser.logger.error "My method", "Some description", ex
 
-### Using Logentries
-
-Create an account on Logentries. Then register your host, and create a default log for this host. You should then get the "Token" for this log, and change the Logentries token key:
-
-    "logger": { 
-        "logentries": {
-            "enabled": true,
-            "token": "your-logentries-token-here"
-        }
-    }
-
-### Using Loggly
-
-Create an account on Loggly. Then register your host, and create a default log for this host. You should then get the "Token" for this log, and change the Loggly token and subdomain keys:
-
-    "logger": { 
-        "loggly": {
-            "enabled": true,
-            "subdomain": "my-subdomain",
-            "token": "your-loggly-token-here"
-        }
-    }
-
 ### Logging unhandled exceptions
 
-If you want to log unhandled exceptions (thrown at process level), set {{ settings.logger.uncaughtException }} to true (it is true by default!) and the Logger will save the stack trace to the errors log.
+By default the Logger module will log all unhandled exceptions as error. If you want to disable that, please set
+the `settings.logger.uncaughtException` to false.
 
 ### Using multiple transports
 
-You can have any combination of transports enabled at the same time. For example Local and Logentries, or Logentries and Loggly.
+You can have multiple transports enabled at the same time, and also log only to specific transports by directly
+targeting then on your code.
 
 ### Listening to log events
 
