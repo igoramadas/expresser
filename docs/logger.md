@@ -29,12 +29,15 @@ targeting then on your code.
 
 ### Listening to log events
 
-The Logger module exposes a {{ logSuccess }} and a {{ logError }} which are triggered for every (un)successful log. For example:
+The Logger module exposes a `logSuccess` and `logError` events, triggered for every (un)successful log. This is
+useful in case you want to do a post-operation on logs (for example increment a counter) or to have a fallback
+solution in case your log transport is down.
 
     expresser = require "expresser"
+    counter = 0
     
     mySuccessFunction = (transport, data) ->
-        console.log "Logged successfully!", transport, data
+        counter++
     
     myErrorFunction = (transport, error) ->
         console.warn "Not logged!", transport, data
@@ -42,13 +45,10 @@ The Logger module exposes a {{ logSuccess }} and a {{ logError }} which are trig
     expresser.logger.on "logSuccess", mySuccessFunction
     expresser.logger.on "logError", myErrorFunction
 
-Use `expresser.logger.off` to stop listening. For example:
+Use `expresser.logger.off` to stop listeting to these logging events. For example:
 
     expresser.logger.off "logSuccess", mySuccessFunction
-
-### Automatic email alerts for critical logs
-
-If you define an email on {{ settings.logger.criticalEmailTo }} and the [Mailer] module is correctly configured, the Logger will send an email for every critical log call. To avoid repeated emails, you can define an expiry time for critical alerts on the setting {{ criticalEmailExpireMinutes }}.
+    expresser.logger.off "logError", myErrorFunction
 
 ---
 
