@@ -21,7 +21,7 @@ class DatabaseFile
     # -------------------------------------------------------------------------
 
     # Init the File database module.
-    # @param [Object] options Database init options.
+    # @param {Object} options Database init options.
     init: (options) =>
         database = @expresser.database
         lodash = @expresser.libs.lodash
@@ -42,8 +42,8 @@ class DatabaseFile
             return database.register "file", "file", options.path, options.options
 
     # Get the DB connection object.
-    # @param [Object] dbPath Path where database files should be stored.
-    # @param [Object] options Additional options to be passed when creating the DB connection object.
+    # @param {Object} dbPath Path where database files should be stored.
+    # @param {Object} options Additional options to be passed when creating the DB connection object.
     getConnection: (dbPath, options) =>
         logger.debug "DatabaseFile.getConnection", dbPath, options
 
@@ -56,8 +56,8 @@ class DatabaseFile
     # -------------------------------------------------------------------------
 
     # Helper to read and get the contents of a database file.
-    # @param [String] collection The collection (file name) to be read.
-    # @param [Method] callback Callback (err, result) with collection data.
+    # @param {String} collection The collection (file name) to be read.
+    # @param {Method} callback Callback (err, result) with collection data.
     # @private
     readFromDisk: (collection, callback) ->
         filepath = @dbPath + collection + ".json"
@@ -98,9 +98,9 @@ class DatabaseFile
                     callback null, data
 
     # Helper to write data to a database file.
-    # @param [String] collection The collection (file name) to be read.
-    # @param [Object] data JSON data to be written on the file.
-    # @param [Method] callback Callback (err, result) with collection data.
+    # @param {String} collection The collection (file name) to be read.
+    # @param {Object} data JSON data to be written on the file.
+    # @param {Method} callback Callback (err, result) with collection data.
     # @private
     writeToDisk: (collection, data, callback) ->
         filepath = @dbPath + collection + ".json"
@@ -131,9 +131,9 @@ class DatabaseFile
 
     # Get data from the database. A `collection` and `callback` must be specified. The `filter` is optional.
     # The underlying filtering is done with lodash `filter` method.
-    # @param [String] collection The collection (filename, without .json).
-    # @param [String, Object] filter Optional, can be an object, string, number or function.
-    # @param [Method] callback Callback (err, result) when operation has finished.
+    # @param {String} collection The collection (filename, without .json).
+    # @param {Object} filter Optional, can be an object, string, number or function.
+    # @param {Method} callback Callback (err, result) when operation has finished.
     get: (collection, filter, callback) ->
         logger.debug "DatabaseFile.get", collection, filter
 
@@ -160,9 +160,9 @@ class DatabaseFile
             callback null, result
 
     # Add new document(s) to the JSON file. The `collection` and `obj` are mandatory.
-    # @param [String] collection The collection (filename, without .json).
-    # @param [Object] obj Document or array of documents to be added.
-    # @param [Method] callback Callback (err, result) when operation has finished. Result is added object.
+    # @param {String} collection The collection (filename, without .json).
+    # @param {Object} obj Document or array of documents to be added.
+    # @param {Method} callback Callback (err, result) when operation has finished. Result is added object.
     insert: (collection, obj, callback) ->
         logger.debug "DatabaseFile.insert", collection, obj
 
@@ -194,12 +194,12 @@ class DatabaseFile
 
     # Update existing data on the JSON file. The `collection` and `obj` are mandatory.
     # Values are merged with the
-    # @param [String] collection The collection (filename, without .json).
-    # @param [Object] obj Document or data to be updated.
-    # @param [Object] options Options to filter and define how data is updated.
-    # @option options [Object] filter Filter data to be updated (using lodash filter).
-    # @option options [Object] merge Merge data by default, if false data will be overwritten.
-    # @param [Method] callback Callback (err, result) when operation has finished. Result is array of changed items.
+    # @param {String} collection The collection (filename, without .json).
+    # @param {Object} obj Document or data to be updated.
+    # @param {Object} options Options to filter and define how data is updated.
+    # @option options {Object} filter Filter data to be updated (using lodash filter).
+    # @option options {Object} merge Merge data by default, if false data will be overwritten.
+    # @param {Method} callback Callback (err, result) when operation has finished. Result is array of changed items.
     update: (collection, obj, options, callback) ->
         logger.debug "DatabaseFile.update", collection, obj, options
 
@@ -244,9 +244,9 @@ class DatabaseFile
 
     # Delete an object from the JSON file. The `obj` argument is mandatory.
     # This uses the lodash `remove` helper.
-    # @param [String] collection The collection (filename, without .json).
-    # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
-    # @param [Method] callback Callback (err, result) when operation has finished. Result is the array of removed items.
+    # @param {String} collection The collection (filename, without .json).
+    # @param {Object} filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
+    # @param {Method} callback Callback (err, result) when operation has finished. Result is the array of removed items.
     remove: (collection, filter, callback) ->
         logger.debug "DatabaseFile.remove", collection, filter
 

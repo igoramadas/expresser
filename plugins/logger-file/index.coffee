@@ -20,7 +20,7 @@ class LoggerFile
 
     # Init the File module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
-    # @param [Object] options File init options.
+    # @param {Object} options File init options.
     init: (options) =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -38,7 +38,7 @@ class LoggerFile
             return logger.register "file", "file", options
 
     # Get the file transport object.
-    # @param [Object] options File logging options.
+    # @param {Object} options File logging options.
     getTransport: (options) =>
         if not options.path? or options.path is ""
             err = new Error "The options.path is mandatory! Please specify a valid path to the logs folder."
@@ -74,9 +74,9 @@ class LoggerFile
     # --------------------------------------------------------------------------
 
     # Log locally. The path is defined on `Settings.Path.logsDir`.
-    # @param [String] logType The log type (info, warn, error, debug, etc).
-    # @param [Array] args Array or string to be logged.
-    # @param [Boolean] avoidConsole If true it will NOT log to the console.
+    # @param {String} logType The log type (info, warn, error, debug, etc).
+    # @param {Array} args Array or string to be logged.
+    # @param {Boolean} avoidConsole If true it will NOT log to the console.
     log: (logType, args, avoidConsole) ->
         return if settings.logger.levels.indexOf(logType) < 0
 
@@ -130,7 +130,7 @@ class LoggerFile
 
     # Delete old log files from disk. The maximum date is taken from the settings
     # if not passed.
-    # @param [Integer] maxAge Max age of logs, in days.
+    # @param {Integer} maxAge Max age of logs, in days.
     clean: (maxAge) ->
         maxAge = settings.logger.file.maxAge if not maxAge?
         maxDate = moment().subtract maxAge, "d"

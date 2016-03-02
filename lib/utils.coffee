@@ -22,8 +22,8 @@ class Utils
     # the settings.json file or cron.json for cron jobs. This will look into the current
     # directory, the running directory and the root directory of the app.
     # Returns null if no file is found.
-    # @param [String] filename The base filename (with extension) of the config file.
-    # @return [String] The full path to the config file if one was found, or null.
+    # @param {String} filename The base filename (with extension) of the config file.
+    # @return {String} The full path to the config file if one was found, or null.
     getFilePath: (filename) ->
         originalFilename = "./" + filename.toString()
 
@@ -51,8 +51,8 @@ class Utils
 
     # Returns a list of valid server IP addresses. If `firstOnly` is true it will
     # return only the very first IP address found.
-    # @param [Boolean] firstOnly Optional, default is false which returns an array with all valid IPs, true returns a String will first valid IP.
-    # @return The server IPv4 address, or null.
+    # @param {Boolean} firstOnly Optional, default is false which returns an array with all valid IPs, true returns a String will first valid IP.
+    # @return {String} The server IPv4 address, or null.
     getServerIP: (firstOnly) ->
         ifaces = os.networkInterfaces()
         result = []
@@ -70,7 +70,7 @@ class Utils
             return result
 
     # Return an object with general information about the server.
-    # @return [Object] Results with process pid, platform, memory, uptime and IP.
+    # @return {Object} Results with process pid, platform, memory, uptime and IP.
     getServerInfo: =>
         result = {}
 
@@ -96,6 +96,7 @@ class Utils
         return result
 
     # Get current CPU load (used mainly by getServerInfo).
+    # @return {Object} CPU load with idle and total ticks.
     getCpuLoad: ->
         totalIdle = 0
         totalTick = 0
@@ -115,8 +116,8 @@ class Utils
     # --------------------------------------------------------------------------
 
     # Get the client or browser IP. Works for http and socket requests, even when behind a proxy.
-    # @param [Object] reqOrSocket The request or socket object.
-    # @return [String] The client IP address, or null.
+    # @param {Object} reqOrSocket The request or socket object.
+    # @return {String} The client IP address, or null.
     getClientIP: (reqOrSocket) ->
         return null if not reqOrSocket?
 
@@ -133,8 +134,8 @@ class Utils
             return reqOrSocket.remoteAddress
 
     # Get the client's device. This identifier string is based on the user agent.
-    # @param [Object] req The request object.
-    # @return [String] The client's device.
+    # @param {Object} req The request object.
+    # @return {String} The client's device.
     getClientDevice: (req) ->
         return "unknown" if not req?.headers?
 
@@ -174,14 +175,15 @@ class Utils
     # --------------------------------------------------------------------------
 
     # Copy the `src` file to the `target`, both must be the full file path.
-    # @param [String] src The full source file path.
-    # @param [String] target The full target file path.
+    # @param {String} src The full source file path.
+    # @param {String} target The full target file path.
     copyFileSync: (src, target) =>
         srcContents = fs.readFileSync src
         fs.writeFileSync target, srcContents
 
     # Make sure the "target" directory exists by recursively iterating through its parents
     # and creating the directories. Returns nothing if all good or error.
+    # @param {String} target The full target path, with or without a trailing slash.
     mkdirRecursive: (target) =>
         callback = (p, made) ->
             made = null if not made
@@ -208,9 +210,9 @@ class Utils
 
     # Removes all the specified characters from a string. For example you can cleanup
     # telephone numbers by using removeFromString(phone, [" ", "-", "(", ")"]).
-    # @param [String] value The original value / string.
-    # @param {array] charsToRemove List of characters to be removed from the original string.
-    # @return [String] Resulting value with the characters removed.
+    # @param {String} value The original value / string.
+    # @param {Array} charsToRemove List of characters to be removed from the original string.
+    # @return {String} Resulting value with the characters removed.
     removeFromString: (value, charsToRemove) =>
         result = value
         result = result.toString() if not lodash.isString result
@@ -219,9 +221,9 @@ class Utils
         return result
 
     # Minify the passed JSON value. Removes comments, unecessary white spaces etc.
-    # @param [String] source The JSON text to be minified.
-    # @param [Boolean] asString If true, return as string instead of JSON object.
-    # @return [String] The minified JSON, or an empty string if there's an error.
+    # @param {String} source The JSON text to be minified.
+    # @param {Boolean} asString If true, return as string instead of JSON object.
+    # @return {String} The minified JSON, or an empty string if there's an error.
     minifyJson: (source, asString) ->
         source = JSON.stringify source if typeof source is "object"
         index = 0
@@ -297,6 +299,7 @@ class Utils
             return JSON.parse result
 
     # Generates a RFC1422-compliant unique ID using random numbers.
+    # @return {String} A single unique ID.
     uuid: =>
         baseStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
         generator = (c) ->

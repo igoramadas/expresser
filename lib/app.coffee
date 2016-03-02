@@ -24,7 +24,7 @@ class App
     sockets = null
     utils = null
 
-    # @property [Object] Exposes the Express HTTP or HTTPS `server` object.
+    # @property {Object} Exposes the Express HTTP or HTTPS `server` object.
     server: null
 
     # @property [Array<Object>] Array of additional middlewares to be used
@@ -43,8 +43,8 @@ class App
 
     # Init the Express server. Firewall and Sockets modules will be
     # used only if available and enabled on the settings.
-    # @param [Object] options App init options. If passed as an array, assume it's the array with extra middlewares.
-    # @option options [Array] appendMiddlewares Array with extra middlewares to be loaded.
+    # @param {Object} options App init options. If passed as an array, assume it's the array with extra middlewares.
+    # @option options {Array} appendMiddlewares Array with extra middlewares to be loaded.
     init: (options) =>
         if lodash.isArray options
             options = {appendMiddlewares: options}
@@ -209,10 +209,10 @@ class App
 
     # Helper to render Jade views. The request, response and view are mandatory,
     # and the options argument is optional.
-    # @param [Object] req The request object.
-    # @param [Object] res The response object.
-    # @param [String] view The Jade filename.
-    # @param [Object] options Options passed to the view, optional.
+    # @param {Object} req The request object.
+    # @param {Object} res The response object.
+    # @param {String} view The Jade filename.
+    # @param {Object} options Options passed to the view, optional.
     renderView: (req, res, view, options) =>
         options = {} if not options?
         options.device = utils.getClientDevice req
@@ -226,9 +226,9 @@ class App
         logger.debug "App.renderView", req.originalUrl, view, options
 
     # Render response as human readable JSON data.
-    # @param [Object] req The request object.
-    # @param [Object] res The response object.
-    # @param [Object] data The JSON data to be sent.
+    # @param {Object} req The request object.
+    # @param {Object} res The response object.
+    # @param {Object} data The JSON data to be sent.
     renderJson: (req, res, data) =>
         if lodash.isString data
             try
@@ -259,10 +259,10 @@ class App
         logger.debug "App.renderJson", req.originalUrl, data
 
     # Render response as image.
-    # @param [Object] req The request object.
-    # @param [Object] res The response object.
-    # @param [String] filename The full path to the image file.
-    # @param [Object] options Options passed to the image renderer, for example the "mimetype".
+    # @param {Object} req The request object.
+    # @param {Object} res The response object.
+    # @param {String} filename The full path to the image file.
+    # @param {Object} options Options passed to the image renderer, for example the "mimetype".
     renderImage: (req, res, filename, options) ->
         mimetype = options?.mimetype
 
@@ -279,10 +279,10 @@ class App
 
     # Send error response as JSON. When the server can't return a valid result,
     # send an error response with the specified status code and error output.
-    # @param [Object] req The request object.
-    # @param [Object] res The response object.
-    # @param [Object] error The error object or message to be sent to the client.
-    # @param [Integer] status The response status code, optional, default is 500.
+    # @param {Object} req The request object.
+    # @param {Object} res The response object.
+    # @param {Object} error The error object or message to be sent to the client.
+    # @param {Integer} status The response status code, optional, default is 500.
     renderError: (req, res, error, status) =>
         status = 408 if status is "ETIMEDOUT"
 

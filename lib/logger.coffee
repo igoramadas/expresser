@@ -19,16 +19,16 @@ class Logger
     # PUBLIC PROPERTIES
     # --------------------------------------------------------------------------
 
-    # @property [Object] Holds a list of available logging drivers.
+    # @property {Object} Holds a list of available logging drivers.
     drivers: {}
 
-    # @property [Object] List of registered transports.
+    # @property {Object} List of registered transports.
     transports: {}
 
-    # @property [Method] Custom (result) method to call when logs are sent to logging server or flushed to disk.
+    # @property {Method} Custom (result) method to call when logs are sent to logging server or flushed to disk.
     onLogSuccess: null
 
-    # @property [Method] Custom (err) method to call when errors are triggered by the logging transport.
+    # @property {Method} Custom (err) method to call when errors are triggered by the logging transport.
     onLogError: null
 
     # INIT
@@ -36,7 +36,7 @@ class Logger
 
     # Init the Logger module. Verify which services are set, and add the necessary transports.
     # IP address will be appended to logs depending on the settings.
-    # @param [Object] options Logger init options.
+    # @param {Object} options Logger init options.
     init: (options) =>
         if settings.logger.uncaughtException
             @debug "Logger.init", "Catching unhandled exceptions."
@@ -88,9 +88,9 @@ class Logger
     # --------------------------------------------------------------------------
 
     # Log to the console.
-    # @param [String] logType The log type (for example: warning, error, info, security, etc).
-    # @param [Array] args Array of arguments to be stringified and logged.
-    # @return [String] The human readable log sent to the console.
+    # @param {String} logType The log type (for example: warning, error, info, security, etc).
+    # @param {Array} args Array of arguments to be stringified and logged.
+    # @return {String} The human readable log sent to the console.
     console: (logType, args) =>
         args = @argsCleaner args
         args.unshift moment().format "HH:mm:ss.SS"
@@ -103,8 +103,8 @@ class Logger
         return args
 
     # Internal generic log method.
-    # @param [String] logType The log type (for example: warning, error, info, security, etc).
-    # @param [Array] args Array to be stringified and logged.
+    # @param {String} logType The log type (for example: warning, error, info, security, etc).
+    # @param {Array} args Array to be stringified and logged.
     log: (logType, args) =>
         return if settings.logger.levels.indexOf(logType) < 0 and not settings.general.debug
 
@@ -160,7 +160,7 @@ class Logger
     # --------------------------------------------------------------------------
 
     # Cleans the arguments passed according to the `removeFields` setting.
-    # @return [Arguments] Arguments with private fields obfuscated.
+    # @return {Arguments} Arguments with private fields obfuscated.
     # @private
     argsCleaner: ->
         args = []
@@ -190,7 +190,7 @@ class Logger
         return args
 
     # Returns a human readable message out of the arguments.
-    # @return [String] The human readable, parsed JSON message.
+    # @return {String} The human readable, parsed JSON message.
     # @private
     getMessage: ->
         separated = []

@@ -33,7 +33,7 @@
 	},
     "devDependencies": {
         "chai": ">= 3.5.0",
-        "docco": ">= 0.7.0",
+        "groc": ">= 0.8.0",
         "mocha": ">= 2.4.5"
     },
     "repository": {

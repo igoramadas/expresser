@@ -32,7 +32,7 @@ class Mailer
     # --------------------------------------------------------------------------
 
     # Init the Mailer module and create the SMTP objects.
-    # @param [Object] options Mailer init options.
+    # @param {Object} options Mailer init options.
     init: (options) =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -74,13 +74,13 @@ class Mailer
     # --------------------------------------------------------------------------
 
     # Sends an email to the specified address. A callback can be specified, having (err, result).
-    # @param [String] options The email message options
-    # @option options [String] body The email body in text or HTML.
-    # @option options [String] subject The email subject.
-    # @option options [String] to The "to" address.
-    # @option options [String] from The "from" address, optional, if blank use default from settings.
-    # @option options [String] template The template file to be loaded, optional.
-    # @param [Function] callback Callback (err, result) when message is sent or fails.
+    # @param {String} options The email message options
+    # @option options {String} body The email body in text or HTML.
+    # @option options {String} subject The email subject.
+    # @option options {String} to The "to" address.
+    # @option options {String} from The "from" address, optional, if blank use default from settings.
+    # @option options {String} template The template file to be loaded, optional.
+    # @param {Method} callback Callback (err, result) when message is sent or fails.
     send: (options, callback) =>
         logger.debug "Mailer.send", options
 
@@ -152,8 +152,8 @@ class Mailer
     # folder by default and should have a .html extension. The base template,
     # which is always loaded first, should be called base.html by default.
     # The contents will be inserted on the {contents} tag.
-    # @param [String] name The template name, without .html.
-    # @return [String] The template HTML.
+    # @param {String} name The template name, without .html.
+    # @return {String} The template HTML.
     getTemplate: (name) =>
         name = name.toString()
         name = name.replace(".html", "") if name.indexOf(".html")
@@ -187,9 +187,9 @@ class Mailer
     # Parse the specified template to replace keywords. The `keywords` is a set of key-values
     # to be replaced. For example if keywords is `{id: 1, friendlyUrl: "abc"}` then the tags
     # `{id}` and `{friendlyUrl}` will be replaced with the values 1 and abc.
-    # @param [String] template The template (its value, not its name!) to be parsed.
-    # @param [Object] keywords Object with keys to be replaced with its values.
-    # @return [String] The parsed template, keywords replaced with values.
+    # @param {String} template The template (its value, not its name!) to be parsed.
+    # @param {Object} keywords Object with keys to be replaced with its values.
+    # @return {String} The parsed template, keywords replaced with values.
     parseTemplate: (template, keywords) =>
         logger.debug "Mailer.parseTemplate", template, keywords
 
@@ -214,8 +214,8 @@ class Mailer
             callback ex
 
     # Helper to create a SMTP object.
-    # @param [Object] options Options like service, host and port, username, password etc.
-    # @return [Object] A Nodemailer SMTP transport object, or null if a problem was found.
+    # @param {Object} options Options like service, host and port, username, password etc.
+    # @return {Object} A Nodemailer SMTP transport object, or null if a problem was found.
     createSmtp: (options) ->
         logger.debug "Mailer.createSmtp", options
 
@@ -239,8 +239,8 @@ class Mailer
         return result
 
     # Use the specified options and create a new SMTP server.
-    # @param [Object] options Options to be passed to SMTP creator.
-    # @param [Boolean] secondary If false set as the main SMTP server, if true set as secondary.
+    # @param {Object} options Options to be passed to SMTP creator.
+    # @param {Boolean} secondary If false set as the main SMTP server, if true set as secondary.
     setSmtp: (options, secondary) =>
         if not secondary or secondary < 1
             @smtp = @createSmtp options

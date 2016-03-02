@@ -1,0 +1,5 @@
+{
+    "github": true,
+    "glob": ["index.coffee", "lib/*.coffee", "plugins/**/*.coffee"],
+    "out": "./docs/source"
+}

@@ -84,7 +84,7 @@ class Expresser
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App. The `options` can have properties to be
     # passed to the `init` of each module.
-    # @param [Object] options Options to be passed to each init module.
+    # @param {Object} options Options to be passed to each init module.
     init: (options) =>
         options = {} if not options?
 

@@ -39,4 +39,4 @@ it to a document having "username = igor2". Errors will be logged using the Logg
 
 ---
 
-*For detailed info on specific features, check the annotated source on /docs folder.*
+*For detailed info on specific features, check the annotated source on /docs/database-mongo.html*

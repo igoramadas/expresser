@@ -13,7 +13,7 @@ class Sockets
     logger = null
     settings = null
 
-    # @property [Array] Holds a list of current event listeners.
+    # @property {Array} Holds a list of current event listeners.
     currentListeners: null
 
     # @property [Socket.IO Object] Exposes Socket.IO object to external modules.
@@ -31,8 +31,8 @@ class Sockets
 
     # Bind the Socket.IO object to the Express app. This will also set the counter
     # to increase / decrease when users connects or disconnects from the app.
-    # @param [Object] options Sockets init options.
-    # @option options [Object] server The Express server object to bind to.
+    # @param {Object} options Sockets init options.
+    # @option options {Object} server The Express server object to bind to.
     bind: (options) =>
         options = {server: options} if not options.server?
         @currentListeners = []
@@ -56,8 +56,8 @@ class Sockets
     # ----------------------------------------------------------------------
 
     # Emit the specified key and data to clients.
-    # @param [String] key The event key.
-    # @param [Object] data The JSON data to be sent out to clients.
+    # @param {String} key The event key.
+    # @param {Object} data The JSON data to be sent out to clients.
     emit: (key, data) =>
         if @io?
             @io.emit key, data
@@ -67,9 +67,9 @@ class Sockets
 
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.
-    # @param [String] key The event key.
-    # @param [Method] callback The callback to be called when key is triggered.
-    # @param [Boolean] onlyNewClients Optional, if true, listen to event only from new clients.
+    # @param {String} key The event key.
+    # @param {Method} callback The callback to be called when key is triggered.
+    # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
     listenTo: (key, callback, onlyNewClients) =>
         return if not callback?
 
@@ -83,8 +83,8 @@ class Sockets
         logger.debug "Sockets.listenTo", key
 
     # Stops listening to the specified event key.
-    # @param [String] key The event key.
-    # @param [Object] callback The callback to stop triggering.
+    # @param {String} key The event key.
+    # @param {Object} callback The callback to stop triggering.
     stopListening: (key, callback) =>
         for socketKey, socket of @io.sockets.connected
             if callback?

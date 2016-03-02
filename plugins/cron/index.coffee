@@ -34,7 +34,7 @@ class Cron
     settings = null
     utils = null
 
-    # @property [Array] The jobs collection, please do not edit this object manually!
+    # @property {Array} The jobs collection, please do not edit this object manually!
     jobs: []
 
     # INIT
@@ -42,7 +42,7 @@ class Cron
 
     # Init the cron manager. If `loadOnInit` setting is true, the `cron.json
     # file will be parsed and loaded straight away (if there's one).
-    # @param [Object] options Cron init options.
+    # @param {Object} options Cron init options.
     init: (options) =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -67,10 +67,10 @@ class Cron
 
     # Load jobs from the `cron.json` file. If `autoStart` is true, it will automatically
     # call the `start` method after loading.
-    # @param [String] filename Path to the JSON file containing jobs, optional, default is "cron.json".
-    # @param [Object] options Options to be passed when loading cron jobs.
-    # @option options [String] basePath Sets the base path of modules when requiring them.
-    # @option options [Boolean] autoStart If true, call "start" after loading.
+    # @param {String} filename Path to the JSON file containing jobs, optional, default is "cron.json".
+    # @param {Object} options Options to be passed when loading cron jobs.
+    # @option options {String} basePath Sets the base path of modules when requiring them.
+    # @option options {Boolean} autoStart If true, call "start" after loading.
     load: (filename, options) =>
         logger.debug "Cron.load", filename, options
 
@@ -134,7 +134,7 @@ class Cron
     # Start the specified cron job. If no `id` is specified, all jobs will be started.
     # A filter can also be passed as an object. For example to start all jobs for
     # the module "email", use start({module: "email"}).
-    # @param [String] idOrFilter The job id or filter, optional (if not specified, start everything).
+    # @param {String} idOrFilter The job id or filter, optional (if not specified, start everything).
     start: (idOrFilter) =>
         if not idOrFilter?
             logger.info "Cron.start", "All jobs"
@@ -156,7 +156,7 @@ class Cron
     # Stop the specified cron job. If no `id` is specified, all jobs will be stopped.
     # A filter can also be passed as an object. For example to stop all jobs for
     # the module "mymodule", use stop({module: "mymodule"}).
-    # @param [String] idOrFilter The job id or filter, optional (if not specified, stop everything).
+    # @param {String} idOrFilter The job id or filter, optional (if not specified, stop everything).
     stop: (idOrFilter) =>
         if not idOrFilter?
             logger.info "Cron.stop", "All jobs"
@@ -177,13 +177,13 @@ class Cron
 
     # Add a scheduled job to the cron, passing an `id` and `job`.
     # You can also pass only the `job` if it has an id property.
-    # @param [String] id The job ID, optional, overrides job.id in case it has one.
-    # @param [Object] job The job object.
-    # @option job [String] id The job ID, optional.
+    # @param {String} id The job ID, optional, overrides job.id in case it has one.
+    # @param {Object} job The job object.
+    # @option job {String} id The job ID, optional.
     # @option job [Integer, Array] schedule If a number assume it's the interval in seconds, otherwise a times array.
-    # @option job [Method] callback The callback (job) to be triggered.
-    # @option job [Boolean] once If true, the job will be triggered only once no matter which schedule it has.
-    # @return [Object] Returns {error, job}, where job is the job object and error is the error message (if any).
+    # @option job {Method} callback The callback (job) to be triggered.
+    # @option job {Boolean} once If true, the job will be triggered only once no matter which schedule it has.
+    # @return {Object} Returns {error, job}, where job is the job object and error is the error message (if any).
     add: (job) =>
         logger.debug "Cron.add", job
 
@@ -223,7 +223,7 @@ class Cron
         return {job: job}
 
     # Remove and stop a current job. If job does not exist, a warning will be logged.
-    # @param [String] id The job ID.
+    # @param {String} id The job ID.
     remove: (id) =>
         existing = lodash.find @jobs, {id: id}
 

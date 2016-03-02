@@ -52,4 +52,4 @@ Use `expresser.logger.off` to stop listeting to these logging events. For exampl
 
 ---
 
-*For detailed info on specific features, check the annotated source on /docs folder.*
+*For detailed info on specific features, check the annotated source on /docs/logger.html*

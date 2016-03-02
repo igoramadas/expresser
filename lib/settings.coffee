@@ -44,9 +44,9 @@ class Settings
         @loadFromJson "settings.#{@currentEnv.toString().toLowerCase()}.json"
 
     # Helper to load values from the specified settings file.
-    # @param [String] filename The filename or path to the settings file.
-    # @param [Boolean] extend If true it won't update settings that are already existing.
-    # @return [Object] Returns the JSON representation of the loaded file.
+    # @param {String} filename The filename or path to the settings file.
+    # @param {Boolean} extend If true it won't update settings that are already existing.
+    # @return {Object} Returns the JSON representation of the loaded file.
     loadFromJson: (filename, extend) =>
         extend = false if not extend?
         filename = utils.getFilePath filename
@@ -93,11 +93,11 @@ class Settings
     # Helper to encrypt or decrypt settings files. The default encryption password
     # defined on the `Settings.coffee` file is "ExpresserSettings", which ideally you
     # should change. The default cipher algorithm is AES 256.
-    # @param [Boolean] encrypt Pass true to encrypt, false to decrypt.
-    # @param [String] filename The file to be encrypted or decrypted.
-    # @param [Object] options Options to be passed to the cipher.
-    # @option options [String] cipher The cipher to be used, default is aes256.
-    # @option options [String] password The default encryption password.
+    # @param {Boolean} encrypt Pass true to encrypt, false to decrypt.
+    # @param {String} filename The file to be encrypted or decrypted.
+    # @param {Object} options Options to be passed to the cipher.
+    # @option options {String} cipher The cipher to be used, default is aes256.
+    # @option options {String} password The default encryption password.
     cryptoHelper: (encrypt, filename, options) =>
         options = {} if not options?
         options = lodash.defaults options, {cipher: "aes256", password: "ExpresserSettings"}
@@ -185,16 +185,16 @@ class Settings
         return true
 
     # Helper to encrypt the specified settings file. Please see `cryptoHelper` above.
-    # @param [String] filename The file to be encrypted.
-    # @param [Object] options Options to be passed to the cipher.
-    # @return [Boolean] Returns true if encryption OK, false if something went wrong.
+    # @param {String} filename The file to be encrypted.
+    # @param {Object} options Options to be passed to the cipher.
+    # @return {Boolean} Returns true if encryption OK, false if something went wrong.
     encrypt: (filename, options) =>
         @cryptoHelper true, filename, options
 
     # Helper to decrypt the specified settings file. Please see `cryptoHelper` above.
-    # @param [String] filename The file to be decrypted.
-    # @param [Object] options Options to be passed to the cipher.
-    # @return [Boolean] Returns true if decryption OK, false if something went wrong.
+    # @param {String} filename The file to be decrypted.
+    # @param {Object} options Options to be passed to the cipher.
+    # @return {Boolean} Returns true if decryption OK, false if something went wrong.
     decrypt: (filename, options) =>
         @cryptoHelper false, filename, options
 
@@ -203,8 +203,8 @@ class Settings
 
     # Enable or disable the settings files watcher to auto reload settings when file changes.
     # The `callback` is optional in case you want to notify another module about settings updates.
-    # @param [Boolean] enable If enabled is true activate the fs watcher, otherwise deactivate.
-    # @param [Method] callback A function (event, filename) triggered when a settings file changes.
+    # @param {Boolean} enable If enabled is true activate the fs watcher, otherwise deactivate.
+    # @param {Method} callback A function (event, filename) triggered when a settings file changes.
     watch: (enable, callback) =>
         if callback? and not lodash.isFunction callback
             throw new TypeError "The callback must be a valid function, or null/undefined."
@@ -241,7 +241,7 @@ class Settings
 
     # Update settings based on Cloud Environmental variables. If a `filter` is specified,
     # update only settings that match it, otherwise update everything.
-    # @param [String] filter Filter settings to be updated, for example "mailer" or "database".
+    # @param {String} filter Filter settings to be updated, for example "mailer" or "database".
     updateFromPaaS: (filter) =>
         env = process.env
         filter = false if not filter? or filter is ""

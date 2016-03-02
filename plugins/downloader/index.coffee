@@ -27,7 +27,7 @@ class Downloader
     # --------------------------------------------------------------------------
 
     # Init the module.
-    # @param [Object] options Downloader init options.
+    # @param {Object} options Downloader init options.
     init: (options) =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -51,11 +51,11 @@ class Downloader
     # stopping it. Returns false on error or duplicate.
     # Tip: if you want to get the downloaded data without having to read the target file
     # you can get the downloaded contents via the `options.downloadedData`.
-    # @param [String] remoteUrl The URL of the remote file to be downloaded.
-    # @param [String] saveTo The full local path and destination filename.
-    # @param [Object] options Optional, object with request options, for example auth.
-    # @param [Method] callback Optional, a function (err, result) to be called when download has finished.
-    # @return [Object] Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
+    # @param {String} remoteUrl The URL of the remote file to be downloaded.
+    # @param {String} saveTo The full local path and destination filename.
+    # @param {Object} options Optional, object with request options, for example auth.
+    # @param {Method} callback Optional, a function (err, result) to be called when download has finished.
+    # @return {Object} Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
     download: (remoteUrl, saveTo, options, callback) =>
         if not remoteUrl? or remoteUrl is ""
             err = new Error "First parameter 'remoteUrl' is mandatory!"
@@ -97,9 +97,9 @@ class Downloader
         return downloadObj
 
     # Force stop a current download.
-    # @param [String] remoteUrl The URL of the download to stop.
-    # @param [String] saveTo The full local path of the download to stop.
-    # @return [Boolean] Returns true if a match was found, or false if no matching download to stop.
+    # @param {String} remoteUrl The URL of the download to stop.
+    # @param {String} saveTo The full local path of the download to stop.
+    # @return {Boolean} Returns true if a match was found, or false if no matching download to stop.
     stop: (remoteUrl, saveTo) =>
         existing = lodash.find downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
 

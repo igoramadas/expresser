@@ -21,7 +21,7 @@ class LoggerLogentries
 
     # Init the Logentries module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
-    # @param [Object] options Logentries init options.
+    # @param {Object} options Logentries init options.
     init: (options) =>
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -37,7 +37,7 @@ class LoggerLogentries
             return logger.register "logentries", "logentries", options
 
     # Get the transport object.
-    # @param [Object] options Transport options including the token.
+    # @param {Object} options Transport options including the token.
     getTransport: (options) =>
         if not options.token? or options.token is ""
             err = new Error "The options.token is mandatory! Please specify a valid Logentries token."
@@ -59,9 +59,9 @@ class LoggerLogentries
     # --------------------------------------------------------------------------
 
     # Logentries log method.
-    # @param [String] logType The log type (info, warn, error, debug, etc).
-    # @param [Array] args Array or string to be logged.
-    # @param [Boolean] avoidConsole If true it will NOT log to the console.
+    # @param {String} logType The log type (info, warn, error, debug, etc).
+    # @param {Array} args Array or string to be logged.
+    # @param {Boolean} avoidConsole If true it will NOT log to the console.
     log: (logType, args, avoidConsole) ->
         return if settings.logger.levels.indexOf(logType) < 0
 

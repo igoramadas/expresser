@@ -23,4 +23,4 @@ As this is simply a wrapper around Node.js Events class, you can read more at ht
 
 ---
 
-*For detailed info on specific features, check the annotated source on /docs folder.*
+*For detailed info on specific features, check the annotated source on /docs/events.html*

@@ -34,8 +34,8 @@ class Firewall
     # -------------------------------------------------------------------------
 
     # Bind the firewall to the server. This must be called AFTER the web app has started.
-    # @param [Object] options Firewall init options.
-    # @option options [Object] server The Express server object to bind.
+    # @param {Object} options Firewall init options.
+    # @option options {Object} server The Express server object to bind.
     init: (options) =>
         logger = @expresser.logger
         moment = @expresser.libs.moment

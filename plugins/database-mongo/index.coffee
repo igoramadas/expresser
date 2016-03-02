@@ -17,7 +17,7 @@ class DatabaseMongo
     # -------------------------------------------------------------------------
 
     # Init the MongoDB database module.
-    # @param [Object] options Database init options.
+    # @param {Object} options Database init options.
     init: (options) =>
         database = @expresser.database
         lodash = @expresser.libs.lodash
@@ -36,8 +36,8 @@ class DatabaseMongo
             return database.register "mongo", "mongo", options.connString, options.options
 
     # Get the DB connection object.
-    # @param [Object] connString The connection string, for example user:password@hostname/dbname.
-    # @param [Object] options Additional options to be passed when creating the DB connection object.
+    # @param {Object} connString The connection string, for example user:password@hostname/dbname.
+    # @param {Object} options Additional options to be passed when creating the DB connection object.
     getConnection: (connString, options) =>
         sep = connString.indexOf "@"
         connStringSafe = connString
@@ -50,8 +50,8 @@ class DatabaseMongo
     # -------------------------------------------------------------------------
 
     # Helper to transform MongoDB document "_id" to "id".
-    # @param [Object] result The document or result to be normalized.
-    # @return [Object] Returns the normalized document.
+    # @param {Object} result The document or result to be normalized.
+    # @return {Object} Returns the normalized document.
     normalizeId = (result) ->
         return if not result?
 
@@ -75,11 +75,11 @@ class DatabaseMongo
     # Get data from the database. A `collection` and `callback` must be specified. The `filter` is optional.
     # Please note that if `filter` has an _id or id field, or if it's a plain string or number, it will be used
     # to return documents by ID. Otherwise it's used as keys-values object for filtering.
-    # @param [String] collection The collection name.
-    # @param [String, Object] filter Optional, if a string or number, assume it's the document ID. Otherwise assume keys-values filter.
-    # @param [Object] options Options to be passed to the query.
-    # @option options [Integer] limit Limits the resultset to X documents.
-    # @param [Method] callback Callback (err, result) when operation has finished.
+    # @param {String} collection The collection name.
+    # @param {Object} filter Optional, if a string or number, assume it's the document ID. Otherwise assume keys-values filter.
+    # @param {Object} options Options to be passed to the query.
+    # @option options {Integer} limit Limits the resultset to X documents.
+    # @param {Method} callback Callback (err, result) when operation has finished.
     get: (collection, filter, options, callback) ->
         if not callback?
             if lodash.isFunction options
@@ -148,9 +148,9 @@ class DatabaseMongo
 
     # Add new documents to the database.
     # The `options` parameter is optional.
-    # @param [String] collection The collection name.
-    # @param [Object] obj Document or array of documents to be added.
-    # @param [Method] callback Callback (err, result) when operation has finished.
+    # @param {String} collection The collection name.
+    # @param {Object} obj Document or array of documents to be added.
+    # @param {Method} callback Callback (err, result) when operation has finished.
     insert: (collection, obj, callback) ->
         if not obj?
             if callback?
@@ -178,13 +178,13 @@ class DatabaseMongo
 
     # Update existing documents on the database.
     # The `options` parameter is optional.
-    # @param [String] collection The collection name.
-    # @param [Object] obj Document or data to be updated.
-    # @param [Object] options Optional, options to control and filter the insert behaviour.
-    # @option options [Object] filter Defines the query filter. If not specified, will try using the ID of the passed object.
-    # @option options [Boolean] patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
-    # @option options [Boolean] upsert Default is false, if true it will create documents if none was found.
-    # @param [Method] callback Callback (err, result) when operation has finished.
+    # @param {String} collection The collection name.
+    # @param {Object} obj Document or data to be updated.
+    # @param {Object} options Optional, options to control and filter the insert behaviour.
+    # @option options {Object} filter Defines the query filter. If not specified, will try using the ID of the passed object.
+    # @option options {Boolean} patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
+    # @option options {Boolean} upsert Default is false, if true it will create documents if none was found.
+    # @param {Method} callback Callback (err, result) when operation has finished.
     update: (collection, obj, options, callback) ->
         if not callback? and lodash.isFunction options
             callback = options
@@ -246,9 +246,9 @@ class DatabaseMongo
             logger.debug "DatabaseMongo.update", collection, options, "New document."
 
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
-    # @param [String] collection The collection name.
-    # @param [String, Object] filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
-    # @param [Method] callback Callback (err, result) when operation has finished.
+    # @param {String} collection The collection name.
+    # @param {Object} filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
+    # @param {Method} callback Callback (err, result) when operation has finished.
     remove: (collection, filter, callback) ->
         if not callback? and lodash.isFunction options
             callback = options
@@ -288,9 +288,9 @@ class DatabaseMongo
 
     # Count documents from the database. A `collection` must be specified.
     # If no `filter` is not passed then count all documents.
-    # @param [String] collection The collection name.
-    # @param [Object] filter Optional, keys-values filter of documents to be counted.
-    # @param [Method] callback Callback (err, result) when operation has finished.
+    # @param {String} collection The collection name.
+    # @param {Object} filter Optional, keys-values filter of documents to be counted.
+    # @param {Method} callback Callback (err, result) when operation has finished.
     count: (collection, filter, callback) ->
         if not callback? and lodash.isFunction filter
             callback = filter

@@ -41,4 +41,4 @@ Sends JSON data to the client.
 
 ---
 
-*For detailed info on specific features, check the annotated source on /docs folder.*
+*For detailed info on specific features, check the annotated source on /docs/app.html*

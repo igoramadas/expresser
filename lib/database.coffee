@@ -16,17 +16,17 @@ class Database
     # PUBLIC PROPERTIES
     # --------------------------------------------------------------------------
 
-    # @property [Object] Available database drivers.
+    # @property {Object} Available database drivers.
     drivers: {}
 
-    # @property [Object] Dictionary of database objects.
+    # @property {Object} Dictionary of database objects.
     db: {}
 
     # INIT
     # -------------------------------------------------------------------------
 
     # Init the database module.
-    # @param [Object] options Database init options.
+    # @param {Object} options Database init options.
     init: (options) =>
         logger.debug "Database.init", options
         lodash.assign settings.database, options if options?
@@ -41,10 +41,10 @@ class Database
     # -------------------------------------------------------------------------
 
     # Helper to register database objects.
-    # @param [Object] id The ID of the database to be registered. Must be unique.
-    # @param [Object] driver The database driver to be used, for example mongo.
-    # @param [Object] connString The connection string, for example user:password@hostname/dbname.
-    # @param [Object] options Additional options to be passed when creating the DB connection object.
+    # @param {Object} id The ID of the database to be registered. Must be unique.
+    # @param {Object} driver The database driver to be used, for example mongo.
+    # @param {Object} connString The connection string, for example user:password@hostname/dbname.
+    # @param {Object} options Additional options to be passed when creating the DB connection object.
     register: (id, driver, connString, options) =>
         if not @drivers[driver]?
             logger.error "Database.register", "The driver #{driver} is not installed! Please check if plugin expresser-database-#{driver} is available on the current environment."

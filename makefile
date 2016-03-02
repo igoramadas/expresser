@@ -1,16 +1,16 @@
 ifeq ($(OS),Windows_NT)
 	MOCHA := node_modules/.bin/mocha.cmd
-	DOCCO:= node_modules/.bin/docco.cmd
+	GROC:= node_modules/.bin/groc.cmd
 else
 	MOCHA := ./node_modules/.bin/mocha
-	DOCCO:= ./node_modules/.bin/docco
+	GROC:= ./node_modules/.bin/groc
 endif
 
 test:
 	$(MOCHA) -u tdd -R spec
 
 docs:
-	$(DOCCO) -l linear -o docs/source index.coffee lib/*.coffee
+	$(GROC)
 
 clean:
 	rm -rf ./node_modules
