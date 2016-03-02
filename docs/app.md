@@ -20,12 +20,12 @@ If you're planning to use cookies and/or sessions on your app, please update the
 You can bind your own middlewares to the Express server by passing them as an option `extraMiddlewares` on
 the main `init()` call. For example to use the `passport` middleware:
 
-    expresser = require "expresser"
-    passport = require "passport"
+    var expresser = require("expresser");
+    var passport = require("passport");
     
     // Pass my custom middleware to the app.    
-    middlewares = [passport.initialize(), passport.session()]
-    expresser.init {extraMiddlewares: middlewares}
+    var middlewares = [passport.initialize(), passport.session()];
+    expresser.init({extraMiddlewares: middlewares});
     
 ### Rendering / sending the response to the clients
 

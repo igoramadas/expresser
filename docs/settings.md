@@ -28,18 +28,18 @@ will be loaded only on mydeploy.
 If you wish to have settings that apply only to your development machine, we suggest you to create a file
 *settings.local.json* and load it programatically on your app code. Then you can add that file to your
 *.gitignore* (or equivalent) to avoid having it pushed to the source control, docker and other machines.
-For example your *index.coffee* could look like:
+For example your *index.js* could have something like:
 
-    expresser = require "expresser"
+    var expresser = require ("expresser");
     
-    # Load local settings and start the Expresser app.
-    expresser.settings.loadFromJson "settings.local.json"
-    expresser.init settings
+    // Load local settings and start the Expresser app.
+    expresser.settings.loadFromJson("settings.local.json");
+    expresser.init(settings);
 
-    myApp.init()
-    myApp.doSomething()
+    myApp.init();
+    myApp.doSomething();
     
-    # Some more app init code here...
+    // Some more app init code here...
 
 ### Appending custom settings to the Settings class
 

@@ -9,31 +9,6 @@ If the {{ settings.app.paas }} setting is enabled, the Database module will auto
 
 If you're using Backbone.js or any other framework which uses "id" as the document identifier, you might want to leave the {{ settings.database.normalizeId }} true, so the Database module will parse results and convert {""_id""} to "id" on output documents and from "id" to {""_id""} when saving documents to the db.
 
-### Sample code
-
-The following example illustrates how to get a document having "username = igor" from collection "users" and duplicate it to a document having "username = igor2". Errors will be logged using the Logger module.
-
-    expresser = require "expresser"
-
-    setCallback = (err, result) ->
-        if err
-            expresser.logger.error 'Can\'t save document with username igor2.', err
-        else
-            expresser.logger.info 'Document duplicated!', result
-        return
-    
-    getCallback = (err, result) ->
-        if err
-            expresser.logger.error 'Can\'t get document with username igor.', err
-        else
-            user = result[0]
-            user.username = 'igor2'
-            delete user['id']
-            expresser.database.set 'users', user, setCallback
-        return
-    
-    expresser.database.get 'users', { username: 'igor' }, getCallback
-
 ---
 
 *For detailed info on specific features, check the annotated source on /docs folder.*

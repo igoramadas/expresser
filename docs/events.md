@@ -7,15 +7,15 @@ To listen please use the `events.on` method, passing the key and the callback. T
 use `events.off` passing the key and callback as well. To emit an event, use `events.emit` passing the
 event name and its data / arguments. For example:
 
-    expresser = require "expresser"
-    events = expresser.events
+    var expresser = require("expresser");
+    var events = expresser.events;
     
     // Listen to something...
-    logToConsole (message) = -> console.log "My class says...", message
-    events.on "MyClass.saySomething", logToConsole
+    logToConsole (message) = function() {console.log "My class says...", message}
+    events.on("MyClass.saySomething", logToConsole);
     
     // Display "Hey ho let's go" on the console...
-    events.emit "MyClass.saySomething", "Hey ho let's go"
+    events.emit("MyClass.saySomething", "Hey ho let's go");
     
     
 
