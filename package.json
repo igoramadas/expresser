@@ -16,7 +16,7 @@
     "scripts": {
         "test": "make test"
     },
-	"dependencies": {
+    "dependencies": {
         "coffee-script": ">= 1.10.0",
         "async": "1.5.x",
         "body-parser": "1.15.x",
@@ -27,13 +27,13 @@
         "errorhandler": "1.4.x",
         "express": "4.13.x",
         "jade": "1.11.x",
-        "lodash": "4.5.x",
-        "moment": "2.11.x",
+        "lodash": "4.6.x",
+        "moment": "2.12.x",
         "stylus": "0.53.x"
-	},
+    },
     "devDependencies": {
+        "betterdocco": ">= 0.7.1",
         "chai": ">= 3.5.0",
-        "groc": ">= 0.8.0",
         "mocha": ">= 2.4.5"
     },
     "repository": {
@@ -45,6 +45,7 @@
         "express",
         "app",
         "framework",
-        "node"
+        "node",
+        "webapp"
     ]
 }

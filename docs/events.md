@@ -16,8 +16,6 @@ event name and its data / arguments. For example:
     
     // Display "Hey ho let's go" on the console...
     events.emit("MyClass.saySomething", "Hey ho let's go");
-    
-    
 
 As this is simply a wrapper around Node.js Events class, you can read more at https://nodejs.org/api/events.html.
 

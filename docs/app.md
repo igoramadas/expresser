@@ -27,7 +27,7 @@ the main `init()` call. For example to use the `passport` middleware:
     var middlewares = [passport.initialize(), passport.session()];
     expresser.init({extraMiddlewares: middlewares});
     
-### Rendering / sending the response to the clients
+### Rendering / sending the response to the client
 
 The App module has some helper methods to send the response to the browser using different formats. They are:
 
@@ -35,7 +35,7 @@ The App module has some helper methods to send the response to the browser using
 
 Renders a view (by default it uses Jade) with options.
 
-### renderJson(req, res, data)
+#### renderJson(req, res, data)
 
 Sends JSON data to the client.
 
