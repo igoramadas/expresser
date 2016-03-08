@@ -160,23 +160,40 @@ class Logger
     # --------------------------------------------------------------------------
 
     # Cleans the arguments passed according to the `removeFields` setting.
+    # The maximum level deep down the object is defined by the `maxDeepLevel`.
     # @return {Arguments} Arguments with private fields obfuscated.
     # @private
     argsCleaner: ->
+        max = settings.logger.maxDeepLevel
         args = []
 
         # Recursive cleaning function.
-        cleaner = (obj) ->
+        cleaner = (obj, index) ->
+            i = 0
+
             if lodash.isArray obj
-                cleaner b for b in obj
+                while i < obj.length
+                    if index > max
+                        obj[i] = "..."
+                    else if lodash.isFunction obj[i]
+                        obj[i] = "[Function]"
+                    else
+                        cleaner obj[i], index + 1
+                    i++
+
             else if lodash.isObject obj
                 for key, value of obj
-                    if settings.logger.obfuscateFields.indexOf(key) >=0
-                        obj[key] = "***"
-                    else if lodash.isArray value
-                        cleaner b for b in value
-                    else if lodash.isObject value
-                        cleaner value
+                    if index > max
+                        obj[key] = "..."
+                    else
+                        if settings.logger.obfuscateFields.indexOf(key) >=0
+                            obj[key] = "***"
+                        else if lodash.isFunction value
+                            obj[i] = "[Function]"
+                        else if lodash.isArray value
+                            cleaner b, index + 1 for b in value
+                        else if lodash.isObject value
+                            cleaner value, index + 1
 
         # Iterate arguments and execute cleaner on objects.
         for a in arguments

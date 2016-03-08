@@ -117,6 +117,8 @@
             "error",
             "critical"
         ],
+        // Maximum levels to parse deep down an object (for performance reasons, default is 8.
+        "maxDeepLevel": 8,
         // List will all properties to be obfuscated. This is useful to mask out passwords, secret keys, etc.
         "obfuscateFields": "Password,password,passwordHash,passwordEncrypted,accessToken,refreshToken,Token,token,Auth,auth",
         // If `sendIP` is true, the IP address of the machine will be added to logs events.
