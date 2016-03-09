@@ -288,7 +288,7 @@ class App
 
         # Set default status to 500 and stringify message if necessary.
         status = status or err?.statusCode or 500
-        error = JSON.stringify err if not lodash.isString err
+        error = JSON.stringify err if not lodash.isString error
 
         res.status status
         res.json {error: error, url: req.originalUrl}
