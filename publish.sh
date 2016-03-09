@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+npm update
 npm publish
 cd plugins
 

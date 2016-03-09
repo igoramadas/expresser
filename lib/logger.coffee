@@ -164,6 +164,7 @@ class Logger
     # @return {Arguments} Arguments with private fields obfuscated.
     # @private
     argsCleaner: ->
+        funcText = "[Function]"
         max = settings.logger.maxDeepLevel
         args = []
 
@@ -176,7 +177,7 @@ class Logger
                     if index > max
                         obj[i] = "..."
                     else if lodash.isFunction obj[i]
-                        obj[i] = "[Function]"
+                        obj[i] = funcText
                     else
                         cleaner obj[i], index + 1
                     i++
@@ -189,7 +190,7 @@ class Logger
                         if settings.logger.obfuscateFields.indexOf(key) >=0
                             obj[key] = "***"
                         else if lodash.isFunction value
-                            obj[i] = "[Function]"
+                            obj[i] = funcText
                         else if lodash.isArray value
                             cleaner b, index + 1 for b in value
                         else if lodash.isObject value
@@ -201,6 +202,8 @@ class Logger
                 cloned = lodash.cloneDeep a
                 cleaner cloned
                 args.push cloned
+            else if lodash.isFunction a
+                args.push funcText
             else
                 args.push a
 
