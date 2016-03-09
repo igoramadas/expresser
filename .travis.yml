@@ -1,13 +1,12 @@
 sudo: false
 language: node_js
 node_js:
-  - "5.5"
-  - "4.2"
+  - "5.7"
+  - "4.4"
   - "0.12"
 services:
   - mongodb
 before_script:
-  - npm install imagemagick
   - npm install loggly
   - npm install mongodb@2.0.53
   - npm install mongoskin@2.0.3
