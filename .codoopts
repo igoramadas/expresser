@@ -1,6 +1,0 @@
---name "Expresser"
---title "Expresser API Docs"
---readme README.md
---output ./docs/api
---private
-./lib

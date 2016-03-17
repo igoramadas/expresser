@@ -15,10 +15,10 @@
     },
     "mailer": {
         "smtp": {
-            "host": "smtp.mandrillapp.com",
-            "port": 587,
+            "host": "smtp.mailgun.com",
+            "port": 25,
             "secure": false,
-            "service": "mandrill"
+            "service": "mailgun"
         }
     },
     "testingFileWatcher": true

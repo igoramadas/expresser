@@ -963,7 +963,7 @@ send an error response with the specified status code and error output.
             </div>
             
             <div class="content"><div class='highlight'><pre>        status = status <span class="hljs-keyword">or</span> err?.statusCode <span class="hljs-keyword">or</span> <span class="hljs-number">500</span>
-        error = JSON.stringify err <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString err
+        error = JSON.stringify err <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString error
 
         res.status status
         res.json {error: error, url: req.originalUrl}

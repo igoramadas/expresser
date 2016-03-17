@@ -18,9 +18,19 @@ describe("App Tests", function() {
 
     before(function() {
         app = require("../lib/app.coffee");
+
+        if (settings.sockets) {
+            settings.sockets.enabled = false;
+        }
     });
 
     it("Has settings defined", function() {
         settings.should.have.property("app");
+    });
+
+    it("Inits", function() {
+        this.timeout(10000);
+
+        app.init();
     });
 });

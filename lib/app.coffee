@@ -56,9 +56,6 @@ class App
         utils = require "./utils.coffee"
         nodeEnv = process.env.NODE_ENV
 
-        # Set default error handler.
-        @setErrorHandler()
-
         # Require logger.
         logger = require "./logger.coffee"
         logger.debug "App", "init", options
@@ -66,16 +63,6 @@ class App
         # Configure Express server and start server.
         @configureServer options
         @startServer()
-
-    # Log process termination to the console. This will force flush any buffered logs to disk.
-    setErrorHandler: =>
-        process.on "exit", (sig) ->
-            console.warn "App", "Terminating Expresser app...", Date(Date.now()), sig
-
-            try
-                logger.flushLocal()
-            catch ex
-                console.warn "App", "Could not flush buffered logs to disk.", ex.message
 
     # Configure the server. Set views, options, use Express modules, etc.
     configureServer: (options) =>

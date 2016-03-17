@@ -12,12 +12,12 @@ describe("Mailer Tests", function() {
     settings.loadFromJson("../plugins/mailer/settings.default.json");
     settings.loadFromJson("settings.test.json");
 
-    if (env["MANDRILL_USER"]) {
-        settings.mailer.smtp.user = env["MANDRILL_USER"];
+    if (env["SMTP_USER"]) {
+        settings.mailer.smtp.user = env["SMTP_USER"];
     }
 
-    if (env["MANDRILL_PASSWORD"]) {
-        settings.mailer.smtp.password = env["MANDRILL_PASSWORD"];
+    if (env["SMTP_PASSWORD"]) {
+        settings.mailer.smtp.password = env["SMTP_PASSWORD"];
     }
 
     var utils = null;
@@ -43,7 +43,7 @@ describe("Mailer Tests", function() {
     });
 
     if (settings.mailer.smtp.user && settings.mailer.smtp.password) {
-        it("Sends a test email using Mandrill", function(done) {
+        it("Sends a test email", function(done) {
             this.timeout(20000);
 
             var msgOptions = {
@@ -64,6 +64,6 @@ describe("Mailer Tests", function() {
             mailer.send(msgOptions, callback);
         });
     } else {
-        it.skip("Sends a test email using Mandrill (skipped, no user or password set)");
+        it.skip("Sends a test email (skipped, no user or password set)");
     }
 });
