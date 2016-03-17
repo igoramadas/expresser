@@ -5,13 +5,11 @@ Official project page: http://github.com/igoramadas/expresser
 
 [![Build Status](https://travis-ci.org/igoramadas/expresser.png?branch=master)](https://travis-ci.org/igoramadas/expresser)
 
-
 ### Why Expresser?
 
 Even if Express itself does a good job as a web application framework, it can still be considered low level.
 So the idea of Expresser is to aggregate common modules and utils into a single package, and make it even easier to
 start your Node.js web app.
-
 
 ### How to configure
 
@@ -25,68 +23,69 @@ You can also change settings directly on runtime, via the `settings` property of
 
 More info can be found at https://github.com/igoramadas/expresser/wikipage?title=Settings
 
-
 ## Modules
 
 Below you'll find important information about each of Expresser modules. Detailed documentation is extracted from
 the source code and available under the `/docs/` folder.
 
-
 ### App
-*   Pre-configured Express server ready to run on most PaaS providers.
+*   Pre-configured Express server with built-in support for some PaaS providers.
 
-More info at https://github.com/igoramadas/expresser/wikipage?title=App
+More info at https://github.com/igoramadas/expresser/blob/master/docs/app.md
 
+### Cron
+*   Configurable cron for scheduled tasks using JSON files.
+*   Supports multiple files and multiple modules.
+*   Supports managing scheduled tasks programatically.
+*   Low memory footprint, high performance.
+
+More info at More info at https://github.com/igoramadas/expresser/tree/master/plugins/cron
 
 ### Database
-*   Supports reading, updating and deleting documents on MongoDB databases.
-*   Automatic switching to a failover database in case the main one is down.
+*   Supports reading, updating and deleting documents on general databases.
+*   Plugins for MongoDB and JSON file databases.
 
-More info at https://github.com/igoramadas/expresser/wikipage?title=Database
+More info at https://github.com/igoramadas/expresser/blob/master/docs/database.md
+More info at https://github.com/igoramadas/expresser/tree/master/plugins/database-mongo
+More info at https://github.com/igoramadas/expresser/tree/master/plugins/database-file
 
+### Downloader
+*   Configurable download manager supporting standard web protocols.
+
+More info at More info at https://github.com/igoramadas/expresser/tree/master/plugins/downloader
 
 ### Firewall
 *   Automatic protection against SQLi, CSS and LFI attacks.
 *   Automatic IP blacklisting.
 *   Works on HTTP and Socket connections.
 
-More info at https://github.com/igoramadas/expresser/wikipage?title=Firewall
-
-
-### Imaging
-*   Wrapper for ImageMagick.
-*   Easy conversion between multiple image types.
-
-More info at https://github.com/igoramadas/expresser/wikipage?title=Imaging
-
+More info at More info at https://github.com/igoramadas/expresser/tree/master/plugins/firewall
 
 ### Logger
 *   Simple info, warn and error logging methods.
-*   Suppports logging to local files, Logentries (http://logentries.com) and Loggly (http://loggly.com).
+*   Plugins for local files, Logentries (http://logentries.com) and Loggly (http://loggly.com).
 
-More info at https://github.com/igoramadas/expresser/wikipage?title=Logger
+More info at https://github.com/igoramadas/expresser/blob/master/docs/logger.md
+More info at https://github.com/igoramadas/expresser/tree/master/plugins/logger-logentries
+More info at https://github.com/igoramadas/expresser/tree/master/plugins/logger-loggly
 
-
-### Mail
+### Mailer
 *   Supports sending emails via SMTP using optional authentication and SSL/TLS.
 *   Supports email templates and keywords.
 *   Automatic switching to a failover SMTP server in case the main one fails to send.
 
-More info at https://github.com/igoramadas/expresser/wikipage?title=Mail
-
+More info at More info at https://github.com/igoramadas/expresser/tree/master/plugins/mailer
 
 ### Sockets
 *   Wrapper for the Socket.IO module.
 *   Works even if your server does not support websockets.
 
-More info at https://github.com/igoramadas/expresser/wikipage?title=Sockets
-
+More info at More info at https://github.com/igoramadas/expresser/tree/master/plugins/sockets
 
 ### Utils
 *   General utilities and helper methods.
 
-More info at https://github.com/igoramadas/expresser/wikipage?title=Utils
-
+More info at https://github.com/igoramadas/expresser/blob/master/docs/utils.md
 
 ## Running on PaaS
 
@@ -94,13 +93,7 @@ Deploying your Expresser based app to AppFog, Heroku, OpenShift and possibly any
 No need to configure anything - just leave the `Settings.app.paas` setting on, and it will automatically set
 settings from environment variables.
 
-
 ## Common questions and answers
-
-#### Where is this project hosted?
-
-The official project page is at CodePlex: http://github.com/igoramadas/expresser. But as we know there are lots of people
-who prefer GitHub, there's a remote repo at GitHub as well: https://github.com/igoramadas/expresser.
 
 #### How can I change specific settings without touching the `settings.coffee` file?
 
@@ -123,4 +116,4 @@ You can also change settings programatically:
 
 #### I have a problem!
 
-Can't find what you're looking for? Need help? Then post on the Issue Tracker: http://github.com/igoramadas/expresser/workitem/list/basic
+Can't find what you're looking for? Need help? Then post on the Issue Tracker: https://github.com/igoramadas/expresser/issues
