@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "2.1.2",
+    "version": "2.1.3",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -29,7 +29,7 @@
         "jade": "1.11.x",
         "lodash": "4.6.x",
         "moment": "2.12.x",
-        "stylus": "0.53.x"
+        "stylus": "0.54.x"
     },
     "devDependencies": {
         "betterdocco": ">= 0.7.2",
