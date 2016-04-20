@@ -187,9 +187,9 @@ class Logger
                     if index > max
                         obj[key] = "..."
                     else
-                        if settings.logger.obfuscateFields.indexOf(key) >=0
+                        if settings.logger.obfuscateFields?.indexOf(key) >=0
                             obj[key] = "***"
-                        else if settings.logger.removeFields.indexOf(key) >=0
+                        else if settings.logger.removeFields?.indexOf(key) >=0
                             delete obj[key]
                         else if lodash.isFunction value
                             obj[i] = funcText
