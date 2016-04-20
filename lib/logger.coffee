@@ -189,6 +189,8 @@ class Logger
                     else
                         if settings.logger.obfuscateFields.indexOf(key) >=0
                             obj[key] = "***"
+                        else if settings.logger.removeFields.indexOf(key) >=0
+                            delete obj[key]
                         else if lodash.isFunction value
                             obj[i] = funcText
                         else if lodash.isArray value
