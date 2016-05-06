@@ -274,7 +274,7 @@ class App
         status = 408 if status is "ETIMEDOUT"
 
         # Set default status to 500 and stringify message if necessary.
-        status = status or err?.statusCode or 500
+        status = status or error?.statusCode or 500
         error = JSON.stringify err if not lodash.isString error
 
         res.status status
