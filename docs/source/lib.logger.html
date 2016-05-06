@@ -676,8 +676,10 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
                     <span class="hljs-keyword">if</span> index &gt; max
                         obj[key] = <span class="hljs-string">"..."</span>
                     <span class="hljs-keyword">else</span>
-                        <span class="hljs-keyword">if</span> settings.logger.obfuscateFields.indexOf(key) &gt;=<span class="hljs-number">0</span>
+                        <span class="hljs-keyword">if</span> settings.logger.obfuscateFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
                             obj[key] = <span class="hljs-string">"***"</span>
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.removeFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
+                            <span class="hljs-keyword">delete</span> obj[key]
                         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction value
                             obj[i] = funcText
                         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isArray value
