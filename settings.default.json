@@ -40,6 +40,8 @@
         "connectAssets": {
             // Build assets? True or false.
             "build": true,
+            // Build directory is assets/build by default.
+            "buildDir": "assets/build",
             // Minify JS and CSS builds? True or false.
             "compress": true,
             "gzip": true
