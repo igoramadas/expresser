@@ -88,10 +88,10 @@ class Cron
 
         # Get full path to the passed json file.
         filepath = utils.getFilePath filename
-        basename = path.basename filepath
 
         # Found the cron.json file? Read it.
         if filepath?
+            basename = path.basename filepath
             cronJson = ""
 
             try
