@@ -158,6 +158,7 @@ class Utils
         return "mobile-android" if ua.indexOf("Android") > 0
 
         # Find desktop browsers.
+        return "desktop-vivaldi" if ua.indexOf("Vivaldi/") > 0
         return "desktop-edge" if ua.indexOf("Edge/") > 0
         return "desktop-opera" if ua.indexOf("Opera/") > 0
         return "desktop-chrome" if ua.indexOf("Chrome/") > 0
