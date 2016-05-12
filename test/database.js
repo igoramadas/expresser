@@ -9,7 +9,6 @@ describe("Database Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    settings.loadFromJson("../plugins/database-file/settings.default.json");
     settings.loadFromJson("../plugins/database-mongodb/settings.default.json");
     settings.loadFromJson("../plugins/database-tingodb/settings.default.json");
     settings.loadFromJson("settings.test.json");
@@ -20,9 +19,10 @@ describe("Database Tests", function() {
 
     var utils = null;
     var database = null;
-    var databaseFile = null;
     var databaseMongo = null;
+    var databaseTingo = null;
     var dbMongo = null;
+    var dbTingo = null;
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
@@ -30,12 +30,6 @@ describe("Database Tests", function() {
     before(function() {
         utils = require("../lib/utils.coffee");
         database = require("../lib/database.coffee");
-
-        databaseFile = require("../plugins/database-file/index.coffee");
-        databaseFile.expresser = require("../index.coffee");
-        databaseFile.expresser.events = require("../lib/events.coffee");
-        databaseFile.expresser.logger = require("../lib/logger.coffee");
-        databaseFile.expresser.database = database;
 
         databaseMongo = require("../plugins/database-mongodb/index.coffee");
         databaseMongo.expresser = require("../index.coffee");
@@ -61,71 +55,22 @@ describe("Database Tests", function() {
         }
 
         try {
-            fs.unlinkSync(__dirname + "/database/test.json");
-        } catch (ex) {
-            console.error("Could not delete temporary test.json database file.", ex);
-        }
-
-        try {
             fs.unlinkSync(__dirname + "/database");
         } catch (ex) {
-            console.error("Could not delete tingo.db test database.", ex);
+            console.error("Could not delete TingoDB test database files.", ex);
         }
     });
 
     it("Has settings defined", function() {
         settings.should.have.property("database");
-        settings.database.should.have.property("file");
         settings.database.should.have.property("mongodb");
         settings.database.should.have.property("tingodb");
     });
 
     it("Inits", function() {
         database.init();
-        dbFile = databaseFile.init();
         dbMongo = databaseMongo.init();
         dbTingo = databaseTingo.init();
-    });
-
-    it("File - Add an array of random strings to database", function(done) {
-        var callback = function(err, result) {
-            if (err) {
-                done(err);
-            } else {
-                done();
-            }
-        };
-
-        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-+";
-        var arr = [];
-        var a, b, max, text;
-
-        for (a = 0; a < 100; a++) {
-            max = Math.random() * 20;
-            text = "";
-
-            for (b = 0; b < max; b++) {
-                text += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-
-            arr.push(text);
-        }
-
-        dbFile.insert("test", {id: "testArray", data: arr}, callback);
-    });
-
-    it("File - Remove test array created on previous test", function(done) {
-        var callback = function(err, result) {
-            if (err) {
-                done(err);
-            } else if (result == null) {
-                done("Data was not found so couldn't be removed.");
-            } else {
-                done();
-            }
-        };
-
-        dbFile.remove("test", {id: "testArray"}, callback);
     });
 
     it("MongoDB - Add complex record to the database", function(done) {
