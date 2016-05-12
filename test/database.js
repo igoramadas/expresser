@@ -10,11 +10,12 @@ describe("Database Tests", function() {
 
     var settings = require("../lib/settings.coffee");
     settings.loadFromJson("../plugins/database-file/settings.default.json");
-    settings.loadFromJson("../plugins/database-mongo/settings.default.json");
+    settings.loadFromJson("../plugins/database-mongodb/settings.default.json");
+    settings.loadFromJson("../plugins/database-tingodb/settings.default.json");
     settings.loadFromJson("settings.test.json");
 
-    if (env["MONGO"]) {
-        settings.database.mongo.connString = env["MONGO"];
+    if (env["MONGODB"]) {
+        settings.database.mongodb.connString = env["MONGODB"];
     }
 
     var utils = null;
@@ -36,29 +37,54 @@ describe("Database Tests", function() {
         databaseFile.expresser.logger = require("../lib/logger.coffee");
         databaseFile.expresser.database = database;
 
-        databaseMongo = require("../plugins/database-mongo/index.coffee");
+        databaseMongo = require("../plugins/database-mongodb/index.coffee");
         databaseMongo.expresser = require("../index.coffee");
         databaseMongo.expresser.events = require("../lib/events.coffee");
         databaseMongo.expresser.logger = require("../lib/logger.coffee");
         databaseMongo.expresser.database = database;
+
+        databaseTingo = require("../plugins/database-tingodb/index.coffee");
+        databaseTingo.expresser = require("../index.coffee");
+        databaseTingo.expresser.events = require("../lib/events.coffee");
+        databaseTingo.expresser.logger = require("../lib/logger.coffee");
+        databaseTingo.expresser.database = database;
     });
 
     after(function()
     {
-        try { dbMongo.connection.close(); } catch (ex) { }
+        var fs = require("fs");
 
+        try  {
+            dbMongo.connection.close();
+        } catch (ex) {
+            console.error("Could not close MongoDB connection.", ex);
+        }
+
+        try {
+            fs.unlinkSync(__dirname + "/database/test.json");
+        } catch (ex) {
+            console.error("Could not delete temporary test.json database file.", ex);
+        }
+
+        try {
+            fs.unlinkSync(__dirname + "/database");
+        } catch (ex) {
+            console.error("Could not delete tingo.db test database.", ex);
+        }
     });
 
     it("Has settings defined", function() {
         settings.should.have.property("database");
-        settings.database.should.have.property("mongo");
         settings.database.should.have.property("file");
+        settings.database.should.have.property("mongodb");
+        settings.database.should.have.property("tingodb");
     });
 
     it("Inits", function() {
         database.init();
         dbFile = databaseFile.init();
         dbMongo = databaseMongo.init();
+        dbTingo = databaseTingo.init();
     });
 
     it("File - Add an array of random strings to database", function(done) {
@@ -102,7 +128,7 @@ describe("Database Tests", function() {
         dbFile.remove("test", {id: "testArray"}, callback);
     });
 
-    it("Mongo - Add complex record to the database", function(done) {
+    it("MongoDB - Add complex record to the database", function(done) {
         this.timeout(10000);
 
         var callback = function(err, result) {
@@ -118,7 +144,7 @@ describe("Database Tests", function() {
         dbMongo.insert("test", obj, callback);
     });
 
-    it("Mongo - Add 500 records to the database", function(done) {
+    it("MongoDB - Add 500 records to the database", function(done) {
         this.timeout(15000);
 
         var counter = 500;
@@ -139,7 +165,7 @@ describe("Database Tests", function() {
         }
     });
 
-    it("Mongo - Updates all previously created records on the database", function(done) {
+    it("MongoDB - Updates all previously created records on the database", function(done) {
         var callback = function(err, result) {
             if (err) {
                 done(err);
@@ -151,5 +177,19 @@ describe("Database Tests", function() {
         var obj = {$set: {updated: true}};
 
         dbMongo.update("test", obj, callback);
+    });
+
+    it("TingoDB - Add complex record to the database", function(done) {
+        var callback = function(err, result) {
+            if (err) {
+                done(err);
+            } else {
+                done();
+            }
+        };
+
+        var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
+
+        dbTingo.insert("test", obj, callback);
     });
 });
