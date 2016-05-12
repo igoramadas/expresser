@@ -10,7 +10,7 @@ services:
 before_script:
   - npm install loggly
   - npm install mongodb
-  - npm install mongoskin
   - npm install node-logentries
   - npm install nodemailer
   - npm install sockets
+  - npm install tingodb
