@@ -1,13 +1,13 @@
 # EXPRESSER DATABASE - MONGODB
 # -----------------------------------------------------------------------------
-# Handles MongoDB database transactions using the `mongoskin` module. This
+# Handles MongoDB database transactions using the native `mongodb` module. This
 # plugin attaches itself to the main `database` module of Expresser.
 # <!--
-# @see settings.database.mongo
+# @see settings.database.mongodb
 # -->
-class DatabaseMongo
+class DatabaseMongoDb
 
-    mongoskin = require "mongoskin"
+    mongodb = require("mongodb").MongoClient
     database = null
     lodash = null
     logger = null
@@ -24,27 +24,41 @@ class DatabaseMongo
         logger = @expresser.logger
         settings = @expresser.settings
 
-        database.drivers.mongo = this
+        database.drivers.mongodb = this
 
-        logger.debug "DatabaseMongo.init", options
+        logger.debug "DatabaseMongoDb.init", options
 
         options = {} if not options?
-        options = lodash.defaultsDeep options, settings.database.mongo
+        options = lodash.defaultsDeep options, settings.database.mongodb
 
-        # Auto register as "mongo" if a `connString` is defined on the settings.
+        # DEPRECATED! The "mongo" driver was renamed to "mongodb".
+        if database.drivers.mongo?
+            logger.warn "DatabaseMongoDb.init", "The MongoDB module was renamed from mongo to mongodb!", "Please update your code to use 'mongodb' instead of 'mongo'."
+        if settings.database.mongo
+            logger.warn "DatabaseMongoDb.init", "The MongoDB module was renamed from mongo to mongodb!", "Please update your settings file to use the key 'mongodb' instead of 'mongo'."
+
+        # Auto register as "mongodb" if a `connString` is defined on the settings.
         if options.enabled and options.connString?
-            return database.register "mongo", "mongo", options.connString, options.options
+            return database.register "mongodb", "mongodb", options.connString, options.options
 
     # Get the DB connection object.
     # @param {Object} connString The connection string, for example user:password@hostname/dbname.
     # @param {Object} options Additional options to be passed when creating the DB connection object.
-    getConnection: (connString, options) =>
+    getConnection: (connString, options, callback) =>
         sep = connString.indexOf "@"
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
-        logger.debug "DatabaseMongo.getConnection", connStringSafe, options
+        logger.debug "DatabaseMongoDb.getConnection", connStringSafe, options
 
-        return {connection: mongoskin.db(connString, options)}
+        result = {connection: null}
+
+        mongodb.connect connString, options, (err, db) ->
+            if err?
+                logger.error "DatabaseMongoDb.getConnection", "Could not connect to #{connStringSafe}.", err
+            else
+                result.connection = db
+
+        return result
 
     # HELPERS
     # -------------------------------------------------------------------------
@@ -91,7 +105,7 @@ class DatabaseMongo
 
         # Callback is mandatory!
         if not callback?
-            throw new Error "DatabaseMongo.get: a callback (last argument) must be specified."
+            throw new Error "DatabaseMongoDb.get: a callback (last argument) must be specified."
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -142,9 +156,9 @@ class DatabaseMongo
 
         if filter?
             filterLog = filter
-            logger.debug "DatabaseMongo.get", collection, filterLog, options
+            logger.debug "DatabaseMongoDb.get", collection, filterLog, options
         else
-            logger.debug "DatabaseMongo.get", collection, "No filter.", options
+            logger.debug "DatabaseMongoDb.get", collection, "No filter.", options
 
     # Add new documents to the database.
     # The `options` parameter is optional.
@@ -154,13 +168,13 @@ class DatabaseMongo
     insert: (collection, obj, callback) ->
         if not obj?
             if callback?
-                callback "DatabaseMongo.insert: no object (second argument) was specified."
+                callback "DatabaseMongoDb.insert: no object (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @connection?
             if callback?
-                callback "DatabaseMongo.insert: the db was not initialized, please check database settings and call its 'init' method."
+                callback "DatabaseMongoDb.insert: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
         # Create the DB callback helper.
@@ -174,7 +188,7 @@ class DatabaseMongo
 
         # Execute insert!
         dbCollection.insert obj, dbCallback
-        logger.debug "DatabaseMongo.insert", collection
+        logger.debug "DatabaseMongoDb.insert", collection
 
     # Update existing documents on the database.
     # The `options` parameter is optional.
@@ -193,13 +207,13 @@ class DatabaseMongo
         # Object or filter is mandatory.
         if not obj?
             if callback?
-                callback "DatabaseMongo.update: no object (second argument) was specified."
+                callback "DatabaseMongoDb.update: no object (second argument) was specified."
             return false
 
         # No DB set? Throw exception.
         if not @connection?
             if callback?
-                callback "DatabaseMongo.update: the db was not initialized, please check database settings and call its 'init' method."
+                callback "DatabaseMongoDb.update: the db was not initialized, please check database settings and call its 'init' method."
             return false
 
         # Create the DB callback helper.
@@ -241,9 +255,9 @@ class DatabaseMongo
         dbCollection.update filter, docData, options, dbCallback
 
         if id?
-            logger.debug "DatabaseMongo.update", collection, options, "ID: #{id}"
+            logger.debug "DatabaseMongoDb.update", collection, options, "ID: #{id}"
         else
-            logger.debug "DatabaseMongo.update", collection, options, "New document."
+            logger.debug "DatabaseMongoDb.update", collection, options, "New document."
 
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
     # @param {String} collection The collection name.
@@ -257,7 +271,7 @@ class DatabaseMongo
         # Filter is mandatory.
         if not filter?
             if callback?
-                callback "DatabaseMongo.remove: no filter (second argument) was specified."
+                callback "DatabaseMongoDb.remove: no filter (second argument) was specified."
             return false
 
         # Check it the `obj` is the model itself, or only the ID string / number.
@@ -284,7 +298,7 @@ class DatabaseMongo
         else
             dbCollection.remove filter, dbCallback
 
-        logger.debug "DatabaseMongo.remove", collection, filter
+        logger.debug "DatabaseMongoDb.remove", collection, filter
 
     # Count documents from the database. A `collection` must be specified.
     # If no `filter` is not passed then count all documents.
@@ -298,12 +312,12 @@ class DatabaseMongo
 
         # Callback is mandatory!
         if not callback?
-            throw new Error "DatabaseMongo.count: a callback (last argument) must be specified."
+            throw new Error "DatabaseMongoDb.count: a callback (last argument) must be specified."
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                logger.debug "DatabaseMongo.count", collection, filter, "Result #{result}"
+                logger.debug "DatabaseMongoDb.count", collection, filter, "Result #{result}"
                 callback err, result
 
         # MongoDB has a built-in count so use it.
@@ -312,9 +326,9 @@ class DatabaseMongo
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------
-DatabaseMongo.getInstance = ->
-    return new DatabaseMongo() if process.env is "test"
-    @instance = new DatabaseMongo() if not @instance?
+DatabaseMongoDb.getInstance = ->
+    return new DatabaseMongoDb() if process.env is "test"
+    @instance = new DatabaseMongoDb() if not @instance?
     return @instance
 
-module.exports = exports = DatabaseMongo.getInstance()
+module.exports = exports = DatabaseMongoDb.getInstance()

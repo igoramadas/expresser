@@ -1,4 +1,4 @@
-# Expresser: Mongo Database
+# Expresser: MongoDB Database
 
 The Database module is a MongoDB wrapper and has 3 main methods: {{ get }}, {{ set }} and {{ del }}. There's also a {{ count }} helper that works with newer versions of MongoDB.
 
