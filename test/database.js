@@ -99,9 +99,12 @@ describe("Database Tests", function() {
             }
         };
 
-        var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
+        var execution = function() {
+            var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
+            dbMongo.insert("test", obj, callback);
+        };
 
-        dbMongo.insert("test", obj, callback);
+        setTimeout(execution, 2000);
     });
 
     it("MongoDB - Add 500 records to the database", function(done) {
@@ -120,9 +123,13 @@ describe("Database Tests", function() {
             current++;
         };
 
-        for (var i = 0; i < counter; i++) {
-            dbMongo.insert("test", {counter: i}, callback);
-        }
+        var execution = function() {
+            for (var i = 0; i < counter; i++) {
+                dbMongo.insert("test", {counter: i}, callback);
+            }
+        };
+
+        setTimeout(execution, 100);
     });
 
     it("MongoDB - Updates all previously created records on the database", function(done) {

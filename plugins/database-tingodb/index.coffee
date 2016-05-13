@@ -13,6 +13,7 @@ class DatabaseTingoDb
     lodash = null
     logger = null
     settings = null
+    utils = null
 
     # INIT
     # -------------------------------------------------------------------------
@@ -24,6 +25,7 @@ class DatabaseTingoDb
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
+        utils = @expresser.utils
 
         database.drivers.tingodb = this
 
@@ -41,7 +43,11 @@ class DatabaseTingoDb
     # @param {Object} options Additional options to be passed when creating the TingoDB connection.
     getConnection: (dbPath, options) =>
         logger.debug "DatabaseTingoDb.getConnection", dbPath, options
+
+        # Make sure database folder exists!
         dbPath = path.resolve dbPath
+        utils.mkdirRecursive dbPath
+
         return {dbPath: dbPath, connection: new tingodb.Db(dbPath, options)}
 
     # DB IMPLEMENTATION
