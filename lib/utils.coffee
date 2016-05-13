@@ -186,6 +186,8 @@ class Utils
     # and creating the directories. Returns nothing if all good or error.
     # @param {String} target The full target path, with or without a trailing slash.
     mkdirRecursive: (target) =>
+        return if fs.existsSync path.resolve(target)
+
         callback = (p, made) ->
             made = null if not made
 
