@@ -13,7 +13,7 @@
             "connString": "mongodb://127.0.0.1/expresser"
         },
         "tingodb": {
-            "path": "test/database"
+            "dbPath": "test/database"
         }
     },
     "logger": {

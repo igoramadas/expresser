@@ -1,4 +1,4 @@
-# EXPRESSER DATABASE - MONGODB
+# EXPRESSER DATABASE - TINGODB
 # -----------------------------------------------------------------------------
 # Handles TingoDB database transactions, which is quite similar to MongoDB. This
 # plugin attaches itself to the main `database` module of Expresser.
@@ -32,9 +32,9 @@ class DatabaseTingoDb
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.database.tingodb
 
-        # Auto register as "tingodb" if a `path` is defined on the settings.
-        if options.enabled and options.path?
-            return database.register "tingodb", "tingodb", options.path, options.options
+        # Auto register as "tingodb" if a `dbPath` is defined on the settings.
+        if options.enabled and options.dbPath?
+            return database.register "tingodb", "tingodb", options.dbPath, options.options
 
     # Get the DB connection object.
     # @param {Object} dbPath Path to the TingoDB file to be loaded.
@@ -42,10 +42,12 @@ class DatabaseTingoDb
     getConnection: (dbPath, options) =>
         logger.debug "DatabaseTingoDb.getConnection", dbPath, options
         dbPath = path.resolve dbPath
-        return {connection: new tingodb.Db(dbPath, options)}
+        return {dbPath: dbPath, connection: new tingodb.Db(dbPath, options)}
 
-    # CRUD IMPLEMENTATION
+    # DB IMPLEMENTATION
     # -------------------------------------------------------------------------
+
+    # ATTENTION! All methods below are bound to the object returned by `getConnection` (above on INIT section).
 
     # Get data from the database. A `collection` and `callback` must be specified. The `filter` is optional.
     # Please note that if `filter` has an _id or id field, or if it's a plain string or number, it will be used
@@ -185,12 +187,6 @@ class DatabaseTingoDb
 
         # Set collection object.
         dbCollection = @connection.collection "#{collection}.tingo"
-
-        # Make sure the ID is converted to ObjectID.
-        if obj._id?
-            id = mongoskin.ObjectID.createFromHexString obj._id.toString()
-        else if obj.id? and settings.database.normalizeId
-            id = mongoskin.ObjectID.createFromHexString obj.id.toString()
 
         # Make sure options is valid.
         options = {} if not options?

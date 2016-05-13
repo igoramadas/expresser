@@ -44,13 +44,13 @@ class DatabaseMongoDb
     # Get the DB connection object.
     # @param {Object} connString The connection string, for example user:password@hostname/dbname.
     # @param {Object} options Additional options to be passed when creating the DB connection object.
-    getConnection: (connString, options, callback) =>
+    getConnection: (connString, options) =>
         sep = connString.indexOf "@"
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep if sep > 0
         logger.debug "DatabaseMongoDb.getConnection", connStringSafe, options
 
-        result = {connection: null}
+        result = {connString: connString, connection: null}
 
         mongodb.connect connString, options, (err, db) ->
             if err?
@@ -83,8 +83,10 @@ class DatabaseMongoDb
 
         return result
 
-    # CRUD IMPLEMENTATION
+    # DB IMPLEMENTATION
     # -------------------------------------------------------------------------
+
+    # ATTENTION! All methods below are bound to the object returned by `getConnection` (above on INIT section).
 
     # Get data from the database. A `collection` and `callback` must be specified. The `filter` is optional.
     # Please note that if `filter` has an _id or id field, or if it's a plain string or number, it will be used
@@ -106,6 +108,12 @@ class DatabaseMongoDb
         # Callback is mandatory!
         if not callback?
             throw new Error "DatabaseMongoDb.get: a callback (last argument) must be specified."
+
+        # No DB set? Throw exception.
+        if not @connection?
+            if callback?
+                callback "DatabaseMongoDb.get: the db was not initialized, please check database settings and call its 'init' method."
+            return false
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
