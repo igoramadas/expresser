@@ -59,13 +59,13 @@
               </a>
             
               
-              <a class="source" href="plugins.database-file.index.html">
-                plugins/database-file/index.coffee
+              <a class="source" href="plugins.database-mongodb.index.html">
+                plugins/database-mongodb/index.coffee
               </a>
             
               
-              <a class="source" href="plugins.database-mongo.index.html">
-                plugins/database-mongo/index.coffee
+              <a class="source" href="plugins.database-tingodb.index.html">
+                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -667,7 +667,9 @@ and creating the directories. Returns nothing if all good or error.
             </div>
             
             <div class="content"><div class='highlight'><pre>    mkdirRecursive: <span class="hljs-function"><span class="hljs-params">(target)</span> =&gt;</span>
-<span class="hljs-function">        <span class="hljs-title">callback</span> = <span class="hljs-params">(p, made)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> fs.existsSync path.resolve(target)
+<span class="hljs-function">
+        <span class="hljs-title">callback</span> = <span class="hljs-params">(p, made)</span> -&gt;</span>
             made = <span class="hljs-literal">null</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> made
 
             p = path.resolve p

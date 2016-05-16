@@ -59,13 +59,13 @@
               </a>
             
               
-              <a class="source" href="plugins.database-file.index.html">
-                plugins/database-file/index.coffee
+              <a class="source" href="plugins.database-mongodb.index.html">
+                plugins/database-mongodb/index.coffee
               </a>
             
               
-              <a class="source" href="plugins.database-mongo.index.html">
-                plugins/database-mongo/index.coffee
+              <a class="source" href="plugins.database-tingodb.index.html">
+                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -925,7 +925,7 @@ send an error response with the specified status code and error output.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        status = status <span class="hljs-keyword">or</span> err?.statusCode <span class="hljs-keyword">or</span> <span class="hljs-number">500</span>
+            <div class="content"><div class='highlight'><pre>        status = status <span class="hljs-keyword">or</span> error?.statusCode <span class="hljs-keyword">or</span> <span class="hljs-number">500</span>
         error = JSON.stringify err <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString error
 
         res.status status

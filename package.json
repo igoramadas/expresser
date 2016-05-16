@@ -27,7 +27,7 @@
         "errorhandler": "1.4.x",
         "express": "4.13.x",
         "jade": "1.11.x",
-        "lodash": "4.11.x",
+        "lodash": "4.12.x",
         "moment": "2.13.x",
         "stylus": "0.54.x"
     },

@@ -59,13 +59,13 @@
               </a>
             
               
-              <a class="source" href="plugins.database-file.index.html">
-                plugins/database-file/index.coffee
+              <a class="source" href="plugins.database-mongodb.index.html">
+                plugins/database-mongodb/index.coffee
               </a>
             
               
-              <a class="source" href="plugins.database-mongo.index.html">
-                plugins/database-mongo/index.coffee
+              <a class="source" href="plugins.database-tingodb.index.html">
+                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -136,17 +136,17 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Handles MongoDB database transactions using the <code>mongoskin</code> module. This
+              <p>Handles MongoDB database transactions using the native <code>mongodb</code> module. This
 plugin attaches itself to the main <code>database</code> module of Expresser.
 <!--
-@see settings.database.mongo
+@see settings.database.mongodb
 --></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DatabaseMongo</span></span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DatabaseMongoDb</span></span>
 
-    mongoskin = <span class="hljs-built_in">require</span> <span class="hljs-string">"mongoskin"</span>
+    mongodb = <span class="hljs-built_in">require</span>(<span class="hljs-string">"mongodb"</span>).MongoClient
     database = <span class="hljs-literal">null</span>
     lodash = <span class="hljs-literal">null</span>
     logger = <span class="hljs-literal">null</span>
@@ -197,12 +197,12 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         logger = @expresser.logger
         settings = @expresser.settings
 
-        database.drivers.mongo = <span class="hljs-keyword">this</span>
+        database.drivers.mongodb = <span class="hljs-keyword">this</span>
 
-        logger.debug <span class="hljs-string">"DatabaseMongo.init"</span>, options
+        logger.debug <span class="hljs-string">"DatabaseMongoDb.init"</span>, options
 
         options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-        options = lodash.defaultsDeep options, settings.database.mongo</pre></div></div>
+        options = lodash.defaultsDeep options, settings.database.mongodb</pre></div></div>
             
         </li>
         
@@ -213,12 +213,14 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Auto register as “mongo” if a <code>connString</code> is defined on the settings.</p>
+              <p>DEPRECATED! The “mongo” driver was renamed to “mongodb”.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.enabled <span class="hljs-keyword">and</span> options.connString?
-            <span class="hljs-keyword">return</span> database.register <span class="hljs-string">"mongo"</span>, <span class="hljs-string">"mongo"</span>, options.connString, options.options</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> database.drivers.mongo?
+            logger.warn <span class="hljs-string">"DatabaseMongoDb.init"</span>, <span class="hljs-string">"The MongoDB module was renamed from mongo to mongodb!"</span>, <span class="hljs-string">"Please update your code to use 'mongodb' instead of 'mongo'."</span>
+        <span class="hljs-keyword">if</span> settings.database.mongo
+            logger.warn <span class="hljs-string">"DatabaseMongoDb.init"</span>, <span class="hljs-string">"The MongoDB module was renamed from mongo to mongodb!"</span>, <span class="hljs-string">"Please update your settings file to use the key 'mongodb' instead of 'mongo'."</span></pre></div></div>
             
         </li>
         
@@ -228,6 +230,22 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Auto register as “mongodb” if a <code>connString</code> is defined on the settings.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.enabled <span class="hljs-keyword">and</span> options.connString?
+            <span class="hljs-keyword">return</span> database.register <span class="hljs-string">"mongodb"</span>, <span class="hljs-string">"mongodb"</span>, options.connString, options.options</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Get the DB connection object.
 @param {Object} connString The connection string, for example user:password@hostname/dbname.
@@ -239,22 +257,17 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         sep = connString.indexOf <span class="hljs-string">"@"</span>
         connStringSafe = connString
         connStringSafe = connStringSafe.substring sep <span class="hljs-keyword">if</span> sep &gt; <span class="hljs-number">0</span>
-        logger.debug <span class="hljs-string">"DatabaseMongo.getConnection"</span>, connStringSafe, options
+        logger.debug <span class="hljs-string">"DatabaseMongoDb.getConnection"</span>, connStringSafe, options
 
-        <span class="hljs-keyword">return</span> {connection: mongoskin.db(connString, options)}</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <h2 id="helpers">HELPERS</h2>
+        result = {connString: connString, connection: <span class="hljs-literal">null</span>}
 
-            </div>
+        mongodb.connect connString, options, <span class="hljs-function"><span class="hljs-params">(err, db)</span> -&gt;</span>
+            <span class="hljs-keyword">if</span> err?
+                logger.error <span class="hljs-string">"DatabaseMongoDb.getConnection"</span>, <span class="hljs-string">"Could not connect to <span class="hljs-subst">#{connStringSafe}</span>."</span>, err
+            <span class="hljs-keyword">else</span>
+                result.connection = db
+
+        <span class="hljs-keyword">return</span> result</pre></div></div>
             
         </li>
         
@@ -265,7 +278,8 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              
+              <h2 id="helpers">HELPERS</h2>
+
             </div>
             
         </li>
@@ -276,6 +290,18 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Helper to transform MongoDB document “_id” to “id”.
 @param {Object} result The document or result to be normalized.
@@ -291,11 +317,11 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Check if result is a collection / array or a single document.</p>
 
@@ -315,26 +341,14 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         </li>
         
         
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <h2 id="crud-implementation">CRUD IMPLEMENTATION</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              
+              <h2 id="db-implementation">DB IMPLEMENTATION</h2>
+
             </div>
             
         </li>
@@ -345,6 +359,31 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>ATTENTION! All methods below are bound to the object returned by <code>getConnection</code> (above on INIT section).</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Get data from the database. A <code>collection</code> and <code>callback</code> must be specified. The <code>filter</code> is optional.
 Please note that if <code>filter</code> has an _id or id field, or if it’s a plain string or number, it will be used
@@ -369,27 +408,45 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
         </li>
         
         
-        <li id="section-15">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Callback is mandatory!</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback?
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"DatabaseMongo.get: a callback (last argument) must be specified."</span></pre></div></div>
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"DatabaseMongoDb.get: a callback (last argument) must be specified."</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-16">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>No DB set? Throw exception.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @connection?
+            <span class="hljs-keyword">if</span> callback?
+                callback <span class="hljs-string">"DatabaseMongoDb.get: the db was not initialized, please check database settings and call its 'init' method."</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Create the DB callback helper.</p>
 
@@ -403,11 +460,11 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
         </li>
         
         
-        <li id="section-17">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Set collection object.</p>
 
@@ -418,11 +475,11 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
         </li>
         
         
-        <li id="section-18">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Parse ID depending on <code>filter</code>.</p>
 
@@ -440,11 +497,11 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
         </li>
         
         
-        <li id="section-19">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Get <code>limit</code> option.</p>
 
@@ -458,11 +515,11 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
         </li>
         
         
-        <li id="section-20">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Find documents depending on <code>filter</code> and <code>options</code>.
 If id is set, use the shorter findById.</p>
@@ -475,11 +532,11 @@ If id is set, use the shorter findById.</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Create a params object for the find method.</p>
 
@@ -497,11 +554,11 @@ If id is set, use the shorter findById.</p>
         </li>
         
         
-        <li id="section-22">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Search everything!</p>
 
@@ -515,18 +572,18 @@ If id is set, use the shorter findById.</p>
 
         <span class="hljs-keyword">if</span> filter?
             filterLog = filter
-            logger.debug <span class="hljs-string">"DatabaseMongo.get"</span>, collection, filterLog, options
+            logger.debug <span class="hljs-string">"DatabaseMongoDb.get"</span>, collection, filterLog, options
         <span class="hljs-keyword">else</span>
-            logger.debug <span class="hljs-string">"DatabaseMongo.get"</span>, collection, <span class="hljs-string">"No filter."</span>, options</pre></div></div>
+            logger.debug <span class="hljs-string">"DatabaseMongoDb.get"</span>, collection, <span class="hljs-string">"No filter."</span>, options</pre></div></div>
             
         </li>
         
         
-        <li id="section-23">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Add new documents to the database.
 The <code>options</code> parameter is optional.
@@ -539,17 +596,17 @@ The <code>options</code> parameter is optional.
             <div class="content"><div class='highlight'><pre>    insert: <span class="hljs-function"><span class="hljs-params">(collection, obj, callback)</span> -&gt;</span>
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?
             <span class="hljs-keyword">if</span> callback?
-                callback <span class="hljs-string">"DatabaseMongo.insert: no object (second argument) was specified."</span>
+                callback <span class="hljs-string">"DatabaseMongoDb.insert: no object (second argument) was specified."</span>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-24">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>No DB set? Throw exception.</p>
 
@@ -557,17 +614,17 @@ The <code>options</code> parameter is optional.
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @connection?
             <span class="hljs-keyword">if</span> callback?
-                callback <span class="hljs-string">"DatabaseMongo.insert: the db was not initialized, please check database settings and call its 'init' method."</span>
+                callback <span class="hljs-string">"DatabaseMongoDb.insert: the db was not initialized, please check database settings and call its 'init' method."</span>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-25">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Create the DB callback helper.</p>
 
@@ -581,11 +638,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-26">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Set collection object.</p>
 
@@ -596,27 +653,27 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-27">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Execute insert!</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        dbCollection.insert obj, dbCallback
-        logger.debug <span class="hljs-string">"DatabaseMongo.insert"</span>, collection</pre></div></div>
+        logger.debug <span class="hljs-string">"DatabaseMongoDb.insert"</span>, collection</pre></div></div>
             
         </li>
         
         
-        <li id="section-28">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Update existing documents on the database.
 The <code>options</code> parameter is optional.
@@ -638,11 +695,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-29">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>Object or filter is mandatory.</p>
 
@@ -650,17 +707,17 @@ The <code>options</code> parameter is optional.
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?
             <span class="hljs-keyword">if</span> callback?
-                callback <span class="hljs-string">"DatabaseMongo.update: no object (second argument) was specified."</span>
+                callback <span class="hljs-string">"DatabaseMongoDb.update: no object (second argument) was specified."</span>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-30">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>No DB set? Throw exception.</p>
 
@@ -668,17 +725,17 @@ The <code>options</code> parameter is optional.
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @connection?
             <span class="hljs-keyword">if</span> callback?
-                callback <span class="hljs-string">"DatabaseMongo.update: the db was not initialized, please check database settings and call its 'init' method."</span>
+                callback <span class="hljs-string">"DatabaseMongoDb.update: the db was not initialized, please check database settings and call its 'init' method."</span>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-31">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Create the DB callback helper.</p>
 
@@ -692,11 +749,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-32">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Set collection object.</p>
 
@@ -707,11 +764,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-33">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Make sure the ID is converted to ObjectID.</p>
 
@@ -725,11 +782,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-34">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Make sure options is valid.</p>
 
@@ -740,11 +797,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-35">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>If a <code>filter</code> option was set, use it as the query filter otherwise use the “_id” property.</p>
 
@@ -759,11 +816,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-36">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>If options patch is set, replace specified document properties only instead of replacing the whole document.</p>
 
@@ -778,11 +835,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-37">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>Set default options.</p>
 
@@ -793,11 +850,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-38">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Execute update!</p>
 
@@ -806,18 +863,18 @@ The <code>options</code> parameter is optional.
             <div class="content"><div class='highlight'><pre>        dbCollection.update filter, docData, options, dbCallback
 
         <span class="hljs-keyword">if</span> id?
-            logger.debug <span class="hljs-string">"DatabaseMongo.update"</span>, collection, options, <span class="hljs-string">"ID: <span class="hljs-subst">#{id}</span>"</span>
+            logger.debug <span class="hljs-string">"DatabaseMongoDb.update"</span>, collection, options, <span class="hljs-string">"ID: <span class="hljs-subst">#{id}</span>"</span>
         <span class="hljs-keyword">else</span>
-            logger.debug <span class="hljs-string">"DatabaseMongo.update"</span>, collection, options, <span class="hljs-string">"New document."</span></pre></div></div>
+            logger.debug <span class="hljs-string">"DatabaseMongoDb.update"</span>, collection, options, <span class="hljs-string">"New document."</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-39">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Delete an object from the database. The <code>obj</code> argument can be either the document itself, or its integer/string ID.
 @param {String} collection The collection name.
@@ -834,11 +891,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-40">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>Filter is mandatory.</p>
 
@@ -846,17 +903,17 @@ The <code>options</code> parameter is optional.
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter?
             <span class="hljs-keyword">if</span> callback?
-                callback <span class="hljs-string">"DatabaseMongo.remove: no filter (second argument) was specified."</span>
+                callback <span class="hljs-string">"DatabaseMongoDb.remove: no filter (second argument) was specified."</span>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-41">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>Check it the <code>obj</code> is the model itself, or only the ID string / number.</p>
 
@@ -873,11 +930,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-42">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>Create the DB callback helper.</p>
 
@@ -891,11 +948,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-43">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>Set collection object and remove specified object from the database.</p>
 
@@ -906,11 +963,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-44">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p>Remove object by ID or filter.</p>
 
@@ -921,16 +978,16 @@ The <code>options</code> parameter is optional.
         <span class="hljs-keyword">else</span>
             dbCollection.remove filter, dbCallback
 
-        logger.debug <span class="hljs-string">"DatabaseMongo.remove"</span>, collection, filter</pre></div></div>
+        logger.debug <span class="hljs-string">"DatabaseMongoDb.remove"</span>, collection, filter</pre></div></div>
             
         </li>
         
         
-        <li id="section-45">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p>Count documents from the database. A <code>collection</code> must be specified.
 If no <code>filter</code> is not passed then count all documents.
@@ -948,27 +1005,27 @@ If no <code>filter</code> is not passed then count all documents.
         </li>
         
         
-        <li id="section-46">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p>Callback is mandatory!</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback?
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"DatabaseMongo.count: a callback (last argument) must be specified."</span></pre></div></div>
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"DatabaseMongoDb.count: a callback (last argument) must be specified."</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-47">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>Create the DB callback helper.</p>
 
@@ -976,17 +1033,17 @@ If no <code>filter</code> is not passed then count all documents.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
             <span class="hljs-keyword">if</span> callback?
-                logger.debug <span class="hljs-string">"DatabaseMongo.count"</span>, collection, filter, <span class="hljs-string">"Result <span class="hljs-subst">#{result}</span>"</span>
+                logger.debug <span class="hljs-string">"DatabaseMongoDb.count"</span>, collection, filter, <span class="hljs-string">"Result <span class="hljs-subst">#{result}</span>"</span>
                 callback err, result</pre></div></div>
             
         </li>
         
         
-        <li id="section-48">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>MongoDB has a built-in count so use it.</p>
 
@@ -998,11 +1055,11 @@ If no <code>filter</code> is not passed then count all documents.
         </li>
         
         
-        <li id="section-49">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <h2 id="singleton-implementation-">Singleton implementation.</h2>
 
@@ -1011,21 +1068,21 @@ If no <code>filter</code> is not passed then count all documents.
         </li>
         
         
-        <li id="section-50">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>DatabaseMongo.getInstance = <span class="hljs-function">-&gt;</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DatabaseMongo() <span class="hljs-keyword">if</span> process.env <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
-    @instance = <span class="hljs-keyword">new</span> DatabaseMongo() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+            <div class="content"><div class='highlight'><pre>DatabaseMongoDb.getInstance = <span class="hljs-function">-&gt;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DatabaseMongoDb() <span class="hljs-keyword">if</span> process.env <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
+    @instance = <span class="hljs-keyword">new</span> DatabaseMongoDb() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
     <span class="hljs-keyword">return</span> @instance
 
-<span class="hljs-built_in">module</span>.exports = exports = DatabaseMongo.getInstance()</pre></div></div>
+<span class="hljs-built_in">module</span>.exports = exports = DatabaseMongoDb.getInstance()</pre></div></div>
             
         </li>
         
