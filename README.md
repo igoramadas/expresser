@@ -30,62 +30,55 @@ the source code and available under the `/docs/` folder.
 
 ### App
 *   Pre-configured Express server with built-in support for some PaaS providers.
-
-More info at https://github.com/igoramadas/expresser/blob/master/docs/app.md
+*   https://github.com/igoramadas/expresser/blob/master/docs/app.md
 
 ### Cron
 *   Configurable cron for scheduled tasks using JSON files.
 *   Supports multiple files and multiple modules.
 *   Supports managing scheduled tasks programatically.
 *   Low memory footprint, high performance.
-
-More info at More info at https://github.com/igoramadas/expresser/tree/master/plugins/cron
+*   https://github.com/igoramadas/expresser/tree/master/plugins/cron
 
 ### Database
 *   Supports reading, updating and deleting documents on general databases.
-*   Plugins for MongoDB and JSON file databases.
-
-More info at https://github.com/igoramadas/expresser/blob/master/docs/database.md
-More info at https://github.com/igoramadas/expresser/tree/master/plugins/database-mongo
-More info at https://github.com/igoramadas/expresser/tree/master/plugins/database-file
+*   Plugins for MongoDB and TingoDB databases.
+*   https://github.com/igoramadas/expresser/blob/master/docs/database.md
+*   https://github.com/igoramadas/expresser/tree/master/plugins/database-mongodb
+*   https://github.com/igoramadas/expresser/tree/master/plugins/database-tingodb
 
 ### Downloader
 *   Configurable download manager supporting standard web protocols.
 
-More info at More info at https://github.com/igoramadas/expresser/tree/master/plugins/downloader
+*   https://github.com/igoramadas/expresser/tree/master/plugins/downloader
 
 ### Firewall
 *   Automatic protection against SQLi, CSS and LFI attacks.
 *   Automatic IP blacklisting.
 *   Works on HTTP and Socket connections.
 
-More info at More info at https://github.com/igoramadas/expresser/tree/master/plugins/firewall
+*   https://github.com/igoramadas/expresser/tree/master/plugins/firewall
 
 ### Logger
 *   Simple info, warn and error logging methods.
 *   Plugins for local files, Logentries (http://logentries.com) and Loggly (http://loggly.com).
-
-More info at https://github.com/igoramadas/expresser/blob/master/docs/logger.md
-More info at https://github.com/igoramadas/expresser/tree/master/plugins/logger-logentries
-More info at https://github.com/igoramadas/expresser/tree/master/plugins/logger-loggly
+*   https://github.com/igoramadas/expresser/blob/master/docs/logger.md
+*   https://github.com/igoramadas/expresser/tree/master/plugins/logger-logentries
+*   https://github.com/igoramadas/expresser/tree/master/plugins/logger-loggly
 
 ### Mailer
 *   Supports sending emails via SMTP using optional authentication and SSL/TLS.
 *   Supports email templates and keywords.
 *   Automatic switching to a failover SMTP server in case the main one fails to send.
-
-More info at More info at https://github.com/igoramadas/expresser/tree/master/plugins/mailer
+*   https://github.com/igoramadas/expresser/tree/master/plugins/mailer
 
 ### Sockets
 *   Wrapper for the Socket.IO module.
 *   Works even if your server does not support websockets.
-
-More info at More info at https://github.com/igoramadas/expresser/tree/master/plugins/sockets
+*   https://github.com/igoramadas/expresser/tree/master/plugins/sockets
 
 ### Utils
 *   General utilities and helper methods.
-
-More info at https://github.com/igoramadas/expresser/blob/master/docs/utils.md
+*   https://github.com/igoramadas/expresser/blob/master/docs/utils.md
 
 ## Running on PaaS
 
