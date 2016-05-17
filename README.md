@@ -48,14 +48,12 @@ the source code and available under the `/docs/` folder.
 
 ### Downloader
 *   Configurable download manager supporting standard web protocols.
-
 *   https://github.com/igoramadas/expresser/tree/master/plugins/downloader
 
 ### Firewall
 *   Automatic protection against SQLi, CSS and LFI attacks.
 *   Automatic IP blacklisting.
 *   Works on HTTP and Socket connections.
-
 *   https://github.com/igoramadas/expresser/tree/master/plugins/firewall
 
 ### Logger
@@ -85,27 +83,6 @@ the source code and available under the `/docs/` folder.
 Deploying your Expresser based app to AppFog, Heroku, OpenShift and possibly any other PaaS is dead simple.
 No need to configure anything - just leave the `Settings.app.paas` setting on, and it will automatically set
 settings from environment variables.
-
-## Common questions and answers
-
-#### How can I change specific settings without touching the `settings.coffee` file?
-
-Create a `settings.json` file with the specific keys and values that you want to override. For example:
-
-    {
-        "general": {
-            "appTitle": "My App"
-        },
-        "app": {
-            "paas": false,
-            "port": 1234
-        }
-    }
-
-You can also change settings programatically:
-
-    var expresser = require("expresser");
-    expresser.settings.app.title = "MyApp";
 
 #### I have a problem!
 
