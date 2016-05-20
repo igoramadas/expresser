@@ -1,6 +1,8 @@
 // EXPRESSER FIREWALL SETTINGS
 {
     "firewall": {
+        // Auto sanitize querystring input? This will effectively block malicious XSS by transforming the inputs.
+        "autoSanitize": true,
         // How long should IP be blacklisted, in seconds.
         "blacklistExpires": 30,
         // How long should IP be blacklisted in case it reaches the "MaxRetries" value

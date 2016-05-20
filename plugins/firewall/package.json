@@ -14,7 +14,8 @@
         "node": "*"
     },
 	"dependencies": {
-        "coffee-script": ">= 1.10.0"
+        "coffee-script": ">= 1.10.0",
+        "express-validator": "2.20.x"
 	},
     "repository": {
         "type": "git",

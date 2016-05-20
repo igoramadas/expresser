@@ -7,8 +7,8 @@
 # -->
 class Firewall
 
+    validator = require "express-validator"
     util = require "util"
-
     logger = null
     moment = null
     settings = null
@@ -50,6 +50,10 @@ class Firewall
         if not options.server?
             logger.error "Firewall.init", "App server is invalid. Abort!"
             return null
+            
+        if settings.firewall.autoSanitize
+            @expresser.app.prependMiddlewares.push validator()
+            @expresser.app.prependMiddlewares.push @sanitize
 
         # Bind HTTP protection.
         if settings.firewall.httpPatterns isnt ""
@@ -64,6 +68,11 @@ class Firewall
 
     # HTTP PROTECTION
     # -------------------------------------------------------------------------
+
+    # Sanitize querystrings automatically.
+    checkHttpRequest: (req, res, next) =>
+        req.sanitize(item).escape() for item in req.body
+        next()
 
     # Check HTTP requests against common web attacks.
     checkHttpRequest: (req, res, next) =>
