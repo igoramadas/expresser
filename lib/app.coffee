@@ -79,7 +79,7 @@ class App
 
         settings.updateFromPaaS() if settings.app.paas
 
-        # Set view options, use Jade for HTML templates.
+        # Set view options, use Pug for HTML templates.
         @server.set "views", settings.path.viewsDir
         @server.set "view engine", settings.app.viewEngine
         @server.set "view options", { layout: false }
@@ -194,19 +194,19 @@ class App
     # HELPER AND UTILS
     # --------------------------------------------------------------------------
 
-    # Helper to render Jade views. The request, response and view are mandatory,
+    # Helper to render Pug views. The request, response and view are mandatory,
     # and the options argument is optional.
     # @param {Object} req The request object.
     # @param {Object} res The response object.
-    # @param {String} view The Jade filename.
+    # @param {String} view The Pug filename.
     # @param {Object} options Options passed to the view, optional.
     renderView: (req, res, view, options) =>
         options = {} if not options?
         options.device = utils.getClientDevice req
         options.title = settings.app.title if not options.title?
 
-        # View filename must jave .jade extension.
-        view += ".jade" if view.indexOf(".jade") < 0
+        # View filename must jave .pug extension.
+        view += ".pug" if view.indexOf(".pug") < 0
 
         res.render view, options
 

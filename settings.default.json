@@ -149,7 +149,7 @@
         "sslKeyFile": null,
         // DEPRECATED!!! Please use settings.app.ssl.certFile!
         "sslCertFile": null,
-        // Path where the .jade views are stored.
+        // Path where the .pug views are stored.
         "viewsDir": "./views/"
     }
 }
