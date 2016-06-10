@@ -18,7 +18,7 @@
     },
     "dependencies": {
         "coffee-script": ">= 1.10.0",
-        "async": "2.0.0-rc.5",
+        "async": "2.0.0-rc.6",
         "body-parser": "1.15.x",
         "compression": "1.6.x",
         "connect-assets": "5.2.x",
