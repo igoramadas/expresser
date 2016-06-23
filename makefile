@@ -7,7 +7,7 @@ else
 endif
 
 test:
-	$(MOCHA) -u tdd -R spec
+	$(MOCHA) -u tdd -R mocha-lcov-reporter
 
 docs:
 	betterdocco -o docs/source index.coffee lib/*.coffee plugins/**/*.coffee

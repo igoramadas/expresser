@@ -146,8 +146,8 @@ It attaches itself automatically to the internal Express app when enabled.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Firewall</span></span>
 
+    validator = <span class="hljs-built_in">require</span> <span class="hljs-string">"express-validator"</span>
     util = <span class="hljs-built_in">require</span> <span class="hljs-string">"util"</span>
-
     logger = <span class="hljs-literal">null</span>
     moment = <span class="hljs-literal">null</span>
     settings = <span class="hljs-literal">null</span>
@@ -269,7 +269,11 @@ It attaches itself automatically to the internal Express app when enabled.
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.server?
             logger.error <span class="hljs-string">"Firewall.init"</span>, <span class="hljs-string">"App server is invalid. Abort!"</span>
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span></pre></div></div>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>
+            
+        <span class="hljs-keyword">if</span> settings.firewall.autoSanitize
+            @expresser.app.prependMiddlewares.push validator()
+            @expresser.app.prependMiddlewares.push @sanitize</pre></div></div>
             
         </li>
         
@@ -340,6 +344,23 @@ It attaches itself automatically to the internal Express app when enabled.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
+              <p>Sanitize querystrings automatically.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    checkHttpRequest: <span class="hljs-function"><span class="hljs-params">(req, res, next)</span> =&gt;</span>
+        req.sanitize(item).escape() <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> req.body
+        next()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
               <p>Check HTTP requests against common web attacks.</p>
 
             </div>
@@ -350,11 +371,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>If IP is blaclisted, end the request immediatelly.</p>
 
@@ -366,11 +387,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Helper method to check HTTP patterns.</p>
 
@@ -381,11 +402,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Set valid and checl all enabled patterns.</p>
 
@@ -399,11 +420,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Only proceed if request is valid.</p>
 
@@ -414,11 +435,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-19">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Test the request against the enabled protection patterns.</p>
 
@@ -438,11 +459,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Handle attacks.</p>
 
@@ -457,26 +478,14 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-21">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
-              </div>
-              <h2 id="sockets-protection">SOCKETS PROTECTION</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              
+              <h2 id="sockets-protection">SOCKETS PROTECTION</h2>
+
             </div>
             
         </li>
@@ -488,6 +497,18 @@ It attaches itself automatically to the internal Express app when enabled.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
               <p>Check Socket requests against common web attacks.</p>
 
             </div>
@@ -498,11 +519,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>If IP is blaclisted, end the request immediatelly.</p>
 
@@ -514,11 +535,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Helper method to check socket patterns.</p>
 
@@ -529,11 +550,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-26">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Set valid and checl all enabled patterns.</p>
 
@@ -547,11 +568,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-27">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Only proceed if request is valid.</p>
 
@@ -562,11 +583,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-28">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Test the request against the enabled protection patterns.</p>
 
@@ -584,11 +605,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-29">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Handle attacks.</p>
 
@@ -602,26 +623,14 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              <h2 id="blacklist-methods">BLACKLIST METHODS</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
-              
+              <h2 id="blacklist-methods">BLACKLIST METHODS</h2>
+
             </div>
             
         </li>
@@ -633,6 +642,18 @@ It attaches itself automatically to the internal Express app when enabled.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
               <p>Reset the blacklist object.</p>
 
             </div>
@@ -643,11 +664,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-33">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Check if the specified IP is blacklisted.</p>
 
@@ -662,11 +683,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Check if record has expired.</p>
 
@@ -679,11 +700,11 @@ It attaches itself automatically to the internal Express app when enabled.
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Increase the blacklist count, and increase the expiry date in case
 it has reached the max retries.</p>
@@ -699,11 +720,11 @@ it has reached the max retries.</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Add the specified IP to the blacklist.</p>
 
@@ -716,11 +737,11 @@ it has reached the max retries.</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Set blacklist object.</p>
 
@@ -734,26 +755,14 @@ it has reached the max retries.</p>
         </li>
         
         
-        <li id="section-38">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
-              </div>
-              <h2 id="helper-methods">HELPER METHODS</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
-              
+              <h2 id="helper-methods">HELPER METHODS</h2>
+
             </div>
             
         </li>
@@ -765,6 +774,18 @@ it has reached the max retries.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
               <p>Send an access denied and end the request in case it wasn’t authorized.</p>
 
             </div>
@@ -775,11 +796,11 @@ it has reached the max retries.</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Set status and message.</p>
 
@@ -791,11 +812,11 @@ it has reached the max retries.</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>Disconnect or end?</p>
 
@@ -809,11 +830,11 @@ it has reached the max retries.</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>Log attacks.</p>
 
@@ -825,11 +846,11 @@ it has reached the max retries.</p>
         </li>
         
         
-        <li id="section-44">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
@@ -838,11 +859,11 @@ it has reached the max retries.</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               
             </div>

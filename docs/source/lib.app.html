@@ -381,7 +381,7 @@ used only if available and enabled on the settings.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>Set view options, use Jade for HTML templates.</p>
+              <p>Set view options, use Pug for HTML templates.</p>
 
             </div>
             
@@ -734,11 +734,11 @@ used only if available and enabled on the settings.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
-              <p>Helper to render Jade views. The request, response and view are mandatory,
+              <p>Helper to render Pug views. The request, response and view are mandatory,
 and the options argument is optional.
 @param {Object} req The request object.
 @param {Object} res The response object.
-@param {String} view The Jade filename.
+@param {String} view The Pug filename.
 @param {Object} options Options passed to the view, optional.</p>
 
             </div>
@@ -757,11 +757,11 @@ and the options argument is optional.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
-              <p>View filename must jave .jade extension.</p>
+              <p>View filename must jave .pug extension.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        view += <span class="hljs-string">".jade"</span> <span class="hljs-keyword">if</span> view.indexOf(<span class="hljs-string">".jade"</span>) &lt; <span class="hljs-number">0</span>
+            <div class="content"><div class='highlight'><pre>        view += <span class="hljs-string">".pug"</span> <span class="hljs-keyword">if</span> view.indexOf(<span class="hljs-string">".pug"</span>) &lt; <span class="hljs-number">0</span>
 
         res.render view, options
 
@@ -926,7 +926,7 @@ send an error response with the specified status code and error output.
             </div>
             
             <div class="content"><div class='highlight'><pre>        status = status <span class="hljs-keyword">or</span> error?.statusCode <span class="hljs-keyword">or</span> <span class="hljs-number">500</span>
-        error = JSON.stringify err <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString error
+        error = JSON.stringify error <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString error
 
         res.status status
         res.json {error: error, url: req.originalUrl}
