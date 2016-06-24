@@ -5,3 +5,4 @@ atlassian-ide-plugin.xml
 database/*.*
 logs/*.*
 node_modules
+test/database
