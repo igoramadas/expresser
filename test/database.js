@@ -55,7 +55,9 @@ describe("Database Tests", function() {
         }
 
         try {
-            fs.unlinkSync(__dirname + "/database");
+            if (fs.existsSync(__dirname + "/database/test.tingo")) {
+                fs.unlinkSync(__dirname + "/database/test.tingo");
+            }            
         } catch (ex) {
             console.error("Could not delete TingoDB test database files.", ex);
         }
