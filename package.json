@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "2.2.0-alpha1",
+    "version": "2.2.0-alpha2",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -27,7 +27,7 @@
         "errorhandler": "1.4.x",
         "express": "4.14.x",
         "lodash": "4.13.x",
-        "moment": "2.13.x",
+        "moment": "2.14.x",
         "pug": "2.0.0-beta3",
         "stylus": "0.54.x"
     },
