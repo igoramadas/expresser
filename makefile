@@ -1,16 +1,25 @@
 ifeq ($(OS),Windows_NT)
-	MOCHA := node_modules/.bin/mocha.cmd
+	MOCHA:= node_modules/.bin/mocha.cmd
+	MOCHAEXEC:= node_modules/.bin/_mocha
 	DOCCO:= node_modules/.bin/betterdocco.cmd
+	ISTANBUL:= node_modules/istanbul/lib/cli.js
+	TESTPATH:= test/*.*
 else
-	MOCHA := ./node_modules/.bin/mocha
+	MOCHA:= ./node_modules/.bin/mocha
+	MOCHAEXEC:= ./node_modules/.bin/_mocha
 	DOCCO:= ./node_modules/.bin/betterdocco
+	ISTANBUL:= ./node_modules/istanbul/lib/cli.js
+	TESTPATH:= ./test/*.*
 endif
 
 test:
 	$(MOCHA) -u tdd -R spec
+	
+cover:
+	$(ISTANBUL) cover $(MOCHAEXEC) -- -R spec $(TESTPATH)
 
 docs:
-	betterdocco -o docs/source index.coffee lib/*.coffee plugins/**/*.coffee
+	$(DOCCO) -o docs/source index.coffee lib/*.coffee plugins/**/*.coffee
 
 clean:
 	rm -rf ./node_modules

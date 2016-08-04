@@ -4,10 +4,6 @@ require("coffee-script/register");
 var chai = require("chai");
 chai.should();
 
-var blanket = require("blanket")({
-    "pattern": "../lib"
-});
-
 describe("App Tests", function() {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";

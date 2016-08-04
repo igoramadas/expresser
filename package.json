@@ -14,7 +14,8 @@
         "node": "*"
     },
     "scripts": {
-        "test": "make test"
+        "test": "make test",
+        "cover": "make cover"
     },
     "dependencies": {
         "coffee-script": ">= 1.10.0",
