@@ -65,8 +65,8 @@ class Cron
         events.on "Cron.add", @add
         events.on "Cron.remove", @remove
 
-    # Load jobs from the `cron.json` file. If `autoStart` is true, it will automatically
-    # call the `start` method after loading.
+    # Load jobs from the specified (default cron.json) file.
+    # If `autoStart` is true, it will automatically call the `start` method after loading.
     # @param {String} filename Path to the JSON file containing jobs, optional, default is "cron.json".
     # @param {Object} options Options to be passed when loading cron jobs.
     # @option options {String} basePath Sets the base path of modules when requiring them.
@@ -79,7 +79,7 @@ class Cron
         options = lodash.defaults options, {autoStart: false, basePath: ""}
 
         if lodash.isBoolean filename
-            filename = null
+            filename = false
             options.autoStart = filename
 
         if not filename? or filename is false or filename is ""
@@ -89,7 +89,7 @@ class Cron
         # Get full path to the passed json file.
         filepath = utils.getFilePath filename
 
-        # Found the cron.json file? Read it.
+        # Found the cron json file? Read it.
         if filepath?
             basename = path.basename filepath
             cronJson = ""

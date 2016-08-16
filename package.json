@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "2.2.0-alpha3",
+    "version": "2.2.0-beta1",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -39,7 +39,8 @@
         "coveralls": ">= 2.11.12",
         "istanbul": ">= 0.4.4",
         "mocha": ">= 3.0.2",
-        "mocha-lcov-reporter": ">= 1.2.0"
+        "mocha-lcov-reporter": ">= 1.2.0",
+        "supertest": ">= 2.0.0"
     },
     "repository": {
         "type": "git",

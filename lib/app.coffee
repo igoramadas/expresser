@@ -277,8 +277,7 @@ class App
         status = status or error?.statusCode or 500
         error = JSON.stringify error if not lodash.isString error
 
-        res.status status
-        res.json {error: error, url: req.originalUrl}
+        res.status(status).json {error: error, url: req.originalUrl}
 
         logger.error "App.renderError", req.originalUrl, status, error
 
