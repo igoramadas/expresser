@@ -928,8 +928,7 @@ send an error response with the specified status code and error output.
             <div class="content"><div class='highlight'><pre>        status = status <span class="hljs-keyword">or</span> error?.statusCode <span class="hljs-keyword">or</span> <span class="hljs-number">500</span>
         error = JSON.stringify error <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString error
 
-        res.status status
-        res.json {error: error, url: req.originalUrl}
+        res.status(status).json {error: error, url: req.originalUrl}
 
         logger.error <span class="hljs-string">"App.renderError"</span>, req.originalUrl, status, error</pre></div></div>
             

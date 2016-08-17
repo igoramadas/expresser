@@ -270,8 +270,8 @@ file will be parsed and loaded straight away (if there’s one).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Load jobs from the <code>cron.json</code> file. If <code>autoStart</code> is true, it will automatically
-call the <code>start</code> method after loading.
+              <p>Load jobs from the specified (default cron.json) file.
+If <code>autoStart</code> is true, it will automatically call the <code>start</code> method after loading.
 @param {String} filename Path to the JSON file containing jobs, optional, default is “cron.json”.
 @param {Object} options Options to be passed when loading cron jobs.
 @option options {String} basePath Sets the base path of modules when requiring them.
@@ -299,7 +299,7 @@ call the <code>start</code> method after loading.
         options = lodash.defaults options, {autoStart: <span class="hljs-literal">false</span>, basePath: <span class="hljs-string">""</span>}
 
         <span class="hljs-keyword">if</span> lodash.isBoolean filename
-            filename = <span class="hljs-literal">null</span>
+            filename = <span class="hljs-literal">false</span>
             options.autoStart = filename
 
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filename? <span class="hljs-keyword">or</span> filename <span class="hljs-keyword">is</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">or</span> filename <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
@@ -330,7 +330,7 @@ call the <code>start</code> method after loading.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Found the cron.json file? Read it.</p>
+              <p>Found the cron json file? Read it.</p>
 
             </div>
             

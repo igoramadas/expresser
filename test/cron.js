@@ -36,8 +36,6 @@ describe("Cron Tests", function() {
 
     it("Loads jobs from a testcron.json file", function() {
         cron.load("test/testcron.json", {autoStart: false, basePath: "../../../"});
-
-        
     });
 
     it("Add and run a cron job, passing itself to the callback", function(done) {
