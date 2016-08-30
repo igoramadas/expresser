@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "2.2.0-beta1",
+    "version": "2.2.0-beta2",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",

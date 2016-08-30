@@ -79,6 +79,62 @@ describe("Logger Tests", function() {
         logger.init();
     });
 
+    it("Logs on diffent levels (debug, info, warn, error, critical)", function() {
+        logger.debug("THIS IS DEBUG");
+        logger.info("THIS IS INFO");
+        logger.warn("THIS IS WARN");
+        logger.error("THIS IS ERROR");
+        logger.critical("THIS IS CRITICAL");
+    });
+
+    it("Clean arguments before logging", function(done) {
+        var testObj = {
+            someFunction: function() {return true },
+            password: "this should be obfuscated.",
+            level0: {
+                level1: {
+                    level2: {
+                        level3: {
+                            level4: {
+                                level5: {
+                                    level6: {
+                                        level7: {
+                                            level8: {
+                                                level9: true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        var simpleObj = "This is a string";
+        var cleanArgs = logger.argsCleaner(testObj, simpleObj);
+
+        if (cleanArgs[0].password == testObj.password) {
+            done("Password on test object was not obfuscated.");
+        } else if (cleanArgs[0].level0.level1.level2.level3.level4.level5.level6.level7.level8.level9) {
+            done("Maximum deep level should be 8, but test object has a property with 9 levels down.");
+        } else {
+            done();
+        }
+    });
+
+    it("Get a stringfied message out of the arguments", function(done) {
+        var time = new Date().getTime();
+        var message = logger.getMessage(1, "A", time).toString();
+
+        if (message.indexOf(1) < 0 || message.indexOf("A") < 0) {
+            done("Stringified message should have values 1 and A on.");
+        } else {
+            done();
+        }
+    });
+
     it("Check if removed fields are hidden from log", function(done) {
         var privateObj = {
             password: "Welcome123",
@@ -141,4 +197,18 @@ describe("Logger Tests", function() {
     } else {
         it.skip("Send log to Loggly (skipped, no token or subdomain set)");
     }
+
+    it("Registers a dummy log driver", function() {
+        var driver = {
+            getTransport: function() {
+                return {};
+            },
+            log: function(data) {
+                console.log("DUMMY DRIVER", data);
+            }
+        };
+
+        logger.drivers["dummydriver"] = driver;
+        logger.register("testlogger", "dummydriver");
+    });
 });

@@ -107,14 +107,16 @@ class Cron
                 module = require(path.dirname(require.main.filename) + "/" + options.basePath + key)
 
                 # Only proceed if the cronDisabled flag is not present on the module.
+                # If no ID is set for the job, use module key + callback name.
                 if module.cronDisabled isnt true
                     for d in data
                         if not d.enabled? or d.enabled
                             cb = module[d.callback]
                             job = d
                             job.module = key
-                            job.id = key + "." + d.callback
+                            job.id = key + "." + d.callback if not job.id?
                             job.callback = cb
+                            job.timer = null
                             @add job
                         else
                             logger.debug "Cron.load", filename, key, d.callback, "Job 'enabled' is false. Skip!"

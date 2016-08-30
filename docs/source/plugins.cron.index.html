@@ -371,7 +371,8 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Only proceed if the cronDisabled flag is not present on the module.</p>
+              <p>Only proceed if the cronDisabled flag is not present on the module.
+If no ID is set for the job, use module key + callback name.</p>
 
             </div>
             
@@ -381,8 +382,9 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
                             cb = <span class="hljs-built_in">module</span>[d.callback]
                             job = d
                             job.<span class="hljs-built_in">module</span> = key
-                            job.id = key + <span class="hljs-string">"."</span> + d.callback
+                            job.id = key + <span class="hljs-string">"."</span> + d.callback <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> job.id?
                             job.callback = cb
+                            job.timer = <span class="hljs-literal">null</span>
                             @add job
                         <span class="hljs-keyword">else</span>
                             logger.debug <span class="hljs-string">"Cron.load"</span>, filename, key, d.callback, <span class="hljs-string">"Job 'enabled' is false. Skip!"</span>

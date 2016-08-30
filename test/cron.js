@@ -34,8 +34,25 @@ describe("Cron Tests", function() {
         cron.init();
     });
 
-    it("Loads jobs from a testcron.json file", function() {
+    it("Loads jobs from a testcron.json file", function(done) {
         cron.load("test/testcron.json", {autoStart: false, basePath: "../../../"});
+
+        if (cron.jobs.length == 1) {
+            done();
+        } else {
+            done("Cron should have a single job loaded from testcron.json, but has " + cron.jobs.length + " jobs.");
+        }
+    });
+
+    it("Remove test123 job loaded from testcron.json", function(done) {
+        var length = cron.jobs.length;
+        cron.remove("test123");
+
+        if (cron.jobs.length < length) {
+            done();
+        } else {
+            done("Job test123 was not removed from cron jobs list.");
+        }
     });
 
     it("Add and run a cron job, passing itself to the callback", function(done) {
@@ -54,6 +71,18 @@ describe("Cron Tests", function() {
         var job = {id: "testjob", callback: callback, schedule: schedule, once: true};
 
         cron.add(job);
+    });
+
+    it("Stop jobs", function(done) {
+        cron.stop();
+
+        for (var j = 0; j < cron.jobs.length; j++) {
+            if (cron.jobs[j].timer != null) {
+                return done("Cron still has jobs enabled after calling stop().");
+            }
+        }
+
+        done();
     });
 
     it("Prevents duplicate jobs when 'allowReplacing' setting is false", function(done) {

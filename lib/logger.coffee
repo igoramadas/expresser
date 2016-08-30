@@ -165,7 +165,7 @@ class Logger
     # @private
     argsCleaner: ->
         funcText = "[Function]"
-        max = settings.logger.maxDeepLevel
+        max = settings.logger.maxDeepLevel - 1
         args = []
 
         # Recursive cleaning function.
@@ -194,7 +194,8 @@ class Logger
                         else if lodash.isFunction value
                             obj[i] = funcText
                         else if lodash.isArray value
-                            cleaner b, index + 1 for b in value
+                            for b in value
+                                cleaner b, index + 1
                         else if lodash.isObject value
                             cleaner value, index + 1
 
@@ -202,7 +203,7 @@ class Logger
         for a in arguments
             if lodash.isObject a or lodash.isArray a
                 cloned = lodash.cloneDeep a
-                cleaner cloned
+                cleaner cloned, 0
                 args.push cloned
             else if lodash.isFunction a
                 args.push funcText
@@ -222,7 +223,10 @@ class Logger
         # on the `removeFields` setting won't be added to the message.
         for a in args
             try
-                separated.push JSON.stringify a
+                if lodash.isObject a
+                    separated.push JSON.stringify a
+                else
+                    separated.push a.toString()
             catch ex
                 separated.push a.toString()
 
