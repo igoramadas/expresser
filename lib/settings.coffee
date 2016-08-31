@@ -258,33 +258,41 @@ class Settings
             vcap = env.VCAP_SERVICES
             vcap = JSON.parse vcap if vcap?
 
+            @database.mongodb = {} if not @database.mongodb?
+
             # Check for AppFog MongoDB variables.
             if vcap? and vcap isnt ""
                 mongo = vcap["mongodb-1.8"]
                 mongo = mongo[0]["credentials"] if mongo?
                 if mongo?
-                    @database.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
+                    @database.mongodb.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
 
             # Check for MongoLab variables.
             mongoLab = env.MONGOLAB_URI
-            @database.connString = mongoLab if mongoLab? and mongoLab isnt ""
+            @database.mongodb.connString = mongoLab if mongoLab? and mongoLab isnt ""
 
             # Check for MongoHQ variables.
             mongoHq = env.MONGOHQ_URL
-            @database.connString = mongoHq if mongoHq? and mongoHq isnt ""
+            @database.mongodb.connString = mongoHq if mongoHq? and mongoHq isnt ""
 
         # Update logger settings (Logentries and Loggly).
         if not filter or filter.indexOf("logger") >= 0
             logentriesToken = env.LOGENTRIES_TOKEN
             logglyToken = env.LOGGLY_TOKEN
             logglySubdomain = env.LOGGLY_SUBDOMAIN
+
+            @logger.logentries = {} if not @logger.logentries?
+            @logger.loggly = {} if not @logger.loggly?
+
             @logger.logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
             @logger.loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
             @logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
         # Update mailer settings (Mailgun, Mandrill, SendGrid).
         if not filter or filter.indexOf("mail") >= 0
-            currentSmtpHost = @mailer.smtp.host?.toLowerCase()
+            @mailer = {} if not @mailer?
+
+            currentSmtpHost = @mailer.smtp?.host?.toLowerCase()
             currentSmtpHost = "" if not currentSmtpHost?
 
             # Get and set Mailgun.
