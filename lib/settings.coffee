@@ -90,17 +90,26 @@ class Settings
     # ENCRYPTION
     # --------------------------------------------------------------------------
 
-    # Helper to encrypt or decrypt settings files. The default encryption password
-    # defined on the `Settings.coffee` file is "ExpresserSettings", which ideally you
-    # should change. The default cipher algorithm is AES 256.
+    # Helper to encrypt or decrypt settings files. The default encryption key
+    # defined on the `Settings.coffee` file is "ExpresserSettings", which
+    # you should change to your desired value. You can also set the key
+    # via the EXPRESSER_SETTINGS_CRYPTOKEY environment variable.
+    # The default cipher algorithm is AES 256.
     # @param {Boolean} encrypt Pass true to encrypt, false to decrypt.
     # @param {String} filename The file to be encrypted or decrypted.
     # @param {Object} options Options to be passed to the cipher.
     # @option options {String} cipher The cipher to be used, default is aes256.
-    # @option options {String} password The default encryption password.
+    # @option options {String} password The encryption key.
     cryptoHelper: (encrypt, filename, options) =>
+        env = process.env
+
         options = {} if not options?
-        options = lodash.defaults options, {cipher: "aes256", password: "ExpresserSettings"}
+        options = lodash.defaults options, {cipher: "aes256", key: env["EXPRESSER_SETTINGS_CRYPTOKEY"]}
+        options.key = "ExpresserSettings" if not options.key? or options.key is ""
+
+        # Option 'password' is deprecated, now replaced by 'key'.
+        if options.password? and not options.key?
+            console.warn "Settings.cryptoHelper", "Option 'password'' is deprecated, please use 'key' to set the encryption key."
 
         settingsJson = @loadFromJson filename, false
 
