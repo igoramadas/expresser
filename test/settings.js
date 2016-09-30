@@ -86,7 +86,7 @@ describe("Settings Tests", function() {
         if (!encrypted.encrypted) {
             return callback("Property 'encrypted' was not properly set.")
         } else if (encrypted.app.title == "Expresser Settings Encryption") {
-            return callback("Encryption failed, settings.general.appTitle is still set as 'Expresser'.")
+            return callback("Encryption failed, settings.app.title is still set as 'Expresser'.")
         }
 
         settings.decrypt(filename);

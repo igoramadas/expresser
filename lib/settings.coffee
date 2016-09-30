@@ -106,11 +106,6 @@ class Settings
         options = {} if not options?
         options = lodash.defaults options, {cipher: "aes256", key: env["EXPRESSER_SETTINGS_CRYPTOKEY"]}
         options.key = "ExpresserSettings" if not options.key? or options.key is ""
-
-        # Option 'password' is deprecated, now replaced by 'key'.
-        if options.password? and not options.key?
-            console.warn "Settings.cryptoHelper", "Option 'password'' is deprecated, please use 'key' to set the encryption key."
-
         settingsJson = @loadFromJson filename, false
 
         # Settings file not found or invalid? Stop here.
@@ -147,7 +142,7 @@ class Settings
                                 newValue = "string:"
 
                             # Create cipher amd encrypt data.
-                            c = crypto.createCipher options.cipher, options.password
+                            c = crypto.createCipher options.cipher, options.key
                             newValue += c.update currentValue.toString(), @general.encoding, "hex"
                             newValue += c.final "hex"
 
@@ -158,7 +153,7 @@ class Settings
                             newValue = ""
 
                             # Create cipher and decrypt.
-                            c = crypto.createDecipher options.cipher, options.password
+                            c = crypto.createDecipher options.cipher, options.key
                             newValue += c.update arrValue[1], "hex", @general.encoding
                             newValue += c.final @general.encoding
 
