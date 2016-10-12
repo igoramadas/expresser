@@ -146,11 +146,13 @@ class Utils
         return "mobile-windows-8" if ua.indexOf("Windows Phone 8") > 0
         return "mobile-windows-7" if ua.indexOf("Windows Phone 7") > 0
         return "mobile-windows" if ua.indexOf("Windows Phone") > 0
+        return "mobile-iphone-8" if ua.indexOf("iPhone8") > 0
         return "mobile-iphone-7" if ua.indexOf("iPhone7") > 0
         return "mobile-iphone-6" if ua.indexOf("iPhone6") > 0
         return "mobile-iphone-5" if ua.indexOf("iPhone5") > 0
         return "mobile-iphone-4" if ua.indexOf("iPhone4") > 0
         return "mobile-iphone" if ua.indexOf("iPhone") > 0
+        return "mobile-android-8" if ua.indexOf("Android 8") > 0
         return "mobile-android-7" if ua.indexOf("Android 7") > 0
         return "mobile-android-6" if ua.indexOf("Android 6") > 0
         return "mobile-android-5" if ua.indexOf("Android 5") > 0
