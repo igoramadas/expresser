@@ -142,7 +142,7 @@ class Utils
         ua = req.headers["user-agent"]
 
         # Find mobile devices.
-        return "mobile-windows-10" if ua.indexOf("Windows Phone 10") > 0
+        return "mobile-windows-10" if ua.indexOf("Windows 10 Mobile") > 0
         return "mobile-windows-8" if ua.indexOf("Windows Phone 8") > 0
         return "mobile-windows-7" if ua.indexOf("Windows Phone 7") > 0
         return "mobile-windows" if ua.indexOf("Windows Phone") > 0

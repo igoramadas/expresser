@@ -18,13 +18,13 @@
         "cover": "make cover"
     },
     "dependencies": {
-        "coffee-script": ">= 1.11.0",
-        "async": "2.0.x",
+        "coffee-script": ">= 1.11.1",
+        "async": "2.1.x",
         "body-parser": "1.15.x",
         "compression": "1.6.x",
         "connect-assets": "5.4.x",
         "cookie-parser": "1.4.x",
-        "cookie-session": "2.0.0-alpha.1",
+        "cookie-session": "1.2.x",
         "errorhandler": "1.4.x",
         "express": "4.14.x",
         "lodash": "4.16.x",
