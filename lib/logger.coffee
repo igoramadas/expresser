@@ -95,7 +95,6 @@ class Logger
     # @param {Boolean} doNotParse If true, message won't be parsed and cleaned using the argsCleaner helper.
     # @return {String} The human readable log sent to the console.
     console: (logType, msg, doNotParse) =>
-        chalkStyle = chalk
         timestamp = moment().format "HH:mm:ss.SS"
 
         # Only parse message if doNotClean is false or unset.
@@ -110,7 +109,10 @@ class Logger
         styles = settings.logger.styles[logType]
 
         if styles?
+            chalkStyle = chalk
             chalkStyle = chalkStyle[s] for s in styles
+        else
+            chalkStyle = chalk.white
 
         method timestamp, chalkStyle msg
 
