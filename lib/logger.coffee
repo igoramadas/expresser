@@ -91,9 +91,13 @@ class Logger
     # Log to the console.
     # @param {String} logType The log type (for example: warning, error, info, security, etc).
     # @param {Array} args Array of arguments to be stringified and logged.
+    # @param {Boolean} doNotParse If true, message won't be parsed and cleaned using the argsCleaner helper.
     # @return {String} The human readable log sent to the console.
-    console: (logType, msg) =>
+    console: (logType, msg, doNotParse) =>
         timestamp = moment().format "HH:mm:ss.SS"
+
+        # Only parse message if doNotClean is false or unset.
+        msg = @getMessage args if not doNotParse
 
         if console[logType]?
             method = console[logType]
@@ -124,7 +128,7 @@ class Logger
 
         # Log to the console depending on `console` setting.
         if settings.logger.console
-            @console logType, msg
+            @console logType, msg, true
 
         return msg
 
