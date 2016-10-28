@@ -11,11 +11,17 @@ of arguments, which will be parsed and transformed to a single log line.
 For example to log an exception as "error":
 
     expresser = require "expresser"
-    
+
     try
         mymodule.doSomethingWrong()
     catch ex
         expresser.logger.error "My method", "Some description", ex
+
+### Styling the console logs
+
+The Logger makes use of Chalk to set colours and font styles on the console output.
+The default styles are set under the `settings.logger.styles` setting. For more info
+please head to https://github.com/chalk/chalk.
 
 ### Logging unhandled exceptions
 
@@ -35,13 +41,13 @@ solution in case your log transport is down.
 
     expresser = require "expresser"
     counter = 0
-    
+
     mySuccessFunction = (transport, data) ->
         counter++
-    
+
     myErrorFunction = (transport, error) ->
         console.warn "Not logged!", transport, data
-    
+
     expresser.logger.on "logSuccess", mySuccessFunction
     expresser.logger.on "logError", myErrorFunction
 
