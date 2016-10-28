@@ -57,7 +57,7 @@ class Logger
 
     # Bind events.
     setEvents: =>
-        events.on "Logger.console", @@console
+        events.on "Logger.console", @console
         events.on "Logger.debug", @debug
         events.on "Logger.info", @info
         events.on "Logger.warn", @warn
