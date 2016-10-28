@@ -92,7 +92,6 @@ class Logger
     # @param {Array} args Array of arguments to be stringified and logged.
     # @return {String} The human readable log sent to the console.
     console: (logType, msg) =>
-        args = @argsCleaner args
         timestamp = moment().format "HH:mm:ss.SS"
 
         if console[logType]?
@@ -166,7 +165,7 @@ class Logger
     argsCleaner: ->
         funcText = "[Function]"
         max = settings.logger.maxDeepLevel - 1
-        args = []
+        result = []
 
         # Recursive cleaning function.
         cleaner = (obj, index) ->
@@ -186,49 +185,62 @@ class Logger
                 for key, value of obj
                     if index > max
                         obj[key] = "..."
-                    else
-                        if settings.logger.obfuscateFields?.indexOf(key) >=0
-                            obj[key] = "***"
-                        else if settings.logger.removeFields?.indexOf(key) >=0
-                            delete obj[key]
-                        else if lodash.isFunction value
-                            obj[key] = funcText
-                        else if lodash.isArray value
-                            cleaner value[i], index + 1 while i < value.length
-                        else if lodash.isObject value
-                            cleaner value, index + 1
+                    else if settings.logger.obfuscateFields?.indexOf(key) >=0
+                        obj[key] = "***"
+                    else if settings.logger.removeFields?.indexOf(key) >=0
+                        delete obj[key]
+                    else if lodash.isArray value
+                        while i < value.length
+                            cleaner value[i], index + 1
+                            i++
+                    else if lodash.isFunction value
+                        obj[key] = funcText
+                    else if lodash.isObject value
+                        cleaner value, index + 1
 
         # Iterate arguments and execute cleaner on objects.
-        for a in arguments
-            if lodash.isObject a or lodash.isArray a
-                cloned = lodash.cloneDeep a
+        for argKey, arg of arguments
+            if lodash.isArray arg
+                for v in arg
+                    cloned = lodash.cloneDeep v
+                    cleaner cloned, 0
+                    result.push cloned
+            else if lodash.isObject
+                cloned = lodash.cloneDeep arg
                 cleaner cloned, 0
-                args.push cloned
-            else if lodash.isFunction a
-                args.push funcText
+                result.push cloned
+            else if lodash.isFunction arg
+                result.push funcText
             else
-                args.push a
+                result.push a
 
-        return args
+        return result
 
     # Returns a human readable message out of the arguments.
     # @return {String} The human readable, parsed JSON message.
     # @private
-    getMessage: ->
+    getMessage: (args) ->
         separated = []
-        args = @argsCleaner arguments
+        args = @argsCleaner args
 
         # Parse all arguments and stringify objects. Please note that fields defined
         # on the `removeFields` setting won't be added to the message.
-        for a in args
-            try
-                if lodash.isObject a
-                    stringified = JSON.stringify a, null, 2
-                else
-                    stringified = a.toString()
-                separated.push stringified
-            catch ex
-                separated.push a.toString()
+        for arg in args
+            if arg?
+                stringified = ""
+
+                try
+                    if lodash.isArray arg
+                        for value in arg
+                            stringified += JSON.stringify value, null, 1
+                    else if lodash.isObject arg
+                        stringified = JSON.stringify arg, null, 1
+                    else
+                        stringified = arg.toString()
+
+                    separated.push stringified
+                catch ex
+                    separated.push arg.toString()
 
         # Append IP address, if `serverIP` is set.
         serverIP = utils.getServerIP true if settings.logger.sendIP
