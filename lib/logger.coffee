@@ -91,16 +91,16 @@ class Logger
     # @param {String} logType The log type (for example: warning, error, info, security, etc).
     # @param {Array} args Array of arguments to be stringified and logged.
     # @return {String} The human readable log sent to the console.
-    console: (logType, args) =>
+    console: (logType, msg) =>
         args = @argsCleaner args
-        args.unshift moment().format "HH:mm:ss.SS"
+        timestamp = moment().format "HH:mm:ss.SS"
 
         if console[logType]?
-            console[logType].apply this, args
+            console[logType] timestamp, msg
         else
-            console.log.apply this, args
+            console.log timestamp, msg
 
-        return args
+        return msg
 
     # Internal generic log method.
     # @param {String} logType The log type (for example: warning, error, info, security, etc).
@@ -117,7 +117,7 @@ class Logger
 
         # Log to the console depending on `console` setting.
         if settings.logger.console
-            @console logType, args
+            @console logType, msg
 
         return msg
 
@@ -192,10 +192,9 @@ class Logger
                         else if settings.logger.removeFields?.indexOf(key) >=0
                             delete obj[key]
                         else if lodash.isFunction value
-                            obj[i] = funcText
+                            obj[key] = funcText
                         else if lodash.isArray value
-                            for b in value
-                                cleaner b, index + 1
+                            cleaner value[i], index + 1 while i < value.length
                         else if lodash.isObject value
                             cleaner value, index + 1
 
@@ -224,9 +223,10 @@ class Logger
         for a in args
             try
                 if lodash.isObject a
-                    separated.push JSON.stringify a
+                    stringified = JSON.stringify a, null, 2
                 else
-                    separated.push a.toString()
+                    stringified = a.toString()
+                separated.push stringified
             catch ex
                 separated.push a.toString()
 
