@@ -8,6 +8,7 @@
 # -->
 class Logger
 
+    chalk = require "chalk"
     events = require "./events.coffee"
     fs = require "fs"
     lodash = require "lodash"
@@ -95,9 +96,16 @@ class Logger
         timestamp = moment().format "HH:mm:ss.SS"
 
         if console[logType]?
-            console[logType] timestamp, msg
+            method = console[logType]
         else
-            console.log timestamp, msg
+            method = console.log
+
+        # Get styles (text colour, bold, italic etc...) for the correlated log type.
+        styles = settings.logger.styles[logType]
+        chalkStyle = chalk
+        chalkStyle = chalkStyle[s] for s in styles
+
+        method timestamp, chalkStyle msg
 
         return msg
 
@@ -219,8 +227,10 @@ class Logger
     # Returns a human readable message out of the arguments.
     # @return {String} The human readable, parsed JSON message.
     # @private
-    getMessage: (args) ->
+    getMessage: ->
         separated = []
+        args = []
+        args.push value for value in arguments
         args = @argsCleaner args
 
         # Parse all arguments and stringify objects. Please note that fields defined

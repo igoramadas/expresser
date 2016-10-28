@@ -4,7 +4,7 @@ require("coffee-script/register");
 var chai = require("chai");
 chai.should();
 
-describe("Logger Tests", function() {
+describe("Logger Tests", function () {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
@@ -34,14 +34,14 @@ describe("Logger Tests", function() {
     var transportLogentries = null;
     var transportLoggly = null;
 
-    var helperLogOnSuccess = function(done) {
-        return function(result) {
+    var helperLogOnSuccess = function (done) {
+        return function (result) {
             done();
         };
     };
 
-    var helperLogOnError = function(done) {
-        return function(err) {
+    var helperLogOnError = function (done) {
+        return function (err) {
             done(err);
         };
     };
@@ -49,7 +49,7 @@ describe("Logger Tests", function() {
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
-    before(function(){
+    before(function () {
         logger = require("../lib/logger.coffee");
 
         loggerFile = require("../plugins/logger-file/index.coffee");
@@ -68,18 +68,18 @@ describe("Logger Tests", function() {
         loggerLoggly.expresser.logger = require("../lib/logger.coffee");
     });
 
-    it("Has settings defined", function() {
+    it("Has settings defined", function () {
         settings.should.have.property("logger");
         settings.logger.should.have.property("file");
         settings.logger.should.have.property("logentries");
         settings.logger.should.have.property("loggly");
     });
 
-    it("Inits", function() {
+    it("Inits", function () {
         logger.init();
     });
 
-    it("Logs on diffent levels (debug, info, warn, error, critical)", function() {
+    it("Logs on diffent levels (debug, info, warn, error, critical)", function () {
         logger.debug("THIS IS DEBUG");
         logger.info("THIS IS INFO");
         logger.warn("THIS IS WARN");
@@ -87,9 +87,11 @@ describe("Logger Tests", function() {
         logger.critical("THIS IS CRITICAL");
     });
 
-    it("Clean arguments before logging", function(done) {
+    it("Clean arguments before logging", function (done) {
         var testObj = {
-            someFunction: function() {return true },
+            someFunction: function () {
+                return true
+            },
             password: "this should be obfuscated.",
             level0: {
                 level1: {
@@ -124,7 +126,7 @@ describe("Logger Tests", function() {
         }
     });
 
-    it("Get a stringfied message out of the arguments", function(done) {
+    it("Get a stringfied message out of the arguments", function (done) {
         var time = new Date().getTime();
         var message = logger.getMessage(1, "A", time).toString();
 
@@ -135,7 +137,7 @@ describe("Logger Tests", function() {
         }
     });
 
-    it("Check if removed fields are hidden from log", function(done) {
+    it("Check if removed fields are hidden from log", function (done) {
         var privateObj = {
             password: "Welcome123",
             username: "jondoe",
@@ -148,8 +150,8 @@ describe("Logger Tests", function() {
         };
 
         var someMessage = "Some more stuff here.";
-
-        var loggedMessage = JSON.stringify(logger.console("info", [privateObj, someMessage]));
+        var cleanMessage = logger.getMessage([privateObj, someMessage]);
+        var loggedMessage = JSON.stringify(logger.console("info", cleanMessage));
 
         if (loggedMessage.indexOf("Welcome123") > 0 || loggedMessage.indexOf("lalala") > 0) {
             done("Fields were not hidden from log message.");
@@ -158,18 +160,20 @@ describe("Logger Tests", function() {
         }
     });
 
-    it("Save log to file", function(done) {
+    it("Save log to file", function (done) {
         transportFile = loggerFile.init({
             onLogSuccess: helperLogOnSuccess(done),
             onLogError: helperLogOnError(done)
         });
 
-        transportFile.info("Expresser local disk log test.", {password: "obfuscated"}, new Date());
+        transportFile.info("Expresser local disk log test.", {
+            password: "obfuscated"
+        }, new Date());
         transportFile.flush();
     });
 
     if (settings.logger.logentries.token) {
-        it("Send log to Logentries", function(done) {
+        it("Send log to Logentries", function (done) {
             this.timeout(10000);
 
             transportLogentries = loggerLogentries.init({
@@ -184,7 +188,7 @@ describe("Logger Tests", function() {
     }
 
     if (settings.logger.logentries.token && settings.logger.loggly.subdomain) {
-        it("Send log to Loggly", function(done) {
+        it("Send log to Loggly", function (done) {
             this.timeout(10000);
 
             transportLoggly = loggerLoggly.init({
@@ -198,12 +202,12 @@ describe("Logger Tests", function() {
         it.skip("Send log to Loggly (skipped, no token or subdomain set)");
     }
 
-    it("Registers a dummy log driver", function() {
+    it("Registers a dummy log driver", function () {
         var driver = {
-            getTransport: function() {
+            getTransport: function () {
                 return {};
             },
-            log: function(data) {
+            log: function (data) {
                 console.log("DUMMY DRIVER", data);
             }
         };

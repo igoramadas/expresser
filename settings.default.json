@@ -134,6 +134,14 @@
         "sendTimestamp": true,
         // Default separator for arguments logged to file and transports.
         "separator": " | ",
+        // Colours and styles of logs sent to the console (using the Chalk module).
+        // For more info see https://github.com/chalk/chalk
+        "styles": {
+            "info": ["white"],
+            "warn": ["yellow"],
+            "error": ["red"],
+            "critical": ["red", "bold"]
+        },
         // Set `uncaughtException` to true to bind the logger to the `uncaughtException`
         // event on the process and log all uncaught expcetions as errors.
         "uncaughtException": true
