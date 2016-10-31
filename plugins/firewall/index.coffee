@@ -50,7 +50,7 @@ class Firewall
         if not options.server?
             logger.error "Firewall.init", "App server is invalid. Abort!"
             return null
-            
+
         if settings.firewall.autoSanitize
             @expresser.app.prependMiddlewares.push validator()
             @expresser.app.prependMiddlewares.push @sanitize

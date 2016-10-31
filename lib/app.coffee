@@ -32,7 +32,7 @@ class App
     # so should be used for things that need immediate processing
     # (firewall, for example).
     prependMiddlewares: []
-    
+
     # @property [Array<Object>] Array of additional middlewares to be used
     # by the Express server. Please note that if you're adding middlewares
     # manually you must do it BEFORE calling `init`.
