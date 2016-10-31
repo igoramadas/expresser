@@ -8,6 +8,7 @@
 # -->
 class Logger
 
+    chalk = require "chalk"
     events = require "./events.coffee"
     fs = require "fs"
     lodash = require "lodash"
@@ -56,6 +57,7 @@ class Logger
 
     # Bind events.
     setEvents: =>
+        events.on "Logger.console", @console
         events.on "Logger.debug", @debug
         events.on "Logger.info", @info
         events.on "Logger.warn", @warn
@@ -90,17 +92,31 @@ class Logger
     # Log to the console.
     # @param {String} logType The log type (for example: warning, error, info, security, etc).
     # @param {Array} args Array of arguments to be stringified and logged.
+    # @param {Boolean} doNotParse If true, message won't be parsed and cleaned using the argsCleaner helper.
     # @return {String} The human readable log sent to the console.
-    console: (logType, args) =>
-        args = @argsCleaner args
-        args.unshift moment().format "HH:mm:ss.SS"
+    console: (logType, msg, doNotParse) =>
+        timestamp = moment().format "HH:mm:ss.SS"
+
+        # Only parse message if doNotClean is false or unset.
+        msg = @getMessage msg if not doNotParse
 
         if console[logType]?
-            console[logType].apply this, args
+            method = console[logType]
         else
-            console.log.apply this, args
+            method = console.log
 
-        return args
+        # Get styles (text colour, bold, italic etc...) for the correlated log type.
+        styles = settings.logger.styles[logType]
+
+        if styles?
+            chalkStyle = chalk
+            chalkStyle = chalkStyle[s] for s in styles
+        else
+            chalkStyle = chalk.white
+
+        method timestamp, chalkStyle msg
+
+        return msg
 
     # Internal generic log method.
     # @param {String} logType The log type (for example: warning, error, info, security, etc).
@@ -117,7 +133,7 @@ class Logger
 
         # Log to the console depending on `console` setting.
         if settings.logger.console
-            @console logType, args
+            @console logType, msg, true
 
         return msg
 
@@ -165,8 +181,8 @@ class Logger
     # @private
     argsCleaner: ->
         funcText = "[Function]"
-        max = settings.logger.maxDeepLevel
-        args = []
+        max = settings.logger.maxDeepLevel - 1
+        result = []
 
         # Recursive cleaning function.
         cleaner = (obj, index) ->
@@ -186,45 +202,64 @@ class Logger
                 for key, value of obj
                     if index > max
                         obj[key] = "..."
-                    else
-                        if settings.logger.obfuscateFields?.indexOf(key) >=0
-                            obj[key] = "***"
-                        else if settings.logger.removeFields?.indexOf(key) >=0
-                            delete obj[key]
-                        else if lodash.isFunction value
-                            obj[i] = funcText
-                        else if lodash.isArray value
-                            cleaner b, index + 1 for b in value
-                        else if lodash.isObject value
-                            cleaner value, index + 1
+                    else if settings.logger.obfuscateFields?.indexOf(key) >=0
+                        obj[key] = "***"
+                    else if settings.logger.removeFields?.indexOf(key) >=0
+                        delete obj[key]
+                    else if lodash.isArray value
+                        while i < value.length
+                            cleaner value[i], index + 1
+                            i++
+                    else if lodash.isFunction value
+                        obj[key] = funcText
+                    else if lodash.isObject value
+                        cleaner value, index + 1
 
         # Iterate arguments and execute cleaner on objects.
-        for a in arguments
-            if lodash.isObject a or lodash.isArray a
-                cloned = lodash.cloneDeep a
-                cleaner cloned
-                args.push cloned
-            else if lodash.isFunction a
-                args.push funcText
+        for argKey, arg of arguments
+            if lodash.isArray arg
+                for v in arg
+                    cloned = lodash.cloneDeep v
+                    cleaner cloned, 0
+                    result.push cloned
+            else if lodash.isObject
+                cloned = lodash.cloneDeep arg
+                cleaner cloned, 0
+                result.push cloned
+            else if lodash.isFunction arg
+                result.push funcText
             else
-                args.push a
+                result.push a
 
-        return args
+        return result
 
     # Returns a human readable message out of the arguments.
     # @return {String} The human readable, parsed JSON message.
     # @private
     getMessage: ->
         separated = []
-        args = @argsCleaner arguments
+        args = []
+        args.push value for value in arguments
+        args = @argsCleaner args
 
         # Parse all arguments and stringify objects. Please note that fields defined
         # on the `removeFields` setting won't be added to the message.
-        for a in args
-            try
-                separated.push JSON.stringify a
-            catch ex
-                separated.push a.toString()
+        for arg in args
+            if arg?
+                stringified = ""
+
+                try
+                    if lodash.isArray arg
+                        for value in arg
+                            stringified += JSON.stringify value, null, 1
+                    else if lodash.isObject arg
+                        stringified = JSON.stringify arg, null, 1
+                    else
+                        stringified = arg.toString()
+
+                    separated.push stringified
+                catch ex
+                    separated.push arg.toString()
 
         # Append IP address, if `serverIP` is set.
         serverIP = utils.getServerIP true if settings.logger.sendIP
@@ -236,7 +271,6 @@ class Logger
 # Singleton implementation
 # --------------------------------------------------------------------------
 Logger.getInstance = ->
-    return new Logger() if process.env is "test"
     @instance = new Logger() if not @instance?
     return @instance
 

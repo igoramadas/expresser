@@ -570,7 +570,7 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
             
             <div class="content"><div class='highlight'><pre>    argsCleaner: <span class="hljs-function">-&gt;</span>
         funcText = <span class="hljs-string">"[Function]"</span>
-        max = settings.logger.maxDeepLevel
+        max = settings.logger.maxDeepLevel - <span class="hljs-number">1</span>
         args = []</pre></div></div>
             
         </li>
@@ -611,7 +611,8 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
                         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction value
                             obj[i] = funcText
                         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isArray value
-                            cleaner b, index + <span class="hljs-number">1</span> <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> value
+                            <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> value
+                                cleaner b, index + <span class="hljs-number">1</span>
                         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject value
                             cleaner value, index + <span class="hljs-number">1</span></pre></div></div>
             
@@ -631,7 +632,7 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> a <span class="hljs-keyword">in</span> arguments
             <span class="hljs-keyword">if</span> lodash.isObject a <span class="hljs-keyword">or</span> lodash.isArray a
                 cloned = lodash.cloneDeep a
-                cleaner cloned
+                cleaner cloned, <span class="hljs-number">0</span>
                 args.push cloned
             <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction a
                 args.push funcText
@@ -675,7 +676,10 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> a <span class="hljs-keyword">in</span> args
             <span class="hljs-keyword">try</span>
-                separated.push JSON.stringify a
+                <span class="hljs-keyword">if</span> lodash.isObject a
+                    separated.push JSON.stringify a
+                <span class="hljs-keyword">else</span>
+                    separated.push a.toString()
             <span class="hljs-keyword">catch</span> ex
                 separated.push a.toString()</pre></div></div>
             

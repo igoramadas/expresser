@@ -1,0 +1,10 @@
+{
+    "index.coffee": [
+        {
+            "id": "test123",
+            "callback": "init",
+            "description": "Test cron.",
+            "schedule": 3600
+        }
+    ]
+}

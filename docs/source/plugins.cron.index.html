@@ -246,8 +246,8 @@ file will be parsed and loaded straight away (if there’s one).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Load jobs from the <code>cron.json</code> file. If <code>autoStart</code> is true, it will automatically
-call the <code>start</code> method after loading.
+              <p>Load jobs from the specified (default cron.json) file.
+If <code>autoStart</code> is true, it will automatically call the <code>start</code> method after loading.
 @param {String} filename Path to the JSON file containing jobs, optional, default is “cron.json”.
 @param {Object} options Options to be passed when loading cron jobs.
 @option options {String} basePath Sets the base path of modules when requiring them.
@@ -271,6 +271,7 @@ call the <code>start</code> method after loading.
 
             </div>
             
+<<<<<<< HEAD
             <div class="content"><div class='highlight'><pre>        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
         options = lodash.defaults options, {autoStart: <span class="hljs-literal">false</span>, basePath: <span class="hljs-string">""</span>}
 
@@ -280,6 +281,17 @@ call the <code>start</code> method after loading.
 
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filename? <span class="hljs-keyword">or</span> filename <span class="hljs-keyword">is</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">or</span> filename <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
             filename = <span class="hljs-string">"cron.json"</span>
+=======
+            <div class="content"><div class='highlight'><pre>        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
+        options = lodash.defaults options, {autoStart: <span class="hljs-literal">false</span>, basePath: <span class="hljs-string">""</span>}
+
+        <span class="hljs-keyword">if</span> lodash.isBoolean filename
+            filename = <span class="hljs-literal">false</span>
+            options.autoStart = filename
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filename? <span class="hljs-keyword">or</span> filename <span class="hljs-keyword">is</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">or</span> filename <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+            filename = <span class="hljs-string">"cron.json"</span>
+>>>>>>> 757e34fabaa30fd4655fa8d33ff04fea18af5160
             doNotWarn = <span class="hljs-literal">true</span></pre></div></div>
             
         </li>
@@ -306,7 +318,7 @@ call the <code>start</code> method after loading.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Found the cron.json file? Read it.</p>
+              <p>Found the cron json file? Read it.</p>
 
             </div>
             
@@ -347,10 +359,12 @@ call the <code>start</code> method after loading.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Only proceed if the cronDisabled flag is not present on the module.</p>
+              <p>Only proceed if the cronDisabled flag is not present on the module.
+If no ID is set for the job, use module key + callback name.</p>
 
             </div>
             
+<<<<<<< HEAD
             <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> <span class="hljs-built_in">module</span>.cronDisabled <span class="hljs-keyword">isnt</span> <span class="hljs-literal">true</span>
                     <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> data
                         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> d.enabled? <span class="hljs-keyword">or</span> d.enabled
@@ -363,6 +377,21 @@ call the <code>start</code> method after loading.
                         <span class="hljs-keyword">else</span>
                             logger.debug <span class="hljs-string">"Cron.load"</span>, filename, key, d.callback, <span class="hljs-string">"Job 'enabled' is false. Skip!"</span>
                 <span class="hljs-keyword">else</span>
+=======
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> <span class="hljs-built_in">module</span>.cronDisabled <span class="hljs-keyword">isnt</span> <span class="hljs-literal">true</span>
+                    <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> data
+                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> d.enabled? <span class="hljs-keyword">or</span> d.enabled
+                            cb = <span class="hljs-built_in">module</span>[d.callback]
+                            job = d
+                            job.<span class="hljs-built_in">module</span> = key
+                            job.id = key + <span class="hljs-string">"."</span> + d.callback <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> job.id?
+                            job.callback = cb
+                            job.timer = <span class="hljs-literal">null</span>
+                            @add job
+                        <span class="hljs-keyword">else</span>
+                            logger.debug <span class="hljs-string">"Cron.load"</span>, filename, key, d.callback, <span class="hljs-string">"Job 'enabled' is false. Skip!"</span>
+                <span class="hljs-keyword">else</span>
+>>>>>>> 757e34fabaa30fd4655fa8d33ff04fea18af5160
                     logger.debug <span class="hljs-string">"Cron.load"</span>, filename, <span class="hljs-string">"Module has 'cronDisabled' set. Skip!"</span></pre></div></div>
             
         </li>

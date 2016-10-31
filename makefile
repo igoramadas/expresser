@@ -3,13 +3,13 @@ ifeq ($(OS),Windows_NT)
 	MOCHAEXEC:= node_modules/.bin/_mocha
 	DOCCO:= node_modules/.bin/betterdocco.cmd
 	ISTANBUL:= node_modules/istanbul/lib/cli.js
-	TESTPATH:= test/*.*
+	TESTPATH:= test/*.js
 else
 	MOCHA:= ./node_modules/.bin/mocha
 	MOCHAEXEC:= ./node_modules/.bin/_mocha
 	DOCCO:= ./node_modules/.bin/betterdocco
 	ISTANBUL:= ./node_modules/istanbul/lib/cli.js
-	TESTPATH:= ./test/*.*
+	TESTPATH:= ./test/*.js
 endif
 
 test:

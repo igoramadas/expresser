@@ -90,18 +90,22 @@ class Settings
     # ENCRYPTION
     # --------------------------------------------------------------------------
 
-    # Helper to encrypt or decrypt settings files. The default encryption password
-    # defined on the `Settings.coffee` file is "ExpresserSettings", which ideally you
-    # should change. The default cipher algorithm is AES 256.
+    # Helper to encrypt or decrypt settings files. The default encryption key
+    # defined on the `Settings.coffee` file is "ExpresserSettings", which
+    # you should change to your desired value. You can also set the key
+    # via the EXPRESSER_SETTINGS_CRYPTOKEY environment variable.
+    # The default cipher algorithm is AES 256.
     # @param {Boolean} encrypt Pass true to encrypt, false to decrypt.
     # @param {String} filename The file to be encrypted or decrypted.
     # @param {Object} options Options to be passed to the cipher.
     # @option options {String} cipher The cipher to be used, default is aes256.
-    # @option options {String} password The default encryption password.
+    # @option options {String} password The encryption key.
     cryptoHelper: (encrypt, filename, options) =>
-        options = {} if not options?
-        options = lodash.defaults options, {cipher: "aes256", password: "ExpresserSettings"}
+        env = process.env
 
+        options = {} if not options?
+        options = lodash.defaults options, {cipher: "aes256", key: env["EXPRESSER_SETTINGS_CRYPTOKEY"]}
+        options.key = "ExpresserSettings" if not options.key? or options.key is ""
         settingsJson = @loadFromJson filename, false
 
         # Settings file not found or invalid? Stop here.
@@ -138,7 +142,7 @@ class Settings
                                 newValue = "string:"
 
                             # Create cipher amd encrypt data.
-                            c = crypto.createCipher options.cipher, options.password
+                            c = crypto.createCipher options.cipher, options.key
                             newValue += c.update currentValue.toString(), @general.encoding, "hex"
                             newValue += c.final "hex"
 
@@ -149,7 +153,7 @@ class Settings
                             newValue = ""
 
                             # Create cipher and decrypt.
-                            c = crypto.createDecipher options.cipher, options.password
+                            c = crypto.createDecipher options.cipher, options.key
                             newValue += c.update arrValue[1], "hex", @general.encoding
                             newValue += c.final @general.encoding
 
@@ -258,33 +262,41 @@ class Settings
             vcap = env.VCAP_SERVICES
             vcap = JSON.parse vcap if vcap?
 
+            @database.mongodb = {} if not @database.mongodb?
+
             # Check for AppFog MongoDB variables.
             if vcap? and vcap isnt ""
                 mongo = vcap["mongodb-1.8"]
                 mongo = mongo[0]["credentials"] if mongo?
                 if mongo?
-                    @database.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
+                    @database.mongodb.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
 
             # Check for MongoLab variables.
             mongoLab = env.MONGOLAB_URI
-            @database.connString = mongoLab if mongoLab? and mongoLab isnt ""
+            @database.mongodb.connString = mongoLab if mongoLab? and mongoLab isnt ""
 
             # Check for MongoHQ variables.
             mongoHq = env.MONGOHQ_URL
-            @database.connString = mongoHq if mongoHq? and mongoHq isnt ""
+            @database.mongodb.connString = mongoHq if mongoHq? and mongoHq isnt ""
 
         # Update logger settings (Logentries and Loggly).
         if not filter or filter.indexOf("logger") >= 0
             logentriesToken = env.LOGENTRIES_TOKEN
             logglyToken = env.LOGGLY_TOKEN
             logglySubdomain = env.LOGGLY_SUBDOMAIN
+
+            @logger.logentries = {} if not @logger.logentries?
+            @logger.loggly = {} if not @logger.loggly?
+
             @logger.logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
             @logger.loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
             @logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
         # Update mailer settings (Mailgun, Mandrill, SendGrid).
         if not filter or filter.indexOf("mail") >= 0
-            currentSmtpHost = @mailer.smtp.host?.toLowerCase()
+            @mailer = {} if not @mailer?
+
+            currentSmtpHost = @mailer.smtp?.host?.toLowerCase()
             currentSmtpHost = "" if not currentSmtpHost?
 
             # Get and set Mailgun.
@@ -324,13 +336,6 @@ class Settings
 # Singleton implementation
 # -----------------------------------------------------------------------------
 Settings.getInstance = ->
-
-    # On test we need a new instance each time the module is called!
-    if process.env is "test"
-        obj = new Settings()
-        obj.load()
-        return obj
-
     if not @instance?
         @instance = new Settings()
         @instance.load()

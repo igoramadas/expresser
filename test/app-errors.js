@@ -1,0 +1,42 @@
+// TEST: APP ERRORS
+
+require("coffee-script/register");
+var chai = require("chai");
+chai.should();
+
+describe("App HTTP(s) Error Tests", function () {
+    var env = process.env;
+    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
+
+    var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("settings.test.json");
+    settings.app.port = 19080;
+
+    var app = null;
+    var supertest = require("supertest");
+
+    // TESTS STARTS HERE!!!
+    // ----------------------------------------------------------------------------------
+
+    before(function () {
+        app = require("../lib/app.coffee");
+    });
+
+    it("Init HTTP server to test errors, port 19080", function () {
+        this.timeout(10000);
+
+        app.init();
+    });
+
+    it("Try rendering an invalid JSON", function (done) {
+        this.timeout(5000);
+
+        app.server.get("/invalidjson", function (req, res) {
+            var invalidJson = "invalid JSON / lalala";
+
+            app.renderJson(req, res, invalidJson);
+        });
+
+        supertest(app.server).get("/invalidjson").expect("Content-Type", /json/).expect(500, done);
+    });
+});

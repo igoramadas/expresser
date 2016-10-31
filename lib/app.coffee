@@ -11,28 +11,26 @@ class App
     http = require "http"
     https = require "https"
     lodash = require "lodash"
+    logger = require "./logger.coffee"
     net = require "net"
     path = require "path"
+    settings = require "./settings.coffee"
+    utils = require "./utils.coffee"
 
     # Current node environment and HTTP server handler are set on init.
     nodeEnv = null
 
-    # Internal modules will be set on `init`.
-    firewall = null
-    logger = null
-    settings = null
-    sockets = null
-    utils = null
-
     # @property {Object} Exposes the Express HTTP or HTTPS `server` object.
     server: null
+    httpServer: null
+    httpsServer: null
 
     # @property [Array<Object>] Array of additional middlewares to be used
     # by the Express server. These will be called before anything is processed,
     # so should be used for things that need immediate processing
     # (firewall, for example).
     prependMiddlewares: []
-    
+
     # @property [Array<Object>] Array of additional middlewares to be used
     # by the Express server. Please note that if you're adding middlewares
     # manually you must do it BEFORE calling `init`.
@@ -41,8 +39,7 @@ class App
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Express server. Firewall and Sockets modules will be
-    # used only if available and enabled on the settings.
+    # Init the Express server.
     # @param {Object} options App init options. If passed as an array, assume it's the array with extra middlewares.
     # @option options {Array} appendMiddlewares Array with extra middlewares to be loaded.
     init: (options) =>
@@ -51,14 +48,7 @@ class App
         else if not options?
             options = {}
 
-        # Load settings and utils.
-        settings = require "./settings.coffee"
-        utils = require "./utils.coffee"
         nodeEnv = process.env.NODE_ENV
-
-        # Require logger.
-        logger = require "./logger.coffee"
-        logger.debug "App", "init", options
 
         # Configure Express server and start server.
         @configureServer options
@@ -71,7 +61,7 @@ class App
         midSession = require "cookie-session"
         midCompression = require "compression"
 
-        if nodeEnv is "development"
+        if nodeEnv is "development" or nodeEnv is "test"
             midErrorHandler = require "errorhandler"
 
         # Create express v4 app.
@@ -94,11 +84,6 @@ class App
         # Prepend middlewares, if any was specified.
         if @prependMiddlewares.length > 0
             @server.use mw for mw in @prependMiddlewares
-
-        # Enable firewall?
-        if settings.firewall?.enabled
-            firewall = require "./firewall.coffee"
-            firewall.bind @server
 
         # Use Express basic handlers.
         @server.use midBodyParser.json {limit: settings.app.bodyParser.limit}
@@ -129,7 +114,7 @@ class App
             @server.use mw for mw in @appendMiddlewares
 
         # Configure development environment to dump exceptions and show stack.
-        if nodeEnv is "development"
+        if nodeEnv is "development" or nodeEnv is "test"
             @server.use midErrorHandler {dumpExceptions: true, showStack: true}
 
         # Use Express static routing.
@@ -161,24 +146,22 @@ class App
                     sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
                     sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
                     sslOptions = {key: sslKey, cert: sslCert}
-                    server = https.createServer sslOptions, @server
+                    @httpsServer = https.createServer sslOptions, @server
+                    serverRef = @httpsServer
                 else
                     throw new Error "The certificate files could not be found. Please check the 'settings.app.ssl' settings."
             else
                 throw new Error "SSL is enabled but no key and certificate files were defined. Please check the 'settings.app.ssl' settings."
         else
-            server = http.createServer @server
+            @httpServer = http.createServer @server
+            serverRef = @httpServer
 
-        # Enable sockets?
-        if settings.sockets?.enabled
-            sockets = @expresser.sockets
-            sockets.bind server
-
+        # Start the app!
         if settings.app.ip? and settings.app.ip isnt ""
-            server.listen settings.app.port, settings.app.ip
+            serverRef.listen settings.app.port, settings.app.ip
             logger.info "App", settings.app.title, "Listening on #{settings.app.ip} port #{settings.app.port}"
         else
-            server.listen settings.app.port
+            serverRef.listen settings.app.port
             logger.info "App", settings.app.title, "Listening on port #{settings.app.port}"
 
         # Using SSL and redirector port is set? Then create the http server.
@@ -277,8 +260,7 @@ class App
         status = status or error?.statusCode or 500
         error = JSON.stringify error if not lodash.isString error
 
-        res.status status
-        res.json {error: error, url: req.originalUrl}
+        res.status(status).json {error: error, url: req.originalUrl}
 
         logger.error "App.renderError", req.originalUrl, status, error
 

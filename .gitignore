@@ -3,8 +3,8 @@
 .idea/
 .openshift/
 atlassian-ide-plugin.xml
-coverage/*.*
-database/*.*
-logs/*.*
+coverage/
+database/
+logs/
 node_modules
 test/database
