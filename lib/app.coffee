@@ -95,11 +95,6 @@ class App
         if @prependMiddlewares.length > 0
             @server.use mw for mw in @prependMiddlewares
 
-        # Enable firewall?
-        if settings.firewall?.enabled
-            firewall = require "./firewall.coffee"
-            firewall.bind @server
-
         # Use Express basic handlers.
         @server.use midBodyParser.json {limit: settings.app.bodyParser.limit}
         @server.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
@@ -169,11 +164,7 @@ class App
         else
             server = http.createServer @server
 
-        # Enable sockets?
-        if settings.sockets?.enabled
-            sockets = @expresser.sockets
-            sockets.bind server
-
+        # Start the app!
         if settings.app.ip? and settings.app.ip isnt ""
             server.listen settings.app.port, settings.app.ip
             logger.info "App", settings.app.title, "Listening on #{settings.app.ip} port #{settings.app.port}"

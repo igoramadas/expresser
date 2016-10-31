@@ -12,6 +12,7 @@ describe("App Tests", function () {
     settings.loadFromJson("settings.test.json");
 
     var app = null;
+    var sockets = null;
     var supertest = require("supertest");
 
     // TESTS STARTS HERE!!!
@@ -19,20 +20,31 @@ describe("App Tests", function () {
 
     before(function () {
         app = require("../lib/app.coffee");
+        sockets = require("../plugins/sockets/index.coffee");
 
-        if (settings.sockets) {
-            settings.sockets.enabled = false;
-        }
+        sockets.expresser = require("../index.coffee");
+        sockets.expresser.events = require("../lib/events.coffee");
+        sockets.expresser.logger = require("../lib/logger.coffee");
     });
 
-    it("Has settings defined", function () {
+    it("Has app settings defined", function () {
         settings.should.have.property("app");
     });
 
-    it("Inits", function () {
+    it("Has sockets settings defined", function () {
+        settings.should.have.property("sockets");
+    });
+
+    it("Init app server", function () {
         this.timeout(10000);
 
         app.init();
+    });
+
+    it("Init sockets", function () {
+        this.timeout(10000);
+
+        sockets.bind(app.server);
     });
 
     it("Renders a test view", function (done) {
@@ -85,5 +97,34 @@ describe("App Tests", function () {
         });
 
         supertest(app.server).get("/testjpg").expect("Content-Type", /image/).expect(200, done);
+    });
+
+    it("Emits and intercept a message via sockets", function (done) {
+        this.timeout(10000);
+
+        var listener = function (value) {
+            if (value == true) {
+                return done();
+            }
+            done("Expected socket message value is true, but got " + value + ".");
+        };
+
+        var connected = function (err, res) {
+            if (err) {
+                return done(err);
+            }
+            sockets.emit("test-socket", true);
+        };
+
+        var trigger = function () {
+            supertest(app.server).get("/testsocket").expect(200, connected);
+        };
+
+        app.server.get("/testsocket", function (req, res) {
+            app.renderView(req, res, "testsocket.pug");
+        });
+
+        sockets.listenTo("test-socket", listener, false);
+        setTimeout(trigger, 100);
     });
 });
