@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>logger.coffee</title>
+  <title>logger.coffee - Docs</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -25,82 +25,82 @@
             
               
               <a class="source" href="lib.app.html">
-                lib/app.coffee
+                lib\app.coffee
               </a>
             
               
               <a class="source" href="lib.database.html">
-                lib/database.coffee
+                lib\database.coffee
               </a>
             
               
               <a class="source" href="lib.events.html">
-                lib/events.coffee
+                lib\events.coffee
               </a>
             
               
               <a class="source" href="lib.logger.html">
-                lib/logger.coffee
+                lib\logger.coffee
               </a>
             
               
               <a class="source" href="lib.settings.html">
-                lib/settings.coffee
+                lib\settings.coffee
               </a>
             
               
               <a class="source" href="lib.utils.html">
-                lib/utils.coffee
+                lib\utils.coffee
               </a>
             
               
               <a class="source" href="plugins.cron.index.html">
-                plugins/cron/index.coffee
+                plugins\cron\index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-mongodb.index.html">
-                plugins/database-mongodb/index.coffee
+                plugins\database-mongodb\index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
+                plugins\database-tingodb\index.coffee
               </a>
             
               
               <a class="source" href="plugins.downloader.index.html">
-                plugins/downloader/index.coffee
+                plugins\downloader\index.coffee
               </a>
             
               
               <a class="source" href="plugins.firewall.index.html">
-                plugins/firewall/index.coffee
+                plugins\firewall\index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-file.index.html">
-                plugins/logger-file/index.coffee
+                plugins\logger-file\index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-logentries.index.html">
-                plugins/logger-logentries/index.coffee
+                plugins\logger-logentries\index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-loggly.index.html">
-                plugins/logger-loggly/index.coffee
+                plugins\logger-loggly\index.coffee
               </a>
             
               
               <a class="source" href="plugins.mailer.index.html">
-                plugins/mailer/index.coffee
+                plugins\mailer\index.coffee
               </a>
             
               
               <a class="source" href="plugins.sockets.index.html">
-                plugins/sockets/index.coffee
+                plugins\sockets\index.coffee
               </a>
             
           </div>
@@ -124,19 +124,7 @@
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
               <h2 id="expresser-logger">EXPRESSER LOGGER</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>Handles server logging using local files, Logentries, Loggly and other
+<p>Handles server logging using local files, Logentries, Loggly and other
 transports available as plugins.
 Multiple services can be enabled at the same time.
 <!--
@@ -158,11 +146,11 @@ Multiple services can be enabled at the same time.
         </li>
         
         
-        <li id="section-3">
+        <li id="section-2">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
               <h2 id="public-properties">PUBLIC PROPERTIES</h2>
 
@@ -171,23 +159,11 @@ Multiple services can be enabled at the same time.
         </li>
         
         
-        <li id="section-4">
+        <li id="section-3">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>@property {Object} Holds a list of available logging drivers.</p>
 
@@ -198,11 +174,11 @@ Multiple services can be enabled at the same time.
         </li>
         
         
-        <li id="section-6">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>@property {Object} List of registered transports.</p>
 
@@ -213,11 +189,11 @@ Multiple services can be enabled at the same time.
         </li>
         
         
-        <li id="section-7">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>@property {Method} Custom (result) method to call when logs are sent to logging server or flushed to disk.</p>
 
@@ -228,11 +204,11 @@ Multiple services can be enabled at the same time.
         </li>
         
         
-        <li id="section-8">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>@property {Method} Custom (err) method to call when errors are triggered by the logging transport.</p>
 
@@ -243,11 +219,11 @@ Multiple services can be enabled at the same time.
         </li>
         
         
-        <li id="section-9">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <h2 id="init">INIT</h2>
 
@@ -256,23 +232,11 @@ Multiple services can be enabled at the same time.
         </li>
         
         
-        <li id="section-10">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Init the Logger module. Verify which services are set, and add the necessary transports.
 IP address will be appended to logs depending on the settings.
@@ -293,11 +257,11 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
-        <li id="section-12">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>TODO! Remove deprecation notice in Q2 2016!
 The old <code>removeFields</code> setting is now called <code>settings.logger.obfuscateFields</code>.</p>
@@ -312,11 +276,11 @@ The old <code>removeFields</code> setting is now called <code>settings.logger.ob
         </li>
         
         
-        <li id="section-13">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>Bind events.</p>
 
@@ -332,11 +296,11 @@ The old <code>removeFields</code> setting is now called <code>settings.logger.ob
         </li>
         
         
-        <li id="section-14">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <h2 id="implementation">IMPLEMENTATION</h2>
 
@@ -345,23 +309,11 @@ The old <code>removeFields</code> setting is now called <code>settings.logger.ob
         </li>
         
         
-        <li id="section-15">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Register a Logger transport. This is called by Logger plugins.</p>
 
@@ -388,11 +340,11 @@ The old <code>removeFields</code> setting is now called <code>settings.logger.ob
         </li>
         
         
-        <li id="section-17">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <h2 id="log-methods">LOG METHODS</h2>
 
@@ -401,23 +353,11 @@ The old <code>removeFields</code> setting is now called <code>settings.logger.ob
         </li>
         
         
-        <li id="section-18">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Log to the console.
 @param {String} logType The log type (for example: warning, error, info, security, etc).
@@ -440,11 +380,11 @@ The old <code>removeFields</code> setting is now called <code>settings.logger.ob
         </li>
         
         
-        <li id="section-20">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Internal generic log method.
 @param {String} logType The log type (for example: warning, error, info, security, etc).
@@ -458,11 +398,11 @@ The old <code>removeFields</code> setting is now called <code>settings.logger.ob
         </li>
         
         
-        <li id="section-21">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Get message out of the arguments.</p>
 
@@ -473,11 +413,11 @@ The old <code>removeFields</code> setting is now called <code>settings.logger.ob
         </li>
         
         
-        <li id="section-22">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Dispatch to all registered transports.</p>
 
@@ -489,11 +429,11 @@ The old <code>removeFields</code> setting is now called <code>settings.logger.ob
         </li>
         
         
-        <li id="section-23">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Log to the console depending on <code>console</code> setting.</p>
 
@@ -507,11 +447,11 @@ The old <code>removeFields</code> setting is now called <code>settings.logger.ob
         </li>
         
         
-        <li id="section-24">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Log to the active transports as <code>debug</code>, only if the debug flag is enabled.
 All arguments are transformed to readable strings.</p>
@@ -526,11 +466,11 @@ All arguments are transformed to readable strings.</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Log to the active transports as <code>info</code>.
 All arguments are transformed to readable strings.</p>
@@ -545,11 +485,11 @@ All arguments are transformed to readable strings.</p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Log to the active transports as <code>warn</code>.
 All arguments are transformed to readable strings.</p>
@@ -564,11 +504,11 @@ All arguments are transformed to readable strings.</p>
         </li>
         
         
-        <li id="section-27">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Log to the active transports as <code>error</code>.
 All arguments are transformed to readable strings.</p>
@@ -583,11 +523,11 @@ All arguments are transformed to readable strings.</p>
         </li>
         
         
-        <li id="section-28">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Log to the active transports as <code>critical</code>.
 All arguments are transformed to readable strings.</p>
@@ -602,11 +542,11 @@ All arguments are transformed to readable strings.</p>
         </li>
         
         
-        <li id="section-29">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <h2 id="helper-methods">HELPER METHODS</h2>
 
@@ -615,23 +555,11 @@ All arguments are transformed to readable strings.</p>
         </li>
         
         
-        <li id="section-30">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-31">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Cleans the arguments passed according to the <code>removeFields</code> setting.
 The maximum level deep down the object is defined by the <code>maxDeepLevel</code>.
@@ -648,11 +576,11 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-32">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Recursive cleaning function.</p>
 
@@ -690,11 +618,11 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-33">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Iterate arguments and execute cleaner on objects.</p>
 
@@ -715,11 +643,11 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-34">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Returns a human readable message out of the arguments.
 @return {String} The human readable, parsed JSON message.
@@ -734,11 +662,11 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-35">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Parse all arguments and stringify objects. Please note that fields defined
 on the <code>removeFields</code> setting won’t be added to the message.</p>
@@ -754,11 +682,11 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Append IP address, if <code>serverIP</code> is set.</p>
 
@@ -770,11 +698,11 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Return single string log message.</p>
 
@@ -785,26 +713,14 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-39">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
-              </div>
-              
             </div>
             
             <div class="content"><div class='highlight'><pre>Logger.getInstance = <span class="hljs-function">-&gt;</span>

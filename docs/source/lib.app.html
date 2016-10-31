@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>app.coffee</title>
+  <title>app.coffee - Docs</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -25,82 +25,82 @@
             
               
               <a class="source" href="lib.app.html">
-                lib/app.coffee
+                lib\app.coffee
               </a>
             
               
               <a class="source" href="lib.database.html">
-                lib/database.coffee
+                lib\database.coffee
               </a>
             
               
               <a class="source" href="lib.events.html">
-                lib/events.coffee
+                lib\events.coffee
               </a>
             
               
               <a class="source" href="lib.logger.html">
-                lib/logger.coffee
+                lib\logger.coffee
               </a>
             
               
               <a class="source" href="lib.settings.html">
-                lib/settings.coffee
+                lib\settings.coffee
               </a>
             
               
               <a class="source" href="lib.utils.html">
-                lib/utils.coffee
+                lib\utils.coffee
               </a>
             
               
               <a class="source" href="plugins.cron.index.html">
-                plugins/cron/index.coffee
+                plugins\cron\index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-mongodb.index.html">
-                plugins/database-mongodb/index.coffee
+                plugins\database-mongodb\index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
+                plugins\database-tingodb\index.coffee
               </a>
             
               
               <a class="source" href="plugins.downloader.index.html">
-                plugins/downloader/index.coffee
+                plugins\downloader\index.coffee
               </a>
             
               
               <a class="source" href="plugins.firewall.index.html">
-                plugins/firewall/index.coffee
+                plugins\firewall\index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-file.index.html">
-                plugins/logger-file/index.coffee
+                plugins\logger-file\index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-logentries.index.html">
-                plugins/logger-logentries/index.coffee
+                plugins\logger-logentries\index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-loggly.index.html">
-                plugins/logger-loggly/index.coffee
+                plugins\logger-loggly\index.coffee
               </a>
             
               
               <a class="source" href="plugins.mailer.index.html">
-                plugins/mailer/index.coffee
+                plugins\mailer\index.coffee
               </a>
             
               
               <a class="source" href="plugins.sockets.index.html">
-                plugins/sockets/index.coffee
+                plugins\sockets\index.coffee
               </a>
             
           </div>
@@ -124,19 +124,7 @@
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
               <h2 id="expresser-app">EXPRESSER APP</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>The Express server. By default it will run on HTTP port 8080
+<p>The Express server. By default it will run on HTTP port 8080
 <!--
 @see settings.app
 --></p>
@@ -156,11 +144,11 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-2">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
               <p>Current node environment and HTTP server handler are set on init.</p>
 
@@ -171,11 +159,11 @@
         </li>
         
         
-        <li id="section-4">
+        <li id="section-3">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>Internal modules will be set on <code>init</code>.</p>
 
@@ -190,11 +178,11 @@
         </li>
         
         
-        <li id="section-5">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>@property {Object} Exposes the Express HTTP or HTTPS <code>server</code> object.</p>
 
@@ -205,11 +193,11 @@
         </li>
         
         
-        <li id="section-6">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>@property [Array<Object>] Array of additional middlewares to be used
 by the Express server. These will be called before anything is processed,
@@ -223,11 +211,11 @@ so should be used for things that need immediate processing
         </li>
         
         
-        <li id="section-7">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>@property [Array<Object>] Array of additional middlewares to be used
 by the Express server. Please note that if you’re adding middlewares
@@ -240,11 +228,11 @@ manually you must do it BEFORE calling <code>init</code>.</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <h2 id="init">INIT</h2>
 
@@ -253,23 +241,11 @@ manually you must do it BEFORE calling <code>init</code>.</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Init the Express server. Firewall and Sockets modules will be
 used only if available and enabled on the settings.
@@ -287,11 +263,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-11">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Load settings and utils.</p>
 
@@ -304,11 +280,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-12">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>Require logger.</p>
 
@@ -320,11 +296,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-13">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Configure Express server and start server.</p>
 
@@ -336,11 +312,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-14">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Configure the server. Set views, options, use Express modules, etc.</p>
 
@@ -358,11 +334,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-15">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Create express v4 app.</p>
 
@@ -375,11 +351,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-16">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Set view options, use Pug for HTML templates.</p>
 
@@ -392,11 +368,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-17">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Check for extra middlewares to be added before any other middlewares.</p>
 
@@ -411,11 +387,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-18">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Prepend middlewares, if any was specified.</p>
 
@@ -427,11 +403,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-19">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Enable firewall?</p>
 
@@ -444,11 +420,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-20">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Use Express basic handlers.</p>
 
@@ -462,11 +438,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-21">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Use HTTP compression only if enabled on settings.</p>
 
@@ -477,11 +453,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-22">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Fix connect assets helper context.</p>
 
@@ -493,11 +469,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-23">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Connect assets and dynamic compiling.</p>
 
@@ -509,11 +485,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-24">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Check for extra middlewares to be added.</p>
 
@@ -528,11 +504,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-25">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Add more middlewares, if any (for example passport for authentication).</p>
 
@@ -544,11 +520,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-26">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Configure development environment to dump exceptions and show stack.</p>
 
@@ -560,11 +536,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-27">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Use Express static routing.</p>
 
@@ -575,11 +551,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-28">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>If debug is on, log requests to the console.</p>
 
@@ -594,11 +570,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-29">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Check if request flash is present before logging.</p>
 
@@ -613,11 +589,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-30">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Start the server using HTTP or HTTPS, depending on the settings.</p>
 
@@ -631,11 +607,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-31">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Certificate files were found? Proceed, otherwise alert the user and throw an error.</p>
 
@@ -657,11 +633,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-32">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Enable sockets?</p>
 
@@ -681,11 +657,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-33">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Using SSL and redirector port is set? Then create the http server.</p>
 
@@ -703,11 +679,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-34">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <h2 id="helper-and-utils">HELPER AND UTILS</h2>
 
@@ -716,23 +692,11 @@ used only if available and enabled on the settings.
         </li>
         
         
-        <li id="section-35">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-36">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>Helper to render Pug views. The request, response and view are mandatory,
 and the options argument is optional.
@@ -751,11 +715,11 @@ and the options argument is optional.
         </li>
         
         
-        <li id="section-37">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>View filename must jave .pug extension.</p>
 
@@ -770,11 +734,11 @@ and the options argument is optional.
         </li>
         
         
-        <li id="section-38">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Render response as human readable JSON data.
 @param {Object} req The request object.
@@ -793,11 +757,11 @@ and the options argument is optional.
         </li>
         
         
-        <li id="section-39">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Remove methods from JSON before rendering.</p>
 
@@ -818,11 +782,11 @@ and the options argument is optional.
         </li>
         
         
-        <li id="section-40">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Add Access-Control-Allow-Origin to all when debug is true.</p>
 
@@ -834,11 +798,11 @@ and the options argument is optional.
         </li>
         
         
-        <li id="section-41">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Send JSON response.</p>
 
@@ -851,11 +815,11 @@ and the options argument is optional.
         </li>
         
         
-        <li id="section-42">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>Render response as image.
 @param {Object} req The request object.
@@ -871,11 +835,11 @@ and the options argument is optional.
         </li>
         
         
-        <li id="section-43">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>Try to figure out the mime type in case it wasn’t passed along the options.</p>
 
@@ -894,11 +858,11 @@ and the options argument is optional.
         </li>
         
         
-        <li id="section-44">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Send error response as JSON. When the server can’t return a valid result,
 send an error response with the specified status code and error output.
@@ -915,11 +879,11 @@ send an error response with the specified status code and error output.
         </li>
         
         
-        <li id="section-45">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Set default status to 500 and stringify message if necessary.</p>
 
@@ -936,26 +900,14 @@ send an error response with the specified status code and error output.
         </li>
         
         
-        <li id="section-46">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-47">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
-              </div>
-              
             </div>
             
             <div class="content"><div class='highlight'><pre>App.getInstance = <span class="hljs-function">-&gt;</span>
