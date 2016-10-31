@@ -5,6 +5,7 @@
 # @see settings.app
 # -->
 class App
+    newInstance: -> return new App()
 
     express = require "express"
     fs = require "fs"

@@ -9,9 +9,6 @@ describe("App HTTP(s) Error Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    settings.loadFromJson("settings.test.json");
-    settings.app.port = 19080;
-
     var app = null;
     var supertest = require("supertest");
 
@@ -19,7 +16,10 @@ describe("App HTTP(s) Error Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
-        app = require("../lib/app.coffee");
+        settings.loadFromJson("settings.test.json");
+        settings.app.port = 19080;
+
+        app = require("../lib/app.coffee").newInstance();
     });
 
     it("Init HTTP server to test errors, port 19080", function () {

@@ -7,6 +7,7 @@
 # @see settings.database
 # -->
 class Database
+    newInstance: -> return new Database()
 
     events = require "./events.coffee"
     lodash = require "lodash"

@@ -23,6 +23,7 @@
 #   }
 # -->
 class Settings
+    newInstance: -> return new Settings()
 
     crypto = require "crypto"
     fs = require "fs"

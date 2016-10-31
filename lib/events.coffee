@@ -6,6 +6,7 @@
 # @see settings.events
 # -->
 class Events
+    newInstance: -> return new Events()
 
     evt = require "events"
     emitter = new evt.EventEmitter()

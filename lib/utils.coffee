@@ -3,6 +3,7 @@
 # General network, IO, client and server utilities. As this module can't reference
 # any other module but Settings, all its logging will be done to the console only.
 class Utils
+    newInstance: -> return new Utils()
 
     crypto = require "crypto"
     fs = require "fs"
