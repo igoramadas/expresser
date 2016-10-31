@@ -336,13 +336,6 @@ class Settings
 # Singleton implementation
 # -----------------------------------------------------------------------------
 Settings.getInstance = ->
-
-    # On test we need a new instance each time the module is called!
-    if process.env is "test"
-        obj = new Settings()
-        obj.load()
-        return obj
-
     if not @instance?
         @instance = new Settings()
         @instance.load()

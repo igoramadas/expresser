@@ -271,7 +271,6 @@ class Logger
 # Singleton implementation
 # --------------------------------------------------------------------------
 Logger.getInstance = ->
-    return new Logger() if process.env is "test"
     @instance = new Logger() if not @instance?
     return @instance
 

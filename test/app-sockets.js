@@ -12,7 +12,6 @@ describe("App Sockets Tests", function () {
     settings.loadFromJson("settings.test.json");
     settings.loadFromJson("../plugins/sockets/settings.default.json");
     settings.app.port = 8080;
-    settings.app.ssl.enabled = false;
 
     var app = null;
     var sockets = null;

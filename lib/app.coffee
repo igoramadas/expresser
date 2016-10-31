@@ -11,18 +11,14 @@ class App
     http = require "http"
     https = require "https"
     lodash = require "lodash"
+    logger = require "./logger.coffee"
     net = require "net"
     path = require "path"
+    settings = require "./settings.coffee"
+    utils = require "./utils.coffee"
 
     # Current node environment and HTTP server handler are set on init.
     nodeEnv = null
-
-    # Internal modules will be set on `init`.
-    firewall = null
-    logger = null
-    settings = null
-    sockets = null
-    utils = null
 
     # @property {Object} Exposes the Express HTTP or HTTPS `server` object.
     server: null
@@ -43,8 +39,7 @@ class App
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Express server. Firewall and Sockets modules will be
-    # used only if available and enabled on the settings.
+    # Init the Express server.
     # @param {Object} options App init options. If passed as an array, assume it's the array with extra middlewares.
     # @option options {Array} appendMiddlewares Array with extra middlewares to be loaded.
     init: (options) =>
@@ -53,14 +48,7 @@ class App
         else if not options?
             options = {}
 
-        # Load settings and utils.
-        settings = require "./settings.coffee"
-        utils = require "./utils.coffee"
         nodeEnv = process.env.NODE_ENV
-
-        # Require logger.
-        logger = require "./logger.coffee"
-        logger.debug "App", "init", options
 
         # Configure Express server and start server.
         @configureServer options
@@ -279,7 +267,6 @@ class App
 # Singleton implementation
 # --------------------------------------------------------------------------
 App.getInstance = ->
-    return new App() if process.env is "test"
     @instance = new App() if not @instance?
     return @instance
 

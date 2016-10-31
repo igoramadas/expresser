@@ -317,7 +317,6 @@ class Utils
 # Singleton implementation
 # --------------------------------------------------------------------------
 Utils.getInstance = ->
-    return new Utils() if process.env is "test"
     @instance = new Utils() if not @instance?
     return @instance
 

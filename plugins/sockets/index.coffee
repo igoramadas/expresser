@@ -118,7 +118,6 @@ class Sockets
 # Singleton implementation
 # --------------------------------------------------------------------------
 Sockets.getInstance = ->
-    return new Sockets() if process.env is "test"
     @instance = new Sockets() if not @instance?
     return @instance
 
