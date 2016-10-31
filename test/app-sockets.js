@@ -23,8 +23,8 @@ describe("App Sockets Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
-        settings.loadFromJson("settings.test.json");
         settings.loadFromJson("../plugins/sockets/settings.default.json");
+        settings.loadFromJson("settings.test.json");
         settings.app.port = 8080;
         
         app = require("../lib/app.coffee").newInstance();
