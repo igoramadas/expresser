@@ -74,11 +74,6 @@
               </a>
             
               
-              <a class="source" href="plugins.firewall.index.html">
-                plugins\firewall\index.coffee
-              </a>
-            
-              
               <a class="source" href="plugins.logger-file.index.html">
                 plugins\logger-file\index.coffee
               </a>
@@ -328,21 +323,25 @@ AFTER the main <code>settings.json</code> file.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Helper to encrypt or decrypt settings files. The default encryption password
-defined on the <code>Settings.coffee</code> file is “ExpresserSettings”, which ideally you
-should change. The default cipher algorithm is AES 256.
+              <p>Helper to encrypt or decrypt settings files. The default encryption key
+defined on the <code>Settings.coffee</code> file is “ExpresserSettings”, which
+you should change to your desired value. You can also set the key
+via the EXPRESSER_SETTINGS_CRYPTOKEY environment variable.
+The default cipher algorithm is AES 256.
 @param {Boolean} encrypt Pass true to encrypt, false to decrypt.
 @param {String} filename The file to be encrypted or decrypted.
 @param {Object} options Options to be passed to the cipher.
 @option options {String} cipher The cipher to be used, default is aes256.
-@option options {String} password The default encryption password.</p>
+@option options {String} password The encryption key.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    cryptoHelper: <span class="hljs-function"><span class="hljs-params">(encrypt, filename, options)</span> =&gt;</span>
-        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-        options = lodash.defaults options, {cipher: <span class="hljs-string">"aes256"</span>, password: <span class="hljs-string">"ExpresserSettings"</span>}
+        env = process.env
 
+        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
+        options = lodash.defaults options, {cipher: <span class="hljs-string">"aes256"</span>, key: env[<span class="hljs-string">"EXPRESSER_SETTINGS_CRYPTOKEY"</span>]}
+        options.key = <span class="hljs-string">"ExpresserSettings"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.key? <span class="hljs-keyword">or</span> options.key <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
         settingsJson = @loadFromJson filename, <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
@@ -439,7 +438,7 @@ abort encryption and log to the console.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                            c = crypto.createCipher options.cipher, options.password
+            <div class="content"><div class='highlight'><pre>                            c = crypto.createCipher options.cipher, options.key
                             newValue += c.update currentValue.toString(), @general.encoding, <span class="hljs-string">"hex"</span>
                             newValue += c.final <span class="hljs-string">"hex"</span>
 
@@ -474,7 +473,7 @@ abort encryption and log to the console.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                            c = crypto.createDecipher options.cipher, options.password
+            <div class="content"><div class='highlight'><pre>                            c = crypto.createDecipher options.cipher, options.key
                             newValue += c.update arrValue[<span class="hljs-number">1</span>], <span class="hljs-string">"hex"</span>, @general.encoding
                             newValue += c.final @general.encoding</pre></div></div>
             
@@ -769,7 +768,9 @@ update only settings that match it, otherwise update everything.
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter <span class="hljs-keyword">or</span> filter.indexOf(<span class="hljs-string">"database"</span>) &gt;= <span class="hljs-number">0</span>
             vcap = env.VCAP_SERVICES
-            vcap = JSON.parse vcap <span class="hljs-keyword">if</span> vcap?</pre></div></div>
+            vcap = JSON.parse vcap <span class="hljs-keyword">if</span> vcap?
+
+            @database.mongodb = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @database.mongodb?</pre></div></div>
             
         </li>
         
@@ -788,7 +789,7 @@ update only settings that match it, otherwise update everything.
                 mongo = vcap[<span class="hljs-string">"mongodb-1.8"</span>]
                 mongo = mongo[<span class="hljs-number">0</span>][<span class="hljs-string">"credentials"</span>] <span class="hljs-keyword">if</span> mongo?
                 <span class="hljs-keyword">if</span> mongo?
-                    @database.connString = <span class="hljs-string">"mongodb://<span class="hljs-subst">#{mongo.hostname}</span>:<span class="hljs-subst">#{mongo.port}</span>/<span class="hljs-subst">#{mongo.db}</span>"</span></pre></div></div>
+                    @database.mongodb.connString = <span class="hljs-string">"mongodb://<span class="hljs-subst">#{mongo.hostname}</span>:<span class="hljs-subst">#{mongo.port}</span>/<span class="hljs-subst">#{mongo.db}</span>"</span></pre></div></div>
             
         </li>
         
@@ -804,7 +805,7 @@ update only settings that match it, otherwise update everything.
             </div>
             
             <div class="content"><div class='highlight'><pre>            mongoLab = env.MONGOLAB_URI
-            @database.connString = mongoLab <span class="hljs-keyword">if</span> mongoLab? <span class="hljs-keyword">and</span> mongoLab <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span></pre></div></div>
+            @database.mongodb.connString = mongoLab <span class="hljs-keyword">if</span> mongoLab? <span class="hljs-keyword">and</span> mongoLab <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span></pre></div></div>
             
         </li>
         
@@ -820,7 +821,7 @@ update only settings that match it, otherwise update everything.
             </div>
             
             <div class="content"><div class='highlight'><pre>            mongoHq = env.MONGOHQ_URL
-            @database.connString = mongoHq <span class="hljs-keyword">if</span> mongoHq? <span class="hljs-keyword">and</span> mongoHq <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span></pre></div></div>
+            @database.mongodb.connString = mongoHq <span class="hljs-keyword">if</span> mongoHq? <span class="hljs-keyword">and</span> mongoHq <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span></pre></div></div>
             
         </li>
         
@@ -839,6 +840,10 @@ update only settings that match it, otherwise update everything.
             logentriesToken = env.LOGENTRIES_TOKEN
             logglyToken = env.LOGGLY_TOKEN
             logglySubdomain = env.LOGGLY_SUBDOMAIN
+
+            @logger.logentries = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @logger.logentries?
+            @logger.loggly = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @logger.loggly?
+
             @logger.logentries.token = logentriesToken <span class="hljs-keyword">if</span> logentriesToken? <span class="hljs-keyword">and</span> logentriesToken <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
             @logger.loggly.token = logglyToken <span class="hljs-keyword">if</span> logglyToken? <span class="hljs-keyword">and</span> logglyToken <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
             @logger.loggly.subdomain = logglySubdomain <span class="hljs-keyword">if</span> logglySubdomain? <span class="hljs-keyword">and</span> logglySubdomain <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span></pre></div></div>
@@ -857,7 +862,9 @@ update only settings that match it, otherwise update everything.
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter <span class="hljs-keyword">or</span> filter.indexOf(<span class="hljs-string">"mail"</span>) &gt;= <span class="hljs-number">0</span>
-            currentSmtpHost = @mailer.smtp.host?.toLowerCase()
+            @mailer = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @mailer?
+
+            currentSmtpHost = @mailer.smtp?.host?.toLowerCase()
             currentSmtpHost = <span class="hljs-string">""</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> currentSmtpHost?</pre></div></div>
             
         </li>
@@ -955,26 +962,7 @@ update only settings that match it, otherwise update everything.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Settings.getInstance = <span class="hljs-function">-&gt;</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-45">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
-              </div>
-              <p>On test we need a new instance each time the module is called!</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> process.env <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
-        obj = <span class="hljs-keyword">new</span> Settings()
-        obj.load()
-        <span class="hljs-keyword">return</span> obj
-
+            <div class="content"><div class='highlight'><pre>Settings.getInstance = <span class="hljs-function">-&gt;</span>
     <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
         @instance = <span class="hljs-keyword">new</span> Settings()
         @instance.load()

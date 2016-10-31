@@ -74,11 +74,6 @@
               </a>
             
               
-              <a class="source" href="plugins.firewall.index.html">
-                plugins\firewall\index.coffee
-              </a>
-            
-              
               <a class="source" href="plugins.logger-file.index.html">
                 plugins\logger-file\index.coffee
               </a>
@@ -517,15 +512,17 @@ return only the very first IP address found.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-windows-10"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Windows Phone 10"</span>) &gt; <span class="hljs-number">0</span>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-windows-10"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Windows 10 Mobile"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-windows-8"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Windows Phone 8"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-windows-7"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Windows Phone 7"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-windows"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Windows Phone"</span>) &gt; <span class="hljs-number">0</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-8"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone8"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-7"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone7"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-6"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone6"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-5"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone5"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-4"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone4"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone"</span>) &gt; <span class="hljs-number">0</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-8"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 8"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-7"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 7"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-6"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 6"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-5"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 5"</span>) &gt; <span class="hljs-number">0</span>
@@ -927,7 +924,6 @@ JavaScript-style comments within them are preserved.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>Utils.getInstance = <span class="hljs-function">-&gt;</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Utils() <span class="hljs-keyword">if</span> process.env <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
     @instance = <span class="hljs-keyword">new</span> Utils() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
     <span class="hljs-keyword">return</span> @instance
 

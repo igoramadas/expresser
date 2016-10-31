@@ -74,11 +74,6 @@
               </a>
             
               
-              <a class="source" href="plugins.firewall.index.html">
-                plugins\firewall\index.coffee
-              </a>
-            
-              
               <a class="source" href="plugins.logger-file.index.html">
                 plugins\logger-file\index.coffee
               </a>
@@ -225,7 +220,6 @@ passed to the event emitter.
             </div>
             
             <div class="content"><div class='highlight'><pre>Events.getInstance = <span class="hljs-function">-&gt;</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Events() <span class="hljs-keyword">if</span> process.env <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
     @instance = <span class="hljs-keyword">new</span> Events() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
     <span class="hljs-keyword">return</span> @instance
 
