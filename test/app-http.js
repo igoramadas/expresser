@@ -47,7 +47,7 @@ describe("App HTTP Tests", function () {
     });
 
     it("Renders a test view", function (done) {
-        this.timeout(10000);
+        this.timeout(5000);
 
         app.server.get("/testview", function (req, res) {
             app.renderView(req, res, "testview.pug");
@@ -57,7 +57,7 @@ describe("App HTTP Tests", function () {
     });
 
     it("Renders a JSON object", function (done) {
-        this.timeout(10000);
+        this.timeout(5000);
 
         app.server.get("/testjson", function (req, res) {
             var j = {

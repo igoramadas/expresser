@@ -12,6 +12,7 @@ describe("App Sockets Tests", function () {
     settings.loadFromJson("settings.test.json");
     settings.loadFromJson("../plugins/sockets/settings.default.json");
     settings.app.port = 8080;
+    settings.app.ssl.enabled = false;
 
     var app = null;
     var sockets = null;
@@ -39,7 +40,7 @@ describe("App Sockets Tests", function () {
         settings.should.have.property("sockets");
     });
 
-    it("Init app server with sockets, default port 8080", function () {
+    it("Init app server with sockets, port 8080", function () {
         this.timeout(10000);
 
         app.init();
@@ -48,7 +49,7 @@ describe("App Sockets Tests", function () {
     });
 
     it("Emits sockets message from client to server", function (done) {
-        this.timeout(5000);
+        this.timeout(10000);
 
         var client;
 
@@ -78,7 +79,7 @@ describe("App Sockets Tests", function () {
     });
 
     it("Emits sockets message from server to client", function (done) {
-        this.timeout(5000);
+        this.timeout(10000);
 
         var client;
 

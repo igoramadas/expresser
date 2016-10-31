@@ -64,6 +64,7 @@ class Database
 # Singleton implementation.
 # -----------------------------------------------------------------------------
 Database.getInstance = ->
+    return new Database() if process.env is "test"
     @instance = new Database() if not @instance?
     return @instance
 

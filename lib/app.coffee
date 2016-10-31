@@ -279,6 +279,7 @@ class App
 # Singleton implementation
 # --------------------------------------------------------------------------
 App.getInstance = ->
+    return new App() if process.env is "test"
     @instance = new App() if not @instance?
     return @instance
 
