@@ -41,6 +41,7 @@
         "istanbul": ">= 0.4.5",
         "mocha": ">= 3.1.2",
         "mocha-lcov-reporter": ">= 1.2.0",
+        "socket.io-client": ">= 1.5.1",
         "supertest": ">= 2.0.0"
     },
     "repository": {

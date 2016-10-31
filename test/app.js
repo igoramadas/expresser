@@ -13,7 +13,13 @@ describe("App Tests", function () {
 
     var app = null;
     var sockets = null;
+    var socketClient = require("socket.io-client");
     var supertest = require("supertest");
+
+    var socketClientOptions = {
+        transports: ["websocket"],
+        "force new connection": true
+    };
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
@@ -100,32 +106,63 @@ describe("App Tests", function () {
         supertest(app.server).get("/testjpg").expect("Content-Type", /image/).expect(200, done);
     });
 
-    it("Emits and intercept a message via sockets", function (done) {
-        this.timeout(10000);
+    it("Emits sockets message from client to server", function (done) {
+        this.timeout(5000);
 
-        var listener = function (value) {
-            if (value == true) {
+        var client;
+
+        var clientToServer = function (value) {
+            if (client) {
+                client.disconnect();
+            }
+
+            if (value == "test123") {
                 return done();
             }
+
             done("Expected socket message value is true, but got " + value + ".");
         };
 
-        var connected = function (err, res) {
+        var clientConnected = function (err, res) {
             if (err) {
                 return done(err);
             }
-            sockets.emit("test-socket", true);
+
+            client.emit("client-to-server", "test123");
         };
 
-        var trigger = function () {
-            supertest(app.server).get("/testsocket").expect(200, connected);
+        sockets.listenTo("client-to-server", clientToServer, false);
+        client = socketClient.connect("http://localhost:8080", socketClientOptions);
+        client.on("connect", clientConnected);
+    });
+
+    it("Emits sockets message from server to client", function (done) {
+        this.timeout(5000);
+
+        var client;
+
+        var serverToClient = function (value) {
+            if (client) {
+                client.disconnect();
+            }
+
+            if (value == "test123") {
+                return done();
+            }
+
+            done("Expected socket message value is true, but got " + value + ".");
         };
 
-        app.server.get("/testsocket", function (req, res) {
-            app.renderView(req, res, "testsocket.pug");
-        });
+        var clientConnected = function (err, res) {
+            if (err) {
+                return done(err);
+            }
 
-        sockets.listenTo("test-socket", listener, false);
-        setTimeout(trigger, 100);
+            client.on("server-to-client", serverToClient);
+            sockets.emit("server-to-client", "test123");
+        };
+
+        client = socketClient.connect("http://localhost:8080", socketClientOptions);
+        client.on("connect", clientConnected);
     });
 });
