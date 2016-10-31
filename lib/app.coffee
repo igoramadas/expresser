@@ -44,16 +44,16 @@ class App
     # @param {Object} options App init options. If passed as an array, assume it's the array with extra middlewares.
     # @option options {Array} appendMiddlewares Array with extra middlewares to be loaded.
     init: (options) =>
-        if lodash.isArray options
-            options = {appendMiddlewares: options}
-        else if not options?
-            options = {}
+        logger.debug "App.init", options
+
+        options = {} if not options?
+        lodash.assign settings.app, options
 
         nodeEnv = process.env.NODE_ENV
 
         # Configure Express server and start server.
         @configureServer options
-        @startServer()
+        @startServer options
 
     # Configure the server. Set views, options, use Express modules, etc.
     configureServer: (options) =>
@@ -68,7 +68,7 @@ class App
         # Create express v4 app.
         @server = express()
 
-        settings.updateFromPaaS() if settings.app.paas
+        settings.updateFromPaaS() if options.paas
 
         # Set view options, use Pug for HTML templates.
         @server.set "views", settings.path.viewsDir
@@ -136,10 +136,10 @@ class App
                 next() if next?
 
     # Start the server using HTTP or HTTPS, depending on the settings.
-    startServer: =>
-        if settings.app.ssl.enabled and settings.app.ssl.keyFile? and settings.app.ssl.certFile?
-            sslKeyFile = utils.getFilePath settings.app.ssl.keyFile
-            sslCertFile = utils.getFilePath settings.app.ssl.certFile
+    startServer: (options) =>
+        if options.ssl.enabled and options.ssl.keyFile? and options.ssl.certFile?
+            sslKeyFile = utils.getFilePath options.ssl.keyFile
+            sslCertFile = utils.getFilePath options.ssl.certFile
 
             # Certificate files were found? Proceed, otherwise alert the user and throw an error.
             if sslKeyFile? and sslCertFile?

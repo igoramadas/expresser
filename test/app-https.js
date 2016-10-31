@@ -8,7 +8,7 @@ describe("App HTTPS Tests", function () {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
-    var settings = require("../lib/settings.coffee");
+    var settings = require("../lib/settings.coffee").newInstance();
     settings.loadFromJson("settings.test.json");
     settings.app.port = 18443;
     settings.app.ssl.enabled = true;
@@ -17,9 +17,6 @@ describe("App HTTPS Tests", function () {
 
     var app = null;
     var supertest = require("supertest");
-
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
 
     before(function () {
         app = require("../lib/app.coffee").newInstance();

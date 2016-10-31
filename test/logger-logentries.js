@@ -8,7 +8,7 @@ describe("Logger Logentries Tests", function () {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
-    var settings = require("../lib/settings.coffee");
+    var settings = require("../lib/settings.coffee").newInstance();
     settings.loadFromJson("../plugins/logger-logentries/settings.default.json");
     settings.loadFromJson("settings.test.json");
 
@@ -21,12 +21,18 @@ describe("Logger Logentries Tests", function () {
     var transportLogentries = null;
 
     var helperLogOnSuccess = function (done) {
+        if (done.ran) return;
+        done.ran = true;
+
         return function (result) {
             done();
         };
     };
 
     var helperLogOnError = function (done) {
+        if (done.ran) return;
+        done.ran = true;
+
         return function (err) {
             done(err);
         };

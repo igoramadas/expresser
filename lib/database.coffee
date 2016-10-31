@@ -31,7 +31,7 @@ class Database
     init: (options) =>
         logger.debug "Database.init", options
         lodash.assign settings.database, options if options?
-
+        
         @setEvents() if settings.events.enabled
 
     # Bind events.

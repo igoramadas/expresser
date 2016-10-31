@@ -8,7 +8,7 @@ describe("Logger Loggly Tests", function () {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
-    var settings = require("../lib/settings.coffee");
+    var settings = require("../lib/settings.coffee").newInstance();
     settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
     settings.loadFromJson("settings.test.json");
 

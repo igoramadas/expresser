@@ -23,7 +23,10 @@
 #   }
 # -->
 class Settings
-    newInstance: -> return new Settings()
+    newInstance: ->
+        obj = new Settings()
+        obj.load()
+        return obj
 
     crypto = require "crypto"
     fs = require "fs"

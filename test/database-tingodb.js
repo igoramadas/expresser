@@ -20,7 +20,7 @@ describe("Database TingoDB Tests", function() {
     // ----------------------------------------------------------------------------------
 
     before(function() {
-        database = require("../lib/database.coffee".newInstance());
+        database = require("../lib/database.coffee").newInstance();
 
         databaseTingo = require("../plugins/database-tingodb/index.coffee");
         databaseTingo.expresser = require("../index.coffee");

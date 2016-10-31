@@ -1,0 +1,28 @@
+{
+    "name": "expresser-paas",
+    "version": "1.0.0",
+    "description": "PaaS auto config for Expresser apps.",
+    "homepage": "http://github.com/igoramadas/expresser",
+    "author": "Igor Ramadas <igor@devv.com>",
+    "license": "Apache-2.0",
+    "subdomain": "expresser-paas",
+    "main": "index",
+    "domains": [
+        "expresser.devv.com"
+    ],
+    "engines": {
+        "node": "*"
+    },
+    "dependencies": {
+        "coffee-script": ">= 1.11.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/igoramadas/expresser.git"
+    },
+    "keywords": [
+        "expresser",
+        "paas",
+        "saas"
+    ]
+}

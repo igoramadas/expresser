@@ -1,0 +1,7 @@
+// EXPRESSER SOCKETS SETTINGS
+{
+    "sockets": {
+        // Enable the Sockets module?
+        "enabled": true
+    }
+}

@@ -8,7 +8,7 @@ describe("App Sockets Tests", function () {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
-    var settings = require("../lib/settings.coffee");
+    var settings = require("../lib/settings.coffee").newInstance();
     settings.loadFromJson("../plugins/sockets/settings.default.json");
     settings.loadFromJson("settings.test.json");
     settings.app.port = 8080;
@@ -23,9 +23,6 @@ describe("App Sockets Tests", function () {
         "force new connection": true
     };
 
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
-
     before(function () {
         app = require("../lib/app.coffee").newInstance();
         
@@ -39,12 +36,16 @@ describe("App Sockets Tests", function () {
         settings.should.have.property("sockets");
     });
 
-    it("Init app server with sockets, port 8080", function () {
+    it("Init app server with sockets, port 8080", function (done) {
         this.timeout(10000);
+        
+        var delayedInit = function() {
+            sockets.init(app.httpServer);
+            done();
+        };
 
         app.init();
-        sockets.init();
-        sockets.bind(app.httpServer);
+        setTimeout(delayedInit, 500);
     });
 
     it("Emits sockets message from client to server", function (done) {
