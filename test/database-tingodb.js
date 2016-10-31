@@ -9,6 +9,9 @@ describe("Database TingoDB Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("../plugins/database-tingodb/settings.default.json");
+    settings.loadFromJson("settings.test.json");
+
     var database = null;
     var databaseTingo = null;
     var dbTingo = null;
@@ -17,9 +20,6 @@ describe("Database TingoDB Tests", function() {
     // ----------------------------------------------------------------------------------
 
     before(function() {
-        settings.loadFromJson("../plugins/database-tingodb/settings.default.json");
-        settings.loadFromJson("settings.test.json");
-
         database = require("../lib/database.coffee".newInstance());
 
         databaseTingo = require("../plugins/database-tingodb/index.coffee");

@@ -9,14 +9,14 @@ describe("Database Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("settings.test.json");
+    
     var database = null;
 
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
     before(function() {
-        settings.loadFromJson("settings.test.json");
-
         database = require("../lib/database.coffee").newInstance();
     });
 

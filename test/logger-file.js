@@ -9,19 +9,8 @@ describe("Logger File Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-
-
-    if (env["LOGENTRIES_TOKEN"]) {
-        settings.logger.logentries.token = env["LOGENTRIES_TOKEN"];
-    }
-
-    if (env["LOGGLY_TOKEN"]) {
-        settings.logger.loggly.token = env["LOGGLY_TOKEN"];
-    }
-
-    if (env["LOGGLY_SUBDOMAIN"]) {
-        settings.logger.loggly.subdomain = env["LOGGLY_SUBDOMAIN"];
-    }
+    settings.loadFromJson("../plugins/logger-file/settings.default.json");
+    settings.loadFromJson("settings.test.json");
 
     var logger = null;
     var loggerFile = null;
@@ -43,8 +32,7 @@ describe("Logger File Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
-        settings.loadFromJson("../plugins/logger-file/settings.default.json");
-        settings.loadFromJson("settings.test.json");
+
 
         logger = require("../lib/logger.coffee");
 

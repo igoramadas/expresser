@@ -9,6 +9,13 @@ describe("Database MongoDB Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("../plugins/database-mongodb/settings.default.json");
+    settings.loadFromJson("settings.test.json");
+
+    if (env["MONGODB"]) {
+        settings.database.mongodb.connString = env["MONGODB"];
+    }
+
     var database = null;
     var databaseMongo = null;
     var dbMongo = null;
@@ -17,13 +24,6 @@ describe("Database MongoDB Tests", function() {
     // ----------------------------------------------------------------------------------
 
     before(function() {
-        settings.loadFromJson("../plugins/database-mongodb/settings.default.json");
-        settings.loadFromJson("settings.test.json");
-
-        if (env["MONGODB"]) {
-            settings.database.mongodb.connString = env["MONGODB"];
-        }
-
         database = require("../lib/database.coffee").newInstance();
 
         databaseMongo = require("../plugins/database-mongodb/index.coffee");
@@ -48,66 +48,70 @@ describe("Database MongoDB Tests", function() {
         settings.database.should.have.property("mongodb");
     });
 
-    it("Inits", function() {
-        database.init();
-        dbMongo = databaseMongo.init();
-    });
+    if (settings.database.mongodb && settings.database.mongodb.connString) {
+        it("Inits", function() {
+            database.init();
+            dbMongo = databaseMongo.init();
+        });
 
-    it("MongoDB - Add complex record to the database", function(done) {
-        this.timeout(10000);
+        it("MongoDB - Add complex record to the database", function(done) {
+            this.timeout(10000);
 
-        var callback = function(err, result) {
-            if (err) {
-                done(err);
-            } else {
-                done();
-            }
-        };
+            var callback = function(err, result) {
+                if (err) {
+                    done(err);
+                } else {
+                    done();
+                }
+            };
 
-        var execution = function() {
-            var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
-            dbMongo.insert("test", obj, callback);
-        };
+            var execution = function() {
+                var obj = {complex: true, date: new Date(), data: [1, 2, "a", "b", {sub: 0.5}]};
+                dbMongo.insert("test", obj, callback);
+            };
 
-        setTimeout(execution, 2000);
-    });
+            setTimeout(execution, 2000);
+        });
 
-    it("MongoDB - Add 500 records to the database", function(done) {
-        this.timeout(12000);
+        it("MongoDB - Add 500 records to the database", function(done) {
+            this.timeout(12000);
 
-        var counter = 500;
-        var current = 1;
+            var counter = 500;
+            var current = 1;
 
-        var callback = function(err, result) {
-            if (err) {
-                done(err);
-            } else if (current == counter) {
-                done();
-            }
+            var callback = function(err, result) {
+                if (err) {
+                    done(err);
+                } else if (current == counter) {
+                    done();
+                }
 
-            current++;
-        };
+                current++;
+            };
 
-        var execution = function() {
-            for (var i = 0; i < counter; i++) {
-                dbMongo.insert("test", {counter: i}, callback);
-            }
-        };
+            var execution = function() {
+                for (var i = 0; i < counter; i++) {
+                    dbMongo.insert("test", {counter: i}, callback);
+                }
+            };
 
-        setTimeout(execution, 100);
-    });
+            setTimeout(execution, 100);
+        });
 
-    it("MongoDB - Updates all previously created records on the database", function(done) {
-        var callback = function(err, result) {
-            if (err) {
-                done(err);
-            } else {
-                done();
-            }
-        };
+        it("MongoDB - Updates all previously created records on the database", function(done) {
+            var callback = function(err, result) {
+                if (err) {
+                    done(err);
+                } else {
+                    done();
+                }
+            };
 
-        var obj = {$set: {updated: true}};
+            var obj = {$set: {updated: true}};
 
-        dbMongo.update("test", obj, callback);
-    });
+            dbMongo.update("test", obj, callback);
+        });
+    } else {
+        it.skip("Database MongoDB tests skipped, no connection string set");
+    }
 });

@@ -9,6 +9,12 @@ describe("App HTTPS Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("settings.test.json");
+    settings.app.port = 18443;
+    settings.app.ssl.enabled = true;
+    settings.app.ssl.keyFile = "localhost.key";
+    settings.app.ssl.certFile = "localhost.crt";
+
     var app = null;
     var supertest = require("supertest");
 
@@ -16,12 +22,6 @@ describe("App HTTPS Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
-        settings.loadFromJson("settings.test.json");
-        settings.app.port = 18443;
-        settings.app.ssl.enabled = true;
-        settings.app.ssl.keyFile = "localhost.key";
-        settings.app.ssl.certFile = "localhost.crt";
-
         app = require("../lib/app.coffee").newInstance();
     });
 

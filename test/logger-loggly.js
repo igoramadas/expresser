@@ -9,6 +9,17 @@ describe("Logger Loggly Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
+    settings.loadFromJson("settings.test.json");
+
+    if (env["LOGGLY_TOKEN"]) {
+        settings.logger.loggly.token = env["LOGGLY_TOKEN"];
+    }
+
+    if (env["LOGGLY_SUBDOMAIN"]) {
+        settings.logger.loggly.subdomain = env["LOGGLY_SUBDOMAIN"];
+    }
+    
     var logger = null;
     var loggerLoggly = null;
     var transportLoggly = null;
@@ -29,17 +40,6 @@ describe("Logger Loggly Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
-        settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
-        settings.loadFromJson("settings.test.json");
-
-        if (env["LOGGLY_TOKEN"]) {
-            settings.logger.loggly.token = env["LOGGLY_TOKEN"];
-        }
-
-        if (env["LOGGLY_SUBDOMAIN"]) {
-            settings.logger.loggly.subdomain = env["LOGGLY_SUBDOMAIN"];
-        }
-
         logger = require("../lib/logger.coffee");
 
         loggerLoggly = require("../plugins/logger-loggly/index.coffee");
@@ -52,7 +52,7 @@ describe("Logger Loggly Tests", function () {
         settings.logger.should.have.property("loggly");
     });
 
-    if (settings.logger.loggly.token && settings.logger.loggly.subdomain) {
+    if (settings.logger.loggly && settings.logger.loggly.token && settings.logger.loggly.subdomain) {
         it("Send log to Loggly", function (done) {
             this.timeout(10000);
 

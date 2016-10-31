@@ -9,6 +9,13 @@ describe("Logger Logentries Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("../plugins/logger-logentries/settings.default.json");
+    settings.loadFromJson("settings.test.json");
+
+    if (env["LOGENTRIES_TOKEN"]) {
+        settings.logger.logentries.token = env["LOGENTRIES_TOKEN"];
+    }
+
     var logger = null;
     var loggerLogentries = null;
     var transportLogentries = null;
@@ -29,13 +36,6 @@ describe("Logger Logentries Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {    
-        settings.loadFromJson("../plugins/logger-logentries/settings.default.json");
-        settings.loadFromJson("settings.test.json");
-
-        if (env["LOGENTRIES_TOKEN"]) {
-            settings.logger.logentries.token = env["LOGENTRIES_TOKEN"];
-        }
-
         logger = require("../lib/logger.coffee");
 
         loggerLogentries = require("../plugins/logger-logentries/index.coffee");
@@ -48,7 +48,7 @@ describe("Logger Logentries Tests", function () {
         settings.logger.should.have.property("logentries");
     });
 
-    if (settings.logger.logentries.token) {
+    if (settings.logger.logentries && settings.logger.logentries.token) {
         it("Send log to Logentries", function (done) {
             this.timeout(10000);
 

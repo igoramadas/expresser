@@ -9,6 +9,9 @@ describe("App HTTP Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("settings.test.json");
+    settings.app.port = 18080;
+
     var app = null;
     var supertest = require("supertest");
 
@@ -16,9 +19,6 @@ describe("App HTTP Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
-        settings.loadFromJson("settings.test.json");
-        settings.app.port = 18080;
-
         app = require("../lib/app.coffee").newInstance();
     });
 

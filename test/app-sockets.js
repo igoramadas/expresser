@@ -9,6 +9,10 @@ describe("App Sockets Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    settings.loadFromJson("../plugins/sockets/settings.default.json");
+    settings.loadFromJson("settings.test.json");
+    settings.app.port = 8080;
+
     var app = null;
     var sockets = null;
     var socketClient = require("socket.io-client");
@@ -23,10 +27,6 @@ describe("App Sockets Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
-        settings.loadFromJson("../plugins/sockets/settings.default.json");
-        settings.loadFromJson("settings.test.json");
-        settings.app.port = 8080;
-        
         app = require("../lib/app.coffee").newInstance();
         
         sockets = require("../plugins/sockets/index.coffee");
