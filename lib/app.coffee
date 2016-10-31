@@ -26,6 +26,8 @@ class App
 
     # @property {Object} Exposes the Express HTTP or HTTPS `server` object.
     server: null
+    httpServer: null
+    httpsServer: null
 
     # @property [Array<Object>] Array of additional middlewares to be used
     # by the Express server. These will be called before anything is processed,
@@ -156,20 +158,22 @@ class App
                     sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
                     sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
                     sslOptions = {key: sslKey, cert: sslCert}
-                    server = https.createServer sslOptions, @server
+                    @httpsServer = https.createServer sslOptions, @server
+                    serverRef = @httpsServer
                 else
                     throw new Error "The certificate files could not be found. Please check the 'settings.app.ssl' settings."
             else
                 throw new Error "SSL is enabled but no key and certificate files were defined. Please check the 'settings.app.ssl' settings."
         else
-            server = http.createServer @server
+            @httpServer = http.createServer @server
+            serverRef = @httpServer
 
         # Start the app!
         if settings.app.ip? and settings.app.ip isnt ""
-            server.listen settings.app.port, settings.app.ip
+            serverRef.listen settings.app.port, settings.app.ip
             logger.info "App", settings.app.title, "Listening on #{settings.app.ip} port #{settings.app.port}"
         else
-            server.listen settings.app.port
+            serverRef.listen settings.app.port
             logger.info "App", settings.app.title, "Listening on port #{settings.app.port}"
 
         # Using SSL and redirector port is set? Then create the http server.

@@ -38,9 +38,9 @@ describe("Cron Tests", function () {
             done("Listener was not removed.");
         };
 
-        events.on("Test.addListener", listener);
-        events.off("Test.addListener", listener);
-        events.emit("Test.addListener", true);
+        events.on("Test.addRemoveListener", listener);
+        events.off("Test.addRemoveListener", listener);
+        events.emit("Test.addRemoveListener", true);
 
         var timer = function () {
             done();

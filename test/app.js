@@ -44,7 +44,8 @@ describe("App Tests", function () {
     it("Init sockets", function () {
         this.timeout(10000);
 
-        sockets.bind(app.server);
+        sockets.init();
+        sockets.bind(app.httpServer);
     });
 
     it("Renders a test view", function (done) {
