@@ -8,6 +8,7 @@ class App
     newInstance: -> return new App()
 
     express = require "express"
+    events = require "./events.coffee"
     fs = require "fs"
     http = require "http"
     https = require "https"
@@ -55,6 +56,8 @@ class App
         @configureServer options
         @startServer options
 
+        events.emit "App.on.init"
+
     # Configure the server. Set views, options, use Express modules, etc.
     configureServer: (options) =>
         midBodyParser = require "body-parser"
@@ -67,8 +70,6 @@ class App
 
         # Create express v4 app.
         @server = express()
-
-        settings.updateFromPaaS() if options.paas
 
         # Set view options, use Pug for HTML templates.
         @server.set "views", settings.path.viewsDir
@@ -135,6 +136,8 @@ class App
                     console.log "Request from #{ip}", method, url
                 next() if next?
 
+        events.emit "App.on.configureServer"
+
     # Start the server using HTTP or HTTPS, depending on the settings.
     startServer: (options) =>
         if options.ssl.enabled and options.ssl.keyFile? and options.ssl.certFile?
@@ -174,6 +177,8 @@ class App
 
             @redirectorServer = http.createServer redirServer
             @redirectorServer.listen settings.app.ssl.redirectorPort
+
+        events.emit "App.on.startServer"
 
     # HELPER AND UTILS
     # --------------------------------------------------------------------------

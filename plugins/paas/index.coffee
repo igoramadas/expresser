@@ -1,126 +1,123 @@
 # EXPRESSER SOCKETS
 # --------------------------------------------------------------------------
-# Handles sockets communication using the module Socket.IO.
-# ATTENTION! The Sockets module is started automatically by the App module.
-# If you wish to disable it, set `Settings.sockets.enabled` to false.
+# Auto configure the Expresser app and its modules to work on known PaaS 
+# providers, mainly by checking cloud environmental variables.
 # <!--
-# @see settings.sockets
+# @see settings.paas
 # -->
-class Sockets
+class PaaS
 
     events = null
-    lodash =  null
     logger = null
     settings = null
-
-    # @property {Array} Holds a list of current event listeners.
-    currentListeners: null
-
-    # @property [Socket.IO Object] Exposes Socket.IO object to external modules.
-    io: null
 
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Sockets plugin.
+    # Init the PaaS plugin.
     init: (options) =>
         events = @expresser.events
-        lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
 
-        @bind options if options?
+    # SETTINGS
+    # --------------------------------------------------------------------------
 
-    # Bind the Socket.IO object to the Express app. This will also set the counter
-    # to increase / decrease when users connects or disconnects from the app.
-    # @param {Object} options Sockets init options.
-    # @option options {Object} server The Express server object to bind to.
-    bind: (options) =>
-        options = {server: options} if not options.server?
-        @currentListeners = []
+    # Update settings based on Cloud Environmental variables. If a `filter` is specified,
+    # update only settings that match it, otherwise update everything.
+    # @param {String} filter Filter settings to be updated, for example "mailer" or "database".
+    updateSettings: (filter) =>
+        env = process.env
+        filter = false if not filter? or filter is ""
 
-        if not options.server?
-            logger.error "Sockets.init", "App server is invalid. Abort!"
-            return
+        # Update app IP and port (OpenShift, AppFog).
+        if not filter or filter.indexOf("app") >= 0
+            ip = env.OPENSHIFT_NODEJS_IP or env.IP
+            port = env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
+            @app.ip = ip if ip? and ip isnt ""
+            @app.port = port if port? and port isnt ""
 
-        @io = require("socket.io") options.server
+        # Update database settings (AppFog, MongoLab, MongoHQ).
+        if not filter or filter.indexOf("database") >= 0
+            vcap = env.VCAP_SERVICES
+            vcap = JSON.parse vcap if vcap?
 
-        # Listen to user connection count updates.
-        @io.sockets.on "connection", (socket) =>
-            @io.emit "connection-count", @getConnectionCount()
-            socket.on "disconnect", @onDisconnect
+            @database.mongodb = {} if not @database.mongodb?
 
-            # Bind all current event listeners.
-            for listener in @currentListeners
-                socket.on listener.key, listener.callback if listener?
+            # Check for AppFog MongoDB variables.
+            if vcap? and vcap isnt ""
+                mongo = vcap["mongodb-1.8"]
+                mongo = mongo[0]["credentials"] if mongo?
+                if mongo?
+                    @database.mongodb.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
 
-    # EVENTS
-    # ----------------------------------------------------------------------
+            # Check for MongoLab variables.
+            mongoLab = env.MONGOLAB_URI
+            @database.mongodb.connString = mongoLab if mongoLab? and mongoLab isnt ""
 
-    # Emit the specified key and data to clients.
-    # @param {String} key The event key.
-    # @param {Object} data The JSON data to be sent out to clients.
-    emit: (key, data) =>
-        if @io?
-            @io.emit key, data
-            logger.debug "Sockets.emit", key, JSON.stringify(data).length + " bytes"
-        else
-            logger.debug "Sockets.emit", key, "Sockets not initiated yet, abort!"
+            # Check for MongoHQ variables.
+            mongoHq = env.MONGOHQ_URL
+            @database.mongodb.connString = mongoHq if mongoHq? and mongoHq isnt ""
 
-    # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
-    # event from currently connected clients.
-    # @param {String} key The event key.
-    # @param {Method} callback The callback to be called when key is triggered.
-    # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
-    listenTo: (key, callback, onlyNewClients) =>
-        return if not callback?
+        # Update logger settings (Logentries and Loggly).
+        if not filter or filter.indexOf("logger") >= 0
+            logentriesToken = env.LOGENTRIES_TOKEN
+            logglyToken = env.LOGGLY_TOKEN
+            logglySubdomain = env.LOGGLY_SUBDOMAIN
 
-        onlyNewClients = false if not onlyNewClients?
-        @currentListeners.push {key: key, callback: callback}
+            @logger.logentries = {} if not @logger.logentries?
+            @logger.loggly = {} if not @logger.loggly?
 
-        if not onlyNewClients
-            for key, socket of @io.sockets.connected
-                socket.on key, callback
+            @logger.logentries.token = logentriesToken if logentriesToken? and logentriesToken isnt ""
+            @logger.loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
+            @logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
-        logger.debug "Sockets.listenTo", key
+        # Update mailer settings (Mailgun, Mandrill, SendGrid).
+        if not filter or filter.indexOf("mail") >= 0
+            @mailer = {} if not @mailer?
 
-    # Stops listening to the specified event key.
-    # @param {String} key The event key.
-    # @param {Object} callback The callback to stop triggering.
-    stopListening: (key, callback) =>
-        for socketKey, socket of @io.sockets.connected
-            if callback?
-                socket.removeListener key, callback
-            else
-                socket.removeAllListeners key
+            currentSmtpHost = @mailer.smtp?.host?.toLowerCase()
+            currentSmtpHost = "" if not currentSmtpHost?
 
-        # Remove binding from the currentListeners collection.
-        for listener in @currentListeners
-            if listener.key is key and (listener.callback is callback or not callback?)
-                listener = null
+            # Get and set Mailgun.
+            if currentSmtpHost.indexOf("mailgun") >= 0 or smtpHost?.indexOf("mailgun") >= 0
+                @mailer.smtp.service = "mailgun"
+                smtpUser = env.MAILGUN_SMTP_LOGIN
+                smtpPassword = env.MAILGUN_SMTP_PASSWORD
 
-        logger.debug "Sockets.stopListening", key
+                if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+                    @mailer.smtp.user = smtpUser
+                    @mailer.smtp.password = smtpPassword
 
-    # Remove invalid and expired event listeners.
-    compact: =>
-        @currentListeners = lodash.compact @currentListeners
+            # Get and set Mandrill.
+            if currentSmtpHost.indexOf("mandrill") >= 0 or smtpHost?.indexOf("mandrill") >= 0
+                @mailer.smtp.service = "mandrill"
+                smtpUser = env.MANDRILL_USERNAME
+                smtpPassword = env.MANDRILL_APIKEY
 
-    # HELPERS
-    # ----------------------------------------------------------------------
+                if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+                    @mailer.smtp.user = smtpUser
+                    @mailer.smtp.password = smtpPassword
 
-    # Get how many users are currenly connected to the app.
-    getConnectionCount: =>
-        return Object.keys(@io.sockets.connected).length
+            # Get and set SendGrid.
+            if currentSmtpHost.indexOf("sendgrid") >= 0 or smtpHost?.indexOf("sendgrid") >= 0
+                @mailer.smtp.service = "sendgrid"
+                smtpUser = env.SENDGRID_USERNAME
+                smtpPassword = env.SENDGRID_PASSWORD
 
-    # When user disconnects, emit an event with the new connection count to all clients.
-    onDisconnect: =>
-        count = @getConnectionCount()
-        logger.debug "Sockets.onDisconnect", "New count: #{count}."
+                if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+                    @mailer.smtp.user = smtpUser
+                    @mailer.smtp.password = smtpPassword
+
+        # Log to console.
+        if @general.debug and @logger.console
+            console.log "Settings.updateFromPaaS", "Updated!", filter
+    
 
 # Singleton implementation
 # --------------------------------------------------------------------------
-Sockets.getInstance = ->
-    @instance = new Sockets() if not @instance?
+PaaS.getInstance = ->
+    @instance = new PaaS() if not @instance?
     return @instance
 
-module.exports = exports = Sockets.getInstance()
+module.exports = exports = PaaS.getInstance()

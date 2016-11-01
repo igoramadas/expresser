@@ -1,7 +1,7 @@
-// EXPRESSER SOCKETS SETTINGS
+// EXPRESSER PAAS SETTINGS
 {
-    "sockets": {
-        // Enable the Sockets module?
+    "paas": {
+        // Enable the PaaS module?
         "enabled": true
     }
 }

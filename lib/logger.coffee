@@ -8,7 +8,7 @@
 # -->
 class Logger
     newInstance: -> return new Logger()
-
+    
     chalk = require "chalk"
     events = require "./events.coffee"
     fs = require "fs"
