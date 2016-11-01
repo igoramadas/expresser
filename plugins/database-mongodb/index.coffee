@@ -251,6 +251,7 @@ class DatabaseMongoDb
             filter = options.filter
         else
             filter = {_id: id}
+            
         delete options.filter
 
         # If options patch is set, replace specified document properties only instead of replacing the whole document.
@@ -258,6 +259,7 @@ class DatabaseMongoDb
             docData = {$set: obj}
         else
             docData = obj
+
         delete options.patch
 
         # Set default options.

@@ -40,6 +40,8 @@ class Logger
     # IP address will be appended to logs depending on the settings.
     # @param {Object} options Logger init options.
     init: (options) =>
+        events.emit "Logger.before.init", options
+
         if settings.logger.uncaughtException
             @debug "Logger.init", "Catching unhandled exceptions."
 

@@ -30,6 +30,8 @@ class Database
     # @param {Object} options Database init options.
     init: (options) =>
         logger.debug "Database.init", options
+        events.emit "Database.before.init", options
+
         lodash.assign settings.database, options if options?
         
         @setEvents()

@@ -46,6 +46,7 @@ class App
     # @option options {Array} appendMiddlewares Array with extra middlewares to be loaded.
     init: (options) =>
         logger.debug "App.init", options
+        events.emit "App.before.init", options
 
         options = {} if not options?
         lodash.assign settings.app, options
@@ -136,7 +137,7 @@ class App
                     console.log "Request from #{ip}", method, url
                 next() if next?
 
-        events.emit "App.on.configureServer"
+        events.emit "App.on.configureServer", options
 
     # Start the server using HTTP or HTTPS, depending on the settings.
     startServer: (options) =>
@@ -178,7 +179,7 @@ class App
             @redirectorServer = http.createServer redirServer
             @redirectorServer.listen settings.app.ssl.redirectorPort
 
-        events.emit "App.on.startServer"
+        events.emit "App.on.startServer", options
 
     # HELPER AND UTILS
     # --------------------------------------------------------------------------
