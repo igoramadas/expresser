@@ -47,6 +47,8 @@ class Settings
         @loadFromJson "settings.json"
         @loadFromJson "settings.#{@currentEnv.toString().toLowerCase()}.json"
 
+        events.emit "Settings.on.load"
+
     # Helper to load values from the specified settings file.
     # @param {String} filename The filename or path to the settings file.
     # @param {Boolean} extend If true it won't update settings that are already existing.

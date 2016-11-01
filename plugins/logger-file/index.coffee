@@ -35,7 +35,11 @@ class LoggerFile
 
         # Auto register as "file" if a default path is defined on the settings.
         if options.enabled and options.path?
-            return logger.register "file", "file", options
+            result = logger.register "file", "file", options
+
+        events.emit "LoggerFile.on.init", options
+
+        return result
 
     # Get the file transport object.
     # @param {Object} options File logging options.

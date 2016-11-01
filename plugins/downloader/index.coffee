@@ -35,7 +35,11 @@ class Downloader
         moment = @expresser.libs.moment
         settings = @expresser.settings
 
-        @setEvents() if settings.events.enabled
+        logger.debug "Downloader.init", options
+
+        @setEvents()
+
+        events.emit "Downloader.on.init", options
 
     # Bind events.
     setEvents: =>
@@ -272,7 +276,6 @@ class Downloader
 # Singleton implementation
 # --------------------------------------------------------------------------
 Downloader.getInstance = ->
-    return new Downloader() if process.env is "test"
     @instance = new Downloader() if not @instance?
     return @instance
 

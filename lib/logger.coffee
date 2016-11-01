@@ -54,7 +54,9 @@ class Logger
         if settings.logger.removeFields?
             console.warn "Logger.init", "The logger.removeFields setting is deprecated, please use logger.obfuscateFields!"
 
-        @setEvents() if settings.events.enabled
+        @setEvents()
+
+        events.emit "Logger.on.init", options
 
     # Bind events.
     setEvents: =>

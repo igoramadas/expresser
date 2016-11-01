@@ -24,9 +24,9 @@ class DatabaseMongoDb
         logger = @expresser.logger
         settings = @expresser.settings
 
-        database.drivers.mongodb = this
-
         logger.debug "DatabaseMongoDb.init", options
+
+        database.drivers.mongodb = this        
 
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.database.mongodb
@@ -39,7 +39,11 @@ class DatabaseMongoDb
 
         # Auto register as "mongodb" if a `connString` is defined on the settings.
         if options.enabled and options.connString?
-            return database.register "mongodb", "mongodb", options.connString, options.options
+            result = database.register "mongodb", "mongodb", options.connString, options.options
+
+        events.emit "DatabaseMongoDb.on.init", options
+
+        return result
 
     # Get the DB connection object.
     # @param {Object} connString The connection string, for example user:password@hostname/dbname.
@@ -335,7 +339,6 @@ class DatabaseMongoDb
 # Singleton implementation.
 # -----------------------------------------------------------------------------
 DatabaseMongoDb.getInstance = ->
-    return new DatabaseMongoDb() if process.env is "test"
     @instance = new DatabaseMongoDb() if not @instance?
     return @instance
 

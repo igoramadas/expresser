@@ -15,11 +15,13 @@ class Events
     # -------------------------------------------------------------------------
 
     # Emit a new event. The first argument is the event ID, all others are
-    # passed to the event emitter.
+    # passed to the event emitter. Only if `settings.events.enabled` is true!
     # @param {String} id The event ID.
     # @param {Arguments} args Arguments to be passed to the emitter.
     # @return {Object} Returns itself so calls can be chained.
     emit: (id, args) =>
+        return if not settings.events.enabled
+
         emitter.emit.apply emitter, arguments
         return this
 

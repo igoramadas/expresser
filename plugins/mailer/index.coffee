@@ -64,7 +64,9 @@ class Mailer
         if options.enabled and not @smtp? and not @smtp2?
             logger.warn "Mailer.init", "No default SMTP settings found.", "No emails will be sent out if you don't pass a SMTP server on `send`."
 
-        @setEvents() if settings.events.enabled
+        @setEvents()
+
+        events.emit "Mailer.on.init", options
 
     # Bind event listeners.
     setEvents: =>

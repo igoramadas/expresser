@@ -27,16 +27,20 @@ class DatabaseTingoDb
         settings = @expresser.settings
         utils = @expresser.utils
 
-        database.drivers.tingodb = this
-
         logger.debug "DatabaseTingoDb.init", options
+
+        database.drivers.tingodb = this        
 
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.database.tingodb
 
         # Auto register as "tingodb" if a `dbPath` is defined on the settings.
         if options.enabled and options.dbPath?
-            return database.register "tingodb", "tingodb", options.dbPath, options.options
+            result = database.register "tingodb", "tingodb", options.dbPath, options.options
+
+        events.emit "DatabaseTingoDb.on.init", options
+
+        return result
 
     # Get the DB connection object.
     # @param {Object} dbPath Path to the TingoDB file to be loaded.
@@ -290,7 +294,6 @@ class DatabaseTingoDb
 # Singleton implementation.
 # -----------------------------------------------------------------------------
 DatabaseTingoDb.getInstance = ->
-    return new DatabaseTingoDb() if process.env is "test"
     @instance = new DatabaseTingoDb() if not @instance?
     return @instance
 

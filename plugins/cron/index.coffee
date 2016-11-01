@@ -52,11 +52,14 @@ class Cron
         utils = @expresser.utils
 
         logger.debug "Cron.init", options
+
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.cron
 
-        @setEvents() if settings.events.enabled
+        @setEvents()
         @load true, options if options.loadOnInit
+
+        events.emit "Cron.on.init", options
 
     # Bind events.
     setEvents: =>
@@ -313,7 +316,6 @@ class Cron
 # Singleton implementation.
 # -----------------------------------------------------------------------------
 Cron.getInstance = ->
-    return new Cron() if process.env is "test"
     @instance = new Cron() if not @instance?
     return @instance
 

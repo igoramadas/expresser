@@ -34,7 +34,11 @@ class LoggerLogentries
 
         # Auto register as "logentries" if a default token is defined on the settings.
         if options.enabled and options.token?
-            return logger.register "logentries", "logentries", options
+            result = logger.register "logentries", "logentries", options
+
+        events.emit "LoggerLogentries.on.init", options
+
+        return result
 
     # Get the transport object.
     # @param {Object} options Transport options including the token.

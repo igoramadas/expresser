@@ -31,6 +31,8 @@ class Sockets
 
         @bind options if options?
 
+        events.emit "Sockets.on.init", options
+
     # Bind the Socket.IO object to the Express app. This will also set the counter
     # to increase / decrease when users connects or disconnects from the app.
     # @param {Object} options Sockets init options.

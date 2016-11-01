@@ -56,7 +56,7 @@ class App
         @configureServer options
         @startServer options
 
-        events.emit "App.on.init"
+        events.emit "App.on.init", options
 
     # Configure the server. Set views, options, use Express modules, etc.
     configureServer: (options) =>
@@ -190,6 +190,8 @@ class App
     # @param {String} view The Pug filename.
     # @param {Object} options Options passed to the view, optional.
     renderView: (req, res, view, options) =>
+        logger.debug "App.renderView", req.originalUrl, view, options
+
         options = {} if not options?
         options.device = utils.getClientDevice req
         options.title = settings.app.title if not options.title?
@@ -197,15 +199,18 @@ class App
         # View filename must jave .pug extension.
         view += ".pug" if view.indexOf(".pug") < 0
 
+        # Send rendered view to client.
         res.render view, options
-
-        logger.debug "App.renderView", req.originalUrl, view, options
+        
+        events.emit "App.on.renderView", req, res, view, options
 
     # Render response as human readable JSON data.
     # @param {Object} req The request object.
     # @param {Object} res The response object.
     # @param {Object} data The JSON data to be sent.
     renderJson: (req, res, data) =>
+        logger.debug "App.renderJson", req.originalUrl, data
+
         if lodash.isString data
             try
                 data = JSON.parse data
@@ -232,7 +237,7 @@ class App
         # Send JSON response.
         res.json data
 
-        logger.debug "App.renderJson", req.originalUrl, data
+        events.emit "App.on.renderJson", req, res, data
 
     # Render response as image.
     # @param {Object} req The request object.
@@ -240,6 +245,8 @@ class App
     # @param {String} filename The full path to the image file.
     # @param {Object} options Options passed to the image renderer, for example the "mimetype".
     renderImage: (req, res, filename, options) ->
+        logger.debug "App.renderImage", req.originalUrl, filename, options
+
         mimetype = options?.mimetype
 
         # Try to figure out the mime type in case it wasn't passed along the options.
@@ -248,10 +255,11 @@ class App
             extname = "jpeg" if extname is "jpg"
             mimetype = "image/#{extname}"
 
+        # Send image to client.
         res.contentType mimetype
         res.sendFile filename
 
-        logger.debug "App.renderImage", req.originalUrl, filename, options
+        events.emit "App.on.renderImage", req, res, filename, options
 
     # Send error response as JSON. When the server can't return a valid result,
     # send an error response with the specified status code and error output.
@@ -260,16 +268,19 @@ class App
     # @param {Object} error The error object or message to be sent to the client.
     # @param {Integer} status The response status code, optional, default is 500.
     renderError: (req, res, error, status) =>
+        logger.error "App.renderError", req.originalUrl, status, error
+
         status = 408 if status is "ETIMEDOUT"
 
         # Set default status to 500 and stringify message if necessary.
         status = status or error?.statusCode or 500
         error = JSON.stringify error if not lodash.isString error
 
+        # Send error JSON to client.
         res.status(status).json {error: error, url: req.originalUrl}
 
-        logger.error "App.renderError", req.originalUrl, status, error
-
+        events.emit "App.on.renderError", req, res, error, status
+        
 # Singleton implementation
 # --------------------------------------------------------------------------
 App.getInstance = ->

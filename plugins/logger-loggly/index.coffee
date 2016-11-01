@@ -34,7 +34,11 @@ class LoggerLoggly
 
         # Auto register as "loggly" if a default token is defined on the settings.
         if options.enabled and options.token?
-            return logger.register "loggly", "loggly", options
+            result = logger.register "loggly", "loggly", options
+
+        events.emit "LoggerLoggly.on.init", options
+
+        return result
 
     # Get the transport object.
     # @param {Object} options Transport options including the token.
