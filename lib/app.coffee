@@ -44,23 +44,20 @@ class App
     # Init the Express server.
     # @param {Object} options App init options. If passed as an array, assume it's the array with extra middlewares.
     # @option options {Array} appendMiddlewares Array with extra middlewares to be loaded.
-    init: (options) =>
-        logger.debug "App.init", options
-        events.emit "App.before.init", options
-
-        options = {} if not options?
-        lodash.assign settings.app, options
+    init: =>
+        logger.debug "App.init",
+        events.emit "App.before.init"
 
         nodeEnv = process.env.NODE_ENV
 
         # Configure Express server and start server.
-        @configureServer options
-        @startServer options
+        @configureServer()
+        @startServer()
 
-        events.emit "App.on.init", options
+        events.emit "App.on.init"
 
     # Configure the server. Set views, options, use Express modules, etc.
-    configureServer: (options) =>
+    configureServer: =>
         midBodyParser = require "body-parser"
         midCookieParser = require "cookie-parser"
         midSession = require "cookie-session"
@@ -137,13 +134,13 @@ class App
                     console.log "Request from #{ip}", method, url
                 next() if next?
 
-        events.emit "App.on.configureServer", options
+        events.emit "App.on.configureServer"
 
     # Start the server using HTTP or HTTPS, depending on the settings.
-    startServer: (options) =>
-        if options.ssl.enabled and options.ssl.keyFile? and options.ssl.certFile?
-            sslKeyFile = utils.getFilePath options.ssl.keyFile
-            sslCertFile = utils.getFilePath options.ssl.certFile
+    startServer: =>
+        if settings.app.ssl.enabled and settings.app.ssl.keyFile? and settings.app.ssl.certFile?
+            sslKeyFile = utils.getFilePath settings.app.ssl.keyFile
+            sslCertFile = utils.getFilePath settings.app.ssl.certFile
 
             # Certificate files were found? Proceed, otherwise alert the user and throw an error.
             if sslKeyFile? and sslCertFile?
@@ -179,7 +176,7 @@ class App
             @redirectorServer = http.createServer redirServer
             @redirectorServer.listen settings.app.ssl.redirectorPort
 
-        events.emit "App.on.startServer", options
+        events.emit "App.on.startServer"
 
     # HELPER AND UTILS
     # --------------------------------------------------------------------------

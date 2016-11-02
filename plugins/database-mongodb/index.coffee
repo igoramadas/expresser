@@ -20,6 +20,7 @@ class DatabaseMongoDb
     # @param {Object} options Database init options.
     init: (options) =>
         database = @expresser.database
+        events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings

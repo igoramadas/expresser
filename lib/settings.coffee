@@ -29,6 +29,7 @@ class Settings
         return obj
         
     crypto = require "crypto"
+    events = require "./events.coffee"
     fs = require "fs"
     lodash = require "lodash"
     path = require "path"

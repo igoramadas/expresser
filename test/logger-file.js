@@ -32,8 +32,6 @@ describe("Logger File Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
-
-
         logger = require("../lib/logger.coffee");
 
         loggerFile = require("../plugins/logger-file/index.coffee");

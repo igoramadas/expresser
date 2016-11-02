@@ -27,6 +27,7 @@ class PaaS
         events.on "App.before.init", => @appSettings()
         events.on "Database.before.init", => @databaseSettings()
         events.on "Logger.before.init", => @loggerSettings()
+        events.on "Mailer.before.init", => @mailerSettings()
 
     # SETTINGS
     # --------------------------------------------------------------------------
@@ -38,32 +39,33 @@ class PaaS
         settings.app.ip = ip if ip? and ip isnt ""
         settings.app.port = port if port? and port isnt ""
 
-        # Log to console.
-        if @general.debug and settings.logger.console
-            console.log "Settings.updateFromPaaS", "Updated!", filter
+        if settings.logger.console
+            console.log "PaaS.appSettings", "App settings were auto updated."
 
     # Update database settings.
     databaseSettings: =>
-        if not filter or filter.indexOf("database") >= 0
-            vcap = env.VCAP_SERVICES
-            vcap = JSON.parse vcap if vcap?
+        vcap = env.VCAP_SERVICES
+        vcap = JSON.parse vcap if vcap?
 
-            settings.database.mongodb = {} if not settings.database.mongodb?
+        settings.database.mongodb = {} if not settings.database.mongodb?
 
-            # Check for AppFog MongoDB variables.
-            if vcap? and vcap isnt ""
-                mongo = vcap["mongodb-1.8"]
-                mongo = mongo[0]["credentials"] if mongo?
-                if mongo?
-                    settings.database.mongodb.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
+        # Check for AppFog MongoDB variables.
+        if vcap? and vcap isnt ""
+            mongo = vcap["mongodb-1.8"]
+            mongo = mongo[0]["credentials"] if mongo?
+            if mongo?
+                settings.database.mongodb.connString = "mongodb://#{mongo.hostname}:#{mongo.port}/#{mongo.db}"
 
-            # Check for MongoLab variables.
-            mongoLab = env.MONGOLAB_URI
-            settings.database.mongodb.connString = mongoLab if mongoLab? and mongoLab isnt ""
+        # Check for MongoLab variables.
+        mongoLab = env.MONGOLAB_URI
+        settings.database.mongodb.connString = mongoLab if mongoLab? and mongoLab isnt ""
 
-            # Check for MongoHQ variables.
-            mongoHq = env.MONGOHQ_URL
-            settings.database.mongodb.connString = mongoHq if mongoHq? and mongoHq isnt ""
+        # Check for MongoHQ variables.
+        mongoHq = env.MONGOHQ_URL
+        settings.database.mongodb.connString = mongoHq if mongoHq? and mongoHq isnt ""
+
+        if settings.logger.console
+            console.log "PaaS.databaseSettings", "Database settings were auto updated."
 
     # Update logger settings.
     loggerSettings: =>
@@ -78,10 +80,11 @@ class PaaS
         settings.logger.loggly.token = logglyToken if logglyToken? and logglyToken isnt ""
         settings.logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
+        if settings.logger.console
+            console.log "PaaS.loggerSettings", "Logger settings were auto updated."
+
     # Update mailer settings.
     mailerSettings: =>
-        @mailer = {} if not @mailer?
-
         currentSmtpHost = settings.mailer.smtp?.host?.toLowerCase()
         currentSmtpHost = "" if not currentSmtpHost?
 
@@ -114,7 +117,9 @@ class PaaS
             if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
                 settings.mailer.smtp.user = smtpUser
                 settings.mailer.smtp.password = smtpPassword
-   
+
+        if settings.logger.console
+            console.log "PaaS.mailerSettings", "Mailer settings were auto updated."
 
 # Singleton implementation
 # --------------------------------------------------------------------------

@@ -41,7 +41,7 @@ describe("Logger Logentries Tests", function () {
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
-    before(function () {    
+    before(function () {
         logger = require("../lib/logger.coffee");
 
         loggerLogentries = require("../plugins/logger-logentries/index.coffee");

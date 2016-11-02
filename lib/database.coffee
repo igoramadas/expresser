@@ -32,7 +32,8 @@ class Database
         logger.debug "Database.init", options
         events.emit "Database.before.init", options
 
-        lodash.assign settings.database, options if options?
+        options = {} if not options?
+        options = lodash.defaultsDeep options, settings.database
         
         @setEvents()
 

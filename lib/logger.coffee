@@ -42,6 +42,9 @@ class Logger
     init: (options) =>
         events.emit "Logger.before.init", options
 
+        options = {} if not options?
+        options = lodash.defaultsDeep options, settings.logger
+
         if settings.logger.uncaughtException
             @debug "Logger.init", "Catching unhandled exceptions."
 

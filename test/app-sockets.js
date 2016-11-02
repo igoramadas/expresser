@@ -11,7 +11,7 @@ describe("App Sockets Tests", function () {
     var settings = require("../lib/settings.coffee").newInstance();
     settings.loadFromJson("../plugins/sockets/settings.default.json");
     settings.loadFromJson("settings.test.json");
-    settings.app.port = 8080;
+    settings.app.port = 20080;
 
     var app = null;
     var sockets = null;
@@ -25,7 +25,7 @@ describe("App Sockets Tests", function () {
 
     before(function () {
         app = require("../lib/app.coffee").newInstance();
-        
+
         sockets = require("../plugins/sockets/index.coffee");
         sockets.expresser = require("../index.coffee");
         sockets.expresser.events = require("../lib/events.coffee");
@@ -38,8 +38,8 @@ describe("App Sockets Tests", function () {
 
     it("Init app server with sockets, port 8080", function (done) {
         this.timeout(10000);
-        
-        var delayedInit = function() {
+
+        var delayedInit = function () {
             sockets.init(app.httpServer);
             done();
         };
@@ -74,7 +74,7 @@ describe("App Sockets Tests", function () {
         };
 
         sockets.listenTo("client-to-server", clientToServer, false);
-        client = socketClient.connect("http://localhost:8080", socketClientOptions);
+        client = socketClient.connect("http://localhost:20080", socketClientOptions);
         client.on("connect", clientConnected);
     });
 
@@ -104,7 +104,7 @@ describe("App Sockets Tests", function () {
             sockets.emit("server-to-client", "test123");
         };
 
-        client = socketClient.connect("http://localhost:8080", socketClientOptions);
+        client = socketClient.connect("http://localhost:20080", socketClientOptions);
         client.on("connect", clientConnected);
     });
 });

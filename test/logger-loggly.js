@@ -19,7 +19,7 @@ describe("Logger Loggly Tests", function () {
     if (env["LOGGLY_SUBDOMAIN"]) {
         settings.logger.loggly.subdomain = env["LOGGLY_SUBDOMAIN"];
     }
-    
+
     var logger = null;
     var loggerLoggly = null;
     var transportLoggly = null;
