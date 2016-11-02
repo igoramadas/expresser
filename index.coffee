@@ -79,7 +79,7 @@ class Expresser
 
                 # Init plugin only if enabled is not set to false on its settings.
                 if optionsRef?.enabled
-                    self[pluginName].init? optionsRef
+                    self[pluginName].init?()
 
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App. The `options` can have properties to be

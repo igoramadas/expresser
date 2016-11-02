@@ -48,6 +48,9 @@ class App
         logger.debug "App.init",
         events.emit "App.before.init"
 
+        if arguments.length > 0
+            logger.deprecated "App.init(options)", "No options param anymore. App will be configured based on what's defiend on the settings module."
+
         nodeEnv = process.env.NODE_ENV
 
         # Configure Express server and start server.
@@ -74,17 +77,9 @@ class App
         @server.set "view engine", settings.app.viewEngine
         @server.set "view options", { layout: false }
 
-        # Check for extra middlewares to be added before any other middlewares.
-        if options.prependMiddlewares?
-            if lodash.isArray options.prependMiddlewares
-                @prependMiddlewares.push mw for mw in options.prependMiddlewares
-            else
-                @prependMiddlewares.push options.prependMiddlewares
-
         # Prepend middlewares, if any was specified.
-        if @prependMiddlewares.length > 0
-            @server.use mw for mw in @prependMiddlewares
-
+        @server.use mw for mw in @prependMiddlewares
+            
         # Use Express basic handlers.
         @server.use midBodyParser.json {limit: settings.app.bodyParser.limit}
         @server.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
@@ -102,16 +97,8 @@ class App
         ConnectAssets = (require "connect-assets") connectAssetsOptions
         @server.use ConnectAssets
 
-        # Check for extra middlewares to be added.
-        if options.appendMiddlewares?
-            if lodash.isArray options.appendMiddlewares
-                @appendMiddlewares.push mw for mw in options.appendMiddlewares
-            else
-                @appendMiddlewares.push options.appendMiddlewares
-
-        # Add more middlewares, if any (for example passport for authentication).
-        if @appendMiddlewares.length > 0
-            @server.use mw for mw in @appendMiddlewares
+        # Append extra middlewares, if any was specified.
+        @server.use mw for mw in @appendMiddlewares
 
         # Configure development environment to dump exceptions and show stack.
         if nodeEnv is "development" or nodeEnv is "test"

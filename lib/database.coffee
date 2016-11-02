@@ -28,16 +28,16 @@ class Database
 
     # Init the database module.
     # @param {Object} options Database init options.
-    init: (options) =>
-        logger.debug "Database.init", options
-        events.emit "Database.before.init", options
+    init: =>
+        logger.debug "Database.init"
+        events.emit "Database.before.init"
 
-        options = {} if not options?
-        options = lodash.defaultsDeep options, settings.database
+        if arguments.length > 0
+            logger.deprecated "Database.init(options)", "No options param anymore. Database will be configured based on what's defiend on the settings module."
         
         @setEvents()
 
-        events.emit "Database.on.init", options
+        events.emit "Database.on.init"
 
     # Bind events.
     setEvents: =>

@@ -39,11 +39,11 @@ class Logger
     # Init the Logger module. Verify which services are set, and add the necessary transports.
     # IP address will be appended to logs depending on the settings.
     # @param {Object} options Logger init options.
-    init: (options) =>
+    init: =>
         events.emit "Logger.before.init", options
 
-        options = {} if not options?
-        options = lodash.defaultsDeep options, settings.logger
+        if arguments.length > 0
+            logger.deprecated "Logger.init(options)", "No options param anymore. Logger will be configured based on what's defiend on the settings module."
 
         if settings.logger.uncaughtException
             @debug "Logger.init", "Catching unhandled exceptions."
@@ -182,6 +182,10 @@ class Logger
 
     # HELPER METHODS
     # --------------------------------------------------------------------------
+
+    # Helper to log to console about methods / features deprecation.
+    deprecated: (func, message) =>
+        @console "deprecated", "#{func} is deprecated. #{message}"
 
     # Cleans the arguments passed according to the `removeFields` setting.
     # The maximum level deep down the object is defined by the `maxDeepLevel`.
