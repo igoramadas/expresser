@@ -75,10 +75,12 @@ describe("App Sockets Tests", function () {
 
         sockets.listenTo("client-to-server", clientToServer, false);
         client = socketClient("http://localhost:8080/", socketClientOptions);
-        client.on("connect_error", function () {
+
+        client.on("connect", clientConnected);
+        client.on("connect_error", function (err) {
             socketError(err, done);
         });
-        client.on("connect", clientConnected);
+
 
         it("Emits sockets message from server to client", function (done) {
             this.timeout(10000);
@@ -107,8 +109,9 @@ describe("App Sockets Tests", function () {
             };
 
             client = socketClient("http://localhost:8080/", socketClientOptions);
+
             client.on("connect", clientConnected);
-            client.on("connect_error", function () {
+            client.on("connect_error", function (err) {
                 socketError(err, done)
 
             });
