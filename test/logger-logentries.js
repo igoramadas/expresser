@@ -32,6 +32,8 @@ describe("Logger Logentries Tests", function () {
     };
 
     before(function () {
+        var env = process.env;
+
         settings.loadFromJson("../plugins/logger-logentries/settings.default.json");
         settings.loadFromJson("settings.test.json");
 

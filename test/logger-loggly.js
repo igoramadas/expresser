@@ -31,6 +31,8 @@ describe("Logger Loggly Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
+        var env = process.env;
+
         settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
         settings.loadFromJson("settings.test.json");
 
