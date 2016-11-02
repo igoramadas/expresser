@@ -8,18 +8,18 @@ describe("App HTTP(s) Error Tests", function () {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
-    var settings = require("../lib/settings.coffee").newInstance();
-    settings.loadFromJson("settings.test.json");
-    settings.app.port = 19080;
-
+    var settings = require("../lib/settings.coffee");
     var app = null;
     var supertest = require("supertest");
 
     before(function () {
+        settings.loadFromJson("settings.test.json");
+        settings.app.port = 18004;
+
         app = require("../lib/app.coffee").newInstance();
     });
 
-    it("Init HTTP server to test errors, port 19080", function () {
+    it("Init HTTP server to test errors, port 18004", function () {
         this.timeout(10000);
 
         app.init();

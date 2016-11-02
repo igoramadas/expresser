@@ -18,31 +18,22 @@ class DatabaseMongoDb
 
     # Init the MongoDB database module.
     # @param {Object} options Database init options.
-    init: (options) =>
+    init: =>
         database = @expresser.database
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
 
-        logger.debug "DatabaseMongoDb.init", options
+        logger.debug "DatabaseMongoDb.init"
 
         database.drivers.mongodb = this        
 
-        options = {} if not options?
-        options = lodash.defaultsDeep options, settings.database.mongodb
-
-        # DEPRECATED! The "mongo" driver was renamed to "mongodb".
-        if database.drivers.mongo?
-            logger.warn "DatabaseMongoDb.init", "The MongoDB module was renamed from mongo to mongodb!", "Please update your code to use 'mongodb' instead of 'mongo'."
-        if settings.database.mongo
-            logger.warn "DatabaseMongoDb.init", "The MongoDB module was renamed from mongo to mongodb!", "Please update your settings file to use the key 'mongodb' instead of 'mongo'."
-
         # Auto register as "mongodb" if a `connString` is defined on the settings.
-        if options.enabled and options.connString?
-            result = database.register "mongodb", "mongodb", options.connString, options.options
+        if settings.database.mongodb.enabled and settings.database.mongodb.connString?
+            result = database.register "mongodb", "mongodb", settings.database.mongodb.connString, settings.database.mongodb.options
 
-        events.emit "DatabaseMongoDb.on.init", options
+        events.emit "DatabaseMongoDb.on.init"
 
         return result
 

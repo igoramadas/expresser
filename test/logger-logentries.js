@@ -8,14 +8,7 @@ describe("Logger Logentries Tests", function () {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
-    var settings = require("../lib/settings.coffee").newInstance();
-    settings.loadFromJson("../plugins/logger-logentries/settings.default.json");
-    settings.loadFromJson("settings.test.json");
-
-    if (env["LOGENTRIES_TOKEN"]) {
-        settings.logger.logentries.token = env["LOGENTRIES_TOKEN"];
-    }
-
+    var settings = require("../lib/settings.coffee");
     var logger = null;
     var loggerLogentries = null;
     var transportLogentries = null;
@@ -38,10 +31,14 @@ describe("Logger Logentries Tests", function () {
         };
     };
 
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
-
     before(function () {
+        settings.loadFromJson("../plugins/logger-logentries/settings.default.json");
+        settings.loadFromJson("settings.test.json");
+
+        if (env["LOGENTRIES_TOKEN"]) {
+            settings.logger.logentries.token = env["LOGENTRIES_TOKEN"];
+        }
+
         logger = require("../lib/logger.coffee");
 
         loggerLogentries = require("../plugins/logger-logentries/index.coffee");
@@ -55,13 +52,17 @@ describe("Logger Logentries Tests", function () {
     });
 
     if (settings.logger.logentries && settings.logger.logentries.token) {
+        it("Creates transport object", function () {
+            logger.init();
+
+            transportLogentries = loggerLogentries.init();
+        });
+
         it("Send log to Logentries", function (done) {
             this.timeout(10000);
 
-            transportLogentries = loggerLogentries.init({
-                onLogSuccess: helperLogOnSuccess(done),
-                onLogError: helperLogOnError(done)
-            });
+            transportLogentries.onLogSuccess = helperLogOnSuccess(done);
+            transportLogentries.onLogError = helperLogOnError(done);
 
             transportLogentries.info("Expresser Logentries log test.", new Date());
         });

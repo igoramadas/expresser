@@ -20,25 +20,23 @@ class DatabaseTingoDb
 
     # Init the TingoDB database module.
     # @param {Object} options Database init options.
-    init: (options) =>
+    init: =>
         database = @expresser.database
+        events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
         utils = @expresser.utils
 
-        logger.debug "DatabaseTingoDb.init", options
+        logger.debug "DatabaseTingoDb.init"
 
         database.drivers.tingodb = this        
 
-        options = {} if not options?
-        options = lodash.defaultsDeep options, settings.database.tingodb
-
         # Auto register as "tingodb" if a `dbPath` is defined on the settings.
-        if options.enabled and options.dbPath?
-            result = database.register "tingodb", "tingodb", options.dbPath, options.options
+        if settings.database.tingodb.enabled and settings.database.tingodb.dbPath?
+            result = database.register "tingodb", "tingodb", settings.database.tingodb.dbPath, settings.database.tingodb.options
 
-        events.emit "DatabaseTingoDb.on.init", options
+        events.emit "DatabaseTingoDb.on.init"
 
         return result
 

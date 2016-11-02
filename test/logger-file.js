@@ -9,9 +9,6 @@ describe("Logger File Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    settings.loadFromJson("../plugins/logger-file/settings.default.json");
-    settings.loadFromJson("settings.test.json");
-
     var logger = null;
     var loggerFile = null;
     var transportFile = null;
@@ -32,6 +29,9 @@ describe("Logger File Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
+        settings.loadFromJson("../plugins/logger-file/settings.default.json");
+        settings.loadFromJson("settings.test.json");
+
         logger = require("../lib/logger.coffee");
 
         loggerFile = require("../plugins/logger-file/index.coffee");
@@ -44,19 +44,20 @@ describe("Logger File Tests", function () {
         settings.logger.should.have.property("file");
     });
 
-    it("Inits", function () {
+    it("Creates transport object", function () {
         logger.init();
+        transportFile = loggerFile.init();
     });
 
     it("Save log to file", function (done) {
-        transportFile = loggerFile.init({
-            onLogSuccess: helperLogOnSuccess(done),
-            onLogError: helperLogOnError(done)
-        });
+        transportFile.onLogSuccess = helperLogOnSuccess(done);
+        transportFile.onLogError = helperLogOnError(done);
 
         transportFile.info("Expresser local disk log test.", {
-            password: "obfuscated"
+            password: "obfuscated",
+            something: "hello!"
         }, new Date());
+
         transportFile.flush();
     });
 });

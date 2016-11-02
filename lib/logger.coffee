@@ -40,10 +40,10 @@ class Logger
     # IP address will be appended to logs depending on the settings.
     # @param {Object} options Logger init options.
     init: =>
-        events.emit "Logger.before.init", options
+        events.emit "Logger.before.init"
 
         if arguments.length > 0
-            logger.deprecated "Logger.init(options)", "No options param anymore. Logger will be configured based on what's defiend on the settings module."
+            @deprecated "Logger.init(options)", "No options param anymore. Logger will be configured based on what's defiend on the settings module."
 
         if settings.logger.uncaughtException
             @debug "Logger.init", "Catching unhandled exceptions."
@@ -61,7 +61,7 @@ class Logger
 
         @setEvents()
 
-        events.emit "Logger.on.init", options
+        events.emit "Logger.on.init"
 
     # Bind events.
     setEvents: =>
@@ -248,10 +248,17 @@ class Logger
     # Returns a human readable message out of the arguments.
     # @return {String} The human readable, parsed JSON message.
     # @private
-    getMessage: ->
+    getMessage: (params) ->
         separated = []
         args = []
-        args.push value for value in arguments
+
+        if arguments.length > 1
+            args.push value for value in arguments
+        else if lodash.isArray params
+            args.push value for value in params
+        else
+            args.push params
+
         args = @argsCleaner args
 
         # Parse all arguments and stringify objects. Please note that fields defined
@@ -277,8 +284,10 @@ class Logger
         serverIP = utils.getServerIP true if settings.logger.sendIP
         separated.push "IP #{serverIP}" if serverIP?
 
+        separator = settings.logger.separator
+
         # Return single string log message.
-        return separated.join settings.logger.separator
+        return separated.join separator
 
 # Singleton implementation
 # --------------------------------------------------------------------------

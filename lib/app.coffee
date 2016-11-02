@@ -24,8 +24,6 @@ class App
 
     # @property {Object} Exposes the Express HTTP or HTTPS `server` object.
     server: null
-    httpServer: null
-    httpsServer: null
 
     # @property [Array<Object>] Array of additional middlewares to be used
     # by the Express server. These will be called before anything is processed,
@@ -78,7 +76,8 @@ class App
         @server.set "view options", { layout: false }
 
         # Prepend middlewares, if any was specified.
-        @server.use mw for mw in @prependMiddlewares
+        if @prependMiddlewares.length > 0
+            @server.use mw for mw in @prependMiddlewares
             
         # Use Express basic handlers.
         @server.use midBodyParser.json {limit: settings.app.bodyParser.limit}
@@ -98,7 +97,8 @@ class App
         @server.use ConnectAssets
 
         # Append extra middlewares, if any was specified.
-        @server.use mw for mw in @appendMiddlewares
+        if @appendMiddlewares.length > 0
+            @server.use mw for mw in @appendMiddlewares
 
         # Configure development environment to dump exceptions and show stack.
         if nodeEnv is "development" or nodeEnv is "test"
@@ -135,15 +135,13 @@ class App
                     sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
                     sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
                     sslOptions = {key: sslKey, cert: sslCert}
-                    @httpsServer = https.createServer sslOptions, @server
-                    serverRef = @httpsServer
+                    serverRef = https.createServer sslOptions, @server
                 else
                     throw new Error "The certificate files could not be found. Please check the 'settings.app.ssl' settings."
             else
                 throw new Error "SSL is enabled but no key and certificate files were defined. Please check the 'settings.app.ssl' settings."
         else
-            @httpServer = http.createServer @server
-            serverRef = @httpServer
+            serverRef = http.createServer @server
 
         # Start the app!
         if settings.app.ip? and settings.app.ip isnt ""
@@ -163,7 +161,8 @@ class App
             @redirectorServer = http.createServer redirServer
             @redirectorServer.listen settings.app.ssl.redirectorPort
 
-        events.emit "App.on.startServer"
+        # Pass the HTTP(s) server created to external modules.
+        events.emit "App.on.startServer", serverRef
 
     # HELPER AND UTILS
     # --------------------------------------------------------------------------

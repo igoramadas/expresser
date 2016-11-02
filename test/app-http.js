@@ -8,14 +8,14 @@ describe("App HTTP Tests", function () {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
-    var settings = require("../lib/settings.coffee").newInstance();
-    settings.loadFromJson("settings.test.json");
-    settings.app.port = 18080;
-
+    var settings = require("../lib/settings.coffee");
     var app = null;
     var supertest = require("supertest");
 
     before(function () {
+        settings.loadFromJson("settings.test.json");
+        settings.app.port = 18001;
+
         app = require("../lib/app.coffee").newInstance();
     });
 
@@ -23,7 +23,7 @@ describe("App HTTP Tests", function () {
         settings.should.have.property("app");
     });
 
-    it("Init HTTP server with custom middleware, port 18080", function () {
+    it("Init HTTP server with custom middleware, port 18001", function () {
         this.timeout(10000);
 
         var middleware = function (req, res, next) {
@@ -36,11 +36,8 @@ describe("App HTTP Tests", function () {
             next();
         };
 
-        var options = {
-            appendMiddlewares: middleware
-        };
-
-        app.init(options);
+        app.appendMiddlewares.push(middleware);
+        app.init();
     });
 
     it("Renders a test view", function (done) {

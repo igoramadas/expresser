@@ -22,21 +22,19 @@ class LoggerLoggly
     # Init the Loggly module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
     # @param {Object} options LoggerLoggly init options.
-    init: (options) =>
+    init: =>
+        events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
 
         logger.drivers.loggly = this
 
-        options = {} if not options?
-        options = lodash.defaultsDeep options, settings.logger.loggly
-
         # Auto register as "loggly" if a default token is defined on the settings.
-        if options.enabled and options.token?
-            result = logger.register "loggly", "loggly", options
+        if settings.logger.loggly.enabled and settings.logger.loggly.token?
+            result = logger.register "loggly", "loggly", settings.logger.loggly
 
-        events.emit "LoggerLoggly.on.init", options
+        events.emit "LoggerLoggly.on.init"
 
         return result
 

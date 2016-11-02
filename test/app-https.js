@@ -8,21 +8,21 @@ describe("App HTTPS Tests", function () {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
-    var settings = require("../lib/settings.coffee").newInstance();
-    settings.loadFromJson("settings.test.json");
-    settings.app.port = 18443;
-    settings.app.ssl.enabled = true;
-    settings.app.ssl.keyFile = "localhost.key";
-    settings.app.ssl.certFile = "localhost.crt";
-
+    var settings = require("../lib/settings.coffee");
     var app = null;
     var supertest = require("supertest");
 
     before(function () {
+        settings.loadFromJson("settings.test.json");
+        settings.app.port = 18002;
+        settings.app.ssl.enabled = true;
+        settings.app.ssl.keyFile = "localhost.key";
+        settings.app.ssl.certFile = "localhost.crt";
+
         app = require("../lib/app.coffee").newInstance();
     });
 
-    it("Init HTTPS server with custom middleware array, port 18443", function () {
+    it("Init HTTPS server with custom middleware array, port 18002", function () {
         this.timeout(10000);
 
         var middleware1 = function (req, res, next) {
@@ -45,11 +45,9 @@ describe("App HTTPS Tests", function () {
             next();
         };
 
-        var options = {
-            appendMiddlewares: [middleware1, middleware2]
-        };
-
-        app.init(options);
+        app.appendMiddlewares.push(middleware1);
+        app.appendMiddlewares.push(middleware2);
+        app.init();
     });
 
     it("Renders test middleware 1", function (done) {

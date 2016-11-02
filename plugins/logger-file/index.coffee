@@ -21,7 +21,7 @@ class LoggerFile
     # Init the File module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
     # @param {Object} options File init options.
-    init: (options) =>
+    init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -30,15 +30,12 @@ class LoggerFile
 
         logger.drivers.file = this
 
-        options = {} if not options?
-        options = lodash.defaultsDeep options, settings.logger.file
-
         # Auto register as "file" if a default path is defined on the settings.
-        if options.enabled and options.path?
-            result = logger.register "file", "file", options
+        if settings.logger.file.enabled and settings.logger.file.path?
+            result = logger.register "file", "file", settings.logger.file
 
-        events.emit "LoggerFile.on.init", options
-
+        events.emit "LoggerFile.on.init"
+        
         return result
 
     # Get the file transport object.

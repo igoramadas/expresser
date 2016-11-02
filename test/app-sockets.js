@@ -8,11 +8,7 @@ describe("App Sockets Tests", function () {
     var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
-    var settings = require("../lib/settings.coffee").newInstance();
-    settings.loadFromJson("../plugins/sockets/settings.default.json");
-    settings.loadFromJson("settings.test.json");
-    settings.app.port = 20080;
-
+    var settings = require("../lib/settings.coffee");
     var app = null;
     var sockets = null;
     var socketClient = require("socket.io-client");
@@ -20,10 +16,14 @@ describe("App Sockets Tests", function () {
 
     var socketClientOptions = {
         transports: ["websocket"],
-        "force new connection": true
+        forceNew: true
     };
 
     before(function () {
+        settings.loadFromJson("../plugins/sockets/settings.default.json");
+        settings.loadFromJson("settings.test.json");
+        settings.app.port = 18003;
+
         app = require("../lib/app.coffee").newInstance();
 
         sockets = require("../plugins/sockets/index.coffee");
@@ -36,20 +36,15 @@ describe("App Sockets Tests", function () {
         settings.should.have.property("sockets");
     });
 
-    it("Init app server with sockets, port 8080", function (done) {
-        this.timeout(10000);
+    it("Init app server with sockets, port 18003", function () {
+        this.timeout(5000);
 
-        var delayedInit = function () {
-            sockets.init(app.httpServer);
-            done();
-        };
-
+        sockets.init();
         app.init();
-        setTimeout(delayedInit, 500);
     });
 
     it("Emits sockets message from client to server", function (done) {
-        this.timeout(10000);
+        this.timeout(5000);
 
         var client;
 
@@ -74,12 +69,12 @@ describe("App Sockets Tests", function () {
         };
 
         sockets.listenTo("client-to-server", clientToServer, false);
-        client = socketClient.connect("http://localhost:20080", socketClientOptions);
+        client = socketClient("http://localhost:18003/", socketClientOptions);
         client.on("connect", clientConnected);
     });
 
     it("Emits sockets message from server to client", function (done) {
-        this.timeout(10000);
+        this.timeout(5000);
 
         var client;
 
@@ -104,7 +99,7 @@ describe("App Sockets Tests", function () {
             sockets.emit("server-to-client", "test123");
         };
 
-        client = socketClient.connect("http://localhost:20080", socketClientOptions);
+        client = socketClient("http://localhost:18003/", socketClientOptions);
         client.on("connect", clientConnected);
     });
 });

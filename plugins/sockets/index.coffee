@@ -8,13 +8,14 @@
 # -->
 class Sockets
 
+    app = null
     events = null
     lodash =  null
     logger = null
     settings = null
 
     # @property {Array} Holds a list of current event listeners.
-    currentListeners: null
+    currentListeners: []
 
     # @property [Socket.IO Object] Exposes Socket.IO object to external modules.
     io: null
@@ -23,29 +24,27 @@ class Sockets
     # --------------------------------------------------------------------------
 
     # Init the Sockets plugin.
-    init: (options) =>
+    init: =>
+        app = @expresser.app
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
 
-        @bind options if options?
+        @setEvents()
 
-        events.emit "Sockets.on.init", options
+        events.emit "Sockets.on.init"
+
+    # Bind events.
+    setEvents: =>
+        events.on "App.on.startServer", @bind
 
     # Bind the Socket.IO object to the Express app. This will also set the counter
     # to increase / decrease when users connects or disconnects from the app.
     # @param {Object} options Sockets init options.
     # @option options {Object} server The Express server object to bind to.
-    bind: (options) =>
-        options = {server: options} if not options.server?
-        @currentListeners = []
-
-        if not options.server?
-            logger.error "Sockets.init", "App server is invalid. Abort!"
-            return
-
-        @io = require("socket.io") options.server
+    bind: (server) =>
+        @io = require("socket.io") server
 
         # Listen to user connection count updates.
         @io.sockets.on "connection", (socket) =>
@@ -63,11 +62,12 @@ class Sockets
     # @param {String} key The event key.
     # @param {Object} data The JSON data to be sent out to clients.
     emit: (key, data) =>
-        if @io?
-            @io.emit key, data
-            logger.debug "Sockets.emit", key, JSON.stringify(data).length + " bytes"
-        else
-            logger.debug "Sockets.emit", key, "Sockets not initiated yet, abort!"
+        if not @io?
+            return logger.warn "Sockets.emit", key, JSON.stringify(data).length + " bytes", "Sockets not initiated yet, abort!"
+            
+        logger.debug "Sockets.emit", key, data
+
+        @io.emit key, data            
 
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.
@@ -75,16 +75,17 @@ class Sockets
     # @param {Method} callback The callback to be called when key is triggered.
     # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
     listenTo: (key, callback, onlyNewClients) =>
-        return if not callback?
+        if not @io?.sockets?
+            return logger.warn "Sockets.listenTo", key, "Sockets not initiated yet, abort!"
 
         onlyNewClients = false if not onlyNewClients?
         @currentListeners.push {key: key, callback: callback}
 
+        logger.debug "Sockets.listenTo", key, callback, onlyNewClients
+
         if not onlyNewClients
             for key, socket of @io.sockets.connected
                 socket.on key, callback
-
-        logger.debug "Sockets.listenTo", key
 
     # Stops listening to the specified event key.
     # @param {String} key The event key.
