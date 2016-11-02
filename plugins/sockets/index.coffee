@@ -25,7 +25,6 @@ class Sockets
 
     # Init the Sockets plugin.
     init: =>
-        app = @expresser.app
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger

@@ -15,6 +15,7 @@ describe("App HTTP Tests", function () {
     before(function () {
         settings.loadFromJson("settings.test.json");
         settings.app.port = 18001;
+        settings.app.ssl.enabled = false;
 
         app = require("../lib/app.coffee").newInstance();
     });
