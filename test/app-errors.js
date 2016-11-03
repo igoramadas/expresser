@@ -1,11 +1,11 @@
 // TEST: APP ERRORS
 
 require("coffee-script/register");
+var env = process.env;
 var chai = require("chai");
 chai.should();
 
 describe("App HTTP(s) Error Tests", function () {
-    var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");

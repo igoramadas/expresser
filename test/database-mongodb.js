@@ -1,11 +1,11 @@
 // TEST: DATABASE MONGODB
 
 require("coffee-script/register");
+var env = process.env;
 var chai = require("chai");
 chai.should();
 
 describe("Database MongoDB Tests", function () {
-    var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
@@ -17,8 +17,6 @@ describe("Database MongoDB Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
-        var env = process.env;
-
         settings.loadFromJson("../plugins/database-mongodb/settings.default.json");
         settings.loadFromJson("settings.test.json");
 

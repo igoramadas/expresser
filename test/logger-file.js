@@ -1,11 +1,11 @@
 // TEST: LOGGER FILE
 
 require("coffee-script/register");
+var env = process.env;
 var chai = require("chai");
 chai.should();
 
 describe("Logger File Tests", function () {
-    var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
@@ -32,12 +32,12 @@ describe("Logger File Tests", function () {
         settings.loadFromJson("../plugins/logger-file/settings.default.json");
         settings.loadFromJson("settings.test.json");
 
-        logger = require("../lib/logger.coffee");
+        logger = require("../lib/logger.coffee").newInstance();
 
         loggerFile = require("../plugins/logger-file/index.coffee");
         loggerFile.expresser = require("../index.coffee");
         loggerFile.expresser.events = require("../lib/events.coffee");
-        loggerFile.expresser.logger = require("../lib/logger.coffee");
+        loggerFile.expresser.logger = logger;
     });
 
     it("Has settings defined", function () {

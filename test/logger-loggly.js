@@ -1,16 +1,14 @@
 // TEST: LOGGER LOGGLY
 
 require("coffee-script/register");
+var env = process.env;
 var chai = require("chai");
 chai.should();
 
 describe("Logger Loggly Tests", function () {
-    var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-
-
     var logger = null;
     var loggerLoggly = null;
     var transportLoggly = null;
@@ -31,8 +29,6 @@ describe("Logger Loggly Tests", function () {
     // ----------------------------------------------------------------------------------
 
     before(function () {
-        var env = process.env;
-
         settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
         settings.loadFromJson("settings.test.json");
 
@@ -44,12 +40,12 @@ describe("Logger Loggly Tests", function () {
             settings.logger.loggly.subdomain = env["LOGGLY_SUBDOMAIN"];
         }
 
-        logger = require("../lib/logger.coffee");
+        logger = require("../lib/logger.coffee").newInstance();
 
         loggerLoggly = require("../plugins/logger-loggly/index.coffee");
         loggerLoggly.expresser = require("../index.coffee");
         loggerLoggly.expresser.events = require("../lib/events.coffee");
-        loggerLoggly.expresser.logger = require("../lib/logger.coffee");
+        loggerLoggly.expresser.logger = logger;
     });
 
     it("Has settings defined", function () {

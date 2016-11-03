@@ -1,11 +1,11 @@
 // TEST: LOGGER LOGENTRIES
 
 require("coffee-script/register");
+var env = process.env;
 var chai = require("chai");
 chai.should();
 
 describe("Logger Logentries Tests", function () {
-    var env = process.env;
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
@@ -32,8 +32,6 @@ describe("Logger Logentries Tests", function () {
     };
 
     before(function () {
-        var env = process.env;
-
         settings.loadFromJson("../plugins/logger-logentries/settings.default.json");
         settings.loadFromJson("settings.test.json");
 
@@ -41,12 +39,12 @@ describe("Logger Logentries Tests", function () {
             settings.logger.logentries.token = env["LOGENTRIES_TOKEN"];
         }
 
-        logger = require("../lib/logger.coffee");
+        logger = require("../lib/logger.coffee").newInstance();
 
         loggerLogentries = require("../plugins/logger-logentries/index.coffee");
         loggerLogentries.expresser = require("../index.coffee");
         loggerLogentries.expresser.events = require("../lib/events.coffee");
-        loggerLogentries.expresser.logger = require("../lib/logger.coffee");
+        loggerLogentries.expresser.logger = logger;
     });
 
     it("Has settings defined", function () {

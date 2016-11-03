@@ -1,17 +1,14 @@
 // TEST: DOWNLOADER
 
 require("coffee-script/register");
+var env = process.env;
 var chai = require("chai");
 chai.should();
 
-describe("Downloader Tests", function() {
-    var env = process.env;
+describe("Downloader Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
-    settings.loadFromJson("../plugins/downloader/settings.default.json");
-    settings.loadFromJson("settings.test.json");
-
     var fs = require("fs");
     var utils = null;
     var downloader = null;
@@ -19,26 +16,30 @@ describe("Downloader Tests", function() {
     // TESTS STARTS HERE!!!
     // ----------------------------------------------------------------------------------
 
-    before(function() {
+    before(function () {
+        settings.loadFromJson("../plugins/downloader/settings.default.json");
+        settings.loadFromJson("settings.test.json");
+
         utils = require("../lib/utils.coffee");
-        downloader = require("../plugins/downloader/index.coffee");
+
+        downloader = require("../plugins/downloader/index.coffee").newInstance();
         downloader.expresser = require("../index.coffee");
         downloader.expresser.events = require("../lib/events.coffee");
         downloader.expresser.logger = require("../lib/logger.coffee");
     });
 
-    it("Has settings defined", function() {
+    it("Has settings defined", function () {
         settings.should.have.property("downloader");
     });
 
-    it("Inits", function() {
+    it("Inits", function () {
         downloader.init();
     });
 
-    it("Download with redirect (Google index html)", function(done) {
+    it("Download with redirect (Google index html)", function (done) {
         this.timeout(10000);
 
-        var callback = function(err, obj) {
+        var callback = function (err, obj) {
             if (err) {
                 throw err;
             } else {
@@ -51,13 +52,13 @@ describe("Downloader Tests", function() {
         downloader.download("http://google.com/", saveTo, callback);
     });
 
-    it("Force stop a download", function(done) {
+    it("Force stop a download", function (done) {
         this.timeout(10000);
         settings.downloader.preventDuplicates = false;
 
         var d, saveTo, downUrl;
 
-        var callback = function(err, obj) {
+        var callback = function (err, obj) {
             done();
         };
 
@@ -67,13 +68,13 @@ describe("Downloader Tests", function() {
         d.stop()
     });
 
-    it("Prevent duplicate downloads", function(done) {
+    it("Prevent duplicate downloads", function (done) {
         this.timeout(10000);
         settings.downloader.preventDuplicates = true;
 
         var d1, d2, saveTo, downUrl;
 
-        var callback1 = function(err, obj) {
+        var callback1 = function (err, obj) {
             try {
                 if (fs.existsSync(obj.saveTo)) {
                     fs.unlinkSync(obj.saveTo);
@@ -83,7 +84,7 @@ describe("Downloader Tests", function() {
             }
         };
 
-        var callback2 = function(err, obj) {
+        var callback2 = function (err, obj) {
             d1.stop();
 
             if (err && err.duplicate && d1 != d2) {
