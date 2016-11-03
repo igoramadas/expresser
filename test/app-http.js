@@ -20,6 +20,10 @@ describe("App HTTP Tests", function () {
         app = require("../lib/app.coffee").newInstance();
     });
 
+    after(function () {
+        app.kill();
+    });
+
     it("Has app settings defined", function () {
         settings.should.have.property("app");
     });

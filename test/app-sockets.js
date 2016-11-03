@@ -37,6 +37,10 @@ describe("App Sockets Tests", function () {
         sockets.expresser.logger = require("../lib/logger.coffee");
     });
 
+    after(function () {
+        app.kill();
+    });
+
     it("Has sockets settings defined", function () {
         settings.should.have.property("sockets");
     });

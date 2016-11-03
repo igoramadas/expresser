@@ -24,6 +24,7 @@ class App
 
     # @property {Object} Exposes the Express HTTP or HTTPS `server` object.
     server: null
+    webServer: null
 
     # @property [Array<Object>] Array of additional middlewares to be used
     # by the Express server. These will be called before anything is processed,
@@ -161,8 +162,14 @@ class App
             @redirectorServer = http.createServer redirServer
             @redirectorServer.listen settings.app.ssl.redirectorPort
 
+        @webServer = serverRef
+
         # Pass the HTTP(s) server created to external modules.
         events.emit "App.on.startServer", serverRef
+
+    # Kill the underlying Express server and shut down the app.
+    kill: =>
+        @webServer.close()
 
     # HELPER AND UTILS
     # --------------------------------------------------------------------------

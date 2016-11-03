@@ -20,6 +20,10 @@ describe("App HTTP(s) Error Tests", function () {
         app = require("../lib/app.coffee").newInstance();
     });
 
+    after(function () {
+        app.kill();
+    });
+
     it("Init HTTP server to test errors, port 18004", function () {
         this.timeout(10000);
 

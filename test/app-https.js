@@ -22,6 +22,10 @@ describe("App HTTPS Tests", function () {
         app = require("../lib/app.coffee").newInstance();
     });
 
+    after(function () {
+        app.kill();
+    });
+
     it("Init HTTPS server with custom middleware array, port 18002", function () {
         this.timeout(10000);
 
