@@ -89,7 +89,7 @@ class PaaS
 
     # Update mailer settings.
     mailerSettings: =>
-        currentSmtpHost = settings.mailer.smtp?.host?.toLowerCase()
+        currentSmtpHost = settings.mailer?.smtp?.host?.toLowerCase()
         currentSmtpHost = "" if not currentSmtpHost?
 
         # Get and set Mailgun.
