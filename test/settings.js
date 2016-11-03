@@ -12,20 +12,12 @@ describe("Settings Tests", function () {
     var fs = require("fs");
     var utils = null;
 
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
-
     before(function () {
         settings.loadFromJson("settings.test.json");
 
         utils = require("../lib/utils.coffee");
     });
 
-    it("Is single instance", function () {
-        settings.singleInstance = true;
-        var settings2 = require("../lib/settings.coffee");
-        settings.singleInstance.should.equal(settings2.singleInstance);
-    });
 
     it("Settings file watchers properly working", function (done) {
         this.timeout(10000);

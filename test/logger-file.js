@@ -25,9 +25,6 @@ describe("Logger File Tests", function () {
         };
     };
 
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
-
     before(function () {
         settings.loadFromJson("../plugins/logger-file/settings.default.json");
         settings.loadFromJson("settings.test.json");

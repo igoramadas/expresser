@@ -11,9 +11,6 @@ describe("Logger Tests", function () {
     var settings = require("../lib/settings.coffee");
     var logger = null;
 
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
-
     before(function () {
         settings.loadFromJson("settings.test.json");
 

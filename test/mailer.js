@@ -13,9 +13,6 @@ describe("Mailer Tests", function () {
     var utils = null;
     var mailer = null;
 
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
-
     before(function () {
         settings.loadFromJson("../plugins/mailer/settings.default.json");
         settings.loadFromJson("settings.test.json");

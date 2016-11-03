@@ -25,9 +25,6 @@ describe("Logger Loggly Tests", function () {
         };
     };
 
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
-
     before(function () {
         settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
         settings.loadFromJson("settings.test.json");

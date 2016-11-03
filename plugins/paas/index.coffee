@@ -24,6 +24,10 @@ class PaaS
 
         env = process.env
 
+        @setEvents()
+
+    # Bind events.
+    setEvents: =>
         events.on "App.before.init", => @appSettings()
         events.on "Database.before.init", => @databaseSettings()
         events.on "Logger.before.init", => @loggerSettings()

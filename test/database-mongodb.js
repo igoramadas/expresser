@@ -13,9 +13,6 @@ describe("Database MongoDB Tests", function () {
     var databaseMongo = null;
     var dbMongo = null;
 
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
-
     before(function () {
         settings.loadFromJson("../plugins/database-mongodb/settings.default.json");
         settings.loadFromJson("settings.test.json");

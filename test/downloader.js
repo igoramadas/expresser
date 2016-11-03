@@ -13,16 +13,13 @@ describe("Downloader Tests", function () {
     var utils = null;
     var downloader = null;
 
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
-
     before(function () {
         settings.loadFromJson("../plugins/downloader/settings.default.json");
         settings.loadFromJson("settings.test.json");
 
         utils = require("../lib/utils.coffee");
 
-        downloader = require("../plugins/downloader/index.coffee").newInstance();
+        downloader = require("../plugins/downloader/index.coffee");
         downloader.expresser = require("../index.coffee");
         downloader.expresser.events = require("../lib/events.coffee");
         downloader.expresser.logger = require("../lib/logger.coffee");

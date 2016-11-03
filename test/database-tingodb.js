@@ -13,9 +13,6 @@ describe("Database TingoDB Tests", function () {
     var databaseTingo = null;
     var dbTingo = null;
 
-    // TESTS STARTS HERE!!!
-    // ----------------------------------------------------------------------------------
-
     before(function () {
         settings.loadFromJson("../plugins/database-tingodb/settings.default.json");
         settings.loadFromJson("settings.test.json");
