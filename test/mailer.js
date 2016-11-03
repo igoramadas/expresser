@@ -6,8 +6,8 @@ var chai = require("chai");
 chai.should();
 
 describe("Mailer Tests", function () {
-
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
+    var hasEnv = env["SMTP_USER"] ? true : false;
 
     var settings = require("../lib/settings.coffee");
     var utils = null;
@@ -41,7 +41,7 @@ describe("Mailer Tests", function () {
         mailer.init();
     });
 
-    if (settings.mailer.smtp.user && settings.mailer.smtp.password) {
+    if (hasEnv) {
         it("Sends a test email", function (done) {
             this.timeout(20000);
 

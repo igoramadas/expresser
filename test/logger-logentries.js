@@ -7,6 +7,7 @@ chai.should();
 
 describe("Logger Logentries Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
+    var hasEnv = env["LOGENTRIES_TOKEN"] ? true : false;
 
     var settings = require("../lib/settings.coffee");
     var logger = null;
@@ -14,19 +15,17 @@ describe("Logger Logentries Tests", function () {
     var transportLogentries = null;
 
     var helperLogOnSuccess = function (done) {
-        if (done.ran) return;
-        done.ran = true;
-
         return function (result) {
+            if (done.ran) return;
+            done.ran = true;
             done();
         };
     };
 
     var helperLogOnError = function (done) {
-        if (done.ran) return;
-        done.ran = true;
-
         return function (err) {
+            if (done.ran) return;
+            done.ran = true;
             done(err);
         };
     };
@@ -51,7 +50,7 @@ describe("Logger Logentries Tests", function () {
         settings.logger.should.have.property("logentries");
     });
 
-    if (settings.logger.logentries && settings.logger.logentries.token) {
+    if (hasEnv) {
         it("Creates transport object", function () {
             logger.init();
 
@@ -61,8 +60,8 @@ describe("Logger Logentries Tests", function () {
         it("Send log to Logentries", function (done) {
             this.timeout(10000);
 
-            transportLogentries.onLogSuccess = helperLogOnSuccess(done);
-            transportLogentries.onLogError = helperLogOnError(done);
+            transportLogentries.client.on("log", helperLogOnSuccess(done));
+            transportLogentries.client.on("error", helperLogOnError(done));
 
             transportLogentries.info("Expresser Logentries log test.", new Date());
         });

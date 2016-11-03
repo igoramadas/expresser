@@ -7,6 +7,7 @@ chai.should();
 
 describe("Logger Loggly Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
+    var hasEnv = env["LOGGLY_TOKEN"] ? true : false;
 
     var settings = require("../lib/settings.coffee");
     var logger = null;
@@ -15,12 +16,16 @@ describe("Logger Loggly Tests", function () {
 
     var helperLogOnSuccess = function (done) {
         return function (result) {
+            if (done.ran) return;
+            done.ran = true;
             done();
         };
     };
 
     var helperLogOnError = function (done) {
         return function (err) {
+            if (done.ran) return;
+            done.ran = true;
             done(err);
         };
     };
@@ -49,7 +54,7 @@ describe("Logger Loggly Tests", function () {
         settings.logger.should.have.property("loggly");
     });
 
-    if (settings.logger.loggly && settings.logger.loggly.token && settings.logger.loggly.subdomain) {
+    if (hasEnv) {
         it("Creates transport object", function () {
             logger.init();
 

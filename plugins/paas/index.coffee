@@ -98,8 +98,10 @@ class PaaS
             smtpUser = env.MAILGUN_SMTP_LOGIN
             smtpPassword = env.MAILGUN_SMTP_PASSWORD
 
-            if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+            if smtpUser? and smtpUser isnt ""
                 settings.mailer.smtp.user = smtpUser
+
+            if smtpPassword? and smtpPassword isnt ""
                 settings.mailer.smtp.password = smtpPassword
 
         # Get and set Mandrill.
@@ -108,8 +110,10 @@ class PaaS
             smtpUser = env.MANDRILL_USERNAME
             smtpPassword = env.MANDRILL_APIKEY
 
-            if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+            if smtpUser? and smtpUser isnt ""
                 settings.mailer.smtp.user = smtpUser
+
+            if smtpPassword? and smtpPassword isnt ""
                 settings.mailer.smtp.password = smtpPassword
 
         # Get and set SendGrid.
@@ -118,8 +122,10 @@ class PaaS
             smtpUser = env.SENDGRID_USERNAME
             smtpPassword = env.SENDGRID_PASSWORD
 
-            if smtpUser? and smtpUser isnt "" and smtpPassword? and smtpPassword isnt ""
+            if smtpUser? and smtpUser isnt ""
                 settings.mailer.smtp.user = smtpUser
+
+            if smtpPassword? and smtpPassword isnt ""
                 settings.mailer.smtp.password = smtpPassword
 
         if settings.logger.console
