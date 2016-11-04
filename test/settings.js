@@ -22,7 +22,9 @@ describe("Settings Tests", function () {
     it("Settings file watchers properly working", function (done) {
         this.timeout(10000);
 
+        var doneCalled = false;
         var filename = "./settings.test.json";
+
         if (process.versions.node.indexOf(".10.") > 0) {
             var originalJson = fs.readFileSync(filename, {
                 encoding: "utf8"
@@ -30,17 +32,19 @@ describe("Settings Tests", function () {
         } else {
             var originalJson = fs.readFileSync(filename, "utf8");
         }
+
         var newJson = utils.minifyJson(originalJson);
 
         var callback = function () {
-            if (process.versions.node.indexOf(".10.") > 0) {
-                fs.writeFileSync(filename, originalJson, {
-                    encoding: "utf8"
-                });
-            } else {
-                fs.writeFileSync(filename, originalJson, "utf8");
-            }
+            if (doneCalled) return;
+            doneCalled = true;
+
             unwatch();
+
+            fs.writeFileSync(filename, originalJson, {
+                encoding: "utf8"
+            });
+
             done();
         };
 
@@ -54,6 +58,10 @@ describe("Settings Tests", function () {
         try {
             fs.writeFileSync(filename, JSON.stringify(newJson, null, 4));
         } catch (ex) {
+            if (doneCalled) return;
+            doneCalled = true;
+
+            unwatch();
             done(ex);
         }
     });

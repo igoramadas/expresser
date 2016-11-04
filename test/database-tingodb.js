@@ -87,7 +87,7 @@ describe("Database TingoDB Tests", function () {
         };
 
         var filter = {
-            complex: true
+            testId: testTimestamp
         };
 
         dbTingo.get("test", filter, callback);

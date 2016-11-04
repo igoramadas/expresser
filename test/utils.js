@@ -11,24 +11,43 @@ describe("Utils Tests", function () {
 
     var settings = require("../lib/settings.coffee");
     var utils = require("../lib/utils.coffee");
+    var lodash = require("lodash");
+
+    var recursiveTarget = __dirname + "/mkdir/directory/inside/another";
+
+    var cleanup = function () {
+        if (fs.existsSync(recursiveTarget)) {
+            fs.rmdirSync(__dirname + "/mkdir/directory/inside/another");
+            fs.rmdirSync(__dirname + "/mkdir/directory/inside");
+            fs.rmdirSync(__dirname + "/mkdir/directory");
+            fs.rmdirSync(__dirname + "/mkdir");
+        }
+    };
+
+    before(function () {
+        cleanup();
+    });
+
+    after(function () {
+        cleanup();
+    });
 
     it("Creates directory recursively", function (done) {
         this.timeout = 5000;
 
-        var target = __dirname + "/some/directory/inside/another";
         var checkDir = function () {
-            var stat = fs.statSync(target);
+            var stat = fs.statSync(recursiveTarget);
 
             if (stat.isDirectory()) {
                 done();
             } else {
-                done("Folder " + target + " was not created.");
+                done("Folder " + recursiveTarget + " was not created.");
             }
         };
 
-        utils.mkdirRecursive(target);
+        utils.mkdirRecursive(recursiveTarget);
 
-        setTimeout(1000, checkDir);
+        setTimeout(checkDir, 1000);
     });
 
     it("Get valid server info", function (done) {
@@ -38,6 +57,24 @@ describe("Utils Tests", function () {
             done();
         } else {
             done("Could not get CPU core count from server info result.");
+        }
+    });
+
+    it("Generate unique IDs", function (done) {
+        var ids = [];
+        var max = 500;
+        var i;
+
+        for (i = 0; i < max; i++) {
+            ids.push(utils.uuid());
+        }
+
+        var noduplicates = lodash.uniq(ids);
+
+        if (noduplicates.length == max) {
+            done();
+        } else {
+            done("Out of " + max + ", " + max - noduplicates.length + " of the generated IDs were not unique.");
         }
     });
 });

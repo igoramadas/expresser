@@ -116,7 +116,7 @@ describe("Database MongoDB Tests", function () {
             };
 
             var filter = {
-                complex: true
+                testId: testTimestamp
             };
 
             dbMongo.get("test", filter, callback);

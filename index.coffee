@@ -3,6 +3,7 @@
 # A platform for Node.js web apps, built on top of Express.
 # If you need help check the project page at http://github.com/igoramadas/expresser.
 class Expresser
+    newInstance: -> return new Expresser()
 
     fs = require "fs"
     path = require "path"
@@ -25,15 +26,15 @@ class Expresser
         moment: require "moment"
 
     # Helper to load default modules. Basically everything inside the lib folder.
-    initDefaultModules = (self, options) ->
+    initDefaultModules = (self) ->
         for id, m of self
-            if id isnt "app" and m?.init? and self.settings[id]?.enabled
-                self[id].init? options?[id]
+            if id isnt "app" and m?.init?
+                self[id].init?()
 
     # Helper to load plugins. This will look first inside a /plugins
     # folder for local development setups, or directly under /node_modules
     # for plugins installed via NPM (most production scenarios).
-    loadPlugins = (self, options) ->
+    loadPlugins = (self) ->
         if fs.existsSync "#{__dirname}/plugins"
             pluginsFolder = true
             plugins = fs.readdirSync "#{__dirname}/plugins"
@@ -65,12 +66,11 @@ class Expresser
                 # Check if there are default settings to be loaded for the plugin.
                 if fs.existsSync pluginSettingsPath
                     self.settings.loadFromJson pluginSettingsPath, true
-                    options = self.libs.lodash.defaults options, self.settings
 
-                # Get options accordingly to plugin name. For example the expresser-database-mongo
-                # should have its options set under settings.database.mongo.
+                # Get options accordingly to plugin name. For example the expresser-database-mongodb
+                # should have its options set under settings.database.mongodb.
                 pluginArr = pluginName.split "-"
-                optionsRef = options
+                optionsRef = self.settings
                 i = 0
 
                 while i < pluginArr.length
@@ -79,23 +79,22 @@ class Expresser
 
                 # Init plugin only if enabled is not set to false on its settings.
                 if optionsRef?.enabled
-                    self[pluginName].init?()
+                    self[pluginName].init? optionsRef
 
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App. The `options` can have properties to be
     # passed to the `init` of each module.
     # @param {Object} options Options to be passed to each init module.
-    init: (options) =>
-        options = {} if not options?
-
-        initDefaultModules this, options
-        loadPlugins this, options
+    init: =>
+        return 
+        initDefaultModules this
+        loadPlugins this
 
         # App must be the last thing to be started!
         # The Firewall and Sockets modules are initiated inside the App
         # depending on their settings.
         @app.expresser = this
-        @app.init options?.app
+        @app.init()
 
 # Singleton implementation
 # --------------------------------------------------------------------------
