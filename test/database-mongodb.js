@@ -75,7 +75,7 @@ describe("Database MongoDB Tests", function () {
             setTimeout(execution, 2000);
         });
 
-        it("MongoDB - Add 500 records to the database", function (done) {
+        it("Add 500 records to the database", function (done) {
             this.timeout(12000);
 
             var counter = 500;
@@ -102,7 +102,7 @@ describe("Database MongoDB Tests", function () {
             setTimeout(execution, 100);
         });
 
-        it("MongoDB - Updates all previously created records on the database", function (done) {
+        it("Updates all previously created records on the database", function (done) {
             var callback = function (err, result) {
                 if (err) {
                     done(err);

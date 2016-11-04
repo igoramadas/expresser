@@ -76,6 +76,7 @@ describe("PaaS Tests", function () {
         var connString = "127.0.0.1/mongo-test";
 
         env.MONGOLAB_URI = connString;
+        env.VCAP_SERVICES = "{}";
         database.init();
 
         if (settings.database.mongodb.connString != connString) {
@@ -116,6 +117,7 @@ describe("PaaS Tests", function () {
         }
 
         env.MAILGUN_SMTP_LOGIN = originalEnv;
+
         done(err);
     });
 });

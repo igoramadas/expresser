@@ -10,13 +10,15 @@ describe("Logger File Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    var events = require("../lib/events.coffee");
     var logger = null;
     var loggerFile = null;
     var transport = null;
+    var logSaved = false;
 
-    var helperLogOnSuccess = function (done) {
+    var helperLogOnSuccess = function () {
         return function (result) {
-            done();
+            logSaved = true;
         };
     };
 
@@ -28,7 +30,14 @@ describe("Logger File Tests", function () {
 
     var deleteLogsFolder = function () {
         if (fs.existsSync(settings.logger.file.path)) {
-            fs.unlinkSync(settings.logger.file.path);
+            var files = fs.readdirSync(settings.logger.file.path);
+            var f;
+
+            for (f = 0; f < files.length; f++) {
+                fs.unlinkSync(settings.logger.file.path + files[f]);
+            }
+
+            fs.rmdirSync(settings.logger.file.path);
         }
     };
 
@@ -61,7 +70,17 @@ describe("Logger File Tests", function () {
     });
 
     it("Save log to file", function (done) {
-        transport.onLogSuccess = helperLogOnSuccess(done);
+        var onFlush = function () {
+            if (logSaved) {
+                done();
+            } else {
+                done("Log was not saved successfully");
+            }
+        };
+
+        events.on("LoggerFile.on.flush", onFlush);
+
+        transport.onLogSuccess = helperLogOnSuccess();
         transport.onLogError = helperLogOnError(done);
 
         transport.info("Expresser local disk log test.", {
@@ -84,7 +103,7 @@ describe("Logger File Tests", function () {
             counter++;
             files = fs.readdirSync(settings.logger.file.path);
 
-            if (counter > 3) {
+            if (counter > 4) {
                 done("Log folder should be empty after clearing, but has " + files.length + " files.");
             } else if (files.length > 0) {
                 setTimeout(checkFiles, 1000);
@@ -93,7 +112,7 @@ describe("Logger File Tests", function () {
             }
         };
 
-        setTimeout(checkFiles, 1000);
+        setTimeout(checkFiles, 2000);
     });
 
     it("Fails to create transport with missing options", function (done) {

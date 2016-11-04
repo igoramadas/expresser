@@ -8,6 +8,7 @@
 class PaaS
 
     events = null
+    lodash = null
     logger = null
     settings = null
 
@@ -19,6 +20,7 @@ class PaaS
     # Init the PaaS plugin.
     init: (options) =>
         events = @expresser.events
+        lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
 
@@ -49,7 +51,7 @@ class PaaS
     # Update database settings.
     databaseSettings: =>
         vcap = env.VCAP_SERVICES
-        vcap = JSON.parse vcap if vcap?
+        vcap = JSON.parse vcap if vcap? and lodash.isString vcap
 
         settings.database.mongodb = {} if not settings.database.mongodb?
 

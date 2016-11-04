@@ -105,7 +105,7 @@ class LoggerFile
         # Set flushing and get current date.
         @flushing = true
         now = moment()
-        date = now.format "YYYYMMDD"
+        date = now.format settings.logger.file.dateFormat
 
         # Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
         # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
@@ -123,29 +123,32 @@ class LoggerFile
                 if fs.appendFile?
                     fs.appendFile filePath, "\n" + writeData, (err) =>
                         @flushing = false
+
                         if err?
-                            console.error "Logger.LoggerFile.flush", err
+                            console.error "LoggerFile.flush", err
                             @onLogError? err
                         else
                             @onLogSuccess? successMsg
 
+                        events.emit "LoggerFile.on.flush", this
+
     # Delete old log files from disk. The maximum date is taken from the settings
     # if not passed.
     # @param {Integer} maxAge Max age of logs, in days.
-    clean: (maxAge) ->
+    clean: (maxAge) =>
         maxAge = settings.logger.file.maxAge if not maxAge?
         maxDate = moment().subtract maxAge, "d"
 
-        fs.readdir settings.logger.file.path, (err, files) ->
+        fs.readdir settings.logger.file.path, (err, files) =>
             if err?
-                console.error "Logger.LoggerFile.clean", err
+                console.error "LoggerFile.clean", err
             else
                 for f in files
-                    date = moment f.split(".")[1], "yyyyMMdd"
+                    date = moment f.split(".")[0], settings.logger.file.dateFormat
                     if date.isSameOrBefore maxDate
-                        fs.unlink path.join(settings.logger.file.path, f), (err) ->
-                            if err?
-                                console.error "Logger.LoggerFile.clean", err
+                        fs.unlinkSync path.join(settings.logger.file.path, f)
+
+                events.emit "LoggerFile.on.clean", this, maxAge
 
 # Singleton implementation
 # --------------------------------------------------------------------------
