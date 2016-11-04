@@ -3,6 +3,7 @@
 require("coffee-script/register");
 var env = process.env;
 var chai = require("chai");
+var fs = require("fs");
 chai.should();
 
 describe("Logger File Tests", function () {
@@ -11,7 +12,7 @@ describe("Logger File Tests", function () {
     var settings = require("../lib/settings.coffee");
     var logger = null;
     var loggerFile = null;
-    var transportFile = null;
+    var transport = null;
 
     var helperLogOnSuccess = function (done) {
         return function (result) {
@@ -25,9 +26,16 @@ describe("Logger File Tests", function () {
         };
     };
 
+    var deleteLogsFolder = function () {
+        if (fs.existsSync(settings.logger.file.path)) {
+            fs.unlinkSync(settings.logger.file.path);
+        }
+    };
+
     before(function () {
         settings.loadFromJson("../plugins/logger-file/settings.default.json");
         settings.loadFromJson("settings.test.json");
+        settings.logger.file.path = __dirname + "/logs/";
 
         logger = require("../lib/logger.coffee").newInstance();
 
@@ -35,6 +43,12 @@ describe("Logger File Tests", function () {
         loggerFile.expresser = require("../index.coffee");
         loggerFile.expresser.events = require("../lib/events.coffee");
         loggerFile.expresser.logger = logger;
+
+        deleteLogsFolder();
+    });
+
+    after(function () {
+        deleteLogsFolder();
     });
 
     it("Has settings defined", function () {
@@ -43,18 +57,51 @@ describe("Logger File Tests", function () {
 
     it("Creates transport object", function () {
         logger.init();
-        transportFile = loggerFile.init();
+        transport = loggerFile.init();
     });
 
     it("Save log to file", function (done) {
-        transportFile.onLogSuccess = helperLogOnSuccess(done);
-        transportFile.onLogError = helperLogOnError(done);
+        transport.onLogSuccess = helperLogOnSuccess(done);
+        transport.onLogError = helperLogOnError(done);
 
-        transportFile.info("Expresser local disk log test.", {
+        transport.info("Expresser local disk log test.", {
             password: "obfuscated",
             something: "hello!"
         }, new Date());
 
-        transportFile.flush();
+        transport.flush();
+    });
+
+    it("Cleans all log files", function (done) {
+        this.timeout(10000);
+
+        transport.clean(0);
+
+        var files;
+        var counter = 0;
+
+        var checkFiles = function () {
+            counter++;
+            files = fs.readdirSync(settings.logger.file.path);
+
+            if (counter > 3) {
+                done("Log folder should be empty after clearing, but has " + files.length + " files.");
+            } else if (files.length > 0) {
+                setTimeout(checkFiles, 1000);
+            } else {
+                done();
+            }
+        };
+
+        setTimeout(checkFiles, 1000);
+    });
+
+    it("Fails to create transport with missing options", function (done) {
+        try {
+            var invalidTransport = loggerFile.getTransport();
+            done("Calling getTransport(null) should throw an error.");
+        } catch (ex) {
+            done();
+        }
     });
 });

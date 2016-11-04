@@ -12,7 +12,7 @@ describe("Logger Logentries Tests", function () {
     var settings = require("../lib/settings.coffee");
     var logger = null;
     var loggerLogentries = null;
-    var transportLogentries = null;
+    var transport = null;
 
     var helperLogOnSuccess = function (done) {
         return function (result) {
@@ -54,18 +54,27 @@ describe("Logger Logentries Tests", function () {
         it("Creates transport object", function () {
             logger.init();
 
-            transportLogentries = loggerLogentries.init();
+            transport = loggerLogentries.init();
         });
 
         it("Send log to Logentries", function (done) {
             this.timeout(10000);
 
-            transportLogentries.client.on("log", helperLogOnSuccess(done));
-            transportLogentries.client.on("error", helperLogOnError(done));
+            transport.client.on("log", helperLogOnSuccess(done));
+            transport.client.on("error", helperLogOnError(done));
 
-            transportLogentries.info("Expresser Logentries log test.", new Date());
+            transport.info("Expresser Logentries log test.", new Date());
         });
     } else {
         it.skip("Send log to Logentries (skipped, no token set)");
     }
+
+    it("Fails to create transport with missing options", function (done) {
+        try {
+            var invalidTransport = loggerLogentries.getTransport();
+            done("Calling getTransport(null) should throw an error.");
+        } catch (ex) {
+            done();
+        }
+    });
 });

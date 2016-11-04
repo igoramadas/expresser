@@ -41,7 +41,7 @@ class LoggerLogentries
     # Get the transport object.
     # @param {Object} options Transport options including the token.
     getTransport: (options) =>
-        if not options.token? or options.token is ""
+        if not options?.token? or options.token is ""
             err = new Error "The options.token is mandatory! Please specify a valid Logentries token."
             logger.error "LoggerLogentries.getTransport", err, options
             throw err

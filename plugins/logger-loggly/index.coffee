@@ -41,12 +41,12 @@ class LoggerLoggly
     # Get the transport object.
     # @param {Object} options Transport options including the token.
     getTransport: (options) =>
-        if not options.token? or options.token is ""
+        if not options?.token? or options.token is ""
             err = new Error "The options.token is mandatory! Please specify a valid Loggly token."
             logger.error "LoggerLoggly.getTransport", err, options
             throw err
 
-        if not options.subdomain? or options.subdomain is ""
+        if not options?.subdomain? or options.subdomain is ""
             err = new Error "The options.subdomain is mandatory! Please specify a valid Loggly subdomain."
             logger.error "LoggerLoggly.getTransport", err, options
             throw err

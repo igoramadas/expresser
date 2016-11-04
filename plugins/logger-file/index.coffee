@@ -41,7 +41,7 @@ class LoggerFile
     # Get the file transport object.
     # @param {Object} options File logging options.
     getTransport: (options) =>
-        if not options.path? or options.path is ""
+        if not options?.path? or options.path is ""
             err = new Error "The options.path is mandatory! Please specify a valid path to the logs folder."
             logger.error "LoggerFile.getTransport", err, options
             throw err
@@ -142,7 +142,7 @@ class LoggerFile
             else
                 for f in files
                     date = moment f.split(".")[1], "yyyyMMdd"
-                    if date.isBefore maxDate
+                    if date.isSameOrBefore maxDate
                         fs.unlink path.join(settings.logger.file.path, f), (err) ->
                             if err?
                                 console.error "Logger.LoggerFile.clean", err

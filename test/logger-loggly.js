@@ -12,7 +12,7 @@ describe("Logger Loggly Tests", function () {
     var settings = require("../lib/settings.coffee");
     var logger = null;
     var loggerLoggly = null;
-    var transportLoggly = null;
+    var transport = null;
 
     var helperLogOnSuccess = function (done) {
         return function (result) {
@@ -58,18 +58,27 @@ describe("Logger Loggly Tests", function () {
         it("Creates transport object", function () {
             logger.init();
 
-            transportLoggly = loggerLoggly.init();
+            transport = loggerLoggly.init();
         });
 
         it("Send log to Loggly", function (done) {
             this.timeout(10000);
 
-            transportLoggly.onLogSuccess = helperLogOnSuccess(done);
-            transportLoggly.onLogError = helperLogOnError(done);
+            transport.onLogSuccess = helperLogOnSuccess(done);
+            transport.onLogError = helperLogOnError(done);
 
-            transportLoggly.info("Expresser Loggly log test.", new Date());
+            transport.info("Expresser Loggly log test.", new Date());
         });
     } else {
         it.skip("Send log to Loggly (skipped, no token or subdomain set)");
     }
+
+    it("Fails to create transport with missing options", function (done) {
+        try {
+            var invalidTransport = loggerLoggly.getTransport();
+            done("Calling getTransport(null) should throw an error.");
+        } catch (ex) {
+            done();
+        }
+    });
 });
