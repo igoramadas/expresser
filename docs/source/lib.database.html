@@ -25,77 +25,82 @@
             
               
               <a class="source" href="lib.app.html">
-                lib\app.coffee
+                lib/app.coffee
               </a>
             
               
               <a class="source" href="lib.database.html">
-                lib\database.coffee
+                lib/database.coffee
               </a>
             
               
               <a class="source" href="lib.events.html">
-                lib\events.coffee
+                lib/events.coffee
               </a>
             
               
               <a class="source" href="lib.logger.html">
-                lib\logger.coffee
+                lib/logger.coffee
               </a>
             
               
               <a class="source" href="lib.settings.html">
-                lib\settings.coffee
+                lib/settings.coffee
               </a>
             
               
               <a class="source" href="lib.utils.html">
-                lib\utils.coffee
+                lib/utils.coffee
               </a>
             
               
               <a class="source" href="plugins.cron.index.html">
-                plugins\cron\index.coffee
+                plugins/cron/index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-mongodb.index.html">
-                plugins\database-mongodb\index.coffee
+                plugins/database-mongodb/index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-tingodb.index.html">
-                plugins\database-tingodb\index.coffee
+                plugins/database-tingodb/index.coffee
               </a>
             
               
               <a class="source" href="plugins.downloader.index.html">
-                plugins\downloader\index.coffee
+                plugins/downloader/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-file.index.html">
-                plugins\logger-file\index.coffee
+                plugins/logger-file/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-logentries.index.html">
-                plugins\logger-logentries\index.coffee
+                plugins/logger-logentries/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-loggly.index.html">
-                plugins\logger-loggly\index.coffee
+                plugins/logger-loggly/index.coffee
               </a>
             
               
               <a class="source" href="plugins.mailer.index.html">
-                plugins\mailer\index.coffee
+                plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.paas.index.html">
+                plugins/paas/index.coffee
               </a>
             
               
               <a class="source" href="plugins.sockets.index.html">
-                plugins\sockets\index.coffee
+                plugins/sockets/index.coffee
               </a>
             
           </div>
@@ -119,21 +124,8 @@
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
               <h2 id="expresser-database">EXPRESSER DATABASE</h2>
-<p>Wrapper for databases. This module by itself won’t do anything, as you’ll
-need to add database driver plugins for your desired DB. At the moment we
-officially support MongoDB (plugin expresser-database-mongo).
-<!--
-@see settings.database
---></p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Database</span></span>
-
-    events = <span class="hljs-built_in">require</span> <span class="hljs-string">"./events.coffee"</span>
-    lodash = <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
-    logger = <span class="hljs-built_in">require</span> <span class="hljs-string">"./logger.coffee"</span>
-    settings = <span class="hljs-built_in">require</span> <span class="hljs-string">"./settings.coffee"</span></pre></div></div>
             
         </li>
         
@@ -144,9 +136,22 @@ officially support MongoDB (plugin expresser-database-mongo).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h2 id="public-properties">PUBLIC PROPERTIES</h2>
+              <p>Wrapper for databases. This module by itself won’t do anything, as you’ll
+need to add database driver plugins for your desired DB. At the moment we
+officially support MongoDB (plugin expresser-database-mongo).
+<!--
+@see settings.database
+--></p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Database</span></span>
+    newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Database()
+
+    events = <span class="hljs-built_in">require</span> <span class="hljs-string">"./events.coffee"</span>
+    lodash = <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
+    logger = <span class="hljs-built_in">require</span> <span class="hljs-string">"./logger.coffee"</span>
+    settings = <span class="hljs-built_in">require</span> <span class="hljs-string">"./settings.coffee"</span></pre></div></div>
             
         </li>
         
@@ -157,11 +162,9 @@ officially support MongoDB (plugin expresser-database-mongo).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>@property {Object} Available database drivers.</p>
+              <h2 id="public-properties">PUBLIC PROPERTIES</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    drivers: {}</pre></div></div>
             
         </li>
         
@@ -172,11 +175,8 @@ officially support MongoDB (plugin expresser-database-mongo).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>@property {Object} Dictionary of database objects.</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    db: {}</pre></div></div>
             
         </li>
         
@@ -187,9 +187,11 @@ officially support MongoDB (plugin expresser-database-mongo).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h2 id="init">INIT</h2>
+              <p>@property {Object} Available database drivers.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    drivers: {}</pre></div></div>
             
         </li>
         
@@ -200,16 +202,11 @@ officially support MongoDB (plugin expresser-database-mongo).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Init the database module.
-@param {Object} options Database init options.</p>
+              <p>@property {Object} Dictionary of database objects.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"Database.init"</span>, options
-        lodash.assign settings.database, options <span class="hljs-keyword">if</span> options?
-
-        @setEvents() <span class="hljs-keyword">if</span> settings.events.enabled</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    db: {}</pre></div></div>
             
         </li>
         
@@ -219,6 +216,56 @@ officially support MongoDB (plugin expresser-database-mongo).
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h2 id="init">INIT</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Init the database module.
+@param {Object} options Database init options.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+        logger.debug <span class="hljs-string">"Database.init"</span>
+        events.emit <span class="hljs-string">"Database.before.init"</span>
+
+        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">0</span>
+            logger.deprecated <span class="hljs-string">"Database.init(options)"</span>, <span class="hljs-string">"No options param anymore. Database will be configured based on what's defiend on the settings module."</span>
+        
+        @setEvents()
+
+        events.emit <span class="hljs-string">"Database.on.init"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>Bind events.</p>
 
@@ -230,11 +277,11 @@ officially support MongoDB (plugin expresser-database-mongo).
         </li>
         
         
-        <li id="section-8">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <h2 id="implementation">IMPLEMENTATION</h2>
 
@@ -243,11 +290,23 @@ officially support MongoDB (plugin expresser-database-mongo).
         </li>
         
         
-        <li id="section-9">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Helper to register database objects.
 @param {Object} id The ID of the database to be registered. Must be unique.
@@ -276,14 +335,26 @@ officially support MongoDB (plugin expresser-database-mongo).
         </li>
         
         
-        <li id="section-10">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <h2 id="singleton-implementation-">Singleton implementation.</h2>
 
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              
             </div>
             
             <div class="content"><div class='highlight'><pre>Database.getInstance = <span class="hljs-function">-&gt;</span>

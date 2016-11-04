@@ -25,77 +25,82 @@
             
               
               <a class="source" href="lib.app.html">
-                lib\app.coffee
+                lib/app.coffee
               </a>
             
               
               <a class="source" href="lib.database.html">
-                lib\database.coffee
+                lib/database.coffee
               </a>
             
               
               <a class="source" href="lib.events.html">
-                lib\events.coffee
+                lib/events.coffee
               </a>
             
               
               <a class="source" href="lib.logger.html">
-                lib\logger.coffee
+                lib/logger.coffee
               </a>
             
               
               <a class="source" href="lib.settings.html">
-                lib\settings.coffee
+                lib/settings.coffee
               </a>
             
               
               <a class="source" href="lib.utils.html">
-                lib\utils.coffee
+                lib/utils.coffee
               </a>
             
               
               <a class="source" href="plugins.cron.index.html">
-                plugins\cron\index.coffee
+                plugins/cron/index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-mongodb.index.html">
-                plugins\database-mongodb\index.coffee
+                plugins/database-mongodb/index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-tingodb.index.html">
-                plugins\database-tingodb\index.coffee
+                plugins/database-tingodb/index.coffee
               </a>
             
               
               <a class="source" href="plugins.downloader.index.html">
-                plugins\downloader\index.coffee
+                plugins/downloader/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-file.index.html">
-                plugins\logger-file\index.coffee
+                plugins/logger-file/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-logentries.index.html">
-                plugins\logger-logentries\index.coffee
+                plugins/logger-logentries/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-loggly.index.html">
-                plugins\logger-loggly\index.coffee
+                plugins/logger-loggly/index.coffee
               </a>
             
               
               <a class="source" href="plugins.mailer.index.html">
-                plugins\mailer\index.coffee
+                plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.paas.index.html">
+                plugins/paas/index.coffee
               </a>
             
               
               <a class="source" href="plugins.sockets.index.html">
-                plugins\sockets\index.coffee
+                plugins/sockets/index.coffee
               </a>
             
           </div>
@@ -119,21 +124,8 @@
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
               <h2 id="expresser-sockets">EXPRESSER SOCKETS</h2>
-<p>Handles sockets communication using the module Socket.IO.
-ATTENTION! The Sockets module is started automatically by the App module.
-If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
-<!--
-@see settings.sockets
---></p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Sockets</span></span>
-
-    events = <span class="hljs-literal">null</span>
-    lodash =  <span class="hljs-literal">null</span>
-    logger = <span class="hljs-literal">null</span>
-    settings = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -144,11 +136,22 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>@property {Array} Holds a list of current event listeners.</p>
+              <p>Handles sockets communication using the module Socket.IO.
+ATTENTION! The Sockets module is started automatically by the App module.
+If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
+<!--
+@see settings.sockets
+--></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    currentListeners: <span class="hljs-literal">null</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Sockets</span></span>
+
+    app = <span class="hljs-literal">null</span>
+    events = <span class="hljs-literal">null</span>
+    lodash =  <span class="hljs-literal">null</span>
+    logger = <span class="hljs-literal">null</span>
+    settings = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -159,11 +162,11 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>@property [Socket.IO Object] Exposes Socket.IO object to external modules.</p>
+              <p>@property {Array} Holds a list of current event listeners.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    io: <span class="hljs-literal">null</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    currentListeners: []</pre></div></div>
             
         </li>
         
@@ -174,9 +177,11 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h2 id="init">INIT</h2>
+              <p>@property [Socket.IO Object] Exposes Socket.IO object to external modules.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    io: <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -187,15 +192,9 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Init the Sockets plugin.</p>
+              <h2 id="init">INIT</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
-        events = @expresser.events
-        lodash = @expresser.libs.lodash
-        logger = @expresser.logger
-        settings = @expresser.settings</pre></div></div>
             
         </li>
         
@@ -206,22 +205,8 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Bind the Socket.IO object to the Express app. This will also set the counter
-to increase / decrease when users connects or disconnects from the app.
-@param {Object} options Sockets init options.
-@option options {Object} server The Express server object to bind to.</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    bind: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
-        options = {server: options} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.server?
-        @currentListeners = []
-
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.server?
-            logger.error <span class="hljs-string">"Sockets.init"</span>, <span class="hljs-string">"App server is invalid. Abort!"</span>
-            <span class="hljs-keyword">return</span>
-
-        @io = <span class="hljs-built_in">require</span>(<span class="hljs-string">"socket.io"</span>) options.server</pre></div></div>
             
         </li>
         
@@ -231,6 +216,64 @@ to increase / decrease when users connects or disconnects from the app.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Init the Sockets plugin.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        settings = @expresser.settings
+
+        @setEvents()
+
+        events.emit <span class="hljs-string">"Sockets.on.init"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Bind events.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">=&gt;</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"App.on.startServer"</span>, @bind</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Bind the Socket.IO object to the Express app. This will also set the counter
+to increase / decrease when users connects or disconnects from the app.
+@param {Object} options Sockets init options.
+@option options {Object} server The Express server object to bind to.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    bind: <span class="hljs-function"><span class="hljs-params">(server)</span> =&gt;</span>
+        @io = <span class="hljs-built_in">require</span>(<span class="hljs-string">"socket.io"</span>) server</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>Listen to user connection count updates.</p>
 
@@ -243,11 +286,11 @@ to increase / decrease when users connects or disconnects from the app.
         </li>
         
         
-        <li id="section-8">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Bind all current event listeners.</p>
 
@@ -259,11 +302,11 @@ to increase / decrease when users connects or disconnects from the app.
         </li>
         
         
-        <li id="section-9">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <h2 id="events">EVENTS</h2>
 
@@ -272,11 +315,23 @@ to increase / decrease when users connects or disconnects from the app.
         </li>
         
         
-        <li id="section-10">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Emit the specified key and data to clients.
 @param {String} key The event key.
@@ -285,20 +340,21 @@ to increase / decrease when users connects or disconnects from the app.
             </div>
             
             <div class="content"><div class='highlight'><pre>    emit: <span class="hljs-function"><span class="hljs-params">(key, data)</span> =&gt;</span>
-        <span class="hljs-keyword">if</span> @io?
-            @io.emit key, data
-            logger.debug <span class="hljs-string">"Sockets.emit"</span>, key, JSON.stringify(data).length + <span class="hljs-string">" bytes"</span>
-        <span class="hljs-keyword">else</span>
-            logger.debug <span class="hljs-string">"Sockets.emit"</span>, key, <span class="hljs-string">"Sockets not initiated yet, abort!"</span></pre></div></div>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @io?
+            <span class="hljs-keyword">return</span> logger.warn <span class="hljs-string">"Sockets.emit"</span>, key, JSON.stringify(data).length + <span class="hljs-string">" bytes"</span>, <span class="hljs-string">"Sockets not initiated yet, abort!"</span>
+            
+        logger.debug <span class="hljs-string">"Sockets.emit"</span>, key, data
+
+        @io.emit key, data</pre></div></div>
             
         </li>
         
         
-        <li id="section-11">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Listen to a specific event. If <code>onlyNewClients</code> is true then it won’t listen to that particular
 event from currently connected clients.
@@ -309,25 +365,26 @@ event from currently connected clients.
             </div>
             
             <div class="content"><div class='highlight'><pre>    listenTo: <span class="hljs-function"><span class="hljs-params">(key, callback, onlyNewClients)</span> =&gt;</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback?
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @io?.sockets?
+            <span class="hljs-keyword">return</span> logger.warn <span class="hljs-string">"Sockets.listenTo"</span>, key, <span class="hljs-string">"Sockets not initiated yet, abort!"</span>
 
         onlyNewClients = <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> onlyNewClients?
         @currentListeners.push {key: key, callback: callback}
 
+        logger.debug <span class="hljs-string">"Sockets.listenTo"</span>, key, callback, onlyNewClients
+
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> onlyNewClients
             <span class="hljs-keyword">for</span> key, socket <span class="hljs-keyword">of</span> @io.sockets.connected
-                socket.<span class="hljs-literal">on</span> key, callback
-
-        logger.debug <span class="hljs-string">"Sockets.listenTo"</span>, key</pre></div></div>
+                socket.<span class="hljs-literal">on</span> key, callback</pre></div></div>
             
         </li>
         
         
-        <li id="section-12">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Stops listening to the specified event key.
 @param {String} key The event key.
@@ -345,11 +402,11 @@ event from currently connected clients.
         </li>
         
         
-        <li id="section-13">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Remove binding from the currentListeners collection.</p>
 
@@ -364,11 +421,11 @@ event from currently connected clients.
         </li>
         
         
-        <li id="section-14">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Remove invalid and expired event listeners.</p>
 
@@ -380,11 +437,11 @@ event from currently connected clients.
         </li>
         
         
-        <li id="section-15">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <h2 id="helpers">HELPERS</h2>
 
@@ -393,11 +450,23 @@ event from currently connected clients.
         </li>
         
         
-        <li id="section-16">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Get how many users are currenly connected to the app.</p>
 
@@ -409,11 +478,11 @@ event from currently connected clients.
         </li>
         
         
-        <li id="section-17">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>When user disconnects, emit an event with the new connection count to all clients.</p>
 
@@ -426,14 +495,26 @@ event from currently connected clients.
         </li>
         
         
-        <li id="section-18">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              
             </div>
             
             <div class="content"><div class='highlight'><pre>Sockets.getInstance = <span class="hljs-function">-&gt;</span>

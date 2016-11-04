@@ -8,7 +8,7 @@ chai.should();
 describe("Expresser (Main) Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
-    var expresser = require("../index.coffee");
+    var expresser = require("../index.coffee").newInstance();
     var events = require("../lib/events.coffee");
 
     before(function () {
@@ -16,10 +16,6 @@ describe("Expresser (Main) Tests", function () {
     });
 
     it("Inits", function () {
-        var onInit = function () {
-            done();
-        }
-
         expresser.init();
     });
 });

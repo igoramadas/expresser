@@ -53,7 +53,7 @@ describe("App Sockets Tests", function () {
     });
 
     it("Emits sockets message from client to server", function (done) {
-        this.timeout(10000);
+        this.timeout(12000);
 
         var client;
 
@@ -87,7 +87,7 @@ describe("App Sockets Tests", function () {
 
 
         it("Emits sockets message from server to client", function (done) {
-            this.timeout(10000);
+            this.timeout(12000);
 
             var client;
 

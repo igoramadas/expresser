@@ -25,77 +25,82 @@
             
               
               <a class="source" href="lib.app.html">
-                lib\app.coffee
+                lib/app.coffee
               </a>
             
               
               <a class="source" href="lib.database.html">
-                lib\database.coffee
+                lib/database.coffee
               </a>
             
               
               <a class="source" href="lib.events.html">
-                lib\events.coffee
+                lib/events.coffee
               </a>
             
               
               <a class="source" href="lib.logger.html">
-                lib\logger.coffee
+                lib/logger.coffee
               </a>
             
               
               <a class="source" href="lib.settings.html">
-                lib\settings.coffee
+                lib/settings.coffee
               </a>
             
               
               <a class="source" href="lib.utils.html">
-                lib\utils.coffee
+                lib/utils.coffee
               </a>
             
               
               <a class="source" href="plugins.cron.index.html">
-                plugins\cron\index.coffee
+                plugins/cron/index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-mongodb.index.html">
-                plugins\database-mongodb\index.coffee
+                plugins/database-mongodb/index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-tingodb.index.html">
-                plugins\database-tingodb\index.coffee
+                plugins/database-tingodb/index.coffee
               </a>
             
               
               <a class="source" href="plugins.downloader.index.html">
-                plugins\downloader\index.coffee
+                plugins/downloader/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-file.index.html">
-                plugins\logger-file\index.coffee
+                plugins/logger-file/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-logentries.index.html">
-                plugins\logger-logentries\index.coffee
+                plugins/logger-logentries/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-loggly.index.html">
-                plugins\logger-loggly\index.coffee
+                plugins/logger-loggly/index.coffee
               </a>
             
               
               <a class="source" href="plugins.mailer.index.html">
-                plugins\mailer\index.coffee
+                plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.paas.index.html">
+                plugins/paas/index.coffee
               </a>
             
               
               <a class="source" href="plugins.sockets.index.html">
-                plugins\sockets\index.coffee
+                plugins/sockets/index.coffee
               </a>
             
           </div>
@@ -119,7 +124,19 @@
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
               <h2 id="expresser-database-tingodb">EXPRESSER DATABASE - TINGODB</h2>
-<p>Handles TingoDB database transactions, which is quite similar to MongoDB. This
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Handles TingoDB database transactions, which is quite similar to MongoDB. This
 plugin attaches itself to the main <code>database</code> module of Expresser.
 <!--
 @see settings.database.tingodb
@@ -140,43 +157,15 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         </li>
         
         
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <h2 id="init">INIT</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-3">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Init the TingoDB database module.
-@param {Object} options Database init options.</p>
+              <h2 id="init">INIT</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
-        database = @expresser.database
-        lodash = @expresser.libs.lodash
-        logger = @expresser.logger
-        settings = @expresser.settings
-        utils = @expresser.utils
-
-        database.drivers.tingodb = <span class="hljs-keyword">this</span>
-
-        logger.debug <span class="hljs-string">"DatabaseTingoDb.init"</span>, options
-
-        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-        options = lodash.defaultsDeep options, settings.database.tingodb</pre></div></div>
             
         </li>
         
@@ -187,12 +176,8 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Auto register as “tingodb” if a <code>dbPath</code> is defined on the settings.</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.enabled <span class="hljs-keyword">and</span> options.dbPath?
-            <span class="hljs-keyword">return</span> database.register <span class="hljs-string">"tingodb"</span>, <span class="hljs-string">"tingodb"</span>, options.dbPath, options.options</pre></div></div>
             
         </li>
         
@@ -202,6 +187,52 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Init the TingoDB database module.
+@param {Object} options Database init options.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+        database = @expresser.database
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        settings = @expresser.settings
+        utils = @expresser.utils
+
+        logger.debug <span class="hljs-string">"DatabaseTingoDb.init"</span>
+
+        database.drivers.tingodb = <span class="hljs-keyword">this</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Auto register as “tingodb” if a <code>dbPath</code> is defined on the settings.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.database.tingodb.enabled <span class="hljs-keyword">and</span> settings.database.tingodb.dbPath?
+            result = database.register <span class="hljs-string">"tingodb"</span>, <span class="hljs-string">"tingodb"</span>, settings.database.tingodb.dbPath, settings.database.tingodb.options
+
+        events.emit <span class="hljs-string">"DatabaseTingoDb.on.init"</span>
+
+        <span class="hljs-keyword">return</span> result</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>Get the DB connection object.
 @param {Object} dbPath Path to the TingoDB file to be loaded.
@@ -215,11 +246,11 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         </li>
         
         
-        <li id="section-6">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Make sure database folder exists!</p>
 
@@ -233,11 +264,11 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         </li>
         
         
-        <li id="section-7">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <h2 id="db-implementation">DB IMPLEMENTATION</h2>
 
@@ -246,11 +277,23 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         </li>
         
         
-        <li id="section-8">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>ATTENTION! All methods below are bound to the object returned by <code>getConnection</code> (above on INIT section).</p>
 
@@ -259,11 +302,11 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         </li>
         
         
-        <li id="section-9">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Get data from the database. A <code>collection</code> and <code>callback</code> must be specified. The <code>filter</code> is optional.
 Please note that if <code>filter</code> has an _id or id field, or if it’s a plain string or number, it will be used
@@ -288,11 +331,11 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
         </li>
         
         
-        <li id="section-10">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Callback is mandatory!</p>
 
@@ -304,11 +347,11 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
         </li>
         
         
-        <li id="section-11">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Create the DB callback helper.</p>
 
@@ -316,17 +359,16 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
             
             <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
             <span class="hljs-keyword">if</span> callback?
-                result = normalizeId result <span class="hljs-keyword">if</span> settings.database.normalizeId
                 callback err, result</pre></div></div>
             
         </li>
         
         
-        <li id="section-12">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Set collection object.</p>
 
@@ -337,11 +379,11 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
         </li>
         
         
-        <li id="section-13">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Parse ID depending on <code>filter</code>.</p>
 
@@ -350,7 +392,6 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> filter?
             <span class="hljs-keyword">if</span> filter._id?
                 id = filter._id
-            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> filter.id? <span class="hljs-keyword">and</span> settings.database.normalizeId
                 id = filter.id
             <span class="hljs-keyword">else</span>
                 t = <span class="hljs-keyword">typeof</span> filter
@@ -359,11 +400,11 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
         </li>
         
         
-        <li id="section-14">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Get <code>limit</code> option.</p>
 
@@ -377,11 +418,11 @@ to return documents by ID. Otherwise it’s used as keys-values object for filte
         </li>
         
         
-        <li id="section-15">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Find documents depending on <code>filter</code> and <code>options</code>.
 If id is set, use the shorter findById.</p>
@@ -394,11 +435,11 @@ If id is set, use the shorter findById.</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Create a params object for the find method.</p>
 
@@ -416,11 +457,11 @@ If id is set, use the shorter findById.</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Search everything!</p>
 
@@ -441,11 +482,11 @@ If id is set, use the shorter findById.</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Add new documents to the database.
 The <code>options</code> parameter is optional.
@@ -464,11 +505,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-19">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>No DB set? Throw exception.</p>
 
@@ -482,11 +523,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-20">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Create the DB callback helper.</p>
 
@@ -494,17 +535,16 @@ The <code>options</code> parameter is optional.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
             <span class="hljs-keyword">if</span> callback?
-                result = normalizeId(result) <span class="hljs-keyword">if</span> settings.database.normalizeId
                 callback err, result</pre></div></div>
             
         </li>
         
         
-        <li id="section-21">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Set collection object.</p>
 
@@ -515,11 +555,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-22">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Execute insert!</p>
 
@@ -531,11 +571,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-23">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Update existing documents on the database.
 The <code>options</code> parameter is optional.
@@ -557,11 +597,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-24">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Object or filter is mandatory.</p>
 
@@ -575,11 +615,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-25">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>No DB set? Throw exception.</p>
 
@@ -593,11 +633,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-26">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Create the DB callback helper.</p>
 
@@ -605,17 +645,16 @@ The <code>options</code> parameter is optional.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
             <span class="hljs-keyword">if</span> callback?
-                result = normalizeId(result) <span class="hljs-keyword">if</span> settings.database.normalizeId
                 callback err, result</pre></div></div>
             
         </li>
         
         
-        <li id="section-27">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Set collection object.</p>
 
@@ -626,11 +665,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-28">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Make sure options is valid.</p>
 
@@ -641,11 +680,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-29">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>If a <code>filter</code> option was set, use it as the query filter otherwise use the “_id” property.</p>
 
@@ -654,17 +693,17 @@ The <code>options</code> parameter is optional.
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.filter?
             filter = options.filter
         <span class="hljs-keyword">else</span>
-            filter = {_id: id}
+            filter = {_id: obj.id <span class="hljs-keyword">or</span> obj._id}
         <span class="hljs-keyword">delete</span> options.filter</pre></div></div>
             
         </li>
         
         
-        <li id="section-30">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>If options patch is set, replace specified document properties only instead of replacing the whole document.</p>
 
@@ -679,11 +718,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-31">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Set default options.</p>
 
@@ -694,11 +733,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-32">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Execute update!</p>
 
@@ -714,11 +753,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-33">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Delete an object from the database. The <code>obj</code> argument can be either the document itself, or its integer/string ID.
 @param {String} collection The collection name.
@@ -735,11 +774,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-34">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Filter is mandatory.</p>
 
@@ -753,11 +792,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-35">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Check it the <code>obj</code> is the model itself, or only the ID string / number.</p>
 
@@ -765,7 +804,6 @@ The <code>options</code> parameter is optional.
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> filter._id?
             id = filter._id
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> filter.id <span class="hljs-keyword">and</span> settings.database.normalizeId
             id = filter.id
         <span class="hljs-keyword">else</span>
             t = <span class="hljs-keyword">typeof</span> filter
@@ -774,11 +812,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-36">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>Create the DB callback helper.</p>
 
@@ -786,17 +824,16 @@ The <code>options</code> parameter is optional.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
             <span class="hljs-keyword">if</span> callback?
-                result = normalizeId(result) <span class="hljs-keyword">if</span> settings.database.normalizeId
                 callback err, result</pre></div></div>
             
         </li>
         
         
-        <li id="section-37">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>Set collection object and remove specified object from the database.</p>
 
@@ -807,11 +844,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-38">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Remove object by ID or filter.</p>
 
@@ -827,11 +864,11 @@ The <code>options</code> parameter is optional.
         </li>
         
         
-        <li id="section-39">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Count documents from the database. A <code>collection</code> must be specified.
 If no <code>filter</code> is not passed then count all documents.
@@ -849,11 +886,11 @@ If no <code>filter</code> is not passed then count all documents.
         </li>
         
         
-        <li id="section-40">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>Callback is mandatory!</p>
 
@@ -865,11 +902,11 @@ If no <code>filter</code> is not passed then count all documents.
         </li>
         
         
-        <li id="section-41">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>Create the DB callback helper.</p>
 
@@ -883,11 +920,11 @@ If no <code>filter</code> is not passed then count all documents.
         </li>
         
         
-        <li id="section-42">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>TingoDB has a built-in count so use it.</p>
 
@@ -899,18 +936,29 @@ If no <code>filter</code> is not passed then count all documents.
         </li>
         
         
-        <li id="section-43">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <h2 id="singleton-implementation-">Singleton implementation.</h2>
 
             </div>
             
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              
+            </div>
+            
             <div class="content"><div class='highlight'><pre>DatabaseTingoDb.getInstance = <span class="hljs-function">-&gt;</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DatabaseTingoDb() <span class="hljs-keyword">if</span> process.env <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
     @instance = <span class="hljs-keyword">new</span> DatabaseTingoDb() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
     <span class="hljs-keyword">return</span> @instance
 

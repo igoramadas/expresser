@@ -4,9 +4,10 @@
 # If you need help check the project page at http://github.com/igoramadas/expresser.
 class Expresser
     newInstance: -> return new Expresser()
+    isTest = process.env.NODE_ENV is "test"
 
     fs = require "fs"
-    path = require "path"
+    path = require "path"    
 
     # Set application root path.
     rootPath: path.dirname require.main.filename
@@ -35,6 +36,8 @@ class Expresser
     # folder for local development setups, or directly under /node_modules
     # for plugins installed via NPM (most production scenarios).
     loadPlugins = (self) ->
+        
+
         if fs.existsSync "#{__dirname}/plugins"
             pluginsFolder = true
             plugins = fs.readdirSync "#{__dirname}/plugins"
@@ -46,55 +49,53 @@ class Expresser
 
         # Iterate plugins and get it's ID by removing the "expresser-" prefix.
         for p in plugins
-            pluginId = p.substring(p.lastIndexOf("/") + 1)
+            if not isTest
+                pluginId = p.substring(p.lastIndexOf("/") + 1)
 
-            if pluginsFolder or pluginId.substring(0, 10) is "expresser-"
-                pluginName = pluginId.replace "expresser-", ""
+                if pluginsFolder or pluginId.substring(0, 10) is "expresser-"
+                    pluginName = pluginId.replace "expresser-", ""
 
-                # Check if plugin was already attached.
-                if not self[pluginName]?
-                    if pluginsFolder
-                        self[pluginName] = require "./plugins/#{pluginId}"
-                        pluginSettingsPath = "#{__dirname}/plugins/#{p}/settings.default.json"
-                    else
-                        self[pluginName] = require pluginId
-                        pluginSettingsPath = "#{self.rootPath}/node_modules/#{pluginId}/settings.default.json"
+                    # Check if plugin was already attached.
+                    if not self[pluginName]?
+                        if pluginsFolder
+                            self[pluginName] = require "./plugins/#{pluginId}"
+                            pluginSettingsPath = "#{__dirname}/plugins/#{p}/settings.default.json"
+                        else
+                            self[pluginName] = require pluginId
+                            pluginSettingsPath = "#{self.rootPath}/node_modules/#{pluginId}/settings.default.json"
 
-                    # Attach itself to the plugin.
-                    self[pluginName].expresser = self
+                        # Attach itself to the plugin.
+                        self[pluginName].expresser = self
 
-                # Check if there are default settings to be loaded for the plugin.
-                if fs.existsSync pluginSettingsPath
-                    self.settings.loadFromJson pluginSettingsPath, true
+                    # Check if there are default settings to be loaded for the plugin.
+                    if fs.existsSync pluginSettingsPath
+                        self.settings.loadFromJson pluginSettingsPath, true
 
-                # Get options accordingly to plugin name. For example the expresser-database-mongodb
-                # should have its options set under settings.database.mongodb.
-                pluginArr = pluginName.split "-"
-                optionsRef = self.settings
-                i = 0
+                    # Get options accordingly to plugin name. For example the expresser-database-mongodb
+                    # should have its options set under settings.database.mongodb.
+                    pluginArr = pluginName.split "-"
+                    optionsRef = self.settings
+                    i = 0
 
-                while i < pluginArr.length
-                    optionsRef = optionsRef?[pluginArr[i]]
-                    i++
+                    while i < pluginArr.length
+                        optionsRef = optionsRef?[pluginArr[i]]
+                        i++
 
-                # Init plugin only if enabled is not set to false on its settings.
-                if optionsRef?.enabled
-                    self[pluginName].init? optionsRef
+                    # Init plugin only if enabled is not set to false on its settings.
+                    if optionsRef?.enabled
+                        self[pluginName].init? optionsRef
 
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App. The `options` can have properties to be
     # passed to the `init` of each module.
     # @param {Object} options Options to be passed to each init module.
     init: =>
-        return 
         initDefaultModules this
         loadPlugins this
 
         # App must be the last thing to be started!
-        # The Firewall and Sockets modules are initiated inside the App
-        # depending on their settings.
         @app.expresser = this
-        @app.init()
+        @app.init() if not isTest
 
 # Singleton implementation
 # --------------------------------------------------------------------------

@@ -25,77 +25,82 @@
             
               
               <a class="source" href="lib.app.html">
-                lib\app.coffee
+                lib/app.coffee
               </a>
             
               
               <a class="source" href="lib.database.html">
-                lib\database.coffee
+                lib/database.coffee
               </a>
             
               
               <a class="source" href="lib.events.html">
-                lib\events.coffee
+                lib/events.coffee
               </a>
             
               
               <a class="source" href="lib.logger.html">
-                lib\logger.coffee
+                lib/logger.coffee
               </a>
             
               
               <a class="source" href="lib.settings.html">
-                lib\settings.coffee
+                lib/settings.coffee
               </a>
             
               
               <a class="source" href="lib.utils.html">
-                lib\utils.coffee
+                lib/utils.coffee
               </a>
             
               
               <a class="source" href="plugins.cron.index.html">
-                plugins\cron\index.coffee
+                plugins/cron/index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-mongodb.index.html">
-                plugins\database-mongodb\index.coffee
+                plugins/database-mongodb/index.coffee
               </a>
             
               
               <a class="source" href="plugins.database-tingodb.index.html">
-                plugins\database-tingodb\index.coffee
+                plugins/database-tingodb/index.coffee
               </a>
             
               
               <a class="source" href="plugins.downloader.index.html">
-                plugins\downloader\index.coffee
+                plugins/downloader/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-file.index.html">
-                plugins\logger-file\index.coffee
+                plugins/logger-file/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-logentries.index.html">
-                plugins\logger-logentries\index.coffee
+                plugins/logger-logentries/index.coffee
               </a>
             
               
               <a class="source" href="plugins.logger-loggly.index.html">
-                plugins\logger-loggly\index.coffee
+                plugins/logger-loggly/index.coffee
               </a>
             
               
               <a class="source" href="plugins.mailer.index.html">
-                plugins\mailer\index.coffee
+                plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.paas.index.html">
+                plugins/paas/index.coffee
               </a>
             
               
               <a class="source" href="plugins.sockets.index.html">
-                plugins\sockets\index.coffee
+                plugins/sockets/index.coffee
               </a>
             
           </div>
@@ -119,18 +124,8 @@
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
               <h2 id="expresser-events">EXPRESSER EVENTS</h2>
-<p>Central event manager to dispatch events to all Expresser modules.
-This module acts as a wrapper to Node’s EventEmitter class.
-<!--
-@see settings.events
---></p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Events</span></span>
-
-    evt = <span class="hljs-built_in">require</span> <span class="hljs-string">"events"</span>
-    emitter = <span class="hljs-keyword">new</span> evt.EventEmitter()</pre></div></div>
             
         </li>
         
@@ -141,9 +136,19 @@ This module acts as a wrapper to Node’s EventEmitter class.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h2 id="methods">METHODS</h2>
+              <p>Central event manager to dispatch events to all Expresser modules.
+This module acts as a wrapper to Node’s EventEmitter class.
+<!--
+@see settings.events
+--></p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Events</span></span>
+    newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Events()
+    
+    evt = <span class="hljs-built_in">require</span> <span class="hljs-string">"events"</span>
+    emitter = <span class="hljs-keyword">new</span> evt.EventEmitter()</pre></div></div>
             
         </li>
         
@@ -154,8 +159,33 @@ This module acts as a wrapper to Node’s EventEmitter class.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
+              <h2 id="methods">METHODS</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
               <p>Emit a new event. The first argument is the event ID, all others are
-passed to the event emitter.
+passed to the event emitter. Only if <code>settings.events.enabled</code> is true!
 @param {String} id The event ID.
 @param {Arguments} args Arguments to be passed to the emitter.
 @return {Object} Returns itself so calls can be chained.</p>
@@ -169,11 +199,11 @@ passed to the event emitter.
         </li>
         
         
-        <li id="section-4">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>Bind a specific callback to an event ID.
 @param {String} id The event ID.
@@ -189,11 +219,11 @@ passed to the event emitter.
         </li>
         
         
-        <li id="section-5">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>Remove a specific callback from the listeners related to an event ID.
 @param {String} id The event ID.
@@ -209,14 +239,26 @@ passed to the event emitter.
         </li>
         
         
-        <li id="section-6">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <h2 id="singleton-implementation-">Singleton implementation.</h2>
 
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              
             </div>
             
             <div class="content"><div class='highlight'><pre>Events.getInstance = <span class="hljs-function">-&gt;</span>
