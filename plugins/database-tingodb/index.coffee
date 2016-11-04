@@ -203,7 +203,7 @@ class DatabaseTingoDb
         if options.filter?
             filter = options.filter
         else
-            filter = {_id: id}
+            filter = {_id: obj.id or obj._id}
         delete options.filter
 
         # If options patch is set, replace specified document properties only instead of replacing the whole document.

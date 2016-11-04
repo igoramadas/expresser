@@ -57,15 +57,14 @@ describe("Database TingoDB Tests", function () {
         var callback = function (err, result) {
             if (err) {
                 done(err);
-            } else if (result.length > 0 && result[0].testId == testTimestamp) {
-                done();
             } else {
-                done("Expected one result with testId = " + testTimestamp + ", but got something else.");
+                done();
             }
         };
 
         var obj = {
             testId: testTimestamp,
+            updated: false,
             complex: true,
             date: new Date(),
             data: [1, 2, "a", "b", {
@@ -80,17 +79,11 @@ describe("Database TingoDB Tests", function () {
         var callback = function (err, result) {
             if (err) {
                 done(err);
-            } else {
+            } else if (result.length > 0 && result[0].testId == testTimestamp) {
                 done();
+            } else {
+                done("Expected one result with testId = " + testTimestamp + ", but got something else.");
             }
-        };
-
-        var obj = {
-            complex: true,
-            date: new Date(),
-            data: [1, 2, "a", "b", {
-                sub: 0.5
-            }]
         };
 
         var filter = {
@@ -98,5 +91,55 @@ describe("Database TingoDB Tests", function () {
         };
 
         dbTingo.get("test", filter, callback);
+    });
+
+    it("Get all records from database", function (done) {
+        var callback = function (err, result) {
+            if (err) {
+                done(err);
+            } else {
+                done();
+            }
+        };
+
+        dbTingo.get("test", callback);
+    });
+
+    it("Updated record on database", function (done) {
+        var callback = function (err, result) {
+            if (err) {
+                done(err);
+            } else {
+                done();
+            }
+        };
+
+        var options = {
+            filter: {
+                testId: testTimestamp
+            }
+        };
+
+        var obj = {
+            updated: true
+        };
+
+        dbTingo.update("test", obj, callback);
+    });
+
+    it("Remove record from database", function (done) {
+        var callback = function (err, result) {
+            if (err) {
+                done(err);
+            } else {
+                done();
+            }
+        };
+
+        var filter = {
+            testId: testTimestamp
+        };
+
+        dbTingo.remove("test", filter, callback);
     });
 });

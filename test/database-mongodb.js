@@ -8,6 +8,7 @@ chai.should();
 describe("Database MongoDB Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
+    var testTimestamp = require("moment")().valueOf();
     var settings = require("../lib/settings.coffee");
     var database = null;
     var databaseMongo = null;
@@ -63,6 +64,7 @@ describe("Database MongoDB Tests", function () {
 
             var execution = function () {
                 var obj = {
+                    testId: testTimestamp,
                     complex: true,
                     date: new Date(),
                     data: [1, 2, "a", "b", {
@@ -75,10 +77,10 @@ describe("Database MongoDB Tests", function () {
             setTimeout(execution, 2000);
         });
 
-        it("Add 500 records to the database", function (done) {
+        it("Add 300 records to the database", function (done) {
             this.timeout(12000);
 
-            var counter = 500;
+            var counter = 300;
             var current = 1;
 
             var callback = function (err, result) {
@@ -118,6 +120,22 @@ describe("Database MongoDB Tests", function () {
             };
 
             dbMongo.update("test", obj, callback);
+        });
+
+        it("Remove record from database", function (done) {
+            var callback = function (err, result) {
+                if (err) {
+                    done(err);
+                } else {
+                    done();
+                }
+            };
+
+            var filter = {
+                testId: testTimestamp
+            };
+
+            dbMongo.remove("test", filter, callback);
         });
     } else {
         it.skip("Database MongoDB tests skipped, no connection string set");
