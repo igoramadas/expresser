@@ -51,32 +51,6 @@ describe("Database MongoDB Tests", function () {
             dbMongo = databaseMongo.init();
         });
 
-        it("MongoDB - Add complex record to the database", function (done) {
-            this.timeout(10000);
-
-            var callback = function (err, result) {
-                if (err) {
-                    done(err);
-                } else {
-                    done();
-                }
-            };
-
-            var execution = function () {
-                var obj = {
-                    testId: testTimestamp,
-                    complex: true,
-                    date: new Date(),
-                    data: [1, 2, "a", "b", {
-                        sub: 0.5
-                    }]
-                };
-                dbMongo.insert("test", obj, callback);
-            };
-
-            setTimeout(execution, 2000);
-        });
-
         it("Add 300 records to the database", function (done) {
             this.timeout(12000);
 
@@ -102,6 +76,62 @@ describe("Database MongoDB Tests", function () {
             };
 
             setTimeout(execution, 100);
+        });
+
+        it("Add complex record to the database", function (done) {
+            this.timeout(10000);
+
+            var callback = function (err, result) {
+                if (err) {
+                    done(err);
+                } else {
+                    done();
+                }
+            };
+
+            var execution = function () {
+                var obj = {
+                    testId: testTimestamp,
+                    complex: true,
+                    date: new Date(),
+                    data: [1, 2, "a", "b", {
+                        sub: 0.5
+                    }]
+                };
+                dbMongo.insert("test", obj, callback);
+            };
+
+            setTimeout(execution, 2000);
+        });
+
+        it("Get record added on the previous step", function (done) {
+            var callback = function (err, result) {
+                if (err) {
+                    done(err);
+                } else if (result.length > 0 && result[0].testId == testTimestamp) {
+                    done();
+                } else {
+                    done("Expected one result with testId = " + testTimestamp + ", but got something else.");
+                }
+            };
+
+            var filter = {
+                complex: true
+            };
+
+            dbMongo.get("test", filter, callback);
+        });
+
+        it("Get all records from database", function (done) {
+            var callback = function (err, result) {
+                if (err) {
+                    done(err);
+                } else {
+                    done();
+                }
+            };
+
+            dbMongo.get("test", callback);
         });
 
         it("Updates all previously created records on the database", function (done) {

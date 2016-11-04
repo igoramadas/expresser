@@ -81,7 +81,6 @@ class DatabaseTingoDb
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = normalizeId result if settings.database.mongodb.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -91,7 +90,6 @@ class DatabaseTingoDb
         if filter?
             if filter._id?
                 id = filter._id
-            else if filter.id? and settings.database.mongodb.normalizeId
                 id = filter.id
             else
                 t = typeof filter
@@ -151,7 +149,6 @@ class DatabaseTingoDb
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = normalizeId(result) if settings.database.mongodb.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -190,7 +187,6 @@ class DatabaseTingoDb
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = normalizeId(result) if settings.database.mongodb.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -242,7 +238,6 @@ class DatabaseTingoDb
         # Check it the `obj` is the model itself, or only the ID string / number.
         if filter._id?
             id = filter._id
-        else if filter.id and settings.database.mongodb.normalizeId
             id = filter.id
         else
             t = typeof filter
@@ -251,7 +246,6 @@ class DatabaseTingoDb
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = normalizeId(result) if settings.database.mongodb.normalizeId
                 callback err, result
 
         # Set collection object and remove specified object from the database.

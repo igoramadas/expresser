@@ -59,26 +59,6 @@ class DatabaseMongoDb
     # HELPERS
     # -------------------------------------------------------------------------
 
-    # Helper to transform MongoDB document "_id" to "id".
-    # @param {Object} result The document or result to be normalized.
-    # @return {Object} Returns the normalized document.
-    normalizeId = (result) ->
-        return if not result?
-
-        isArray = lodash.isArray result or lodash.isArguments result
-
-        # Check if result is a collection / array or a single document.
-        if isArray
-            for obj in result
-                if obj["_id"]?
-                    obj["id"] = obj["_id"].toString()
-                    delete obj["_id"]
-        else if result["_id"]?
-            result["id"] = result["_id"].toString()
-            delete result["_id"]
-
-        return result
-
     # DB IMPLEMENTATION
     # -------------------------------------------------------------------------
 
@@ -114,7 +94,6 @@ class DatabaseMongoDb
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = normalizeId result if settings.database.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -124,7 +103,6 @@ class DatabaseMongoDb
         if filter?
             if filter._id?
                 id = filter._id
-            else if filter.id? and settings.database.normalizeId
                 id = filter.id
             else
                 t = typeof filter
@@ -184,7 +162,6 @@ class DatabaseMongoDb
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = normalizeId(result) if settings.database.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -223,7 +200,6 @@ class DatabaseMongoDb
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = normalizeId(result) if settings.database.normalizeId
                 callback err, result
 
         # Set collection object.
@@ -232,8 +208,6 @@ class DatabaseMongoDb
         # Make sure the ID is converted to ObjectID.
         if obj._id?
             id = mongoskin.ObjectID.createFromHexString obj._id.toString()
-        else if obj.id? and settings.database.normalizeId
-            id = mongoskin.ObjectID.createFromHexString obj.id.toString()
 
         # Make sure options is valid.
         options = {} if not options?
@@ -283,8 +257,6 @@ class DatabaseMongoDb
         # Check it the `obj` is the model itself, or only the ID string / number.
         if filter._id?
             id = filter._id
-        else if filter.id and settings.database.normalizeId
-            id = filter.id
         else
             t = typeof filter
             id = filter if t is "string" or t is "integer"
@@ -292,7 +264,6 @@ class DatabaseMongoDb
         # Create the DB callback helper.
         dbCallback = (err, result) =>
             if callback?
-                result = normalizeId(result) if settings.database.normalizeId
                 callback err, result
 
         # Set collection object and remove specified object from the database.
