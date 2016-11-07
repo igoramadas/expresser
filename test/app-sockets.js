@@ -120,5 +120,13 @@ describe("App Sockets Tests", function () {
 
             });
         });
+
+        it("Stop listening to previous events", function () {
+            sockets.stopListening("client-to-server", false);
+        });
+
+        it("Compacts list of current listeners", function () {
+            sockets.compact();
+        });
     });
 });
