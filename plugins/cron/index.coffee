@@ -287,7 +287,7 @@ class Cron
                 # The parameters can be force set using "params".
                 # If not present, pass the job itself to the callback instead.
                 if job.params
-                    job.callback.call job.callback, job.params
+                    job.callback.apply job.callback, job.params
                 else
                     job.callback job
 

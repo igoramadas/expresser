@@ -2,7 +2,7 @@
     "events.coffee": [{
         "id": "cron-start",
         "callback": "emit",
-        "params": ["cron-started", true],
+        "params": ["cron-started", "abc"],
         "description": "Testing cron start.",
         "schedule": 1,
         "once": true

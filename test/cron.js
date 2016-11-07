@@ -9,6 +9,7 @@ describe("Cron Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    var events = require("../lib/events.coffee");
     var utils = null;
     var cron = null;
 
@@ -46,10 +47,12 @@ describe("Cron Tests", function () {
     });
 
     it("Start loaded cron jobs", function (done) {
+        this.timeout(10000);
+
         var verify = function (ok) {
             events.off("cron-started", verify);
 
-            if (ok) {
+            if (ok == "abc") {
                 done()
             } else {
                 done("Event should emit true, but we got " + ok);
@@ -61,14 +64,14 @@ describe("Cron Tests", function () {
         cron.start();
     });
 
-    it("Remove test123 job loaded from testcron.json", function (done) {
+    it("Remove cron-start job loaded from testcron.json", function (done) {
         var length = cron.jobs.length;
-        cron.remove("test123");
+        cron.remove("cron-start");
 
         if (cron.jobs.length < length) {
             done();
         } else {
-            done("Job test123 was not removed from cron jobs list.");
+            done("Job cron-start was not removed from cron jobs list.");
         }
     });
 
