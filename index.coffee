@@ -36,8 +36,6 @@ class Expresser
     # folder for local development setups, or directly under /node_modules
     # for plugins installed via NPM (most production scenarios).
     loadPlugins = (self) ->
-        
-
         if fs.existsSync "#{__dirname}/plugins"
             pluginsFolder = true
             plugins = fs.readdirSync "#{__dirname}/plugins"

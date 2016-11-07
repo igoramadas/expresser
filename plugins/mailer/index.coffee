@@ -47,23 +47,21 @@ class Mailer
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.mailer
 
+        # Warn about new path setting.
+        if settings.path.emailTemplatesDir and not settings.mailer.templatesPath
+            logger.warn "Mailer.init", "The settings.path.emailTemplatesDir setting is deprecated. Please use settings.mailer.templatesPath."
+
+        # Define default primary SMTP.
         if options.smtp.service? and options.smtp.service isnt ""
             @setSmtp options.smtp, false
         else if options.smtp.host? and options.smtp.host isnt "" and options.smtp.port > 0
             @setSmtp options.smtp, false
 
+        # Define default secondary SMTP.
         if options.smtp2.service? and options.smtp2.service isnt ""
             @setSmtp options.smtp2, true
         else if options.smtp2.host? and options.smtp2.host isnt "" and options.smtp2.port > 0
             @setSmtp options.smtp2, true
-
-        # Alert user if specified backup SMTP but not the main one.
-        if not @smtp? and @smtp2?
-            logger.warn "Mailer.init", "The secondary SMTP is defined but not the main one.", "You should set the main one instead, but we'll still use the secondary for now."
-
-        # Warn if no SMTP is available for sending emails, but only when debug is enabled.
-        if options.enabled and not @smtp? and not @smtp2?
-            logger.warn "Mailer.init", "No default SMTP settings found.", "No emails will be sent out if you don't pass a SMTP server on `send`."
 
         @setEvents()
 
@@ -172,8 +170,8 @@ class Mailer
 
         # Set file system reading options.
         readOptions = {encoding: settings.general.encoding}
-        baseFile = utils.getFilePath path.join(settings.path.emailTemplatesDir, settings.mailer.baseTemplateFile)
-        templateFile = utils.getFilePath path.join(settings.path.emailTemplatesDir, "#{name}.html")
+        baseFile = utils.getFilePath path.join(settings.mailer.templatesPath, settings.mailer.baseTemplateFile)
+        templateFile = utils.getFilePath path.join(settings.mailer.templatesPath, "#{name}.html")
 
         # Read base and `name` template and merge them together.
         base = fs.readFileSync baseFile, readOptions

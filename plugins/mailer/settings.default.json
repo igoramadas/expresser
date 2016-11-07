@@ -4,6 +4,8 @@
         // The name of the base template file when loading and parsing email templates.
         // The base path is defined under `settings.path.emailTemplatesDir`.
         "baseTemplateFile": "base.html",
+        // Path to the templates folder.
+        "templatesPath": "./emailtemplates/",
         // If `doNotSend` is true, no email will be sent out. Useful while testing.
         "doNotSend": false,
         // Enable mailer? If `false` the mailer module won't be initialized.

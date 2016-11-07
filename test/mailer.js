@@ -25,6 +25,14 @@ describe("Mailer Tests", function () {
             settings.mailer.smtp.password = env["SMTP_PASSWORD"];
         }
 
+        if (env["SMTP2_USER"]) {
+            settings.mailer.smtp2.user = env["SMTP2_USER"];
+        }
+
+        if (env["SMTP2_PASSWORD"]) {
+            settings.mailer.smtp2.password = env["SMTP2_PASSWORD"];
+        }
+
         utils = require("../lib/utils.coffee");
 
         mailer = require("../plugins/mailer/index.coffee");
@@ -41,15 +49,62 @@ describe("Mailer Tests", function () {
         mailer.init();
     });
 
+    it("Load and process an email template", function (done) {
+        var template = mailer.getTemplate("test");
+        var keywords = {
+            name: "Joe Lee",
+            email: "joelee@somemail.com"
+        };
+
+        var result = mailer.parseTemplate(template, keywords);
+
+        if (result.indexOf("test template") > 0 && result.indexOf(keywords.name) > 0 && result.indexOf(keywords.email) > 0) {
+            done()
+        } else {
+            done("Unexpected template result: " + result);
+        }
+    });
+
+    it("Clears the template cache", function () {
+        mailer.clearCache();
+    });
+
     if (hasEnv) {
-        it("Sends a test email", function (done) {
-            this.timeout(20000);
+        it("Sends a test email using Mailgun (SMTP)", function (done) {
+            this.timeout(12000);
+
+            var smtp = mailer.createSmtp(settings.mailer.smtp);
 
             var msgOptions = {
-                body: "Mail testing: app {appTitle}, to {to}.",
+                body: "SMTP testing: app {appTitle}, to {to}, using Mailgun.",
                 subject: "Test mail",
                 to: "expresser@mailinator.com",
-                from: "devv@devv.com"
+                from: "devv@devv.com",
+                smtp: smtp
+            };
+
+            var callback = function (err) {
+                if (!err) {
+                    done();
+                } else {
+                    done(err);
+                }
+            };
+
+            mailer.send(msgOptions, callback);
+        });
+
+        it("Sends a test email using Debug Mail (SMTP2)", function (done) {
+            this.timeout(12000);
+
+            var smtp = mailer.createSmtp(settings.mailer.smtp2);
+
+            var msgOptions = {
+                body: "SMTP2 testing: app {appTitle}, to {to}, using Debug Mail.",
+                subject: "Test mail",
+                to: "expresser@mailinator.com",
+                from: "devv@devv.com",
+                smtp: smtp
             };
 
             var callback = function (err) {

@@ -23,11 +23,19 @@
         "console": true
     },
     "mailer": {
+        "templatesPath": "test/emailtemplates",
         "smtp": {
             "host": "smtp.mailgun.com",
             "port": 25,
             "secure": false,
             "service": "mailgun"
+        },
+        "smtp2": {
+            "host": "debugmail.io",
+            "port": 25,
+            "secure": false,
+            "service": "debugmail.io",
+            "ignoreTLS": true
         }
     },
     "path": {

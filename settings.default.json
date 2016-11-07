@@ -146,8 +146,6 @@
     // PATH
     // -------------------------------------------------------------------------
     "path": {
-        // Path to the email templates folder.
-        "emailTemplatesDir": "./emailtemplates/",
         // Path to the public folder used by Express.
         "publicDir": "./public/",
         // DEPRECATED!!! Please use settings.app.ssl.keyFile!
