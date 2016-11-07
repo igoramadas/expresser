@@ -1,10 +1,10 @@
 {
-    "index.coffee": [
-        {
-            "id": "test123",
-            "callback": "init",
-            "description": "Test cron.",
-            "schedule": 3600
-        }
-    ]
+    "events.coffee": [{
+        "id": "cron-start",
+        "callback": "emit",
+        "params": ["cron-started", true],
+        "description": "Testing cron start.",
+        "schedule": 1,
+        "once": true
+    }]
 }

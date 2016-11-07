@@ -284,7 +284,15 @@ class Cron
             job.endTime = moment()
 
             try
-                job.callback job
+                # The parameters can be force set using "params".
+                # If not present, pass the job itself to the callback instead.
+                if job.params
+                    job.callback.call job.callback, job.params
+                else
+                    job.callback job
+
+                # Job end time should be set on the callback, but if it wasn't, we force set it here.
+                job.endTime = moment() if job.startTime is job.endTime
             catch ex
                 logger.error "Cron.getCallback", "Could not run job.", ex.message, ex.stack
 

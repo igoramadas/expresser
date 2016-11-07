@@ -35,7 +35,7 @@ describe("Cron Tests", function () {
     it("Loads jobs from a testcron.json file", function (done) {
         cron.load("test/testcron.json", {
             autoStart: false,
-            basePath: "../../../"
+            basePath: "../../../lib/"
         });
 
         if (cron.jobs.length == 1) {
@@ -43,6 +43,22 @@ describe("Cron Tests", function () {
         } else {
             done("Cron should have a single job loaded from testcron.json, but has " + cron.jobs.length + " jobs.");
         }
+    });
+
+    it("Start loaded cron jobs", function (done) {
+        var verify = function (ok) {
+            events.off("cron-started", verify);
+
+            if (ok) {
+                done()
+            } else {
+                done("Event should emit true, but we got " + ok);
+            }
+        };
+
+        events.on("cron-started", verify);
+
+        cron.start();
     });
 
     it("Remove test123 job loaded from testcron.json", function (done) {
