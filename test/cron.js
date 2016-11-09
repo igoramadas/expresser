@@ -39,10 +39,10 @@ describe("Cron Tests", function () {
             basePath: "../../../lib/"
         });
 
-        if (cron.jobs.length == 1) {
+        if (cron.jobs.length == 2) {
             done();
         } else {
-            done("Cron should have a single job loaded from testcron.json, but has " + cron.jobs.length + " jobs.");
+            done("Cron should have two jobs loaded from testcron.json, but has " + cron.jobs.length + " jobs.");
         }
     });
 
@@ -50,28 +50,28 @@ describe("Cron Tests", function () {
         this.timeout(10000);
 
         var verify = function (ok) {
-            events.off("cron-started", verify);
+            events.off("cron-seconds", verify);
 
-            if (ok == "abc") {
+            if (ok === 1) {
                 done()
             } else {
-                done("Event should emit true, but we got " + ok);
+                done("Event should emit 1, but we got " + ok);
             }
         };
 
-        events.on("cron-started", verify);
+        events.on("cron-seconds", verify);
 
         cron.start();
     });
 
-    it("Remove cron-start job loaded from testcron.json", function (done) {
+    it("Remove cron-seconds job loaded from testcron.json", function (done) {
         var length = cron.jobs.length;
-        cron.remove("cron-start");
+        cron.remove("cron-seconds");
 
         if (cron.jobs.length < length) {
             done();
         } else {
-            done("Job cron-start was not removed from cron jobs list.");
+            done("Job cron-seconds was not removed from cron jobs list.");
         }
     });
 
@@ -93,6 +93,33 @@ describe("Cron Tests", function () {
         };
 
         cron.add(job);
+    });
+
+    it("Throw error when adding invalid jobs", function (done) {
+        var err = false;
+
+        try {
+            cron.add({
+                missing_id: true
+            });
+            err = "Cron.add(missing id) should throw an error, but did not."
+        } catch (ex) {}
+
+        if (!err) {
+            try {
+                cron.add({
+                    id: 123,
+                    callback: "invalid"
+                });
+                err = "Cron.add(invalid callback) should throw an error, but did not."
+            } catch (ex) {}
+        }
+
+        if (err) {
+            done();
+        } else {
+            done(err);
+        }
     });
 
     it("Stop jobs", function (done) {
