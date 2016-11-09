@@ -56,9 +56,6 @@ class DatabaseMongoDb
 
         return result
 
-    # HELPERS
-    # -------------------------------------------------------------------------
-
     # DB IMPLEMENTATION
     # -------------------------------------------------------------------------
 
@@ -81,15 +78,12 @@ class DatabaseMongoDb
                 callback = filter
                 filter = null
 
+        if not @connection?
+            throw new Error "DatabaseMongoDb.get: the db was not initialized, please check database settings and call its 'init' method."
+
         # Callback is mandatory!
         if not callback?
             throw new Error "DatabaseMongoDb.get: a callback (last argument) must be specified."
-
-        # No DB set? Throw exception.
-        if not @connection?
-            if callback?
-                callback "DatabaseMongoDb.get: the db was not initialized, please check database settings and call its 'init' method."
-            return false
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -148,16 +142,11 @@ class DatabaseMongoDb
     # @param {Object} obj Document or array of documents to be added.
     # @param {Method} callback Callback (err, result) when operation has finished.
     insert: (collection, obj, callback) ->
-        if not obj?
-            if callback?
-                callback "DatabaseMongoDb.insert: no object (second argument) was specified."
-            return false
-
-        # No DB set? Throw exception.
         if not @connection?
-            if callback?
-                callback "DatabaseMongoDb.insert: the db was not initialized, please check database settings and call its 'init' method."
-            return false
+            throw new Error "DatabaseMongoDb.insert: the db was not initialized, please check database settings and call its 'init' method."
+
+        if not obj?
+            throw new Error "DatabaseMongoDb.insert: no object (second argument) was specified."
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -185,17 +174,12 @@ class DatabaseMongoDb
             callback = options
             options = {}
 
+        if not @connection?
+            throw new Error "DatabaseMongoDb.update: the db was not initialized, please check database settings and call its 'init' method."
+
         # Object or filter is mandatory.
         if not obj?
-            if callback?
-                callback "DatabaseMongoDb.update: no object (second argument) was specified."
-            return false
-
-        # No DB set? Throw exception.
-        if not @connection?
-            if callback?
-                callback "DatabaseMongoDb.update: the db was not initialized, please check database settings and call its 'init' method."
-            return false
+            throw new Error "DatabaseMongoDb.update: no object (second argument) was specified."
 
         # Create the DB callback helper.
         dbCallback = (err, result) =>
@@ -248,11 +232,12 @@ class DatabaseMongoDb
             callback = options
             options = {}
 
+        if not @connection?
+            throw new Error "DatabaseMongoDb.remove: the db was not initialized, please check database settings and call its 'init' method."
+
         # Filter is mandatory.
         if not filter?
-            if callback?
-                callback "DatabaseMongoDb.remove: no filter (second argument) was specified."
-            return false
+            throw new Error "DatabaseMongoDb.remove: no filter (second argument) was specified."
 
         # Check it the `obj` is the model itself, or only the ID string / number.
         if filter._id?
@@ -286,6 +271,9 @@ class DatabaseMongoDb
         if not callback? and lodash.isFunction filter
             callback = filter
             filter = {}
+
+        if not @connection?
+            throw new Error "DatabaseMongoDb.count: the db was not initialized, please check database settings and call its 'init' method."
 
         # Callback is mandatory!
         if not callback?

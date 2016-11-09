@@ -131,27 +131,28 @@ describe("App Sockets Tests", function () {
 
         it("Fails to emit and listen to events with sockets not initiated", function (done) {
             var err = false;
+            var listener = function () {
+                return true;
+            };
 
             sockets.io = null;
 
             try {
                 sockets.emit("invalid-io", true);
-            } catch (ex) {
-                err = ex;
-            }
+                err = "Sockets.emit should throw an error, but did not."
+            } catch (ex) {}
 
-            if (err) {
+            if (!err) {
                 try {
-                    sockets.emit("invalid-io", true);
-                } catch (ex) {
-                    err = ex;
-                }
+                    sockets.listento("invalid-io", listener);
+                    err = "Sockets.listenTo should throw an error, but did not."
+                } catch (ex) {}
             }
 
             if (err) {
                 done();
             } else {
-                done("Sockets should have thrown an exception, but did not.");
+                done(err);
             }
         });
     });

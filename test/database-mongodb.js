@@ -167,6 +167,71 @@ describe("Database MongoDB Tests", function () {
 
             dbMongo.remove("test", filter, callback);
         });
+
+        it("Tries to insert, update, remove, count using invalid params and connection", function (done) {
+            var err = false;
+            var connection = dbMongo.connection;
+            var callback = function () {
+                return false;
+            }
+
+            dbMongo.connection = null;
+
+            try {
+                dbMongo.insert();
+                err = "DatabaseMongoDb.insert(missing params) should throw an error, but did not.";
+            } catch (ex) {}
+
+            if (!err) {
+                try {
+                    dbMongo.insert("invalid", {});
+                    err = "DatabaseMongoDb.insert(invalid connection) should throw an error, but did not.";
+                } catch (ex) {}
+            }
+
+            if (!err) {
+                try {
+                    dbMongo.update();
+                    err = "DatabaseMongoDb.update(missing params) should throw an error, but did not.";
+                } catch (ex) {}
+            }
+
+            if (!err) {
+                try {
+                    dbMongo.update("invalid", {});
+                    err = "DatabaseMongoDb.update(invalid connection) should throw an error, but did not.";
+                } catch (ex) {}
+            }
+
+            if (!err) {
+                try {
+                    dbMongo.remove();
+                    err = "DatabaseMongoDb.remove(missing params) should throw an error, but did not.";
+                } catch (ex) {}
+            }
+
+            if (!err) {
+                try {
+                    dbMongo.remove("invalid", {});
+                    err = "DatabaseMongoDb.remove(invalid connection) should throw an error, but did not.";
+                } catch (ex) {}
+            }
+
+            if (!err) {
+                try {
+                    dbMongo.count();
+                    err = "DatabaseMongoDb.count() should throw an error, but did not.";
+                } catch (ex) {}
+            }
+
+            dbMongo.connection = connection;
+
+            if (err) {
+                done();
+            } else {
+                done(err);
+            }
+        });
     } else {
         it.skip("Database MongoDB tests skipped, no connection string set");
     }

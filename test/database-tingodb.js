@@ -26,6 +26,8 @@ describe("Database TingoDB Tests", function () {
     };
 
     before(function () {
+        clearDatabase();
+
         settings.loadFromJson("../plugins/database-tingodb/settings.default.json");
         settings.loadFromJson("settings.test.json");
 
@@ -36,8 +38,6 @@ describe("Database TingoDB Tests", function () {
         databaseTingo.expresser.events = require("../lib/events.coffee");
         databaseTingo.expresser.logger = require("../lib/logger.coffee");
         databaseTingo.expresser.database = database;
-
-        clearDatabase();
     });
 
     after(function () {
@@ -141,5 +141,46 @@ describe("Database TingoDB Tests", function () {
         };
 
         dbTingo.remove("test", filter, callback);
+    });
+
+    it("Tries to insert, update using invalid params and connection", function (done) {
+        var err = false;
+        var connection = dbTingo.connection;
+
+        dbTingo.connection = null;
+
+        try {
+            dbTingo.insert();
+            err = "DatabaseTingoDb.insert(missing params) should throw an error, but did not.";
+        } catch (ex) {}
+
+        if (!err) {
+            try {
+                dbTingo.insert("invalid", {});
+                err = "DatabaseTingoDb.insert(invalid connection) should throw an error, but did not.";
+            } catch (ex) {}
+        }
+
+        if (!err) {
+            try {
+                dbTingo.update();
+                err = "DatabaseTingoDb.update(missing params) should throw an error, but did not.";
+            } catch (ex) {}
+        }
+
+        if (!err) {
+            try {
+                dbTingo.update("invalid", {});
+                err = "DatabaseTingoDb.update(invalid connection) should throw an error, but did not.";
+            } catch (ex) {}
+        }
+
+        dbTingo.connection = connection;
+
+        if (err) {
+            done();
+        } else {
+            done(err);
+        }
     });
 });
