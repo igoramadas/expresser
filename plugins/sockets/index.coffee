@@ -62,7 +62,8 @@ class Sockets
     # @param {Object} data The JSON data to be sent out to clients.
     emit: (key, data) =>
         if not @io?
-            return logger.warn "Sockets.emit", key, JSON.stringify(data).length + " bytes", "Sockets not initiated yet, abort!"
+            logger.error "Sockets.emit", key, JSON.stringify(data).length + " bytes", "Sockets not initiated yet, abort!"
+            throw new Error "Sockets not initiated (@io is not set)."
             
         logger.debug "Sockets.emit", key, data
 
@@ -75,7 +76,8 @@ class Sockets
     # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
     listenTo: (key, callback, onlyNewClients) =>
         if not @io?.sockets?
-            return logger.warn "Sockets.listenTo", key, "Sockets not initiated yet, abort!"
+            logger.error "Sockets.listenTo", key, "Sockets not initiated yet, abort!"
+            throw new Error "Sockets not initiated (@io is not set)."
 
         onlyNewClients = false if not onlyNewClients?
         @currentListeners.push {key: key, callback: callback}

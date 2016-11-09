@@ -128,5 +128,31 @@ describe("App Sockets Tests", function () {
         it("Compacts list of current listeners", function () {
             sockets.compact();
         });
+
+        it("Fails to emit and listen to events with sockets not initiated", function (done) {
+            var err = false;
+
+            sockets.io = null;
+
+            try {
+                sockets.emit("invalid-io", true);
+            } catch (ex) {
+                err = ex;
+            }
+
+            if (err) {
+                try {
+                    sockets.emit("invalid-io", true);
+                } catch (ex) {
+                    err = ex;
+                }
+            }
+
+            if (err) {
+                done();
+            } else {
+                done("Sockets should have thrown an exception, but did not.");
+            }
+        });
     });
 });
