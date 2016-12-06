@@ -19,7 +19,7 @@
         "test": "make test"
     },
     "dependencies": {
-        "coffee-script": ">= 1.11.1",
+        "coffee-script": ">= 1.12.0",
         "async": "2.1.x",
         "body-parser": "1.15.x",
         "chalk": "1.1.x",
@@ -27,10 +27,10 @@
         "connect-assets": "5.4.x",
         "cookie-parser": "1.4.x",
         "cookie-session": "1.2.x",
-        "errorhandler": "1.4.x",
+        "errorhandler": "1.5.x",
         "express": "4.14.x",
         "lodash": "4.16.x",
-        "moment": "2.15.x",
+        "moment": "2.17.x",
         "pug": "2.0.0-beta6",
         "stylus": "0.54.x"
     },
@@ -40,16 +40,16 @@
         "coffee-coverage": ">= 1.0.1",
         "coveralls": ">= 2.11.14",
         "istanbul": ">= 0.4.5",
-        "loggly": "1.1.x",
+        "loggly": ">= 1.1.1",
         "mocha": ">= 3.1.2",
         "mocha-lcov-reporter": ">= 1.2.0",
-        "mongodb": "2.2.x",
-        "node-logentries": "0.1.x",
-        "nodemailer": "2.6.x",
-        "socket.io": "1.4.x",
+        "mongodb": ">= 2.2.12",
+        "node-logentries": ">= 0.1.4",
+        "nodemailer": ">= 2.6.4",
+        "socket.io": ">= 1.7.1",
         "socket.io-client": ">= 1.5.1",
         "supertest": ">= 2.0.0",
-        "tingodb": "0.4.x"
+        "tingodb": ">= 0.4.2"
     },
     "repository": {
         "type": "git",
