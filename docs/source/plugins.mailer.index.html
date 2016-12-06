@@ -124,19 +124,7 @@
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
               <h2 id="expresser-mailer">EXPRESSER MAILER</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>Sends and manages emails, with template and tags replacement support.
+<p>Sends and manages emails, with template and tags replacement support.
 When parsing templates, the tags should be wrapped with normal brackets {}.
 Example: {contents}
 The base message template (which is loaded with every single sent message)
@@ -163,11 +151,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-3">
+        <li id="section-2">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
               <p>SMTP objects will be instantiated on <code>init</code>.</p>
 
@@ -179,11 +167,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-4">
+        <li id="section-3">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>Templates cache to avoid disk reads.</p>
 
@@ -194,11 +182,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-5">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <h2 id="init">INIT</h2>
 
@@ -207,23 +195,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-6">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>Init the Mailer module and create the SMTP objects.
 @param {Object} options Mailer init options.</p>
@@ -242,17 +218,41 @@ folder / base file name you have set on the settings).
         events.emit <span class="hljs-string">"Mailer.before.init"</span>
 
         options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-        options = lodash.defaultsDeep options, settings.mailer
+        options = lodash.defaultsDeep options, settings.mailer</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Warn about new path setting.</p>
 
-        <span class="hljs-keyword">if</span> options.smtp.service? <span class="hljs-keyword">and</span> options.smtp.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.path.emailTemplatesDir <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> settings.mailer.templatesPath
+            logger.warn <span class="hljs-string">"Mailer.init"</span>, <span class="hljs-string">"The settings.path.emailTemplatesDir setting is deprecated. Please use settings.mailer.templatesPath."</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Define default primary SMTP.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.smtp.service? <span class="hljs-keyword">and</span> options.smtp.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
             @setSmtp options.smtp, <span class="hljs-literal">false</span>
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> options.smtp.host? <span class="hljs-keyword">and</span> options.smtp.host <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> options.smtp.port &gt; <span class="hljs-number">0</span>
-            @setSmtp options.smtp, <span class="hljs-literal">false</span>
-
-        <span class="hljs-keyword">if</span> options.smtp2.service? <span class="hljs-keyword">and</span> options.smtp2.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
-            @setSmtp options.smtp2, <span class="hljs-literal">true</span>
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> options.smtp2.host? <span class="hljs-keyword">and</span> options.smtp2.host <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> options.smtp2.port &gt; <span class="hljs-number">0</span>
-            @setSmtp options.smtp2, <span class="hljs-literal">true</span></pre></div></div>
+            @setSmtp options.smtp, <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
@@ -263,12 +263,18 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Alert user if specified backup SMTP but not the main one.</p>
+              <p>Define default secondary SMTP.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @smtp? <span class="hljs-keyword">and</span> @smtp2?
-            logger.warn <span class="hljs-string">"Mailer.init"</span>, <span class="hljs-string">"The secondary SMTP is defined but not the main one."</span>, <span class="hljs-string">"You should set the main one instead, but we'll still use the secondary for now."</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.smtp2.service? <span class="hljs-keyword">and</span> options.smtp2.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            @setSmtp options.smtp2, <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> options.smtp2.host? <span class="hljs-keyword">and</span> options.smtp2.host <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> options.smtp2.port &gt; <span class="hljs-number">0</span>
+            @setSmtp options.smtp2, <span class="hljs-literal">true</span>
+
+        @setEvents()
+
+        events.emit <span class="hljs-string">"Mailer.on.init"</span>, options</pre></div></div>
             
         </li>
         
@@ -278,26 +284,6 @@ folder / base file name you have set on the settings).
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>Warn if no SMTP is available for sending emails, but only when debug is enabled.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.enabled <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> @smtp? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> @smtp2?
-            logger.warn <span class="hljs-string">"Mailer.init"</span>, <span class="hljs-string">"No default SMTP settings found."</span>, <span class="hljs-string">"No emails will be sent out if you don't pass a SMTP server on `send`."</span>
-
-        @setEvents()
-
-        events.emit <span class="hljs-string">"Mailer.on.init"</span>, options</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>Bind event listeners.</p>
 
@@ -309,11 +295,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-11">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <h2 id="outbound">OUTBOUND</h2>
 
@@ -322,23 +308,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-12">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Sends an email to the specified address. A callback can be specified, having (err, result).
 @param {String} options The email message options
@@ -357,11 +331,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-14">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Get passed SMTP servers or the default ones.</p>
 
@@ -373,11 +347,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-15">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Check if SMTP server is set.</p>
 
@@ -391,11 +365,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-16">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Make sure “to” address is valid.</p>
 
@@ -409,11 +383,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-17">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Set from to default address if no <code>to</code> was set.</p>
 
@@ -424,11 +398,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-18">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Set HTML to body, if passed.</p>
 
@@ -439,11 +413,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-19">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>If to is an array, make it a string separated by commas.</p>
 
@@ -455,11 +429,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-20">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Get the name of recipient based on the <code>to</code> option.</p>
 
@@ -473,11 +447,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-21">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Load template if a <code>template</code> was passed.</p>
 
@@ -490,11 +464,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-22">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Parse template keywords if a <code>keywords</code> was passed.</p>
 
@@ -506,11 +480,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-23">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Parse final template and set it on the <code>options</code>.</p>
 
@@ -522,11 +496,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-24">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Check if <code>doNotSend</code> flag is set, and if so, do not send anything.</p>
 
@@ -539,11 +513,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-25">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Send using the main SMTP. If failed and a secondary is also set, try using the secondary.</p>
 
@@ -561,11 +535,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-26">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <h2 id="templates">TEMPLATES</h2>
 
@@ -574,23 +548,11 @@ folder / base file name you have set on the settings).
         </li>
         
         
-        <li id="section-27">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Load and return the specified template. Get from the cache or from the disk
 if it wasn’t loaded yet. Templates are stored inside the <code>/emailtemplates</code>
@@ -611,11 +573,11 @@ The contents will be inserted on the {contents} tag.
         </li>
         
         
-        <li id="section-29">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Is it already cached? If so do not hit the disk.</p>
 
@@ -630,28 +592,28 @@ The contents will be inserted on the {contents} tag.
         </li>
         
         
-        <li id="section-30">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Set file system reading options.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        readOptions = {encoding: settings.general.encoding}
-        baseFile = utils.getFilePath path.join(settings.path.emailTemplatesDir, settings.mailer.baseTemplateFile)
-        templateFile = utils.getFilePath path.join(settings.path.emailTemplatesDir, <span class="hljs-string">"<span class="hljs-subst">#{name}</span>.html"</span>)</pre></div></div>
+        baseFile = utils.getFilePath path.join(settings.mailer.templatesPath, settings.mailer.baseTemplateFile)
+        templateFile = utils.getFilePath path.join(settings.mailer.templatesPath, <span class="hljs-string">"<span class="hljs-subst">#{name}</span>.html"</span>)</pre></div></div>
             
         </li>
         
         
-        <li id="section-31">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Read base and <code>name</code> template and merge them together.</p>
 
@@ -664,11 +626,11 @@ The contents will be inserted on the {contents} tag.
         </li>
         
         
-        <li id="section-32">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Save to cache.</p>
 
@@ -683,11 +645,11 @@ The contents will be inserted on the {contents} tag.
         </li>
         
         
-        <li id="section-33">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Parse the specified template to replace keywords. The <code>keywords</code> is a set of key-values
 to be replaced. For example if keywords is <code>{id: 1, friendlyUrl: &quot;abc&quot;}</code> then the tags
@@ -711,11 +673,11 @@ to be replaced. For example if keywords is <code>{id: 1, friendlyUrl: &quot;abc&
         </li>
         
         
-        <li id="section-34">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <h2 id="smtp-helper-methods">SMTP HELPER METHODS</h2>
 
@@ -724,23 +686,11 @@ to be replaced. For example if keywords is <code>{id: 1, friendlyUrl: &quot;abc&
         </li>
         
         
-        <li id="section-35">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-36">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>Helper to send emails using the specified transport and options.
 This is NOT exposed to external modules.</p>
@@ -758,11 +708,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>Helper to create a SMTP object.
 @param {Object} options Options like service, host and port, username, password etc.
@@ -780,11 +730,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Make sure auth is properly set.</p>
 
@@ -798,11 +748,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Set the correct SMTP details based on the options.</p>
 
@@ -813,11 +763,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Sign using DKIM?</p>
 
@@ -831,11 +781,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Use the specified options and create a new SMTP server.
 @param {Object} options Options to be passed to SMTP creator.
@@ -852,11 +802,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <h2 id="cache-methods">CACHE METHODS</h2>
 
@@ -865,23 +815,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-44">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>Force clear the templates cache.</p>
 
@@ -895,26 +833,14 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-46">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
-              </div>
-              
             </div>
             
             <div class="content"><div class='highlight'><pre>Mailer.getInstance = <span class="hljs-function">-&gt;</span>
