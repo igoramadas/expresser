@@ -13,6 +13,7 @@ describe("Database MongoDB Tests", function () {
     var database = null;
     var databaseMongo = null;
     var dbMongo = null;
+    var recordId = null;
 
     before(function () {
         settings.loadFromJson("../plugins/database-mongodb/settings.default.json");
@@ -82,6 +83,8 @@ describe("Database MongoDB Tests", function () {
             this.timeout(10000);
 
             var callback = function (err, result) {
+                recordId = result._id;
+
                 if (err) {
                     done(err);
                 } else {
@@ -104,7 +107,7 @@ describe("Database MongoDB Tests", function () {
             setTimeout(execution, 2000);
         });
 
-        it("Get record added on the previous step", function (done) {
+        it("Get record added on the previous step, by filter", function (done) {
             var callback = function (err, result) {
                 if (err) {
                     done(err);
@@ -117,6 +120,24 @@ describe("Database MongoDB Tests", function () {
 
             var filter = {
                 testId: testTimestamp
+            };
+
+            dbMongo.get("test", filter, callback);
+        });
+
+        it("Get record added on the previous step, by ID", function (done) {
+            var callback = function (err, result) {
+                if (err) {
+                    done(err);
+                } else if (!result) {
+                    done("No record returned for ID " + recordId);
+                } else {
+                    done();
+                }
+            };
+
+            var filter = {
+                _id: recordId
             };
 
             dbMongo.get("test", filter, callback);
@@ -152,7 +173,21 @@ describe("Database MongoDB Tests", function () {
             dbMongo.update("test", obj, callback);
         });
 
-        it("Remove record from database", function (done) {
+        it("Count records on database collection", function (done) {
+            var callback = function (err, count) {
+                if (err) {
+                    done(err);
+                } else if (count < 1) {
+                    done("Count should return at least 1 record (added on previous tests).");
+                } else {
+                    done();
+                }
+            };
+
+            dbMongo.count("test", null, callback);
+        });
+
+        it("Remove record from database, by ID", function (done) {
             var callback = function (err, result) {
                 if (err) {
                     done(err);
@@ -162,7 +197,23 @@ describe("Database MongoDB Tests", function () {
             };
 
             var filter = {
-                testId: testTimestamp
+                _id: recordId
+            };
+
+            dbMongo.remove("test", filter, callback);
+        });
+
+        it("Remove record from database, by filter", function (done) {
+            var callback = function (err, result) {
+                if (err) {
+                    done(err);
+                } else {
+                    done();
+                }
+            };
+
+            var filter = {
+                complex: true
             };
 
             dbMongo.remove("test", filter, callback);
@@ -178,9 +229,23 @@ describe("Database MongoDB Tests", function () {
             dbMongo.connection = null;
 
             try {
-                dbMongo.insert();
-                err = "DatabaseMongoDb.insert(missing params) should throw an error, but did not.";
+                dbMongo.get();
+                err = "DatabaseMongoDb.get(missing params) should throw an error, but did not.";
             } catch (ex) {}
+
+            if (!err) {
+                try {
+                    dbMongo.get("test", {something: true});
+                    err = "DatabaseMongoDb.get(invalid connection) should throw an error, but did not.";
+                } catch (ex) {}
+            }
+
+            if (!err) {
+                try {
+                    dbMongo.insert();
+                    err = "DatabaseMongoDb.insert(missing params) should throw an error, but did not.";
+                } catch (ex) {}
+            }
 
             if (!err) {
                 try {
@@ -220,7 +285,14 @@ describe("Database MongoDB Tests", function () {
             if (!err) {
                 try {
                     dbMongo.count();
-                    err = "DatabaseMongoDb.count() should throw an error, but did not.";
+                    err = "DatabaseMongoDb.count(missing params) should throw an error, but did not.";
+                } catch (ex) {}
+            }
+
+            if (!err) {
+                try {
+                    dbMongo.count("invalid", {});
+                    err = "DatabaseMongoDb.count(invalid connection) should throw an error, but did not.";
                 } catch (ex) {}
             }
 

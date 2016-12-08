@@ -93,7 +93,6 @@ class DatabaseTingoDb
         if filter?
             if filter._id?
                 id = filter._id
-                id = filter.id
             else
                 t = typeof filter
                 id = filter if t is "string" or t is "integer"
@@ -193,7 +192,7 @@ class DatabaseTingoDb
         if options.filter?
             filter = options.filter
         else
-            filter = {_id: obj.id or obj._id}
+            filter = {_id: obj._id}
         delete options.filter
 
         # If options patch is set, replace specified document properties only instead of replacing the whole document.
@@ -233,8 +232,6 @@ class DatabaseTingoDb
         # Check it the `obj` is the model itself, or only the ID string / number.
         if filter._id?
             id = filter._id
-        else if filter.id?
-            id = filter.id
         else
             t = typeof filter
             id = filter if t is "string" or t is "integer"

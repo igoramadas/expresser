@@ -97,7 +97,6 @@ class DatabaseMongoDb
         if filter?
             if filter._id?
                 id = filter._id
-                id = filter.id
             else
                 t = typeof filter
                 id = filter if t is "string" or t is "integer"

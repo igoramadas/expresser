@@ -14,6 +14,7 @@ describe("Database TingoDB Tests", function () {
     var database = null;
     var databaseTingo = null;
     var dbTingo = null;
+    var recordId = null;
 
     var clearDatabase = function () {
         try {
@@ -75,7 +76,7 @@ describe("Database TingoDB Tests", function () {
         dbTingo.insert("test", obj, callback);
     });
 
-    it("Get record added on the previous step", function (done) {
+    it("Get record added on the previous step, by filter", function (done) {
         var callback = function (err, result) {
             if (err) {
                 done(err);
@@ -92,6 +93,24 @@ describe("Database TingoDB Tests", function () {
 
         dbTingo.get("test", filter, callback);
     });
+
+    it("Get record added on the previous step, by ID", function (done) {
+            var callback = function (err, result) {
+                if (err) {
+                    done(err);
+                } else if (!result) {
+                    done("No record returned for ID " + recordId);
+                } else {
+                    done();
+                }
+            };
+
+            var filter = {
+                _id: recordId
+            };
+
+            dbTingo.get("test", filter, callback);
+        });
 
     it("Get all records from database", function (done) {
         var callback = function (err, result) {
@@ -127,7 +146,7 @@ describe("Database TingoDB Tests", function () {
         dbTingo.update("test", obj, callback);
     });
 
-    it("Remove record from database", function (done) {
+    it("Remove record from database, by ID", function (done) {
         var callback = function (err, result) {
             if (err) {
                 done(err);
@@ -137,7 +156,23 @@ describe("Database TingoDB Tests", function () {
         };
 
         var filter = {
-            testId: testTimestamp
+            _id: recordId
+        };
+
+        dbTingo.remove("test", filter, callback);
+    });
+
+    it("Remove record from database, by filter", function (done) {
+        var callback = function (err, result) {
+            if (err) {
+                done(err);
+            } else {
+                done();
+            }
+        };
+
+        var filter = {
+            complex: true
         };
 
         dbTingo.remove("test", filter, callback);
