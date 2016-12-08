@@ -233,6 +233,7 @@ class DatabaseTingoDb
         # Check it the `obj` is the model itself, or only the ID string / number.
         if filter._id?
             id = filter._id
+        else if filter.id?
             id = filter.id
         else
             t = typeof filter

@@ -167,7 +167,7 @@ describe("Database MongoDB Tests", function () {
 
             dbMongo.remove("test", filter, callback);
         });
-
+        
         it("Tries to insert, update, remove, count using invalid params and connection", function (done) {
             var err = false;
             var connection = dbMongo.connection;

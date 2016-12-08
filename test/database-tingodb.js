@@ -113,7 +113,7 @@ describe("Database TingoDB Tests", function () {
                 done();
             }
         };
-
+        
         var options = {
             filter: {
                 testId: testTimestamp
@@ -143,16 +143,30 @@ describe("Database TingoDB Tests", function () {
         dbTingo.remove("test", filter, callback);
     });
 
-    it("Tries to insert, update using invalid params and connection", function (done) {
+    it("Tries to get, insert, update using invalid params and connection", function (done) {
         var err = false;
         var connection = dbTingo.connection;
 
         dbTingo.connection = null;
 
         try {
-            dbTingo.insert();
-            err = "DatabaseTingoDb.insert(missing params) should throw an error, but did not.";
+            dbTingo.get();
+            err = "DatabaseTingoDb.get(missing params) should throw an error, but did not.";
         } catch (ex) {}
+
+        if (!err) {
+            try {
+                dbTingo.get("test", {something: true});
+                err = "DatabaseTingoDb.get(invalid connection) should throw an error, but did not.";
+            } catch (ex) {}
+        }
+
+        if (!err) {
+            try {
+                dbTingo.insert();
+                err = "DatabaseTingoDb.insert(missing params) should throw an error, but did not.";
+            } catch (ex) {}
+        }
 
         if (!err) {
             try {
