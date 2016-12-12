@@ -87,7 +87,7 @@ describe("App Sockets Tests", function () {
         });
     });
 
-    it.skip("Emits sockets message from server to client (NOT WORKING)", function (done) {
+    it("Emits sockets message from server to client", function (done) {
         this.timeout(12000);
 
         var client;
@@ -113,7 +113,7 @@ describe("App Sockets Tests", function () {
                 sockets.emit("welcome", "test123");
             }
             
-            setTimeout(200, emitter);
+            setTimeout(emitter, 500);
         };
 
         client = socketClient("http://localhost:8080/", socketClientOptions);
