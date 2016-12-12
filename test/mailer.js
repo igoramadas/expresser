@@ -78,7 +78,7 @@ describe("Mailer Tests", function () {
             var msgOptions = {
                 body: "SMTP testing: app {appTitle}, to {to}, using Mailgun.",
                 subject: "Test mail",
-                to: "expresser@mailinator.com",
+                to: "Expresser <expresser@mailinator.com>",
                 from: "devv@devv.com",
                 smtp: smtp
             };
@@ -102,7 +102,7 @@ describe("Mailer Tests", function () {
             var msgOptions = {
                 body: "SMTP2 testing: app {appTitle}, to {to}, using Debug Mail.",
                 subject: "Test mail",
-                to: "expresser@mailinator.com",
+                to: ["expresser@mailinator.com", "expresser-mailer@mailinator.com"],
                 from: "devv@devv.com",
                 smtp: smtp
             };
@@ -120,4 +120,38 @@ describe("Mailer Tests", function () {
     } else {
         it.skip("Sends a test email (skipped, no user or password set)");
     }
+
+    it("Try sending email without a valid to address", function (done) {
+        var msgOptions = {
+            body: "This should faild.",
+            subject: "Test mail to fail",
+            from: "devv@devv.com"
+        };
+
+        try {
+            mailer.send(msgOptions);
+            done("Sending should throw and error and fail!");
+        } catch (ex) {
+            done();
+        }
+    });
+
+    it("Try sending an email with no SMTP server defined", function (done) {
+        mailer.smtp = null;
+        mailer.smtp2 = null;
+
+        var msgOptions = {
+            body: "This should faild.",
+            subject: "Test mail to fail",
+            to: "expresser@mailinator.com",
+            from: "devv@devv.com"
+        };
+
+        try {
+            mailer.send(msgOptions);
+            done("Sending should throw and error and fail!");
+        } catch (ex) {
+            done();
+        }
+    });
 });

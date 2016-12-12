@@ -47,10 +47,6 @@ class Mailer
         options = {} if not options?
         options = lodash.defaultsDeep options, settings.mailer
 
-        # Warn about new path setting.
-        if settings.path.emailTemplatesDir and not settings.mailer.templatesPath
-            logger.warn "Mailer.init", "The settings.path.emailTemplatesDir setting is deprecated. Please use settings.mailer.templatesPath."
-
         # Define default primary SMTP.
         if options.smtp.service? and options.smtp.service isnt ""
             @setSmtp options.smtp, false
