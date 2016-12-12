@@ -25,7 +25,7 @@ describe("Database Tests", function () {
         database.init();
     });
 
-    it("Try to register invalid database driver", function () {
+    it("Try to register invalid database driver", function (done) {
         if (!database.register("invalid", "invalid")) {
             done();
         } else {

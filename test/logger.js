@@ -120,7 +120,7 @@ describe("Logger Tests", function () {
         logger.register("testlogger", "dummydriver");
     });
 
-    it("Try to register invalid log driver", function () {
+    it("Try to register invalid log driver", function (done) {
         if (!logger.register("invalid", "invalid")) {
             done();
         } else {
