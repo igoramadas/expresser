@@ -24,4 +24,12 @@ describe("Database Tests", function () {
     it("Inits", function () {
         database.init();
     });
+
+    it("Try to register invalid database driver", function () {
+        if (!database.register("invalid", "invalid")) {
+            done();
+        } else {
+            done("Database.register(invalid) should log an error and return false, but it didn't.")
+        }
+    });
 });

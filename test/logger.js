@@ -119,4 +119,12 @@ describe("Logger Tests", function () {
         logger.drivers["dummydriver"] = driver;
         logger.register("testlogger", "dummydriver");
     });
+
+    it("Try to register invalid log driver", function () {
+        if (!logger.register("invalid", "invalid")) {
+            done();
+        } else {
+            done("Logger.register(invalid) should log an error and return false, but it didn't.")
+        }
+    });
 });

@@ -124,6 +124,18 @@ describe("Database TingoDB Tests", function () {
         dbTingo.get("test", callback);
     });
 
+    it("Get records from database, limit to 3", function (done) {
+        var callback = function (err, result) {
+            if (err) {
+                done(err);
+            } else {
+                done();
+            }
+        };
+
+        dbTingo.get("test", {limit: 3}, callback);
+    });
+
     it("Updated record on database", function (done) {
         var callback = function (err, result) {
             if (err) {

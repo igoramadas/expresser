@@ -155,6 +155,18 @@ describe("Database MongoDB Tests", function () {
             dbMongo.get("test", callback);
         });
 
+        it("Get records from database, limit to 5", function (done) {
+            var callback = function (err, result) {
+                if (err) {
+                    done(err);
+                } else {
+                    done();
+                }
+            };
+
+            dbMongo.get("test", {limit: 5}, callback);
+        });
+
         it("Updates all previously created records on the database", function (done) {
             var callback = function (err, result) {
                 if (err) {

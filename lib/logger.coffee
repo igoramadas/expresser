@@ -54,11 +54,6 @@ class Logger
                 catch ex
                     console.error "Unhandled exception!", err.message, err.stack, ex
 
-        # TODO! Remove deprecation notice in Q2 2016!
-        # The old `removeFields` setting is now called `settings.logger.obfuscateFields`.
-        if settings.logger.removeFields?
-            console.warn "Logger.init", "The logger.removeFields setting is deprecated, please use logger.obfuscateFields!"
-
         @setEvents()
 
         events.emit "Logger.on.init"
