@@ -14,7 +14,7 @@
         "node": "*"
     },
     "dependencies": {
-        "coffee-script": ">= 1.12.0",
+        "coffee-script": ">= 1.12.1",
         "mongodb": "2.2.x"
     },
     "repository": {
