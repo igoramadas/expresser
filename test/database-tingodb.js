@@ -236,6 +236,20 @@ describe("Database TingoDB Tests", function () {
             } catch (ex) {}
         }
 
+        if (!err) {
+            try {
+                dbTingo.remove();
+                err = "DatabaseTingoDb.remove(missing params) should throw an error, but did not.";
+            } catch (ex) {}
+        }
+
+        if (!err) {
+            try {
+                dbTingo.remove("invalid", {});
+                err = "DatabaseTingoDb.remove(invalid connection) should throw an error, but did not.";
+            } catch (ex) {}
+        }
+
         dbTingo.connection = connection;
 
         if (err) {
