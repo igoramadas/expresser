@@ -1,36 +1,55 @@
 # Expresser: Settings
 
-This class holds all settings for all modules of Expresser and its relevant plugins. I can also be extended
-and include your own custom settings.
+#### Filename: settings.coffee
 
-The *settings.default.json* file is commented with all Expresser settings. Please check it for detailed instructions.
+This module holds all settings for all modules of Expresser and its relevant plugins. I can also be extended
+to include your own custom settings.
 
-### How to overwrite settings
+The `settings.default.json` file is commented with all Expresser settings. Please check it for detailed instructions.
 
-You can overwrite settings in 3 different ways:
+## How to define and use the settings
 
-* by creating a *settings.json* or *settings.NODE_ENV.json* file on the root of your application.
-* by using the `loadFromJson` helper method passing the path to your custom settings file.
-* programmatically on your app code by doing `settings.some.else = mystuff`.
+You can define your own settings in 3 different ways:
 
-Please note that when you call the main [url:expresser.init()|https://expresser.codeplex.com/SourceControl/latest#lib/expresser.coffee], it will automatically look for the {{ settings.json }} file and use it to override your app settings, so you don't need to do this manually.
+#### Creating a *settings.json* or *settings.NODE_ENV.json* file on the root of your application.
 
-Also remember that the Settings class is singleton: if you update a specific setting somewhere, it will reflect on all other parts of your application.
+Please note that when you call the main `expresser.init()`, it will automatically look for the
+`settings.json` and `settings.NODE_ENV.json` files and auto load them. So you don't need to do
+this manually.
 
-### Per-environment settings
+#### Using the `loadFromJson` helper method passing the path to your custom settings file.
+
+Alternativelly you might want to load settings on demand, by calling the `loadFromJson` method manually.
+For example to load from the `mysettings.json` file:
+
+    var expresser = require("expresser");
+    expresser.settings.loadFromJson("mysettings.json");
+
+#### Programmatically on your app code by doing `expresser.settings.some.else = mystuff`.
+
+Defining your settings programatically is quite simple:
+
+    var expresser = require("expresser");
+    expresser.settings.app.title = "New Title";
+    expresser.settings.someNewStuff = {
+        somevalue: true,
+        timestamp: new Date()
+    };
+
+## Per-environment settings
 
 You can define specific settings for specific environments by using `settings.NODE_ENV.json` files.
-For example `settings.development.json` will be loaded only on development and `settings.mydeploy.json`
-will be loaded only on mydeploy.
+For example `settings.development.json` will be loaded only on development and `settings.mydeployment.json`
+will be loaded only on mydeployment.
 
-### Strategy for temporary or local-only settings
+## Strategy for temporary or local-only settings
 
 If you wish to have settings that apply only to your development machine, we suggest you to create a file
-*settings.local.json* and load it programatically on your app code. Then you can add that file to your
-*.gitignore* (or equivalent) to avoid having it pushed to the source control, docker and other machines.
-For example your *index.js* could have something like:
+`settings.local.json` and load it programatically on your app code. Then you can add that file to your
+`.gitignore` (or equivalent) to avoid having it pushed to the source control, docker and other machines.
+For example your `index.js` could have something like:
 
-    var expresser = require ("expresser");
+    var expresser = require("expresser");
     
     // Load local settings and start the Expresser app.
     expresser.settings.loadFromJson("settings.local.json");
@@ -41,28 +60,35 @@ For example your *index.js* could have something like:
     
     // Some more app init code here...
 
-### Appending custom settings to the Settings class
+## Encrypting the settings files
 
-You can add as many custom settings as you want and use the Settings class as the main settings repository
-for your app, as long as you make sure that there are no conflicts between your custom settings keys and
-the ones used by Expresser. For example you could add the following "theme" block to the `settings.json`:
+The settings class comes with a built-in encryption helper. You can define the encryption key either
+programatically or using the EXPRESSER_SETTINGS_CRYPTOKEY environment variable.
 
-    {
-        "theme": {
-            "name": "MyTheme:,
-            "location": "/mytheme/",
-            "colours": ["green", "white", "black"]
-        },
-    }
+### To encrypt
 
-The above theme name "MyTheme" for example can be accessed via `expresser.settings.theme.name`, and colour
-black is at `expresser.settings.theme.colours[2]`.
+Using the defaults and the key set on the EXPRESSER_SETTINGS_CRYPTOKEY environment variable:
 
-### Resetting to default settings
+    var expresser = require("expresser");
+    expresser.settings.encrypt("settings.json");
+
+Encrypt the production settings using a custom cipher and key:
+
+    var expresser = require("expresser");
+    expresser.settings.encrypt("settings.production.json", {cipher: "aes512", key: "My Key"});
+
+### To decrypt
+
+Same procedure of encryption, but using the `decrypt` method:
+
+    var expresser = require("expresser");
+    expresser.settings.decrypt("settings.json");
+
+## Resetting to default settings
 
 The `settings.reset()` method will create a new instance and reset all settings to their default initial state.
 Custom values set programmatically will be cleared out.
 
 ---
 
-*For detailed info on specific features, check the annotated source on /docs/settings.html*
+*For detailed info on specific features, check the annotated source on /docs/source/settings.html*

@@ -8,28 +8,19 @@ Official project page: http://github.com/igoramadas/expresser
 
 ### Why Expresser?
 
-Even if Express itself does a good job as a web application framework, it can still be considered low level.
-So the idea of Expresser is to aggregate common modules and utils into a single package, and make it even easier to
+Even if Express itself does a good job as a web application framework, it can still be considered low level by some.
+So the idea of Expresser is to aggregate common modules and utilities into a single package, to make it even easier to
 start your Node.js web app.
 
 ### How to configure
 
 Settings for the app and all modules are loaded by the `settings.coffee` module. If you wish to customize any of
 these settings, please create a `settings.json` file on the root of your app folder with the specific keys
-and values. Detailed instructions are available on the top of the `settings.coffee` file.
-
-You can also change settings directly on runtime, via the `settings` property of Expresser, for example:
-
-    var expresser = require("expresser");
-    expresser.settings.app.title = "My App";
-    expresser.settings.myStuff = 123;
-
-More info can be found at https://github.com/igoramadas/expresser/blob/master/docs/settings.md.
+and values. For more info please head to https://github.com/igoramadas/expresser/blob/master/docs/settings.md.
 
 # Main modules
 
-Below you'll find important information about each of Expresser modules. Detailed documentation is extracted from
-the source code and available under the `/docs/` folder.
+Now to the main modules...
 
 ### App
 *   Pre-configured Express web server.
@@ -57,7 +48,7 @@ the source code and available under the `/docs/` folder.
 
 # Plugins
 
-And the official plugins:
+And the official plugins...
 
 ### Cron
 *   Configurable cron for scheduled tasks using JSON files.
