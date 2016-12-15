@@ -1,6 +1,6 @@
 # Expresser
 
-A Node.js platform with web, database, email, logging, twitter and firewall features, built on top of Express.
+A Node.js platform with web, database, email, logging and other special features, built on top of Express.
 Official project page: http://github.com/igoramadas/expresser
 
 [![Build Status](https://travis-ci.org/igoramadas/expresser.png?branch=master)](https://travis-ci.org/igoramadas/expresser)
@@ -95,17 +95,15 @@ And the official plugins:
 *   Automatic switching to a failover SMTP server in case the main one fails to send.
 *   https://github.com/igoramadas/expresser/tree/master/plugins/mailer
 
+### PaaS
+*   Automatically configures other modules while running on PaaS providers.
+*   https://github.com/igoramadas/expresser/tree/master/plugins/paas
+
 ### Sockets
 *   Wrapper for the Socket.IO module.
 *   Works even if your server does not support websockets.
 *   https://github.com/igoramadas/expresser/tree/master/plugins/sockets
 
-## Running on PaaS
-
-Deploying your Expresser based app to AppFog, Heroku, OpenShift and possibly any other PaaS is dead simple.
-No need to configure anything - just leave the `Settings.app.paas` setting on, and it will automatically set
-settings from environment variables.
-
-#### I have a problem!
+# Need help?
 
 Can't find what you're looking for? Need help? Then post on the Issue Tracker: https://github.com/igoramadas/expresser/issues
