@@ -276,7 +276,12 @@ class Logger
                     separated.push arg.toString()
 
         # Append IP address, if `serverIP` is set.
-        serverIP = utils.getServerIP true if settings.logger.sendIP
+        try
+            serverIP = utils.getServerIP true if settings.logger.sendIP
+            serverIP = null if serverIP.error
+        catch ex
+            serverIP = null
+
         separated.push "IP #{serverIP}" if serverIP?
 
         separator = settings.logger.separator

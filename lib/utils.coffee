@@ -55,7 +55,12 @@ class Utils
     # @param {Boolean} firstOnly Optional, default is false which returns an array with all valid IPs, true returns a String will first valid IP.
     # @return {String} The server IPv4 address, or null.
     getServerIP: (firstOnly) ->
-        ifaces = os.networkInterfaces()
+        try
+            ifaces = os.networkInterfaces()
+        catch ex
+            # On Windows Bash this and other corner case systems this can be unavailable.
+            return {error: ex}
+
         result = []
 
         # Parse network interfaces and try getting the server IPv4 address.
