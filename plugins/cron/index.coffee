@@ -163,7 +163,9 @@ class Cron
             arr = lodash.find @jobs, idOrFilter
 
         if not arr? or arr.length < 1
-            logger.debug "Cron.start", "Job #{idOrFilter} does not exist. Abort!"
+            filterString = idOrFilter
+            filterString = JSON.stringify filterString, null, 0 if lodash.isObject filterString
+            logger.debug "Cron.start", "No jobs matching #{filterString}."
         else
             for job in arr
                 clearTimeout job.timer if job.timer?
@@ -185,7 +187,9 @@ class Cron
             arr = lodash.find @jobs, idOrFilter
 
         if not arr? or arr.length < 1
-            logger.debug "Cron.stop", "Job #{idOrFilter} does not exist. Abort!"
+            filterString = idOrFilter
+            filterString = JSON.stringify filterString, null, 0 if lodash.isObject filterString
+            logger.debug "Cron.stop", "No jobs matching #{idOrFilter}."
         else
             for job in arr
                 clearTimeout job.timer if job.timer?
