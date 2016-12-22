@@ -116,6 +116,7 @@ class Cron
                         if not d.enabled? or d.enabled
                             cb = module[d.callback]
                             job = d
+                            job.filename = filename
                             job.module = key
                             job.id = key + "." + d.callback if not job.id?
                             job.callback = cb
@@ -127,7 +128,11 @@ class Cron
                     logger.debug "Cron.load", filename, "Module has 'cronDisabled' set. Skip!"
 
             # Start all jobs automatically if `autoStart` is true.
-            @start() if options.autoStart
+            if options.autoStart
+                if filename
+                    @start {filename: filename}
+                else
+                    @start()
 
             logger.info "Cron.load", "#{basename} loaded.", options
         else if not doNotWarn
