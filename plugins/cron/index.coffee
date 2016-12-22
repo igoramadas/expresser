@@ -82,7 +82,7 @@ class Cron
 
         # Set default options.
         options = {} if not options?
-        options = lodash.defaults options, {autoStart: false, basePath: ""}
+        options = lodash.defaults options, {autoStart: settings.cron.autoStart, basePath: ""}
 
         if lodash.isBoolean filename
             filename = false
