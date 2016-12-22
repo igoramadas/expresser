@@ -77,6 +77,9 @@ class Cron
     load: (filename, options) =>
         logger.debug "Cron.load", filename, options
 
+        if not settings.cron.enabed
+            return logger.warn "Cron.load", filename, "The cron module is not enabled (settings.cron.enabled = false). Abort!"
+
         # Set default options.
         options = {} if not options?
         options = lodash.defaults options, {autoStart: false, basePath: ""}
@@ -146,6 +149,9 @@ class Cron
     # the module "email", use start({module: "email"}).
     # @param {String} idOrFilter The job id or filter, optional (if not specified, start everything).
     start: (idOrFilter) =>
+        if not settings.cron.enabed
+            return logger.warn "Cron.start", idOrFilter, "The cron module is not enabled (settings.cron.enabled = false). Abort!"
+
         if not idOrFilter?
             logger.info "Cron.start", "All jobs"
             arr = @jobs
@@ -196,6 +202,9 @@ class Cron
     # @return {Object} Returns {error, job}, where job is the job object and error is the error message (if any).
     add: (job) =>
         logger.debug "Cron.add", job
+
+        if not settings.cron.enabed
+            return logger.warn "Cron.add", job.id, "The cron module is not enabled (settings.cron.enabled = false). Abort!"
 
         # Throw error if no `id` was provided.
         if not job.id? or job.id is ""
