@@ -1,8 +1,7 @@
 # EXPRESSER DATABASE
 # -----------------------------------------------------------------------------
 # Wrapper for databases. This module by itself won't do anything, as you'll
-# need to add database driver plugins for your desired DB. At the moment we
-# officially support MongoDB (plugin expresser-database-mongo).
+# need to add database driver plugins for your desired DB.
 # <!--
 # @see settings.database
 # -->

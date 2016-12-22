@@ -1,5 +1,7 @@
 # Expresser: Logger
 
+#### Filename: logger.coffee
+
 The Logger module provides integrated logging functionality to your app. By default it supports only console logging
 but you can add additional transports via plugins (for example logger-file, logger-logentries and logger-loddly).
 

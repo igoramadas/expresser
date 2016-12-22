@@ -5,6 +5,7 @@
 This module holds all settings for all modules of Expresser and its relevant plugins. I can also be extended
 to include your own custom settings.
 
+
 The `settings.default.json` file is commented with all Expresser settings. Please check it for detailed instructions.
 
 ## How to define and use the settings

@@ -1,5 +1,7 @@
 # Expresser: Events
 
+#### Filename: events.coffee
+
 This is the central event dispatcher for all of Expresser's modules and plugins. You can extend and use it
 also for your own custom events.
 
