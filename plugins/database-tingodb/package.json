@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "coffee-script": ">= 1.12.2",
-        "tingodb": "0.4.x"
+        "tingodb": "0.5.x"
     },
     "repository": {
         "type": "git",

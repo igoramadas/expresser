@@ -43,13 +43,13 @@
         "loggly": ">= 1.1.1",
         "mocha": ">= 3.2.0",
         "mocha-lcov-reporter": ">= 1.2.0",
-        "mongodb": ">= 2.2.15",
+        "mongodb": ">= 2.2.19",
         "node-logentries": ">= 0.1.4",
-        "nodemailer": ">= 2.6.4",
+        "nodemailer": ">= 2.7.0",
         "socket.io": ">= 1.7.2",
         "socket.io-client": ">= 1.7.2",
         "supertest": ">= 2.0.1",
-        "tingodb": ">= 0.4.2"
+        "tingodb": ">= 0.5.1"
     },
     "repository": {
         "type": "git",

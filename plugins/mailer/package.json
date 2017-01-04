@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "coffee-script": ">= 1.12.2",
-        "nodemailer": "2.6.x"
+        "nodemailer": "2.7.x"
     },
     "repository": {
         "type": "git",
