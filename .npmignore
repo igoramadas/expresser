@@ -1,5 +1,12 @@
+.coveralls.yml
+.history/
 .idea/
 .openshift/
+.vscode/
 atlassian-ide-plugin.xml
-logs/*.*
+coverage/
+database/
+logs/
+node_modules/
 plugins/
+test/

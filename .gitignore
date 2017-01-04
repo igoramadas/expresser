@@ -7,5 +7,5 @@ atlassian-ide-plugin.xml
 coverage/
 database/
 logs/
-node_modules
-test/database
+node_modules/
+test/database/
