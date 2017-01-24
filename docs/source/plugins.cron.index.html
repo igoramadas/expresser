@@ -283,7 +283,10 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
             </div>
             
             <div class="content"><div class='highlight'><pre>    load: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"Cron.load"</span>, filename, options</pre></div></div>
+        logger.debug <span class="hljs-string">"Cron.load"</span>, filename, options
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
+            <span class="hljs-keyword">return</span> logger.warn <span class="hljs-string">"Cron.load"</span>, filename, <span class="hljs-string">"The cron module is not enabled (settings.cron.enabled = false). Abort!"</span></pre></div></div>
             
         </li>
         
@@ -299,7 +302,7 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
             </div>
             
             <div class="content"><div class='highlight'><pre>        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-        options = lodash.defaults options, {autoStart: <span class="hljs-literal">false</span>, basePath: <span class="hljs-string">""</span>}
+        options = lodash.defaults options, {autoStart: settings.cron.autoStart, basePath: <span class="hljs-string">""</span>}
 
         <span class="hljs-keyword">if</span> lodash.isBoolean filename
             filename = <span class="hljs-literal">false</span>
@@ -384,6 +387,7 @@ If no ID is set for the job, use module key + callback name.</p>
                         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> d.enabled? <span class="hljs-keyword">or</span> d.enabled
                             cb = <span class="hljs-built_in">module</span>[d.callback]
                             job = d
+                            job.filename = filename
                             job.<span class="hljs-built_in">module</span> = key
                             job.id = key + <span class="hljs-string">"."</span> + d.callback <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> job.id?
                             job.callback = cb
@@ -407,7 +411,11 @@ If no ID is set for the job, use module key + callback name.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            @start() <span class="hljs-keyword">if</span> options.autoStart
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.autoStart
+                <span class="hljs-keyword">if</span> filename
+                    @start {filename: filename}
+                <span class="hljs-keyword">else</span>
+                    @start()
 
             logger.info <span class="hljs-string">"Cron.load"</span>, <span class="hljs-string">"<span class="hljs-subst">#{basename}</span> loaded."</span>, options
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> doNotWarn
@@ -455,6 +463,9 @@ the module “email”, use start({module: “email”}).
             </div>
             
             <div class="content"><div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(idOrFilter)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
+            <span class="hljs-keyword">return</span> logger.warn <span class="hljs-string">"Cron.start"</span>, idOrFilter, <span class="hljs-string">"The cron module is not enabled (settings.cron.enabled = false). Abort!"</span>
+
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> idOrFilter?
             logger.info <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"All jobs"</span>
             arr = @jobs
@@ -466,7 +477,9 @@ the module “email”, use start({module: “email”}).
             arr = lodash.find @jobs, idOrFilter
 
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> arr? <span class="hljs-keyword">or</span> arr.length &lt; <span class="hljs-number">1</span>
-            logger.debug <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"Job <span class="hljs-subst">#{idOrFilter}</span> does not exist. Abort!"</span>
+            filterString = idOrFilter
+            filterString = JSON.stringify filterString, <span class="hljs-literal">null</span>, <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> lodash.isObject filterString
+            logger.debug <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"No jobs matching <span class="hljs-subst">#{filterString}</span>."</span>
         <span class="hljs-keyword">else</span>
             <span class="hljs-keyword">for</span> job <span class="hljs-keyword">in</span> arr
                 clearTimeout job.timer <span class="hljs-keyword">if</span> job.timer?
@@ -500,7 +513,9 @@ the module “mymodule”, use stop({module: “mymodule”}).
             arr = lodash.find @jobs, idOrFilter
 
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> arr? <span class="hljs-keyword">or</span> arr.length &lt; <span class="hljs-number">1</span>
-            logger.debug <span class="hljs-string">"Cron.stop"</span>, <span class="hljs-string">"Job <span class="hljs-subst">#{idOrFilter}</span> does not exist. Abort!"</span>
+            filterString = idOrFilter
+            filterString = JSON.stringify filterString, <span class="hljs-literal">null</span>, <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> lodash.isObject filterString
+            logger.debug <span class="hljs-string">"Cron.stop"</span>, <span class="hljs-string">"No jobs matching <span class="hljs-subst">#{idOrFilter}</span>."</span>
         <span class="hljs-keyword">else</span>
             <span class="hljs-keyword">for</span> job <span class="hljs-keyword">in</span> arr
                 clearTimeout job.timer <span class="hljs-keyword">if</span> job.timer?
@@ -528,7 +543,10 @@ You can also pass only the <code>job</code> if it has an id property.
             </div>
             
             <div class="content"><div class='highlight'><pre>    add: <span class="hljs-function"><span class="hljs-params">(job)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"Cron.add"</span>, job</pre></div></div>
+        logger.debug <span class="hljs-string">"Cron.add"</span>, job
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
+            <span class="hljs-keyword">return</span> logger.warn <span class="hljs-string">"Cron.add"</span>, job.id, <span class="hljs-string">"The cron module is not enabled (settings.cron.enabled = false). Abort!"</span></pre></div></div>
             
         </li>
         

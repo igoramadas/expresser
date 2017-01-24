@@ -312,8 +312,9 @@ return only the very first IP address found.
             </div>
             
             <div class="content"><div class='highlight'><pre>    getServerIP: <span class="hljs-function"><span class="hljs-params">(firstOnly)</span> -&gt;</span>
-        ifaces = os.networkInterfaces()
-        result = []</pre></div></div>
+        <span class="hljs-keyword">try</span>
+            ifaces = os.networkInterfaces()
+        <span class="hljs-keyword">catch</span> ex</pre></div></div>
             
         </li>
         
@@ -323,6 +324,23 @@ return only the very first IP address found.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>On Windows Bash this and other corner case systems this can be unavailable.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">return</span> {error: ex}
+
+        result = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Parse network interfaces and try getting the server IPv4 address.</p>
 
@@ -336,11 +354,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Return only first IP or all of them?</p>
 
@@ -354,11 +372,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Return an object with general information about the server.
 @return {Object} Results with process pid, platform, memory, uptime and IP.</p>
@@ -371,11 +389,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Save parsed OS info to the result object.</p>
 
@@ -394,11 +412,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Calculate average CPU load.</p>
 
@@ -416,11 +434,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Get current CPU load (used mainly by getServerInfo).
 @return {Object} CPU load with idle and total ticks.</p>
@@ -445,26 +463,14 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <h2 id="client-info-utils">CLIENT INFO UTILS</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              
+              <h2 id="client-info-utils">CLIENT INFO UTILS</h2>
+
             </div>
             
         </li>
@@ -475,6 +481,18 @@ return only the very first IP address found.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Get the client or browser IP. Works for http and socket requests, even when behind a proxy.
 @param {Object} reqOrSocket The request or socket object.
@@ -488,11 +506,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-22">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Try getting the xforwarded header first.</p>
 
@@ -506,11 +524,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-23">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Get remote address.</p>
 
@@ -524,11 +542,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Get the client’s device. This identifier string is based on the user agent.
 @param {Object} req The request object.
@@ -544,11 +562,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Find mobile devices.</p>
 
@@ -574,11 +592,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-26">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Find desktop browsers.</p>
 
@@ -598,11 +616,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-27">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Return default desktop value if no specific devices were found on user agent.</p>
 
@@ -613,26 +631,14 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <h2 id="io-and-datautils">IO AND DATAUTILS</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
-              
+              <h2 id="io-and-datautils">IO AND DATAUTILS</h2>
+
             </div>
             
         </li>
@@ -643,6 +649,18 @@ return only the very first IP address found.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Copy the <code>src</code> file to the <code>target</code>, both must be the full file path.
 @param {String} src The full source file path.
@@ -657,11 +675,11 @@ return only the very first IP address found.
         </li>
         
         
-        <li id="section-31">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>Make sure the “target” directory exists by recursively iterating through its parents
 and creating the directories. Returns nothing if all good or error.
@@ -698,11 +716,11 @@ and creating the directories. Returns nothing if all good or error.
         </li>
         
         
-        <li id="section-32">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>Removes all the specified characters from a string. For example you can cleanup
 telephone numbers by using removeFromString(phone, [“ “, “-“, “(“, “)”]).
@@ -722,11 +740,11 @@ telephone numbers by using removeFromString(phone, [“ “, “-“, “(“, �
         </li>
         
         
-        <li id="section-33">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Minify the passed JSON value. Removes comments, unecessary white spaces etc.
 @param {String} source The JSON text to be minified.
@@ -746,11 +764,11 @@ telephone numbers by using removeFromString(phone, [“ “, “-“, “(“, �
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Main iterator.</p>
 
@@ -764,11 +782,11 @@ telephone numbers by using removeFromString(phone, [“ “, “-“, “(“, �
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Ignore whitespace tokens. According to ES 5.1 section 15.12.1.1,
 whitespace tokens include tabs, carriage returns, line feeds, and
@@ -784,11 +802,11 @@ space characters.</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Ignore line and block comments.</p>
 
@@ -801,11 +819,11 @@ space characters.</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Line comments.</p>
 
@@ -817,11 +835,11 @@ space characters.</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>Check for CR-style line endings.</p>
 
@@ -833,11 +851,11 @@ space characters.</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>Block comments.</p>
 
@@ -850,11 +868,11 @@ space characters.</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Advance the scanner’s position past the end of the comment.</p>
 
@@ -869,11 +887,11 @@ space characters.</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Parse strings separately to ensure that any whitespace characters and
 JavaScript-style comments within them are preserved.</p>
@@ -889,11 +907,11 @@ JavaScript-style comments within them are preserved.</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>Skip past escaped characters.</p>
 
@@ -909,11 +927,11 @@ JavaScript-style comments within them are preserved.</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>Preserve all other characters.</p>
 
@@ -926,11 +944,11 @@ JavaScript-style comments within them are preserved.</p>
         </li>
         
         
-        <li id="section-44">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>Check if should return as string or JSON.</p>
 
@@ -944,11 +962,11 @@ JavaScript-style comments within them are preserved.</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>Generates a RFC1422-compliant unique ID using random numbers.
 @return {String} A single unique ID.</p>
@@ -967,11 +985,11 @@ JavaScript-style comments within them are preserved.</p>
         </li>
         
         
-        <li id="section-46">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
@@ -980,11 +998,11 @@ JavaScript-style comments within them are preserved.</p>
         </li>
         
         
-        <li id="section-47">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               
             </div>

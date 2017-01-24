@@ -837,7 +837,12 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        serverIP = utils.getServerIP <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> settings.logger.sendIP
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">try</span>
+            serverIP = utils.getServerIP <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> settings.logger.sendIP
+            serverIP = <span class="hljs-literal">null</span> <span class="hljs-keyword">if</span> serverIP.error
+        <span class="hljs-keyword">catch</span> ex
+            serverIP = <span class="hljs-literal">null</span>
+
         separated.push <span class="hljs-string">"IP <span class="hljs-subst">#{serverIP}</span>"</span> <span class="hljs-keyword">if</span> serverIP?
 
         separator = settings.logger.separator</pre></div></div>
