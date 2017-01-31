@@ -19,7 +19,7 @@
         "test": "make test"
     },
     "dependencies": {
-        "coffee-script": ">= 1.12.2",
+        "coffee-script": ">= 1.12.3",
         "async": "2.1.x",
         "body-parser": "1.16.x",
         "chalk": "1.1.x",
@@ -31,11 +31,11 @@
         "express": "4.14.x",
         "lodash": "4.17.x",
         "moment": "2.17.x",
-        "pug": "2.0.0-beta7",
+        "pug": "2.0.0-beta10",
         "stylus": "0.54.x"
     },
     "devDependencies": {
-        "betterdocco": ">= 0.7.4",
+        "betterdocco": ">= 0.7.5",
         "chai": ">= 3.5.0",
         "coffee-coverage": ">= 1.0.1",
         "coveralls": ">= 2.11.15",
