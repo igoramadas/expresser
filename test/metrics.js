@@ -10,6 +10,7 @@ describe("Metrics Tests", function () {
 
     var settings = require("../lib/settings.coffee");
     var metrics = null;
+    var totalCalls = 0;
 
     before(function () {
         settings.loadFromJson("../plugins/metrics/settings.default.json");
@@ -37,6 +38,7 @@ describe("Metrics Tests", function () {
 
         for (i = 0; i < 100; i++) {
             mt = metrics.start("iterator", counter);
+            totalCalls++;
 
             for (b = 0; b < 10000; b++) {
                 counter++;
@@ -46,5 +48,28 @@ describe("Metrics Tests", function () {
         }
 
         done();
+    });
+
+    it("Output the metrics gathered on tests", function (done) {
+        var output = metrics.output();
+
+        if (!output.iterator) {
+            done("Could not find 'iterator' metrics on the output.")
+        } else if (output.iterator.total_calls != totalCalls) {
+            done("Was expecting " + totalCalls + " total calls, but got " + output.iterator.total_calls + ".")
+        } else {
+            done();
+        }
+    });
+
+    it("Metrics cleanup (expireAfter set to 0)", function (done) {
+        settings.metrics.expireAfter = 0;
+
+        metrics.cleanup();
+        count = metrics.get("iterator").length;
+
+        if (count > 0) {
+            done("Iterator metrics should have 0 data, but has " + count + ".")
+        }
     });
 });

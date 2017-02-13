@@ -55,6 +55,10 @@ class Metrics
 
         logger.debug "Metrics.end", obj
 
+    # Get collected data for the specified metric.
+    get: (id) ->
+        return metrics[id]
+
     # Clean collected metrics by removing data older than X minutes (defined on settings).
     # Please note that this runs on s schedule so you shouldn't need to call it manually, in most cases.
     cleanup: ->
@@ -67,13 +71,13 @@ class Metrics
             i = obj.length - 1
 
             # Iterate requests for the current metrics, last to first.
-            while i > 0
+            while i >= 0
                 diff = now - obj[i].startTime
                 minutes = diff / 1000 / 60
 
                 # Remove if verified as old. Otherwise, force finish the iteration.
-                if minutes > settings.metrics.expireAfter
-                    delete obj[i]
+                if minutes > settings.metrics.expireAfter or settings.metrics.expireAfter is 0
+                    obj.pop()
                     i--
                 else
                     i = -1
