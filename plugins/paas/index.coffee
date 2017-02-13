@@ -1,6 +1,6 @@
-# EXPRESSER SOCKETS
+# EXPRESSER METRICS
 # --------------------------------------------------------------------------
-# Auto configure the Expresser app and its modules to work on known PaaS 
+# Auto configure the Expresser app and its modules to work on known PaaS
 # providers, mainly by checking cloud environmental variables.
 # <!--
 # @see settings.paas
@@ -39,7 +39,7 @@ class PaaS
     # --------------------------------------------------------------------------
 
     # Update app settings.
-    appSettings: =>        
+    appSettings: =>
         ip = env.OPENSHIFT_NODEJS_IP or env.IP
         port = env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
         settings.app.ip = ip if ip? and ip isnt ""

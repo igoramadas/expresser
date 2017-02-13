@@ -1,0 +1,28 @@
+{
+    "name": "expresser-metrics",
+    "version": "1.0.0",
+    "description": "Metrics for Expresser apps.",
+    "homepage": "http://github.com/igoramadas/expresser",
+    "author": "Igor Ramadas <igor@devv.com>",
+    "license": "Apache-2.0",
+    "subdomain": "expresser-metrics",
+    "main": "index",
+    "domains": [
+        "expresser.devv.com"
+    ],
+    "engines": {
+        "node": "*"
+    },
+    "dependencies": {
+        "coffee-script": ">= 1.12.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/igoramadas/expresser.git"
+    },
+    "keywords": [
+        "expresser",
+        "metrics",
+        "stats"
+    ]
+}

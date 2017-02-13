@@ -1,0 +1,13 @@
+// EXPRESSER METRICS SETTINGS
+{
+    "metrics": {
+        // Enable the Metrics module?
+        "enabled": true,
+        // Cleanup interval, in minutes.
+        "cleanupInterval": 20,
+        // Expire metrics data after X minutes.
+        "expireAfter": 720,
+        // Intervals to show on the output (default is 1min, 5min, 30min)
+        "outputIntervals": [1, 5, 30]
+    }
+}
