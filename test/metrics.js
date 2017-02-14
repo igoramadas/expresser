@@ -70,6 +70,8 @@ describe("Metrics Tests", function () {
 
         if (count > 0) {
             done("Iterator metrics should have 0 data, but has " + count + ".")
+        } else {
+            done();
         }
     });
 });
