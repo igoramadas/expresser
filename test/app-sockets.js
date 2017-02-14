@@ -53,12 +53,18 @@ describe("App Sockets Tests", function () {
         app.init();
     });
 
-    it("Emits sockets message from client to server", function (done) {
+    it("Emits sockets message from client to server, using 2 clients", function (done) {
         this.timeout(12000);
 
-        var client;
+        var client, shadowClient;
 
         var clientToServer = function (value) {
+            sockets.stopListening("client-to-server", false);
+
+            if (shadowClient && shadowClient.connected) {
+                shadowClient.disconnect();
+            }
+
             if (client && client.connected) {
                 client.disconnect();
             }
@@ -78,6 +84,7 @@ describe("App Sockets Tests", function () {
             client.emit("client-to-server", "test123");
         };
 
+        shadowClient = socketClient("http://localhost:8080/", socketClientOptions);
         sockets.listenTo("client-to-server", clientToServer, false);
         client = socketClient("http://localhost:8080/", socketClientOptions);
 
@@ -108,11 +115,11 @@ describe("App Sockets Tests", function () {
             if (err) {
                 return done(err);
             }
-            
-            var emitter = function() {
+
+            var emitter = function () {
                 sockets.emit("welcome", "test123");
             }
-            
+
             setTimeout(emitter, 500);
         };
 
@@ -123,10 +130,6 @@ describe("App Sockets Tests", function () {
         client.on("connect_error", function (err) {
             socketError(err, done);
         });
-    });
-
-    it("Stop listening to previous events", function () {
-        sockets.stopListening("client-to-server", false);
     });
 
     it("Compacts list of current listeners", function () {
@@ -148,7 +151,7 @@ describe("App Sockets Tests", function () {
 
         if (!err) {
             try {
-                sockets.listento("invalid-io", listener);
+                sockets.listenTo("invalid-io", listener);
                 err = "Sockets.listenTo should throw an error, but did not."
             } catch (ex) {}
         }
