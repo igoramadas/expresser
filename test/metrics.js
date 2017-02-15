@@ -34,10 +34,11 @@ describe("Metrics Tests", function () {
         this.timeout(10000);
 
         var counter = 0;
+        var phrase = "";
         var mt, a, b;
 
         for (i = 0; i < 100; i++) {
-            mt = metrics.start("iterator", counter);
+            mt = metrics.start("iteratorSum", counter);
             totalCalls++;
 
             for (b = 0; b < 10000; b++) {
@@ -47,16 +48,37 @@ describe("Metrics Tests", function () {
             metrics.end(mt, null);
         }
 
+        for (i = 0; i < 100; i++) {
+            mt = metrics.start("iteratorString", counter);
+            totalCalls++;
+
+            for (b = 0; b < 1000; b++) {
+                phrase += "0";
+            }
+
+            metrics.end(mt, null);
+        }
+
         done();
     });
 
-    it("Output the metrics gathered on tests", function (done) {
+    it("Output all the metrics gathered on tests", function (done) {
         var output = metrics.output();
 
-        if (!output.iterator) {
-            done("Could not find 'iterator' metrics on the output.")
-        } else if (output.iterator.total_calls != totalCalls) {
-            done("Was expecting " + totalCalls + " total calls, but got " + output.iterator.total_calls + ".")
+        if (!output.iteratorSum || !output.iteratorString || output.iteratorSum.total_calls + output.iteratorString.total_calls != totalCalls) {
+            done("Metrics output expects data for iteratorSum, iteratorString and total calls should be " + totalCalls + ".");
+        } else {
+            done();
+        }
+    });
+
+    it("Output the metrics gathered on tests, but only for iteratorString", function (done) {
+        var output = metrics.output({
+            keys: ["iteratorString"]
+        });
+
+        if (!output.iteratorString || output.iteratorSum) {
+            done("Output should have 'iteratorString' metrics only.");
         } else {
             done();
         }
@@ -66,10 +88,10 @@ describe("Metrics Tests", function () {
         settings.metrics.expireAfter = 0;
 
         metrics.cleanup();
-        count = metrics.get("iterator").length;
+        count = metrics.get("iteratorSum").length;
 
         if (count > 0) {
-            done("Iterator metrics should have 0 data, but has " + count + ".")
+            done("Iterator metrics should have 0 data, but has " + count + ".");
         } else {
             done();
         }
