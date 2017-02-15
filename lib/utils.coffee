@@ -123,31 +123,29 @@ class Utils
     # @param {String} ip The IP to be checked (IPv4 or IPv6).
     # @param {Object} range A string or array of strings representing the valid ranges.
     # @return {Boolean} True if valid, false otherwise.
-    ipInRange = (ip, range) ->
+    ipInRange: (ip, range) =>
         if lodash.isString range
+            ipParsed = ipaddr.parse ip
+            ipVer = ipParsed.kind()
 
             # Range is a subnet? Then parse the IP address and check each block against the range.
             if range.indexOf("/") >= 0
                 try
-                    range_data = range.split "/"
-                    parse_addr = ipaddr.parse ip
-                    parse_range = ipaddr.parse range_data[0]
+                    rangeArr = range.split "/"
+                    rangeParsed = ipaddr.parse rangeArr[0]
 
-                    return parse_addr.match parse_range, range_data[1]
+                    return ipParsed.match rangeParsed, rangeArr[1]
                 catch err
                     return false
 
             # Range is a single IP address.
             else
-                addr = if isV6 ip then ip6.normalize addr else addr
-                range = if isV6 ip then ip6.normalize range else range
-
-                return ipaddr is range
+                return ip is range
 
         # Array of IP ranges, check each one of them.
         else if lodash.isObject range
             for r of range
-                return true if inRange ipaddr, range[r]
+                return true if @ipInRange ip, range[r]
 
         return false
 

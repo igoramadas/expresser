@@ -124,7 +124,7 @@ describe("Mailer Tests", function () {
         });
 
         it("Dummy send an email (doNotSend option is true)", function (done) {
-            settings.mailer.dotNotSend = true;
+            settings.mailer.doNotSend = true;
 
             var smtp = mailer.createSmtp(settings.mailer.smtp2);
 
@@ -137,7 +137,7 @@ describe("Mailer Tests", function () {
             };
 
             var callback = function (err, result) {
-                settings.mailer.dotNotSend = false;
+                settings.mailer.doNotSend = false;
 
                 if (!err && result.indexOf("doNotSend") > 0) {
                     done();

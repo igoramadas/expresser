@@ -128,8 +128,7 @@ class Mailer
 
         # Check if `doNotSend` flag is set, and if so, do not send anything.
         if settings.mailer.doNotSend
-            callback null, "The 'doNotSend' setting is true, will not send anything!" if callback?
-            return
+            return callback null, "The 'doNotSend' setting is true, will not send anything!" if callback?
 
         # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.
         smtpSend smtp, options, (err, result) =>
