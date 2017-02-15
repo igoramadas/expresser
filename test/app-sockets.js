@@ -59,7 +59,7 @@ describe("App Sockets Tests", function () {
         var client, shadowClient;
 
         var clientToServer = function (value) {
-            sockets.stopListening("client-to-server", false);
+            sockets.stopListening("client-to-server");
 
             if (shadowClient && shadowClient.connected) {
                 shadowClient.disconnect();
