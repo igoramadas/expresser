@@ -29,6 +29,7 @@
         "cookie-session": "1.2.x",
         "errorhandler": "1.5.x",
         "express": "4.14.x",
+        "ipaddr.js": "1.2.x",
         "lodash": "4.17.x",
         "moment": "2.17.x",
         "pug": "2.0.0-beta11",

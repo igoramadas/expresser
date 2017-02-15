@@ -7,6 +7,7 @@ class Utils
 
     crypto = require "crypto"
     fs = require "fs"
+    ipaddr = require "ipaddr.js"
     lodash = require "lodash"
     moment = require "moment"
     os = require "os"
@@ -117,6 +118,38 @@ class Utils
             i++
 
         return {idle: totalIdle / cpus.length, total: totalTick / cpus.length}
+
+    # Check if a specific IP is in the provided range.
+    # @param {String} ip The IP to be checked (IPv4 or IPv6).
+    # @param {Object} range A string or array of strings representing the valid ranges.
+    # @return {Boolean} True if valid, false otherwise.
+    ipInRange = (ip, range) ->
+        if lodash.isString range
+
+            # Range is a subnet? Then parse the IP address and check each block against the range.
+            if range.indexOf("/") >= 0
+                try
+                    range_data = range.split "/"
+                    parse_addr = ipaddr.parse ip
+                    parse_range = ipaddr.parse range_data[0]
+
+                    return parse_addr.match parse_range, range_data[1]
+                catch err
+                    return false
+
+            # Range is a single IP address.
+            else
+                addr = if isV6 ip then ip6.normalize addr else addr
+                range = if isV6 ip then ip6.normalize range else range
+
+                return ipaddr is range
+
+        # Array of IP ranges, check each one of them.
+        else if lodash.isObject range
+            for r of range
+                return true if inRange ipaddr, range[r]
+
+        return false
 
     # CLIENT INFO UTILS
     # --------------------------------------------------------------------------

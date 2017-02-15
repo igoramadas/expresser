@@ -60,6 +60,36 @@ describe("Utils Tests", function () {
         }
     });
 
+    it("Check IP against multiple ranges", function (done) {
+        var ip = "192.168.1.1";
+        var validIP = "192.168.1.1";
+        var validRange = "192.168.1.0/24";
+        var validRangeArray = ["192.168.1.0/24", "192.168.0.0/16"];
+        var invalidRange = "10.1.1.0/16";
+
+        if (!utils.ipInRange(ip, validIP)) {
+            done("IP " + ip + " should be valid against " + validIP + ".")
+        } else if (!utils.ipInRange(ip, validRange)) {
+            done("IP " + ip + " should be valid against " + validRange + ".")
+        } else if (!utils.ipInRange(ip, validRangeArray)) {
+            done("IP " + ip + " should be valid against " + validRangeArray.join(", ") + ".")
+        } else if (!utils.ipInRange(ip, validIP)) {
+            done("IP " + ip + " should be invalid against " + invalidRange + ".")
+        } else {
+            done();
+        }
+    });
+
+    it("Check IP against multiple ranges", function (done) {
+        var serverInfo = utils.getServerInfo();
+
+        if (serverInfo.cpuCores > 0) {
+            done();
+        } else {
+            done("Could not get CPU core count from server info result.");
+        }
+    });
+
     it("Generate unique IDs", function (done) {
         var ids = [];
         var max = 500;
