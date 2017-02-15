@@ -52,7 +52,7 @@ class Sockets
 
             # Bind all current event listeners.
             for listener in @currentListeners
-                socket.on listener.key, listener.callback if listener?
+                socket.on listener.key, listener.callback if listener?.callback?
 
     # EVENTS
     # ----------------------------------------------------------------------

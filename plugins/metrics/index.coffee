@@ -102,7 +102,7 @@ class Metrics
 
         # For each different metric...
         for key in keys
-            if not options?,keys? or options?.keys?.indexOf key >= 0
+            if not options?.keys? or options?.keys?.indexOf key >= 0
                 obj = metrics[key]
 
                 result[key] = {total_calls: obj.length}
