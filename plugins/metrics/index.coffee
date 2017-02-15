@@ -62,13 +62,14 @@ class Metrics
     # Clean collected metrics by removing data older than X minutes (defined on settings).
     # Please note that this runs on s schedule so you shouldn't need to call it manually, in most cases.
     cleanup: ->
-        logger.info "Metrics.cleanup"
+        logger.debug "Metrics.cleanup"
 
         now = moment().valueOf()
 
         # Iterate metrics collection.
         for key, obj of metrics
             i = obj.length - 1
+            counter = 0
 
             # Iterate requests for the current metrics, last to first.
             while i >= 0
@@ -79,36 +80,44 @@ class Metrics
                 if minutes > settings.metrics.expireAfter or settings.metrics.expireAfter is 0
                     obj.pop()
                     i--
+                    counter++
                 else
                     i = -1
+
+            logger.info "Metrics.cleanup", "Removed #{counter} records from #{key}."
 
     # OUTPUT
     # -------------------------------------------------------------------------
 
     # Generate the JSON output with all metrics.
-    output: ->
-        logger.debug "Metrics.output", metrics
+    # @param {Object} options Options to filter the output.
+    # @return {Object} JSON output with relevant metrics.
+    output: (options) ->
+        logger.debug "Metrics.output", options, metrics
 
         result = {}
         keys = lodash.keys metrics
 
+        options = lodash.defaults options, {keys: keys}
+
         # For each different metric...
         for key in keys
-            obj = metrics[key]
+            if not options?,keys? or options?.keys?.indexOf key >= 0
+                obj = metrics[key]
 
-            result[key] = {total_calls: obj.length}
+                result[key] = {total_calls: obj.length}
 
-            # Iterate intervals (for example 1m, 5m and 15m) to get specific stats.
-            for interval in settings.metrics.outputIntervals
-                result[key]["last_#{interval}min"] = getSummary obj, interval
+                # Iterate intervals (for example 1m, 5m and 15m) to get specific stats.
+                for interval in settings.metrics.outputIntervals
+                    result[key]["last_#{interval}min"] = getSummary obj, interval
 
-            # Stats for last 3 calls.
-            samples = []
-            samples.push getLastSummary(obj[2]) if obj[2]?
-            samples.push getLastSummary(obj[1]) if obj[1]?
-            samples.push getLastSummary(obj[0]) if obj[0]?
+                # Stats for last 3 calls.
+                samples = []
+                samples.push getLastSummary(obj[2]) if obj[2]?
+                samples.push getLastSummary(obj[1]) if obj[1]?
+                samples.push getLastSummary(obj[0]) if obj[0]?
 
-            result[key].last_samples = samples
+                result[key].last_samples = samples
 
         return result
 

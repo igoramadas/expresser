@@ -64,10 +64,10 @@ class Sockets
         if not @io?
             logger.error "Sockets.emit", key, JSON.stringify(data).length + " bytes", "Sockets not initiated yet, abort!"
             throw new Error "Sockets not initiated (@io is not set)."
-            
+
         logger.debug "Sockets.emit", key, data
 
-        @io.emit key, data            
+        @io.emit key, data
 
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.
