@@ -96,8 +96,17 @@ class Metrics
         logger.debug "Metrics.output", options, metrics
 
         result = {}
-        keys = lodash.keys metrics
 
+        # Add server info to the output?
+        if settings.metrics.serverMetrics?.fields?.length > 0
+            serverInfo = utils.getServerInfo()
+            serverKey = settings.metrics.serverMetrics.key
+
+            result[serverKey] = {}
+            result[serverKey][f] = serverInfo[f] for f in settings.metrics.serverMetrics.fields
+
+        # Get all metrics keys and set default options.
+        keys = lodash.keys metrics
         options = lodash.defaults options, {keys: keys}
 
         # For each different metric...
@@ -149,9 +158,10 @@ class Metrics
         summary = {}
         summary.calls = values.length
         summary.errors = errorCount
-        summary.avg = avg?.toFixed(2) or 0
         summary.min = lodash.min(durations) or 0
         summary.max = lodash.max(durations) or 0
+        summary.avg = avg? or 0
+        summary.avg = Math.round summary.avg
 
         return summary
 

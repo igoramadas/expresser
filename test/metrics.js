@@ -62,6 +62,16 @@ describe("Metrics Tests", function () {
         done();
     });
 
+    it("Output has server info", function (done) {
+        var output = metrics.output();
+
+        if (!output.server.loadAvg || !output.server.memoryUsage) {
+            done("Metrics output expects server's loadAvg and memoryUsage.");
+        } else {
+            done();
+        }
+    });
+
     it("Output all the metrics gathered on tests", function (done) {
         var output = metrics.output();
 
