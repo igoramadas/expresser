@@ -32,13 +32,13 @@ class Metrics
         return logger.notEnabled "Metrics", "init" if not settings.metrics.enabled
 
         # Make sure settings are valid.
-        settings.metrics.outputIntervals = [] if not settings.metrics.outputIntervals?
+        settings.metrics.intervals = [] if not settings.metrics.intervals?
         settings.metrics.percentiles = [] if not settings.metrics.percentiles?
 
         # Schedule the cleanup job.
         cleanupTimer = setInterval @cleanup, settings.metrics.cleanupInterval * 60 * 1000
 
-        # Init the HTTP server module.
+        # Init the HTTP server module. Start if a valid port was set.
         httpServer.init this
         httpServer.start() if settings.metrics.httpServer.port?
 
@@ -112,23 +112,27 @@ class Metrics
     output: (options) ->
         return logger.notEnabled "Metrics", "output" if not settings.metrics.enabled
 
-        logger.debug "Metrics.output", options, metrics
+        logger.debug "Metrics.output", options
         utils.getServerInfo()
+
+        # Get all metrics keys.
+        keys = lodash.keys metrics
+
+        # Set default options.
+        options = {} if not options?
+        options = lodash.defaultsDeep options, settings.metrics
+        options.keys = keys if not options.keys?
 
         result = {}
 
         # Add server info to the output?
-        if settings.metrics.serverMetrics?.fields?.length > 0
+        if options.serverMetrics?.fields?.length > 0
             serverInfo = utils.getServerInfo()
-            serverKey = settings.metrics.serverMetrics.key
+            serverKey = options.serverMetrics.key
             result[serverKey] = {}
 
-            for f in settings.metrics.serverMetrics.fields
+            for f in options.serverMetrics.fields
                 result[serverKey][f] = serverInfo[f]
-
-        # Get all metrics keys and set default options.
-        keys = lodash.keys metrics
-        options = lodash.defaults options, {keys: keys}
 
         # For each different metric...
         for key in keys
@@ -138,7 +142,7 @@ class Metrics
                 result[key] = {total_calls: obj.length}
 
                 # Iterate intervals (for example 1m, 5m and 15m) to get specific stats.
-                for interval in settings.metrics.outputIntervals
+                for interval in options.intervals
                     result[key]["last_#{interval}min"] = getSummary obj, interval
 
                 # Stats for last 3 calls.
@@ -185,7 +189,7 @@ class Metrics
         summary.avg = Math.round summary.avg
 
         # Get percentiles based on settings.
-        for perc in settings.metrics.percentiles
+        for perc in options.percentiles
             summary["p#{perc}"] = percentile.calculate durations, perc
 
         return summary

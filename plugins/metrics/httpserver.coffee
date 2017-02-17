@@ -4,6 +4,7 @@
 class HttpServer
 
     http = require "http"
+    metrics = null
     express = null
     settings = null
     server = null

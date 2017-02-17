@@ -39,3 +39,26 @@ To generate a summary about collected metrics, use the built-in output method:
 
 By default it will give you the specific metrics for the last 1min, 5min and 30min,
 having the 99, 98 and 95 percentiles. You can change these values on the settings.
+
+You can also generate the output with your own custom options. For example to get
+metrics for last 5, 20 and 60 minutes, and not showing the percentiles:
+
+    var options = {
+        intervals: [5, 20, 60],
+        percentiles: []
+    };
+
+    var output = metrics.output(options);
+
+And to get metrics for a specific call only:
+
+    function myCall() {
+        var mt = metrics.start("my-call");
+        // Some code, then end metrics somewhere...
+    }
+
+    var options = {
+        keys: ["my-call"];
+    };
+
+    var output = metrics.output(options);
