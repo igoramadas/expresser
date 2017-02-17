@@ -23,13 +23,13 @@ class Metrics
 
     # Init metrics and set up cleanup timer.
     init: =>
-        return logger.notEnabled "Metrics", "init" if not settings.metrics.enabled
-
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         moment = @expresser.libs.moment
         settings = @expresser.settings
         utils = @expresser.utils
+
+        return logger.notEnabled "Metrics", "init" if not settings.metrics.enabled
 
         # Make sure settings are valid.
         settings.metrics.outputIntervals = [] if not settings.metrics.outputIntervals?
