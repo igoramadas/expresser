@@ -7,6 +7,7 @@
 # -->
 class Metrics
 
+    httpServer = require "./httpserver.coffee"
     percentile = require "./percentile.coffee"
     lodash = null
     logger = null
@@ -28,9 +29,15 @@ class Metrics
         settings = @expresser.settings
         utils = @expresser.utils
 
+        # Make sure settings are valid.
+        settings.metrics.outputIntervals = [] if not settings.metrics.outputIntervals?
         settings.metrics.percentiles = [] if not settings.metrics.percentiles?
 
+        # Schedule the cleanup job.
         cleanupTimer = setInterval @cleanup, settings.metrics.cleanupInterval * 60 * 1000
+
+        # Init the HTTP server module.
+        httpServer.init settings, @expresser.libs.express
 
     # COUNTERS
     # -------------------------------------------------------------------------

@@ -79,7 +79,7 @@ class App
         # Prepend middlewares, if any was specified.
         if @prependMiddlewares.length > 0
             @server.use mw for mw in @prependMiddlewares
-            
+
         # Use Express basic handlers.
         @server.use midBodyParser.json {limit: settings.app.bodyParser.limit}
         @server.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
@@ -192,7 +192,7 @@ class App
 
         # Send rendered view to client.
         res.render view, options
-        
+
         events.emit "App.on.renderView", req, res, view, options
 
     # Render response as human readable JSON data.
@@ -271,7 +271,7 @@ class App
         res.status(status).json {error: error, url: req.originalUrl}
 
         events.emit "App.on.renderError", req, res, error, status
-        
+
 # Singleton implementation
 # --------------------------------------------------------------------------
 App.getInstance = ->
