@@ -27,6 +27,8 @@ class Metrics
         settings = @expresser.settings
         utils = @expresser.utils
 
+        settings.metrics.percentiles = [] if not settings.metrics.percentiles?
+
         cleanupTimer = setInterval @cleanup, settings.metrics.cleanupInterval * 60 * 1000
 
     # COUNTERS
@@ -94,6 +96,7 @@ class Metrics
     # @return {Object} JSON output with relevant metrics.
     output: (options) ->
         logger.debug "Metrics.output", options, metrics
+        utils.getServerInfo()
 
         result = {}
 
@@ -164,6 +167,10 @@ class Metrics
         summary.avg = avg? or 0
         summary.avg = Math.round summary.avg
 
+        # Get percentiles based on settings.
+        for perc in settings.metrics.percentiles
+            summary["p#{perc}"] = getPercentile durations, perc
+
         return summary
 
     # Helper to get summary for last calls.
@@ -173,6 +180,47 @@ class Metrics
             duration: value.duration
             data: value.data
         }
+
+    # PERCENTILE HELPER
+    # -------------------------------------------------------------------------
+
+    # Percentile calculator helper functions.
+    percentileCalculator = {
+        swap: (data, i, j) ->
+            return if i is j
+
+            tmp = data[j]
+            data[j] = data[i]
+            data[i] = tmp
+
+        partition: (data, start, end) ->
+            i = start + 1
+            j = start
+
+            while i < end
+                percentileCalculator.swap data, i, ++j if data[i] < data[start]
+                i++
+
+            percentileCalculator.swap data, start, j
+            return j
+
+        findK: (data, start, end, k) ->
+            while start < end
+                pos = percentileCalculator.partition data, start, end
+
+                if pos is k
+                    return data[k]
+                if pos > k
+                    end = pos
+                else
+                    start = pos + 1
+
+            return null
+    }
+
+    # Get percentile out of the supplied data.
+    getPercentile = (durations, perc) ->
+        percentileCalculator.findK durations.concat(), 0, durations.length, Math.ceil(durations.length * perc / 100) - 1
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------

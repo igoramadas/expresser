@@ -30,7 +30,7 @@ describe("Metrics Tests", function () {
         metrics.init();
     });
 
-    it("Measure time to iterate from 0 to 10k, 100 times", function (done) {
+    it("Measure time to iterate randomly", function (done) {
         this.timeout(10000);
 
         var counter = 0;
@@ -41,7 +41,7 @@ describe("Metrics Tests", function () {
             mt = metrics.start("iteratorSum", counter);
             totalCalls++;
 
-            for (b = 0; b < 10000; b++) {
+            for (b = 0; b < 100000; b++) {
                 counter++;
             }
 
@@ -52,7 +52,7 @@ describe("Metrics Tests", function () {
             mt = metrics.start("iteratorString", counter);
             totalCalls++;
 
-            for (b = 0; b < 1000; b++) {
+            for (b = 0; b < 10000; b++) {
                 phrase += "0";
             }
 

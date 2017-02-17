@@ -94,6 +94,11 @@
               </a>
             
               
+              <a class="source" href="plugins.metrics.index.html">
+                plugins/metrics/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.paas.index.html">
                 plugins/paas/index.coffee
               </a>
@@ -413,7 +418,7 @@ folder / base file name you have set on the settings).
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        options.from = <span class="hljs-string">"<span class="hljs-subst">#{settings.app.title}</span> &lt;<span class="hljs-subst">#{settings.mailer.from}</span>&gt;"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.from?</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        options.<span class="hljs-keyword">from</span> = <span class="hljs-string">"<span class="hljs-subst">#{settings.app.title}</span> &lt;<span class="hljs-subst">#{settings.mailer.<span class="hljs-keyword">from</span>}</span>&gt;"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.<span class="hljs-keyword">from</span>?</pre></div></div>
             
         </li>
         
@@ -527,8 +532,7 @@ folder / base file name you have set on the settings).
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mailer.doNotSend
-            callback <span class="hljs-literal">null</span>, <span class="hljs-string">"The 'doNotSend' setting is true, will not send anything!"</span> <span class="hljs-keyword">if</span> callback?
-            <span class="hljs-keyword">return</span></pre></div></div>
+            <span class="hljs-keyword">return</span> callback <span class="hljs-literal">null</span>, <span class="hljs-string">"The 'doNotSend' setting is true, will not send anything!"</span> <span class="hljs-keyword">if</span> callback?</pre></div></div>
             
         </li>
         
@@ -744,7 +748,7 @@ This is NOT exposed to external modules.</p>
             <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">smtpSend</span> = <span class="hljs-params">(transport, options, callback)</span> -&gt;</span>
         <span class="hljs-keyword">try</span>
             transport.sendMail options, <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
-                logger.debug <span class="hljs-string">"Mailer.smtpSend"</span>, <span class="hljs-string">"OK"</span>, transport.host, options.subject, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.from}</span>."</span>
+                logger.debug <span class="hljs-string">"Mailer.smtpSend"</span>, <span class="hljs-string">"OK"</span>, transport.host, options.subject, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>."</span>
                 callback err, result
         <span class="hljs-keyword">catch</span> ex
             callback ex</pre></div></div>

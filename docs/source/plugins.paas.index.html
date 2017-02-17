@@ -94,6 +94,11 @@
               </a>
             
               
+              <a class="source" href="plugins.metrics.index.html">
+                plugins/metrics/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.paas.index.html">
                 plugins/paas/index.coffee
               </a>
@@ -123,7 +128,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h2 id="expresser-sockets">EXPRESSER SOCKETS</h2>
+              <h2 id="expresser-metrics">EXPRESSER METRICS</h2>
 
             </div>
             
@@ -136,7 +141,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Auto configure the Expresser app and its modules to work on known PaaS 
+              <p>Auto configure the Expresser app and its modules to work on known PaaS
 providers, mainly by checking cloud environmental variables.
 <!--
 @see settings.paas
@@ -258,7 +263,7 @@ providers, mainly by checking cloud environmental variables.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    appSettings: <span class="hljs-function">=&gt;</span>        
+            <div class="content"><div class='highlight'><pre>    appSettings: <span class="hljs-function">=&gt;</span>
         ip = env.OPENSHIFT_NODEJS_IP <span class="hljs-keyword">or</span> env.IP
         port = env.OPENSHIFT_NODEJS_PORT <span class="hljs-keyword">or</span> env.VCAP_APP_PORT <span class="hljs-keyword">or</span> env.PORT
         settings.app.ip = ip <span class="hljs-keyword">if</span> ip? <span class="hljs-keyword">and</span> ip <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>

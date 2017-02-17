@@ -94,6 +94,11 @@
               </a>
             
               
+              <a class="source" href="plugins.metrics.index.html">
+                plugins/metrics/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.paas.index.html">
                 plugins/paas/index.coffee
               </a>
@@ -297,7 +302,7 @@ to increase / decrease when users connects or disconnects from the app.
             </div>
             
             <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">for</span> listener <span class="hljs-keyword">in</span> @currentListeners
-                socket.<span class="hljs-literal">on</span> listener.key, listener.callback <span class="hljs-keyword">if</span> listener?</pre></div></div>
+                socket.<span class="hljs-literal">on</span> listener.key, listener.callback <span class="hljs-keyword">if</span> listener?.callback?</pre></div></div>
             
         </li>
         
@@ -343,7 +348,7 @@ to increase / decrease when users connects or disconnects from the app.
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @io?
             logger.error <span class="hljs-string">"Sockets.emit"</span>, key, JSON.stringify(data).length + <span class="hljs-string">" bytes"</span>, <span class="hljs-string">"Sockets not initiated yet, abort!"</span>
             <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Sockets not initiated (@io is not set)."</span>
-            
+
         logger.debug <span class="hljs-string">"Sockets.emit"</span>, key, data
 
         @io.emit key, data</pre></div></div>
