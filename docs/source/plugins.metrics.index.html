@@ -94,8 +94,18 @@
               </a>
             
               
+              <a class="source" href="plugins.metrics.httpserver.html">
+                plugins/metrics/httpserver.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.metrics.index.html">
                 plugins/metrics/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.percentile.html">
+                plugins/metrics/percentile.coffee
               </a>
             
               
@@ -151,6 +161,7 @@ monitoring systems.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Metrics</span></span>
 
+    percentile = <span class="hljs-built_in">require</span> <span class="hljs-string">"./percentile.coffee"</span>
     lodash = <span class="hljs-literal">null</span>
     logger = <span class="hljs-literal">null</span>
     moment = <span class="hljs-literal">null</span>
@@ -621,7 +632,7 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> perc <span class="hljs-keyword">in</span> settings.metrics.percentiles
-            summary[<span class="hljs-string">"p<span class="hljs-subst">#{perc}</span>"</span>] = getPerecntile durations, perc
+            summary[<span class="hljs-string">"p<span class="hljs-subst">#{perc}</span>"</span>] = percentile.calculate durations, perc
 
         <span class="hljs-keyword">return</span> summary</pre></div></div>
             
@@ -654,7 +665,7 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <h2 id="percentile-helper">PERCENTILE HELPER</h2>
+              <h2 id="singleton-implementation-">Singleton implementation.</h2>
 
             </div>
             
@@ -666,92 +677,6 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-32">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
-              </div>
-              <p>Percentile calculator helper functions.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    percentileCalculator = {
-        swap: <span class="hljs-function"><span class="hljs-params">(data, i, j)</span> -&gt;</span>
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> i <span class="hljs-keyword">is</span> j
-            tmp = data[j]
-            data[j] = data[i]
-            data[i] = tmp
-
-        partition: <span class="hljs-function"><span class="hljs-params">(data, start, end)</span> -&gt;</span>
-            i = start + <span class="hljs-number">1</span>
-            j = start
-
-            <span class="hljs-keyword">while</span> i &lt; end
-                <span class="hljs-keyword">if</span> data[i] &lt; data[start]
-                    swap data, i, ++j
-                    i++
-                <span class="hljs-keyword">else</span>
-                    swap data, start, j
-            <span class="hljs-keyword">return</span> j
-
-        findK: <span class="hljs-function"><span class="hljs-params">(data, start, end, k)</span> -&gt;</span>
-            <span class="hljs-keyword">while</span> start &lt; end
-                pos = partition data, start, end
-                <span class="hljs-keyword">if</span> pos <span class="hljs-keyword">is</span> k
-                    <span class="hljs-keyword">return</span> data[k]
-                <span class="hljs-keyword">if</span> pos &gt; k
-                    end = pos
-                <span class="hljs-keyword">else</span>
-                    start = pos + <span class="hljs-number">1</span>
-
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>
-    }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-33">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
-              </div>
-              <p>Get percentile out of the supplied data.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">getPercentile</span> = <span class="hljs-params">(durations, perc)</span> -&gt;</span>
-        percentileCalculator.findK durations.concat(), <span class="hljs-number">0</span>, durations.length, Math.ceil(durations.length * perc / <span class="hljs-number">100</span>) - <span class="hljs-number">1</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-34">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
-              </div>
-              <h2 id="singleton-implementation-">Singleton implementation.</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-35">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               
             </div>
