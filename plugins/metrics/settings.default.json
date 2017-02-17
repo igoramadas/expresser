@@ -10,7 +10,7 @@
         // Intervals to show on the output (default is 1min, 5min, 30min).
         "outputIntervals": [1, 5, 30],
         // Percentiles to include on output. Leave empty to not calculate percentiles.
-        "percentiles": [99, 98, 95, 75],
+        "percentiles": [99, 98, 95],
         // Include server CPU / RAM metrics on output? Any key returned by the
         // utils.getServerInfo() is valid here. Leave "fields" empty if you
         // don't want to include server metrics on the output.
