@@ -39,7 +39,8 @@ class Metrics
         cleanupTimer = setInterval @cleanup, settings.metrics.cleanupInterval * 60 * 1000
 
         # Init the HTTP server module.
-        httpServer.init settings, @expresser.libs.express
+        httpServer.init this
+        httpServer.start() if settings.metrics.httpServer.port?
 
     # COUNTERS
     # -------------------------------------------------------------------------

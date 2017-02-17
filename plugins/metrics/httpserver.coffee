@@ -9,17 +9,21 @@ class HttpServer
     server = null
 
     # Init the HTTP server class.
-    init: (s, e) =>
-        settings = s
-        express = e
+    init: (parent) =>
+        metrics = parent
+        express = metrics.expresser.libs.express
+        settings = metrics.expresser.settings
 
     # Start the server.
     start: =>
         return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
         return if server?
 
-        server = http.createServer express()
+        app = express()
+        server = http.createServer app
         server.listen settings.metrics.httpServer.port
+
+        app.get settings.metrics.httpServer.path, (req, res) -> res.json metrics.output()
 
     # Kill the server.
     kill: =>
@@ -27,6 +31,7 @@ class HttpServer
         return if not server?
 
         server.close()
+        server = null
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------
