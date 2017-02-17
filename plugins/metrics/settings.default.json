@@ -7,6 +7,13 @@
         "cleanupInterval": 20,
         // Expire metrics data after X minutes.
         "expireAfter": 720,
+        // Se the value below to a valid TCP port number if you wish the module to
+        // spin up a HTTP server automatically to serve the metrics output.
+        // You can also set the path (default is /, but for example you could use /metrics).
+        "httpServer": {
+            "port": null,
+            "path": "/"
+        },
         // Intervals to show on the output (default is 1min, 5min, 30min).
         "outputIntervals": [1, 5, 30],
         // Percentiles to include on output. Leave empty to not calculate percentiles.

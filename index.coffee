@@ -7,7 +7,7 @@ class Expresser
     isTest = process.env.NODE_ENV is "test"
 
     fs = require "fs"
-    path = require "path"    
+    path = require "path"
 
     # Set application root path.
     rootPath: path.dirname require.main.filename
@@ -23,8 +23,10 @@ class Expresser
     # Expose 3rd party modules.
     libs:
         async: require "async"
+        express: require "express"
         lodash: require "lodash"
         moment: require "moment"
+
 
     # Helper to load default modules. Basically everything inside the lib folder.
     initDefaultModules = (self) ->

@@ -7,6 +7,7 @@
 # -->
 class Metrics
 
+    percentile = require "./percentile.coffee"
     lodash = null
     logger = null
     moment = null
@@ -169,7 +170,7 @@ class Metrics
 
         # Get percentiles based on settings.
         for perc in settings.metrics.percentiles
-            summary["p#{perc}"] = getPercentile durations, perc
+            summary["p#{perc}"] = percentile.calculate durations, perc
 
         return summary
 
@@ -180,47 +181,6 @@ class Metrics
             duration: value.duration
             data: value.data
         }
-
-    # PERCENTILE HELPER
-    # -------------------------------------------------------------------------
-
-    # Percentile calculator helper functions.
-    percentileCalculator = {
-        swap: (data, i, j) ->
-            return if i is j
-
-            tmp = data[j]
-            data[j] = data[i]
-            data[i] = tmp
-
-        partition: (data, start, end) ->
-            i = start + 1
-            j = start
-
-            while i < end
-                percentileCalculator.swap data, i, ++j if data[i] < data[start]
-                i++
-
-            percentileCalculator.swap data, start, j
-            return j
-
-        findK: (data, start, end, k) ->
-            while start < end
-                pos = percentileCalculator.partition data, start, end
-
-                if pos is k
-                    return data[k]
-                if pos > k
-                    end = pos
-                else
-                    start = pos + 1
-
-            return null
-    }
-
-    # Get percentile out of the supplied data.
-    getPercentile = (durations, perc) ->
-        percentileCalculator.findK durations.concat(), 0, durations.length, Math.ceil(durations.length * perc / 100) - 1
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------
