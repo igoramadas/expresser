@@ -101,9 +101,10 @@ class Metrics
         if settings.metrics.serverMetrics?.fields?.length > 0
             serverInfo = utils.getServerInfo()
             serverKey = settings.metrics.serverMetrics.key
-
             result[serverKey] = {}
-            result[serverKey][f] = serverInfo[f] for f in settings.metrics.serverMetrics.fields
+
+            for f in settings.metrics.serverMetrics.fields
+                result[serverKey][f] = serverInfo[f]
 
         # Get all metrics keys and set default options.
         keys = lodash.keys metrics
