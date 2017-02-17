@@ -143,7 +143,7 @@ class Metrics
 
                 # Iterate intervals (for example 1m, 5m and 15m) to get specific stats.
                 for interval in options.intervals
-                    result[key]["last_#{interval}min"] = getSummary obj, interval
+                    result[key]["last_#{interval}min"] = getSummary options, obj, interval
 
                 # Stats for last 3 calls.
                 samples = []
@@ -156,7 +156,7 @@ class Metrics
         return result
 
     # Helper to generate summary for the specified interval.
-    getSummary = (obj, interval) ->
+    getSummary = (options, obj, interval) ->
         now = moment().valueOf()
         values = []
         errorCount = 0
