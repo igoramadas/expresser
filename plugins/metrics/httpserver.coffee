@@ -15,6 +15,7 @@ class HttpServer
 
     # Start the server.
     start: =>
+        return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
         return if server?
 
         server = http.createServer express()
@@ -22,6 +23,7 @@ class HttpServer
 
     # Kill the server.
     kill: =>
+        return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
         return if not server?
 
         server.close()

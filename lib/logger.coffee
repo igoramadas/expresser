@@ -8,7 +8,7 @@
 # -->
 class Logger
     newInstance: -> return new Logger()
-    
+
     chalk = require "chalk"
     events = require "./events.coffee"
     fs = require "fs"
@@ -181,6 +181,11 @@ class Logger
     # Helper to log to console about methods / features deprecation.
     deprecated: (func, message) =>
         @console "deprecated", "#{func} is deprecated. #{message}"
+
+    # Helper to log to console that module is not enabled on settings.
+    notEnabled: (module, func) =>
+        @console "debug", "#{module}.#{func} abort! #{module} is not enabled."
+        return false
 
     # Cleans the arguments passed according to the `removeFields` setting.
     # The maximum level deep down the object is defined by the `maxDeepLevel`.

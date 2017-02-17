@@ -23,6 +23,8 @@ class Metrics
 
     # Init metrics and set up cleanup timer.
     init: =>
+        return logger.notEnabled "Metrics", "init" if not settings.metrics.enabled
+
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         moment = @expresser.libs.moment
@@ -44,6 +46,8 @@ class Metrics
 
     # Starts the counter for a specific metric. The data is optional.
     start: (id, data) ->
+        return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
+
         obj = {}
         obj.id = id
         obj.data = data
@@ -72,6 +76,8 @@ class Metrics
     # Clean collected metrics by removing data older than X minutes (defined on settings).
     # Please note that this runs on s schedule so you shouldn't need to call it manually, in most cases.
     cleanup: ->
+        return logger.notEnabled "Metrics", "cleanup" if not settings.metrics.enabled
+
         logger.debug "Metrics.cleanup"
 
         now = moment().valueOf()
@@ -103,6 +109,8 @@ class Metrics
     # @param {Object} options Options to filter the output.
     # @return {Object} JSON output with relevant metrics.
     output: (options) ->
+        return logger.notEnabled "Metrics", "output" if not settings.metrics.enabled
+
         logger.debug "Metrics.output", options, metrics
         utils.getServerInfo()
 
