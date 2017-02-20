@@ -3,7 +3,6 @@
 # Helper class to manage the HTTP server exposing the metrics output.
 class HttpServer
 
-    http = require "http"
     metrics = null
     express = null
     settings = null
@@ -24,10 +23,7 @@ class HttpServer
         return if server?
 
         @server = express()
-
-        webServer = http.createServer @server
-        webServer.listen settings.metrics.httpServer.port
-
+        @server.listen settings.metrics.httpServer.port
         @server.get settings.metrics.httpServer.path, (req, res) -> res.json metrics.output()
 
     # Kill the server.
