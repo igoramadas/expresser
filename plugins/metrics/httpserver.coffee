@@ -8,7 +8,7 @@ class HttpServer
     settings = null
     webServer = null
 
-    # Server is exposed to other modules.
+    # Express server is exposed to other modules.
     server: null
 
     # Init the HTTP server class.
@@ -20,11 +20,12 @@ class HttpServer
     # Start the server.
     start: =>
         return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
-        return if server?
+        return if webServer?
 
         @server = express()
-        @server.listen settings.metrics.httpServer.port
         @server.get settings.metrics.httpServer.path, (req, res) -> res.json metrics.output()
+
+        webServer = @server.listen settings.metrics.httpServer.port
 
     # Kill the server.
     kill: =>

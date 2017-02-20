@@ -96,7 +96,7 @@ describe("Metrics Tests", function () {
     });
 
     it("Output via dedicated HTTP server", function (done) {
-        supertest(metrics.server).get("/").expect("Content-Type", /json/).expect(200, done);
+        supertest(metrics.httpServer.server).get("/").expect("Content-Type", /json/).expect(200, done);
     });
 
     it("Metrics cleanup (expireAfter set to 0)", function (done) {
