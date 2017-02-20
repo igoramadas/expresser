@@ -99,6 +99,10 @@ describe("Metrics Tests", function () {
         supertest(metrics.httpServer.server).get("/").expect("Content-Type", /json/).expect(200, done);
     });
 
+    it("Kill the dedicated HTTP server", function (done) {
+        metrics.httpServer.kill();
+    });
+
     it("Metrics cleanup (expireAfter set to 0)", function (done) {
         settings.metrics.expireAfter = 0;
 
