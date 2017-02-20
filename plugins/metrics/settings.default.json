@@ -21,8 +21,8 @@
         // Include server CPU / RAM metrics on output? Any key returned by the
         // utils.getServerInfo() is valid here. Leave "fields" empty if you
         // don't want to include server metrics on the output.
-        "serverMetrics": {
-            "key": "server",
+        "systemMetrics": {
+            "key": "system",
             "fields": ["loadAvg", "memoryUsage"]
         }
     }

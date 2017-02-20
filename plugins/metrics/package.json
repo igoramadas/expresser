@@ -1,6 +1,6 @@
 {
     "name": "expresser-metrics",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "description": "Metrics for Expresser apps.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -23,6 +23,7 @@
     "keywords": [
         "expresser",
         "metrics",
+        "monitoring",
         "stats"
     ]
 }

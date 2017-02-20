@@ -7,7 +7,6 @@
 # -->
 class Metrics
 
-    httpServer = require "./httpserver.coffee"
     percentile = require "./percentile.coffee"
     lodash = null
     logger = null
@@ -20,6 +19,9 @@ class Metrics
 
     # Timer to cleanup metrics.
     cleanupTimer = null
+
+    # HTTP server module exposed.
+    httpServer: require "./httpserver.coffee"
 
     # Init metrics and set up cleanup timer.
     init: =>
@@ -39,8 +41,8 @@ class Metrics
         cleanupTimer = setInterval @cleanup, settings.metrics.cleanupInterval * 60 * 1000
 
         # Init the HTTP server module. Start if a valid port was set.
-        httpServer.init this
-        httpServer.start() if settings.metrics.httpServer.port?
+        @httpServer.init this
+        @httpServer.start() if settings.metrics.httpServer.port?
 
     # COUNTERS
     # -------------------------------------------------------------------------
@@ -126,12 +128,12 @@ class Metrics
         result = {}
 
         # Add server info to the output?
-        if options.serverMetrics?.fields?.length > 0
+        if options.systemMetrics?.fields?.length > 0
             serverInfo = utils.getServerInfo()
-            serverKey = options.serverMetrics.key
+            serverKey = options.systemMetrics.key
             result[serverKey] = {}
 
-            for f in options.serverMetrics.fields
+            for f in options.systemMetrics.fields
                 result[serverKey][f] = serverInfo[f]
 
         # For each different metric...

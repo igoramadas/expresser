@@ -62,3 +62,10 @@ And to get metrics for a specific call only:
     };
 
     var output = metrics.output(options);
+
+### Metrics HTTP server
+
+The Metrics module can spin up a dedicated HTTP server for the metrics output,
+which makes it easier for you to set firewall rules for external access.
+
+To enable the HTTP server, simply add a valid port number to `settings.metrics.httpServer.port`.

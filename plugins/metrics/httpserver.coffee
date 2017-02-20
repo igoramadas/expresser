@@ -7,7 +7,10 @@ class HttpServer
     metrics = null
     express = null
     settings = null
-    server = null
+    webServer = null
+
+    # Server is exposed to other modules.
+    server: null
 
     # Init the HTTP server class.
     init: (parent) =>
@@ -20,19 +23,20 @@ class HttpServer
         return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
         return if server?
 
-        app = express()
-        server = http.createServer app
-        server.listen settings.metrics.httpServer.port
+        @server = express()
 
-        app.get settings.metrics.httpServer.path, (req, res) -> res.json metrics.output()
+        webServer = http.createServer @server
+        webServer.listen settings.metrics.httpServer.port
+
+        @server.get settings.metrics.httpServer.path, (req, res) -> res.json metrics.output()
 
     # Kill the server.
     kill: =>
         return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
-        return if not server?
+        return if not webServer?
 
-        server.close()
-        server = null
+        webServer.close()
+        webServer = null
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------

@@ -9,6 +9,7 @@ describe("Metrics Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    var supertest = require("supertest");
     var metrics = null;
     var totalCalls = 0;
 
@@ -62,10 +63,10 @@ describe("Metrics Tests", function () {
         done();
     });
 
-    it("Output has server info", function (done) {
+    it("Output has system metrics", function (done) {
         var output = metrics.output();
 
-        if (!output.server.loadAvg || !output.server.memoryUsage) {
+        if (!output.system || !output.system.loadAvg || !output.system.memoryUsage) {
             done("Metrics output expects server's loadAvg and memoryUsage.");
         } else {
             done();
@@ -92,6 +93,10 @@ describe("Metrics Tests", function () {
         } else {
             done();
         }
+    });
+
+    it("Output via dedicated HTTP server", function (done) {
+        supertest(metrics.server).get("/").expect("Content-Type", /json/).expect(200, done);
     });
 
     it("Metrics cleanup (expireAfter set to 0)", function (done) {

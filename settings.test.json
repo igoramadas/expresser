@@ -38,6 +38,11 @@
             "ignoreTLS": true
         }
     },
+    "metrics": {
+        "httpServer": {
+            "port": 8991
+        }
+    },
     "path": {
         "viewsDir": "./test/"
     },
