@@ -27,7 +27,6 @@ class Expresser
         lodash: require "lodash"
         moment: require "moment"
 
-
     # Helper to load default modules. Basically everything inside the lib folder.
     initDefaultModules = (self) ->
         for id, m of self
@@ -45,7 +44,7 @@ class Expresser
             pluginsFolder = false
             plugins = fs.readdirSync "#{self.rootPath}/node_modules"
 
-        plugins.sort()
+        initializers = []
 
         # Iterate plugins and get it's ID by removing the "expresser-" prefix.
         for p in plugins
@@ -83,7 +82,12 @@ class Expresser
 
                     # Init plugin only if enabled is not set to false on its settings.
                     if optionsRef?.enabled
-                        self[pluginName].init? optionsRef
+                        initializers.push {priority: self[pluginName].priority, init: self[pluginName].init}
+
+        sortedInit = self.libs.lodash.sortBy initializers, ["priority"]
+
+        # Init all loaded plugins on the correct order, by checking their 'priority' value.
+        i.init?() for i in sortedInit
 
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App. The `options` can have properties to be

@@ -23,12 +23,12 @@ class Mailer
     settings = null
     utils = null
 
+    # Templates cache to avoid disk reads.
+    templateCache = {}
+
     # SMTP objects will be instantiated on `init`.
     smtp: null
     smtp2: null
-
-    # Templates cache to avoid disk reads.
-    templateCache = {}
 
     # INIT
     # --------------------------------------------------------------------------

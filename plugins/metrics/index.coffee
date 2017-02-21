@@ -9,10 +9,11 @@ class Metrics
 
     priority: 3
 
-    percentile = require "./percentile.coffee"
+    events = null
     lodash = null
     logger = null
     moment = null
+    percentile = require "./percentile.coffee"
     settings = null
     utils = null
 
@@ -27,6 +28,7 @@ class Metrics
 
     # Init metrics and set up cleanup timer.
     init: =>
+        events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         moment = @expresser.libs.moment
