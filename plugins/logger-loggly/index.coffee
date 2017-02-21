@@ -12,7 +12,7 @@ class LoggerLoggly
     lodash = null
     logger = null
     settings = null
-    
+
     # Wrapper for the Loggly client.
     logglyClient = null
 
@@ -35,6 +35,7 @@ class LoggerLoggly
             result = logger.register "loggly", "loggly", settings.logger.loggly
 
         events.emit "LoggerLoggly.on.init"
+        delete @init
 
         return result
 

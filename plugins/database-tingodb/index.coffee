@@ -30,13 +30,14 @@ class DatabaseTingoDb
 
         logger.debug "DatabaseTingoDb.init"
 
-        database.drivers.tingodb = this        
+        database.drivers.tingodb = this
 
         # Auto register as "tingodb" if a `dbPath` is defined on the settings.
         if settings.database.tingodb.enabled and settings.database.tingodb.dbPath?
             result = database.register "tingodb", "tingodb", settings.database.tingodb.dbPath, settings.database.tingodb.options
 
         events.emit "DatabaseTingoDb.on.init"
+        delete @init
 
         return result
 

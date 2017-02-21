@@ -60,6 +60,7 @@ class Cron
         @load true, options if options.loadOnInit
 
         events.emit "Cron.on.init", options
+        delete @init
 
     # Bind events.
     setEvents: =>

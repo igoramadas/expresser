@@ -27,13 +27,14 @@ class DatabaseMongoDb
 
         logger.debug "DatabaseMongoDb.init"
 
-        database.drivers.mongodb = this        
+        database.drivers.mongodb = this
 
         # Auto register as "mongodb" if a `connString` is defined on the settings.
         if settings.database.mongodb.enabled and settings.database.mongodb.connString?
             result = database.register "mongodb", "mongodb", settings.database.mongodb.connString, settings.database.mongodb.options
 
         events.emit "DatabaseMongoDb.on.init"
+        delete @init
 
         return result
 
@@ -200,7 +201,7 @@ class DatabaseMongoDb
             filter = options.filter
         else
             filter = {_id: id}
-            
+
         delete options.filter
 
         # If options patch is set, replace specified document properties only instead of replacing the whole document.

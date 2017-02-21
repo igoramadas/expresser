@@ -35,7 +35,8 @@ class LoggerFile
             result = logger.register "file", "file", settings.logger.file
 
         events.emit "LoggerFile.on.init"
-        
+        delete @init
+
         return result
 
     # Get the file transport object.

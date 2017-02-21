@@ -62,6 +62,7 @@ class Mailer
         @setEvents()
 
         events.emit "Mailer.on.init", options
+        delete @init
 
     # Bind event listeners.
     setEvents: =>

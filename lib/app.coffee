@@ -57,6 +57,7 @@ class App
         @startServer()
 
         events.emit "App.on.init"
+        delete @init
 
     # Configure the server. Set views, options, use Express modules, etc.
     configureServer: =>

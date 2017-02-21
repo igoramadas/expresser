@@ -40,6 +40,7 @@ class Downloader
         @setEvents()
 
         events.emit "Downloader.on.init", options
+        delete @init
 
     # Bind events.
     setEvents: =>

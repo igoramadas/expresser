@@ -35,6 +35,7 @@ class LoggerLogentries
             result = logger.register "logentries", "logentries", settings.logger.logentries
 
         events.emit "LoggerLogentries.on.init"
+        delete @init
 
         return result
 

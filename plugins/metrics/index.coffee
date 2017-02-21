@@ -31,6 +31,8 @@ class Metrics
         settings = @expresser.settings
         utils = @expresser.utils
 
+        events.emit "Metrics.before.init"
+
         return logger.notEnabled "Metrics", "init" if not settings.metrics.enabled
 
         # Make sure settings are valid.
@@ -44,6 +46,9 @@ class Metrics
         # Init the HTTP server module. Start if a valid port was set.
         @httpServer.init this
         @httpServer.start() if settings.metrics.httpServer.port? and settings.metrics.httpServer.autoStart
+
+        events.emit "Metrics.on.init"
+        delete @init
 
     # COUNTERS
     # -------------------------------------------------------------------------

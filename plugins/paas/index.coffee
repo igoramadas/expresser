@@ -18,15 +18,19 @@ class PaaS
     # --------------------------------------------------------------------------
 
     # Init the PaaS plugin.
-    init: (options) =>
+    init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
 
         env = process.env
+        events.emit "PaaS.before.init"
 
         @setEvents()
+
+        events.emit "PaaS.on.init"
+        delete @init
 
     # Bind events.
     setEvents: =>

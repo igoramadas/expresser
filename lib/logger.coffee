@@ -57,6 +57,7 @@ class Logger
         @setEvents()
 
         events.emit "Logger.on.init"
+        delete @init
 
     # Bind events.
     setEvents: =>
