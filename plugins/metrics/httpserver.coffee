@@ -1,10 +1,11 @@
-# HTTP SERVER HELPER
+# METRICS: HTTP SERVER HELPER
 # --------------------------------------------------------------------------
 # Helper class to manage the HTTP server exposing the metrics output.
 class HttpServer
 
     metrics = null
     express = null
+    logger = null
     settings = null
     webServer = null
 
@@ -15,25 +16,36 @@ class HttpServer
     init: (parent) =>
         metrics = parent
         express = metrics.expresser.libs.express
+        logger = metrics.expresser.logger
         settings = metrics.expresser.settings
 
     # Start the server.
     start: =>
-        return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
+        return logger.notEnabled "Metrics.httpServer", "start" if not settings.metrics.enabled
         return if webServer?
 
         @server = express()
         @server.get settings.metrics.httpServer.path, (req, res) -> res.json metrics.output()
 
-        webServer = @server.listen settings.metrics.httpServer.port
+        try
+            webServer = @server.listen settings.metrics.httpServer.port
+        catch ex
+            return logger.error "Metrics.httpServer.start", ex
+
+        logger.info "Metrics.httpServer.start", settings.metrics.httpServer.port
 
     # Kill the server.
     kill: =>
-        return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
+        return logger.notEnabled "Metrics.httpServer", "kill" if not settings.metrics.enabled
         return if not webServer?
 
-        webServer.close()
-        webServer = null
+        try
+            webServer.close()
+            webServer = null
+        catch ex
+            return logger.error "Metrics.httpServer.kill", ex
+
+        logger.info "Metrics.httpServer.kill"
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------

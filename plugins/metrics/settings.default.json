@@ -7,10 +7,10 @@
         "cleanupInterval": 20,
         // Expire metrics data after X minutes.
         "expireAfter": 720,
-        // Se the value below to a valid TCP port number if you wish the module to
-        // spin up a HTTP server automatically to serve the metrics output.
+        // Set the values below if you wish the module to spin up a HTTP server to serve the metrics output.
         // You can also set the path (default is /, but for example you could use /metrics).
         "httpServer": {
+            "autoStart": false,
             "port": null,
             "path": "/"
         },

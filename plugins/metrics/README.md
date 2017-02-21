@@ -73,8 +73,8 @@ And to get metrics for a specific call only:
 The Metrics module can spin up a dedicated HTTP server for the metrics output,
 which makes it easier for you to set firewall rules for external access.
 
-To enable the HTTP server, simply add a valid port number to `settings.metrics.httpServer.port`.
-It will be started on the app init.
+To enable the HTTP server, simply add a valid port number to `settings.metrics.httpServer.port`
+and set `settings.metrics.httpServer.autoStart` to true.
 
 If you want to control the Metrics HTTP server manually, please set the port programatically
 and use the `start` and `kill` methods. You can also access the underlying Express server,

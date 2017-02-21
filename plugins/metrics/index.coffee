@@ -34,6 +34,7 @@ class Metrics
         return logger.notEnabled "Metrics", "init" if not settings.metrics.enabled
 
         # Make sure settings are valid.
+        settings.metrics.httpServer = {} if not settings.metrics.httpServer?
         settings.metrics.intervals = [] if not settings.metrics.intervals?
         settings.metrics.percentiles = [] if not settings.metrics.percentiles?
 
@@ -42,7 +43,7 @@ class Metrics
 
         # Init the HTTP server module. Start if a valid port was set.
         @httpServer.init this
-        @httpServer.start() if settings.metrics.httpServer.port?
+        @httpServer.start() if settings.metrics.httpServer.port? and settings.metrics.httpServer.autoStart
 
     # COUNTERS
     # -------------------------------------------------------------------------
@@ -154,6 +155,8 @@ class Metrics
                 samples.push getLastSummary(obj[0]) if obj[0]?
 
                 result[key].last_samples = samples
+
+        logger.debug "Metrics.output", options, result
 
         return result
 

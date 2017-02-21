@@ -1,4 +1,4 @@
-# PERCENTILE HELPER
+# METRICS: PERCENTILE HELPER
 # --------------------------------------------------------------------------
 # Helper class to calculate percentiles.
 class Percentile
