@@ -62,6 +62,7 @@ class Metrics
     # @return {Object} Returns the metric object to be used later on `end`.
     start: (id, data) ->
         return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
+        logger.debug "Metrics.start", obj, data
 
         obj = {}
         obj.id = id
@@ -71,8 +72,6 @@ class Metrics
         # Create array of counters for the selected ID. Add metric to the beggining of the array.
         metrics[id] = [] if not metrics[id]?
         metrics[id].unshift obj
-
-        logger.debug "Metrics.start", obj, data
 
         return obj
 

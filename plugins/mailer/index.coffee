@@ -79,6 +79,7 @@ class Mailer
     # @param {Method} callback Callback (err, result) when message is sent or fails.
     send: (options, callback) =>
         logger.debug "Mailer.send", options
+        return logger.notEnabled "Mailer", "send" if not settings.mailer.enabled
 
         # Get passed SMTP servers or the default ones.
         smtp = options.smtp or @smtp
@@ -213,6 +214,7 @@ class Mailer
     # @return {Object} A Nodemailer SMTP transport object, or null if a problem was found.
     createSmtp: (options) ->
         logger.debug "Mailer.createSmtp", options
+        return logger.notEnabled "Mailer", "createSmtp" if not settings.mailer.enabled
 
         options.debug = settings.general.debug if not options.debug?
         options.secureConnection = options.secure if not options.secureConnection?

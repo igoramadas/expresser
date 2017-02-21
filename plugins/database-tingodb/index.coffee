@@ -21,7 +21,7 @@ class DatabaseTingoDb
     # -------------------------------------------------------------------------
 
     # Init the TingoDB database module.
-    # @return {Object} Returns the TingoDB transport created (only if default settings are set).
+    # @return {Object} Returns the TingoDB connection created (only if default settings are set).
     init: =>
         database = @expresser.database
         events = @expresser.events
@@ -49,6 +49,7 @@ class DatabaseTingoDb
     # @param {Object} options Additional options to be passed when creating the TingoDB connection.
     getConnection: (dbPath, options) =>
         logger.debug "DatabaseTingoDb.getConnection", dbPath, options
+        return logger.notEnabled "DatabaseTingoDb", "getConnection" if not settings.database.tingodb.enabled
 
         # Make sure database folder exists!
         dbPath = path.resolve dbPath

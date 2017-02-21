@@ -42,10 +42,9 @@ class Cron
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the cron manager. If `loadOnInit` setting is true, the `cron.json
+    # Init the cron manager. If `loadOnInit` setting is true, the `cron.json`
     # file will be parsed and loaded straight away (if there's one).
-    # @param {Object} options Cron init options.
-    init: (options) =>
+    init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -53,15 +52,14 @@ class Cron
         settings = @expresser.settings
         utils = @expresser.utils
 
-        logger.debug "Cron.init", options
-
-        options = {} if not options?
-        options = lodash.defaultsDeep options, settings.cron
+        logger.debug "Cron.init"
+        events.emit "Cron.before.init"
 
         @setEvents()
-        @load true, options if options.loadOnInit
 
-        events.emit "Cron.on.init", options
+        @load true, settings.cron if settings.cron.loadOnInit
+
+        events.emit "Cron.on.init"
         delete @init
 
     # Bind events.
@@ -79,7 +77,6 @@ class Cron
     # @option options {Boolean} autoStart If true, call "start" after loading.
     load: (filename, options) =>
         logger.debug "Cron.load", filename, options
-
         return logger.notEnabled "Cron", "load" if not settings.cron.enabled
 
         # Set default options.
@@ -153,7 +150,6 @@ class Cron
     # @param {String} idOrFilter The job id or filter, optional (if not specified, start everything).
     start: (idOrFilter) =>
         logger.debug "Cron.start", idOrFilter
-
         return logger.notEnabled "Cron", "start" if not settings.cron.enabled
 
         if not idOrFilter?
@@ -212,7 +208,6 @@ class Cron
     # @return {Object} Returns {error, job}, where job is the job object and error is the error message (if any).
     add: (job) =>
         logger.debug "Cron.add", job
-
         return logger.notEnabled "Cron", "add" if not settings.cron.enabled
 
         # Throw error if no `id` was provided.
