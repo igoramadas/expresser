@@ -11,6 +11,8 @@
 # -->
 class Mailer
 
+    priority: 3
+
     events = null
     fs = require "fs"
     lodash = null

@@ -7,6 +7,8 @@
 # -->
 class Metrics
 
+    priority: 3
+
     percentile = require "./percentile.coffee"
     lodash = null
     logger = null

@@ -7,11 +7,12 @@
 # -->
 class PaaS
 
+    priority: 1
+
     events = null
     lodash = null
     logger = null
     settings = null
-
     env = null
 
     # INIT
@@ -23,9 +24,11 @@ class PaaS
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
-
         env = process.env
+
         events.emit "PaaS.before.init"
+
+        return logger.notEnabled "PaaS", "init" if not settings.paas.enabled
 
         @setEvents()
 

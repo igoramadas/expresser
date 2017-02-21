@@ -6,6 +6,8 @@
 # -->
 class LoggerLoggly
 
+    priority: 3
+
     fs = require "fs"
     loggly = require "loggly"
     path = require "path"

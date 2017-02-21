@@ -7,6 +7,8 @@
 # -->
 class DatabaseTingoDb
 
+    priority: 3
+
     path = require "path"
     tingodb = require("tingodb")()
     database = null

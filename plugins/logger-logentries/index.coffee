@@ -6,6 +6,8 @@
 # -->
 class LoggerLogentries
 
+    priority: 3
+
     fs = require "fs"
     lodash = null
     logentries = require "node-logentries"

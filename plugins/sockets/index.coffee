@@ -8,6 +8,8 @@
 # -->
 class Sockets
 
+    priority: 5
+
     app = null
     events = null
     lodash =  null

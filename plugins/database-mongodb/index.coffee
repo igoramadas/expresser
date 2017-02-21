@@ -7,6 +7,8 @@
 # -->
 class DatabaseMongoDb
 
+    priority: 3
+
     mongodb = require("mongodb").MongoClient
     database = null
     lodash = null
