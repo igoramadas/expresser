@@ -138,7 +138,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h2 id="http-server-helper">HTTP SERVER HELPER</h2>
+              <h2 id="metrics-http-server-helper">METRICS: HTTP SERVER HELPER</h2>
 
             </div>
             
@@ -157,11 +157,11 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HttpServer</span></span>
 
-    server:
-
-    start: <span class="hljs-function">=&gt;</span>
-
-    kill: <span class="hljs-function">=&gt;</span></pre></div></div>
+    metrics = <span class="hljs-literal">null</span>
+    express = <span class="hljs-literal">null</span>
+    logger = <span class="hljs-literal">null</span>
+    settings = <span class="hljs-literal">null</span>
+    webServer = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -172,9 +172,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <h2 id="singleton-implementation-">Singleton implementation.</h2>
+              <p>Express server is exposed to other modules.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    server: <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -184,6 +186,95 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Init the HTTP server class.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(parent)</span> =&gt;</span>
+        metrics = parent
+        express = metrics.expresser.libs.express
+        logger = metrics.expresser.logger
+        settings = metrics.expresser.settings</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Start the server.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    start: <span class="hljs-function">=&gt;</span>
+        logger.debug <span class="hljs-string">"Metrics.httpServer.start"</span>
+
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics.httpServer"</span>, <span class="hljs-string">"start"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> webServer?
+
+        @server = express()
+        @server.get settings.metrics.httpServer.path, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span> res.json metrics.output()
+
+        <span class="hljs-keyword">try</span>
+            webServer = @server.listen settings.metrics.httpServer.port
+        <span class="hljs-keyword">catch</span> ex
+            logger.error <span class="hljs-string">"Metrics.httpServer.start"</span>, ex
+            <span class="hljs-keyword">return</span> {error: ex}
+
+        logger.info <span class="hljs-string">"Metrics.httpServer.start"</span>, settings.metrics.httpServer.port</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Kill the server.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    kill: <span class="hljs-function">=&gt;</span>
+        logger.debug <span class="hljs-string">"Metrics.httpServer.kill"</span>
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> webServer?
+
+        <span class="hljs-keyword">try</span>
+            webServer.close()
+            webServer = <span class="hljs-literal">null</span>
+        <span class="hljs-keyword">catch</span> ex
+            logger.error <span class="hljs-string">"Metrics.httpServer.kill"</span>, ex
+            <span class="hljs-keyword">return</span> {error: ex}
+
+        logger.info <span class="hljs-string">"Metrics.httpServer.kill"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h2 id="singleton-implementation-">Singleton implementation.</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               
             </div>

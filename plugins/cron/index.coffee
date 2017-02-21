@@ -137,8 +137,9 @@ class Cron
                     @start()
 
             logger.info "Cron.load", "#{basename} loaded.", options
-        else if not doNotWarn
-            logger.warn "Cron.load", "#{basename} not found.", options
+        else
+            logger.warn "Cron.load", "#{basename} not found.", options if not doNotWarn
+            return {notFound: true}
 
     # METHODS
     # -------------------------------------------------------------------------

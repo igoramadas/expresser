@@ -300,8 +300,7 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
             <div class="content"><div class='highlight'><pre>    load: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> =&gt;</span>
         logger.debug <span class="hljs-string">"Cron.load"</span>, filename, options
 
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
-            <span class="hljs-keyword">return</span> logger.warn <span class="hljs-string">"Cron.load"</span>, filename, <span class="hljs-string">"The cron module is not enabled (settings.cron.enabled = false). Abort!"</span></pre></div></div>
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Cron"</span>, <span class="hljs-string">"load"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled</pre></div></div>
             
         </li>
         
@@ -434,7 +433,8 @@ If no ID is set for the job, use module key + callback name.</p>
 
             logger.info <span class="hljs-string">"Cron.load"</span>, <span class="hljs-string">"<span class="hljs-subst">#{basename}</span> loaded."</span>, options
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> doNotWarn
-            logger.warn <span class="hljs-string">"Cron.load"</span>, <span class="hljs-string">"<span class="hljs-subst">#{basename}</span> not found."</span>, options</pre></div></div>
+            logger.warn <span class="hljs-string">"Cron.load"</span>, <span class="hljs-string">"<span class="hljs-subst">#{basename}</span> not found."</span>, options
+            <span class="hljs-keyword">return</span> {notFound: <span class="hljs-literal">true</span>}</pre></div></div>
             
         </li>
         
@@ -478,8 +478,9 @@ the module “email”, use start({module: “email”}).
             </div>
             
             <div class="content"><div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(idOrFilter)</span> =&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
-            <span class="hljs-keyword">return</span> logger.warn <span class="hljs-string">"Cron.start"</span>, idOrFilter, <span class="hljs-string">"The cron module is not enabled (settings.cron.enabled = false). Abort!"</span>
+        logger.debug <span class="hljs-string">"Cron.start"</span>, idOrFilter
+
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Cron"</span>, <span class="hljs-string">"start"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
 
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> idOrFilter?
             logger.info <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"All jobs"</span>
@@ -517,6 +518,8 @@ the module “mymodule”, use stop({module: “mymodule”}).
             </div>
             
             <div class="content"><div class='highlight'><pre>    stop: <span class="hljs-function"><span class="hljs-params">(idOrFilter)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Cron.stop"</span>, idOrFilter
+
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> idOrFilter?
             logger.info <span class="hljs-string">"Cron.stop"</span>, <span class="hljs-string">"All jobs"</span>
             arr = @jobs
@@ -560,8 +563,7 @@ You can also pass only the <code>job</code> if it has an id property.
             <div class="content"><div class='highlight'><pre>    add: <span class="hljs-function"><span class="hljs-params">(job)</span> =&gt;</span>
         logger.debug <span class="hljs-string">"Cron.add"</span>, job
 
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
-            <span class="hljs-keyword">return</span> logger.warn <span class="hljs-string">"Cron.add"</span>, job.id, <span class="hljs-string">"The cron module is not enabled (settings.cron.enabled = false). Abort!"</span></pre></div></div>
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Cron"</span>, <span class="hljs-string">"add"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled</pre></div></div>
             
         </li>
         

@@ -162,7 +162,7 @@ Multiple services can be enabled at the same time.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Logger</span></span>
     newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Logger()
-    
+
     chalk = <span class="hljs-built_in">require</span> <span class="hljs-string">"chalk"</span>
     events = <span class="hljs-built_in">require</span> <span class="hljs-string">"./events.coffee"</span>
     fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
@@ -494,7 +494,8 @@ IP address will be appended to logs depending on the settings.
               </div>
               <p>Internal generic log method.
 @param {String} logType The log type (for example: warning, error, info, security, etc).
-@param {Array} args Array to be stringified and logged.</p>
+@param {Array} args Array to be stringified and logged.
+@return {String} The human readable log line.</p>
 
             </div>
             
@@ -695,6 +696,23 @@ All arguments are transformed to readable strings.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
+              <p>Helper to log to console that module is not enabled on settings.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    notEnabled: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-built_in">module</span>, func)</span> =&gt;</span>
+        @console <span class="hljs-string">"debug"</span>, <span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-built_in">module</span>}</span>.<span class="hljs-subst">#{func}</span> abort! <span class="hljs-subst">#{<span class="hljs-built_in">module</span>}</span> is not enabled."</span>
+        <span class="hljs-keyword">return</span> {notEnabled: <span class="hljs-literal">true</span>}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
               <p>Cleans the arguments passed according to the <code>removeFields</code> setting.
 The maximum level deep down the object is defined by the <code>maxDeepLevel</code>.
 @return {Arguments} Arguments with private fields obfuscated.
@@ -710,11 +728,11 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Recursive cleaning function.</p>
 
@@ -753,11 +771,11 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Iterate arguments and execute cleaner on objects.</p>
 
@@ -783,11 +801,11 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-36">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Returns a human readable message out of the arguments.
 @return {String} The human readable, parsed JSON message.
@@ -811,11 +829,11 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-37">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Parse all arguments and stringify objects. Please note that fields defined
 on the <code>removeFields</code> setting won’t be added to the message.</p>
@@ -842,11 +860,11 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>Append IP address, if <code>serverIP</code> is set.</p>
 
@@ -865,11 +883,11 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>Return single string log message.</p>
 
@@ -880,11 +898,11 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
@@ -893,11 +911,11 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               
             </div>
