@@ -46,6 +46,15 @@ describe("Cron Tests", function () {
         }
     });
 
+    it("Exception when trying to load an invalid file", function (done) {
+        try {
+            cron.load("this-does-not/exist.json");
+            done("Loading an invalid file should throw an exception, but it didn't.");
+        } catch (ex) {
+            done();
+        }
+    });
+
     it("Start loaded cron jobs", function (done) {
         this.timeout(10000);
 
