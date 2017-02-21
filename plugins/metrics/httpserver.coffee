@@ -21,6 +21,8 @@ class HttpServer
 
     # Start the server.
     start: =>
+        logger.debug "Metrics.httpServer.start"
+
         return logger.notEnabled "Metrics.httpServer", "start" if not settings.metrics.enabled
         return if webServer?
 
@@ -37,6 +39,8 @@ class HttpServer
 
     # Kill the server.
     kill: =>
+        logger.debug "Metrics.httpServer.kill"
+
         return logger.notEnabled "Metrics.httpServer", "kill" if not settings.metrics.enabled
         return if not webServer?
 
