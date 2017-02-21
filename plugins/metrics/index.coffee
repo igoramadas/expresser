@@ -61,8 +61,8 @@ class Metrics
     # @param {Object} data Additional info about the current metric (URL data, for example).
     # @return {Object} Returns the metric object to be used later on `end`.
     start: (id, data) ->
-        return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
         logger.debug "Metrics.start", obj, data
+        return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
 
         obj = {}
         obj.id = id
@@ -93,9 +93,8 @@ class Metrics
     # Clean collected metrics by removing data older than X minutes (defined on settings).
     # Please note that this runs on s schedule so you shouldn't need to call it manually, in most cases.
     cleanup: ->
-        return logger.notEnabled "Metrics", "cleanup" if not settings.metrics.enabled
-
         logger.debug "Metrics.cleanup"
+        return logger.notEnabled "Metrics", "cleanup" if not settings.metrics.enabled
 
         now = moment().valueOf()
         keyCounter = 0
