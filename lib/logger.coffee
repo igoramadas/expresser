@@ -186,7 +186,7 @@ class Logger
     # Helper to log to console that module is not enabled on settings.
     notEnabled: (module, func) =>
         @console "debug", "#{module}.#{func} abort! #{module} is not enabled."
-        return false
+        return {notEnabled: true}
 
     # Cleans the arguments passed according to the `removeFields` setting.
     # The maximum level deep down the object is defined by the `maxDeepLevel`.

@@ -77,8 +77,7 @@ class Cron
     load: (filename, options) =>
         logger.debug "Cron.load", filename, options
 
-        if not settings.cron.enabled
-            return logger.warn "Cron.load", filename, "The cron module is not enabled (settings.cron.enabled = false). Abort!"
+        return logger.notEnabled "Cron", "load" if not settings.cron.enabled
 
         # Set default options.
         options = {} if not options?
@@ -149,8 +148,9 @@ class Cron
     # the module "email", use start({module: "email"}).
     # @param {String} idOrFilter The job id or filter, optional (if not specified, start everything).
     start: (idOrFilter) =>
-        if not settings.cron.enabled
-            return logger.warn "Cron.start", idOrFilter, "The cron module is not enabled (settings.cron.enabled = false). Abort!"
+        logger.debug "Cron.start", idOrFilter
+
+        return logger.notEnabled "Cron", "start" if not settings.cron.enabled
 
         if not idOrFilter?
             logger.info "Cron.start", "All jobs"
@@ -176,6 +176,8 @@ class Cron
     # the module "mymodule", use stop({module: "mymodule"}).
     # @param {String} idOrFilter The job id or filter, optional (if not specified, stop everything).
     stop: (idOrFilter) =>
+        logger.debug "Cron.stop", idOrFilter
+
         if not idOrFilter?
             logger.info "Cron.stop", "All jobs"
             arr = @jobs
@@ -207,8 +209,7 @@ class Cron
     add: (job) =>
         logger.debug "Cron.add", job
 
-        if not settings.cron.enabled
-            return logger.warn "Cron.add", job.id, "The cron module is not enabled (settings.cron.enabled = false). Abort!"
+        return logger.notEnabled "Cron", "add" if not settings.cron.enabled
 
         # Throw error if no `id` was provided.
         if not job.id? or job.id is ""

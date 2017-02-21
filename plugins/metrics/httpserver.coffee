@@ -41,7 +41,6 @@ class HttpServer
     kill: =>
         logger.debug "Metrics.httpServer.kill"
 
-        return logger.notEnabled "Metrics.httpServer", "kill" if not settings.metrics.enabled
         return if not webServer?
 
         try

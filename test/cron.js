@@ -161,4 +161,16 @@ describe("Cron Tests", function () {
             done("Duplicate job was added, and it shouldn't be.")
         }
     });
+
+    it("Do not start cron jobs when module is not enabled", function (done) {
+        settings.cron.enabled = false;
+
+        if (!cron.load().notEnabled) {
+            done("Cron.load should not run when settings.cron.enabled is false.")
+        } else if (!cron.start().notEnabled) {
+            done("Cron.start should not run when settings.cron.enabled is false.")
+        } else {
+            done();
+        }
+    });
 });
