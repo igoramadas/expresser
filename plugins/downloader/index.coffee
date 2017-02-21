@@ -38,6 +38,7 @@ class Downloader
         settings = @expresser.settings
 
         logger.debug "Downloader.init", options
+        events.emit "Downloader.before.init"
 
         @setEvents()
 

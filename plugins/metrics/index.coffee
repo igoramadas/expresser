@@ -35,9 +35,8 @@ class Metrics
         settings = @expresser.settings
         utils = @expresser.utils
 
+        logger.debug "Metrics.init"
         events.emit "Metrics.before.init"
-
-        return logger.notEnabled "Metrics", "init" if not settings.metrics.enabled
 
         # Make sure settings are valid.
         settings.metrics.httpServer = {} if not settings.metrics.httpServer?
@@ -58,6 +57,9 @@ class Metrics
     # -------------------------------------------------------------------------
 
     # Starts the counter for a specific metric. The data is optional.
+    # @param {String} id ID of the metric to be started.
+    # @param {Object} data Additional info about the current metric (URL data, for example).
+    # @return {Object} Returns the metric object to be used later on `end`.
     start: (id, data) ->
         return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
 
@@ -75,6 +77,8 @@ class Metrics
         return obj
 
     # Ends the counter for the specified metric, with an optional error to be passed along.
+    # @param {Object} obj The metric object started previsouly on `start`.
+    # @param {Object} error Optional error that ocurred while processing the metric.
     end: (obj, error) ->
         obj.endTime = moment().valueOf()
         obj.duration = obj.endTime - obj.startTime
@@ -83,6 +87,7 @@ class Metrics
         logger.debug "Metrics.end", obj
 
     # Get collected data for the specified metric.
+    # @param {String} id ID of the metric.
     get: (id) ->
         return metrics[id]
 
@@ -121,7 +126,7 @@ class Metrics
     # -------------------------------------------------------------------------
 
     # Generate the JSON output with all metrics.
-    # @param {Object} options Options to filter the output.
+    # @param {Object} options Options to filter the output. Available options are same as settings.metrics.
     # @return {Object} JSON output with relevant metrics.
     output: (options) ->
         return logger.notEnabled "Metrics", "output" if not settings.metrics.enabled

@@ -21,7 +21,7 @@ class DatabaseTingoDb
     # -------------------------------------------------------------------------
 
     # Init the TingoDB database module.
-    # @param {Object} options Database init options.
+    # @return {Object} Returns the TingoDB transport created (only if default settings are set).
     init: =>
         database = @expresser.database
         events = @expresser.events
@@ -30,9 +30,10 @@ class DatabaseTingoDb
         settings = @expresser.settings
         utils = @expresser.utils
 
-        logger.debug "DatabaseTingoDb.init"
-
         database.drivers.tingodb = this
+
+        logger.debug "DatabaseTingoDb.init"
+        events.emit "DatabaseTingoDb.before.init"
 
         # Auto register as "tingodb" if a `dbPath` is defined on the settings.
         if settings.database.tingodb.enabled and settings.database.tingodb.dbPath?

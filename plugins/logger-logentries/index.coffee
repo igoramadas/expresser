@@ -23,7 +23,7 @@ class LoggerLogentries
 
     # Init the Logentries module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
-    # @param {Object} options Logentries init options.
+    # @return {Object} Returns the Logentries transport created (only if default settings are set).
     init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -31,6 +31,9 @@ class LoggerLogentries
         settings = @expresser.settings
 
         logger.drivers.logentries = this
+
+        logger.debug "LoggerLogentries.init"
+        events.emit "LoggerLogentries.before.init"
 
         # Auto register as "logentries" if a default token is defined on the settings.
         if settings.logger.logentries.enabled and settings.logger.logentries.token?

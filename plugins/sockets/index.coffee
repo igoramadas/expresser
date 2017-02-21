@@ -32,6 +32,7 @@ class Sockets
         logger = @expresser.logger
         settings = @expresser.settings
 
+        logger.debug "Sockets.init"
         events.emit "Sockets.before.init"
 
         @setEvents()

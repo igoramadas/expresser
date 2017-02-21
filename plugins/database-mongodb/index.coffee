@@ -19,7 +19,7 @@ class DatabaseMongoDb
     # -------------------------------------------------------------------------
 
     # Init the MongoDB database module.
-    # @param {Object} options Database init options.
+    # @return {Object} Returns the MongoDB transport created (only if default settings are set).
     init: =>
         database = @expresser.database
         events = @expresser.events
@@ -27,9 +27,10 @@ class DatabaseMongoDb
         logger = @expresser.logger
         settings = @expresser.settings
 
-        logger.debug "DatabaseMongoDb.init"
-
         database.drivers.mongodb = this
+
+        logger.debug "DatabaseMongoDb.init"
+        events.emit "DatabaseMongoDb.before.init"
 
         # Auto register as "mongodb" if a `connString` is defined on the settings.
         if settings.database.mongodb.enabled and settings.database.mongodb.connString?

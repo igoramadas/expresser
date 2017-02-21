@@ -26,9 +26,8 @@ class PaaS
         settings = @expresser.settings
         env = process.env
 
+        logger.debug "PaaS.init"
         events.emit "PaaS.before.init"
-
-        return logger.notEnabled "PaaS", "init" if not settings.paas.enabled
 
         @setEvents()
 

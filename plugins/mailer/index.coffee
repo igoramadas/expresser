@@ -34,8 +34,7 @@ class Mailer
     # --------------------------------------------------------------------------
 
     # Init the Mailer module and create the SMTP objects.
-    # @param {Object} options Mailer init options.
-    init: (options) =>
+    init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -43,27 +42,24 @@ class Mailer
         settings = @expresser.settings
         utils = @expresser.utils
 
-        logger.debug "Mailer.init", options
+        logger.debug "Mailer.init"
         events.emit "Mailer.before.init"
 
-        options = {} if not options?
-        options = lodash.defaultsDeep options, settings.mailer
-
         # Define default primary SMTP.
-        if options.smtp.service? and options.smtp.service isnt ""
-            @setSmtp options.smtp, false
-        else if options.smtp.host? and options.smtp.host isnt "" and options.smtp.port > 0
-            @setSmtp options.smtp, false
+        if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
+            @setSmtp settings.mailer.smtp, false
+        else if settings.mailer.smtp.host? and settings.mailer.smtp.host isnt "" and settings.mailer.smtp.port > 0
+            @setSmtp settings.mailer.smtp, false
 
         # Define default secondary SMTP.
-        if options.smtp2.service? and options.smtp2.service isnt ""
-            @setSmtp options.smtp2, true
-        else if options.smtp2.host? and options.smtp2.host isnt "" and options.smtp2.port > 0
-            @setSmtp options.smtp2, true
+        if settings.mailer.smtp2.service? and settings.mailer.smtp2.service isnt ""
+            @setSmtp settings.mailer.smtp2, true
+        else if settings.mailer.smtp2.host? and settings.mailer.smtp2.host isnt "" and settings.mailer.smtp2.port > 0
+            @setSmtp settings.mailer.smtp2, true
 
         @setEvents()
 
-        events.emit "Mailer.on.init", options
+        events.emit "Mailer.on.init"
         delete @init
 
     # Bind event listeners.
