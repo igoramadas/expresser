@@ -6,6 +6,7 @@ Plugin to gather and output simple metrics on Expresser apps.
 
 To measure something:
 
+    var metrics = require("expresser-metrics");
     var mt = metrics.start("metrics-id", data);
 
     // Do something here and there... call stuff..
@@ -25,12 +26,14 @@ are customizable on the settings.
 
 If you wish to cleanup manually, simply call:
 
+    var metrics = require("expresser-metrics");
     metrics.cleanup();
 
 ### Output
 
 To generate a summary about collected metrics, use the built-in output method:
 
+    var metrics = require("expresser-metrics");
     var output = metrics.output();
 
     // Some code...
@@ -48,6 +51,7 @@ metrics for last 5, 20 and 60 minutes, and not showing the percentiles:
         percentiles: []
     };
 
+    var metrics = require("expresser-metrics");
     var output = metrics.output(options);
 
 And to get metrics for a specific call only:
@@ -61,6 +65,7 @@ And to get metrics for a specific call only:
         keys: ["my-call"];
     };
 
+    var metrics = require("expresser-metrics");
     var output = metrics.output(options);
 
 ### Metrics HTTP server
@@ -69,3 +74,24 @@ The Metrics module can spin up a dedicated HTTP server for the metrics output,
 which makes it easier for you to set firewall rules for external access.
 
 To enable the HTTP server, simply add a valid port number to `settings.metrics.httpServer.port`.
+It will be started on the app init.
+
+If you want to control the Metrics HTTP server manually, please set the port programatically
+and use the `start` and `kill` methods. You can also access the underlying Express server,
+by using the `metrics.httpServer.server` object. For example:
+
+    // Some code, my app starting...
+
+    var expresser = require("expresser");
+    var metrics = require("expresser-metrics");
+
+    expresser.settings.metrics.httpServer.port = 8080;
+    metrics.httpServer.start();
+
+    // Server started, add a custom route to the metrics http server
+    metrics.httpServer.server.get("/my-route", myRouteCallback);
+
+    // More custom stuff... now to kill:
+
+    metrics.httpServer.kill();
+

@@ -20,7 +20,7 @@ class Metrics
     # Timer to cleanup metrics.
     cleanupTimer = null
 
-    # HTTP server module exposed.
+    # HTTP server module exposed to other modules.
     httpServer: require "./httpserver.coffee"
 
     # Init metrics and set up cleanup timer.
