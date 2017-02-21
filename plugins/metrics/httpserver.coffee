@@ -30,7 +30,8 @@ class HttpServer
         try
             webServer = @server.listen settings.metrics.httpServer.port
         catch ex
-            return logger.error "Metrics.httpServer.start", ex
+            logger.error "Metrics.httpServer.start", ex
+            return {error: ex}
 
         logger.info "Metrics.httpServer.start", settings.metrics.httpServer.port
 
@@ -43,7 +44,8 @@ class HttpServer
             webServer.close()
             webServer = null
         catch ex
-            return logger.error "Metrics.httpServer.kill", ex
+            logger.error "Metrics.httpServer.kill", ex
+            return {error: ex}
 
         logger.info "Metrics.httpServer.kill"
 

@@ -124,6 +124,7 @@ class Logger
     # Internal generic log method.
     # @param {String} logType The log type (for example: warning, error, info, security, etc).
     # @param {Array} args Array to be stringified and logged.
+    # @return {String} The human readable log line.
     log: (logType, args) =>
         return if settings.logger.levels.indexOf(logType) < 0 and not settings.general.debug
 

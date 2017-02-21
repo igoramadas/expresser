@@ -95,3 +95,4 @@ by using the `metrics.httpServer.server` object. For example:
 
     metrics.httpServer.kill();
 
+*For detailed info on specific features, check the annotated source on /docs/source/plugin.metrics.index.html*

@@ -85,11 +85,13 @@ class Metrics
         logger.debug "Metrics.cleanup"
 
         now = moment().valueOf()
+        keyCounter = 0
 
         # Iterate metrics collection.
         for key, obj of metrics
             i = obj.length - 1
             counter = 0
+            keyCounter++
 
             # Iterate requests for the current metrics, last to first.
             while i >= 0
@@ -104,7 +106,7 @@ class Metrics
                 else
                     i = -1
 
-            logger.info "Metrics.cleanup", "Removed #{counter} records from #{key}."
+        logger.info "Metrics.cleanup", "Removed #{counter} records from #{keyCounter} keys."
 
     # OUTPUT
     # -------------------------------------------------------------------------

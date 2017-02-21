@@ -95,12 +95,28 @@ describe("Metrics Tests", function () {
         }
     });
 
+    it("Start the dedicated HTTP server", function (done) {
+        var started = metrics.httpServer.start();
+
+        if (started.error) {
+            done("Error starting the Metrics HTTP server: " + started.error);
+        } else {
+            done();
+        }
+    });
+
     it("Output via dedicated HTTP server", function (done) {
         supertest(metrics.httpServer.server).get("/").expect("Content-Type", /json/).expect(200, done);
     });
 
     it("Kill the dedicated HTTP server", function (done) {
-        metrics.httpServer.kill();
+        var killed = metrics.httpServer.kill();
+
+        if (killed.error) {
+            done("Error killing the Metrics HTTP server: " + killed.error);
+        } else {
+            done();
+        }
     });
 
     it("Metrics cleanup (expireAfter set to 0)", function (done) {
