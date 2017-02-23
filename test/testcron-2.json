@@ -1,0 +1,9 @@
+{
+    "events.coffee": [{
+        "id": "cron-2",
+        "callback": "emit",
+        "params": ["cron-2", 1],
+        "description": "Testing cron from second loaded file.",
+        "schedule": 10
+    }]
+}

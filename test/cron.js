@@ -33,34 +33,43 @@ describe("Cron Tests", function () {
         cron.init();
     });
 
-    it("Loads jobs from a testcron1.json file, autostarting", function (done) {
-        cron.load("test/testcron.json", false);
-
-        if (cron.jobs.length == 2) {
-            done();
-        } else {
-            done("Cron should have two jobs loaded from testcron.json, but has " + cron.jobs.length + " jobs.");
-        }
-    });
-
-    it("Loads jobs from a testcron2.json file, passing options", function (done) {
-        cron.load("test/testcron.json", {
-            autoStart: false,
-            basePath: "../../../lib/"
+    it("Loads jobs from a testcron1.json and testcron2.json files", function (done) {
+        cron.load("test/testcron-1.json", {
+            basePath: "../../../lib/",
+            autoStart: false
         });
 
-        if (cron.jobs.length == 2) {
+        cron.load("test/testcron-2.json", {
+            basePath: "../../../lib/",
+            autoStart: true
+        });
+
+        if (cron.jobs.length == 3) {
             done();
         } else {
-            done("Cron should have two jobs loaded from testcron.json, but has " + cron.jobs.length + " jobs.");
+            done("Cron should have three jobs loaded from testcron-1.json and testcron-2.json, but has " + cron.jobs.length + " jobs.");
         }
     });
 
-    it("Exception when trying to load an invalid file", function (done) {
-        if (cron.load("this-does-not/exist.json").notFound) {
+    it("Fails to load when filename or file JSON data is not valid", function (done) {
+        try {
+            cron.load(true);
+            return done("Cron.load(true) should have failed!");
+        } catch (ex) {}
+
+        try {
+            cron.load("invalidfilename.json");
+            done("Cron.load(invalidfilename) should have failed!");
+        } catch (ex) {}
+
+        try {
+            cron.load("test/testcron-invalid.json", {
+                autoStart: false,
+                basePath: "../../../lib/"
+            });
+            done("Cron.load(testcron-invalid should have failed!");
+        } catch (ex) {
             done();
-        } else {
-            done("Loading an invalid file should throw an exception, but it didn't.");
         }
     });
 

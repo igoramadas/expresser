@@ -74,16 +74,17 @@ class Cron
     # If `autoStart` is true, it will automatically call the `start` method after loading.
     # @param {String} filename Path to the JSON file containing jobs, optional, default is "cron.json".
     # @param {Object} options Options to be passed when loading cron jobs.
+    # @option options {String} filename Name of file to be loaded (in case filename was not set on first parameter)
     # @option options {String} basePath Sets the base path of modules when requiring them.
     # @option options {Boolean} autoStart If true, call "start" after loading.
-    # @option options {Boolean} doNotWarn If true, won't warn if cron file could not be loaded.
     load: (filename, options) =>
         logger.debug "Cron.load", filename, options
         return logger.notEnabled "Cron", "load" if not settings.cron.enabled
 
         # DEPRECATED!
         if lodash.isBoolean filename
-            throw logger.deprecated "Cron.load(boolean)", "First parameter must be the filename of the cron file to be loaded."
+            err = logger.deprecated "Cron.load(boolean)", "First parameter must be the filename of the cron file to be loaded, or options object."
+            throw err
 
         # Set default options.
         options = filename if lodash.isObject filename
@@ -104,9 +105,9 @@ class Cron
                 cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
                 cronJson = utils.minifyJson cronJson
             catch ex
-                err = new Error "Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}"
+                err = "Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}"
                 logger.error "Cron.load", err
-                throw err
+                throw {error: "Invalid JSON", message: err}
 
             # Iterate jobs, but do not add if job's `enabled` is false.
             for key, data of cronJson
@@ -139,8 +140,9 @@ class Cron
 
             logger.info "Cron.load", "#{basename} loaded.", options
         else
-            logger.warn "Cron.load", "#{basename} not found.", options if not options.doNotWarn
-            return {notFound: true}
+            err = "Cron file #{filename} not found."
+            logger.error "Cron.load", err
+            throw {error: "Not found", message: "Could not load cron file #{filename}."}
 
     # METHODS
     # -------------------------------------------------------------------------

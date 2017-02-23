@@ -2,9 +2,6 @@
     "app": {
         "title": "Expresser Test"
     },
-    "cron": {
-        "loadOnInit": false
-    },
     "general": {
         "debug": false
     },
