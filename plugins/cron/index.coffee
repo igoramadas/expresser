@@ -57,13 +57,14 @@ class Cron
 
         @setEvents()
 
-        @load true, settings.cron if settings.cron.loadOnInit
+        @load settings.cron.defaultFilename if settings.cron.loadOnInit
 
         events.emit "Cron.on.init"
         delete @init
 
     # Bind events.
     setEvents: =>
+        events.on "Cron.load", @load
         events.on "Cron.start", @start
         events.on "Cron.stop", @stop
         events.on "Cron.add", @add
@@ -75,21 +76,21 @@ class Cron
     # @param {Object} options Options to be passed when loading cron jobs.
     # @option options {String} basePath Sets the base path of modules when requiring them.
     # @option options {Boolean} autoStart If true, call "start" after loading.
+    # @option options {Boolean} doNotWarn If true, won't warn if cron file could not be loaded.
     load: (filename, options) =>
         logger.debug "Cron.load", filename, options
         return logger.notEnabled "Cron", "load" if not settings.cron.enabled
 
+        # DEPRECATED!
+        if lodash.isBoolean filename
+            throw logger.deprecated "Cron.load(boolean)", "First parameter must be the filename of the cron file to be loaded."
+
         # Set default options.
-        options = {} if not options?
+        options = filename if lodash.isObject filename
         options = lodash.defaults options, {autoStart: settings.cron.autoStart, basePath: ""}
 
-        if lodash.isBoolean filename
-            filename = false
-            options.autoStart = filename
-
-        if not filename? or filename is false or filename is ""
-            filename = "cron.json"
-            doNotWarn = true
+        # Make sure filename is set.
+        filename = options.filename if not filename?
 
         # Get full path to the passed json file.
         filepath = utils.getFilePath filename
@@ -138,7 +139,7 @@ class Cron
 
             logger.info "Cron.load", "#{basename} loaded.", options
         else
-            logger.warn "Cron.load", "#{basename} not found.", options if not doNotWarn
+            logger.warn "Cron.load", "#{basename} not found.", options if not options.doNotWarn
             return {notFound: true}
 
     # METHODS

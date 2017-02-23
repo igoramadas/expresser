@@ -182,7 +182,9 @@ class Logger
 
     # Helper to log to console about methods / features deprecation.
     deprecated: (func, message) =>
-        @console "deprecated", "#{func} is deprecated. #{message}"
+        message = "#{func} is deprecated. #{message}"
+        @console "deprecated", message
+        return {error: "Method deprecated", message: message}
 
     # Helper to log to console that module is not enabled on settings.
     notEnabled: (module, func) =>

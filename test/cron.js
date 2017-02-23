@@ -33,7 +33,17 @@ describe("Cron Tests", function () {
         cron.init();
     });
 
-    it("Loads jobs from a testcron.json file", function (done) {
+    it("Loads jobs from a testcron1.json file, autostarting", function (done) {
+        cron.load("test/testcron.json", false);
+
+        if (cron.jobs.length == 2) {
+            done();
+        } else {
+            done("Cron should have two jobs loaded from testcron.json, but has " + cron.jobs.length + " jobs.");
+        }
+    });
+
+    it("Loads jobs from a testcron2.json file, passing options", function (done) {
         cron.load("test/testcron.json", {
             autoStart: false,
             basePath: "../../../lib/"

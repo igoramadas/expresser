@@ -1,0 +1,17 @@
+{
+    "events.coffee": [{
+        "id": "cron-seconds",
+        "callback": "emit",
+        "params": ["cron-seconds", 1],
+        "description": "Testing cron on a seconds based interval.",
+        "schedule": 1,
+        "once": true
+    }, {
+        "id": "cron-specific-time",
+        "callback": "emit",
+        "params": ["cron-specific-time", "07:00:00"],
+        "description": "Testing cron on specific times.",
+        "schedule": ["07:00:00"],
+        "once": true
+    }]
+}

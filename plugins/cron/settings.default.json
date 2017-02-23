@@ -5,6 +5,8 @@
         // job using the same ID. If false, you'll need to remove the existing job
         // before adding otherwise it will throw an error.
         "allowReplacing": true,
+        // Default filename of the main cron is "cron.json".
+        "defaultFilename": "cron.json",
         // Enable cron scheduler? If false the cron module won't be initialized.
         "enabled": true,
         // If `loadOnInit` is true, the cron.json file will be loaded and cron jobs
