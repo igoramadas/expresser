@@ -76,7 +76,7 @@ class Cron
     # @param {Object} options Options to be passed when loading cron jobs.
     # @option options {String} filename Name of file to be loaded (in case filename was not set on first parameter)
     # @option options {String} basePath Sets the base path of modules when requiring them.
-    # @option options {Boolean} autoStart If true, call "start" after loading.
+    # @option options {Boolean} autoStart If true, call `start` after loading.
     load: (filename, options) =>
         logger.debug "Cron.load", filename, options
         return logger.notEnabled "Cron", "load" if not settings.cron.enabled
@@ -127,9 +127,9 @@ class Cron
                             job.timer = null
                             @add job
                         else
-                            logger.debug "Cron.load", filename, key, d.callback, "Job 'enabled' is false. Skip!"
+                            logger.info "Cron.load", filename, key, d.callback, "Job 'enabled' is false. Skip!"
                 else
-                    logger.debug "Cron.load", filename, "Module has 'cronDisabled' set. Skip!"
+                    logger.info "Cron.load", filename, "Module has 'cronDisabled' set. Skip!"
 
             # Start all jobs automatically if `autoStart` is true.
             if options.autoStart
@@ -158,6 +158,7 @@ class Cron
         if not idOrFilter?
             logger.info "Cron.start", "All jobs"
             arr = @jobs
+
         if lodash.isString idOrFilter or lodash.isNumber idOrFilter
             logger.info "Cron.start", idOrFilter
             arr = lodash.find @jobs, {id: idOrFilter.toString()}
@@ -168,7 +169,8 @@ class Cron
         if not arr? or arr.length < 1
             filterString = idOrFilter
             filterString = JSON.stringify filterString, null, 0 if lodash.isObject filterString
-            logger.debug "Cron.start", "No jobs matching #{filterString}."
+            logger.warn "Cron.start", "No jobs matching #{filterString}."
+            return {notFound: true}
         else
             for job in arr
                 clearTimeout job.timer if job.timer?
@@ -184,6 +186,7 @@ class Cron
         if not idOrFilter?
             logger.info "Cron.stop", "All jobs"
             arr = @jobs
+
         if lodash.isString idOrFilter or lodash.isNumber idOrFilter
             logger.info "Cron.stop", idOrFilter
             arr = lodash.find @jobs, {id: idOrFilter.toString()}
@@ -194,13 +197,14 @@ class Cron
         if not arr? or arr.length < 1
             filterString = idOrFilter
             filterString = JSON.stringify filterString, null, 0 if lodash.isObject filterString
-            logger.debug "Cron.stop", "No jobs matching #{idOrFilter}."
+            logger.warn "Cron.stop", "No jobs matching #{filterString}."
+            return {notFound: true}
         else
             for job in arr
                 clearTimeout job.timer if job.timer?
                 job.timer = null
 
-    # Add a scheduled job to the cron, passing an `id` and `job`.
+    # Add a scheduled job to the cron, passing a `job`.
     # You can also pass only the `job` if it has an id property.
     # @param {String} id The job ID, optional, overrides job.id in case it has one.
     # @param {Object} job The job object.
@@ -215,15 +219,15 @@ class Cron
 
         # Throw error if no `id` was provided.
         if not job.id? or job.id is ""
-            err = Error "Job must have an ID. Please set the job.id property."
+            err = "Job must have an ID. Please set the job.id property."
             logger.error "Cron.add", err
-            throw err
+            throw {error: "Missing job ID", message: err}
 
         # Throw error if job callback is not a valid function.
         if not lodash.isFunction job.callback
-            err = new Error "Job #{job.id} callback is not a valid, please set job.callback as a valid Function."
+            err = "Job #{job.id} callback is not a valid, please set job.callback to a valid Function."
             logger.error "Cron.add", err
-            throw err
+            throw {error: "Missing job callback", message: err}
 
         # Find existing job.
         existing = lodash.find @jobs, {id: job.id}
@@ -234,9 +238,9 @@ class Cron
                 clearTimeout existing.timer if existing.timer?
                 existing.timer = null
             else
-                errorMsg = "Job #{job.id} already exists and 'allowReplacing' is false. Abort!"
-                logger.error "Cron.add", errorMsg
-                return {error: errorMsg}
+                err = "Job #{job.id} already exists and 'allowReplacing' is false. Abort!"
+                logger.error "Cron.add", err
+                throw {error: "Job exists", message: err}
 
         # Set `startTime` and `endTime` if not set.
         job.startTime = moment 0 if not job.startTime?
@@ -255,7 +259,7 @@ class Cron
 
         # Job exists?
         if not existing?
-            logger.debug "Cron.remove", "Job #{id} does not exist. Abort!"
+            logger.warn "Cron.remove", "Job #{id} does not exist."
             return false
 
         # Clear timer and remove job from array.
