@@ -23,8 +23,8 @@ class Mailer
     settings = null
     utils = null
 
-    # Templates cache to avoid disk reads.
-    templateCache = {}
+    # Templates manager.
+    templates = require "./templates.coffee"
 
     # SMTP objects will be instantiated on `init`.
     smtp: null
@@ -44,6 +44,9 @@ class Mailer
 
         logger.debug "Mailer.init"
         events.emit "Mailer.before.init"
+
+        # Init the templates helper.
+        templates.init this
 
         # Define default primary SMTP.
         if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
@@ -154,12 +157,12 @@ class Mailer
         name = name.toString()
         name = name.replace(".html", "") if name.indexOf(".html")
 
-        cached = templateCache[name]
+        cached = templates.cache[name]
 
         # Is it already cached? If so do not hit the disk.
         if cached? and cached.expires > moment()
             logger.debug "Mailer.getTemplate", name, "Loaded from cache."
-            return templateCache[name].template
+            return templates.cache[name].template
         else
             logger.debug "Mailer.getTemplate", name
 
@@ -174,9 +177,9 @@ class Mailer
         result = @parseTemplate base, {contents: template}
 
         # Save to cache.
-        templateCache[name] = {}
-        templateCache[name].template = result
-        templateCache[name].expires = moment().add settings.general.ioCacheTimeout, "s"
+        templates.cache[name] = {}
+        templates.cache[name].template = result
+        templates.cache[name].expires = moment().add settings.general.ioCacheTimeout, "s"
 
         return result
 
@@ -249,8 +252,8 @@ class Mailer
 
     # Force clear the templates cache.
     clearCache: =>
-        count = Object.keys(templateCache).length
-        templateCache = {}
+        count = Object.keys(templates.cache).length
+        templates.cache = {}
         logger.info "Mailer.clearCache", "Cleared #{count} templates."
 
 # Singleton implementation
