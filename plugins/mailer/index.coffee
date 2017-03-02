@@ -24,7 +24,7 @@ class Mailer
     utils = null
 
     # Templates manager.
-    templates = require "./templates.coffee"
+    templates: require "./templates.coffee"
 
     # SMTP objects will be instantiated on `init`.
     smtp: null
@@ -46,7 +46,7 @@ class Mailer
         events.emit "Mailer.before.init"
 
         # Init the templates helper.
-        templates.init this
+        @templates.init this
 
         # Define default primary SMTP.
         if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
@@ -118,15 +118,15 @@ class Mailer
 
         # Load template if a `template` was passed.
         if options.template? and options.template isnt ""
-            template = @getTemplate options.template
-            html = @parseTemplate template, {contents: html}
+            template = @templates.get options.template
+            html = @templates.parse template, {contents: html}
 
             # Parse template keywords if a `keywords` was passed.
             if lodash.isObject options.keywords
-                html = @parseTemplate html, options.keywords
+                html = @templates.parse html, options.keywords
 
         # Parse final template and set it on the `options`.
-        html = @parseTemplate html, {to: toName, appTitle: settings.app.title, appUrl: settings.app.url}
+        html = @templates.parse html, {to: toName, appTitle: settings.app.title, appUrl: settings.app.url}
         options.html = html
 
         # Check if `doNotSend` flag is set, and if so, do not send anything.
@@ -142,62 +142,6 @@ class Mailer
                     callback err, result if callback?
             else
                 callback err, result if callback?
-
-    # TEMPLATES
-    # --------------------------------------------------------------------------
-
-    # Load and return the specified template. Get from the cache or from the disk
-    # if it wasn't loaded yet. Templates are stored inside the `/emailtemplates`
-    # folder by default and should have a .html extension. The base template,
-    # which is always loaded first, should be called base.html by default.
-    # The contents will be inserted on the {contents} tag.
-    # @param {String} name The template name, without .html.
-    # @return {String} The template HTML.
-    getTemplate: (name) =>
-        name = name.toString()
-        name = name.replace(".html", "") if name.indexOf(".html")
-
-        cached = templates.cache[name]
-
-        # Is it already cached? If so do not hit the disk.
-        if cached? and cached.expires > moment()
-            logger.debug "Mailer.getTemplate", name, "Loaded from cache."
-            return templates.cache[name].template
-        else
-            logger.debug "Mailer.getTemplate", name
-
-        # Set file system reading options.
-        readOptions = {encoding: settings.general.encoding}
-        baseFile = utils.getFilePath path.join(settings.mailer.templatesPath, settings.mailer.baseTemplateFile)
-        templateFile = utils.getFilePath path.join(settings.mailer.templatesPath, "#{name}.html")
-
-        # Read base and `name` template and merge them together.
-        base = fs.readFileSync baseFile, readOptions
-        template = fs.readFileSync templateFile, readOptions
-        result = @parseTemplate base, {contents: template}
-
-        # Save to cache.
-        templates.cache[name] = {}
-        templates.cache[name].template = result
-        templates.cache[name].expires = moment().add settings.general.ioCacheTimeout, "s"
-
-        return result
-
-    # Parse the specified template to replace keywords. The `keywords` is a set of key-values
-    # to be replaced. For example if keywords is `{id: 1, friendlyUrl: "abc"}` then the tags
-    # `{id}` and `{friendlyUrl}` will be replaced with the values 1 and abc.
-    # @param {String} template The template (its value, not its name!) to be parsed.
-    # @param {Object} keywords Object with keys to be replaced with its values.
-    # @return {String} The parsed template, keywords replaced with values.
-    parseTemplate: (template, keywords) =>
-        logger.debug "Mailer.parseTemplate", template, keywords
-
-        template = template.toString()
-
-        for key, value of keywords
-            template = template.replace new RegExp("\\{#{key}\\}", "gi"), value
-
-        return template
 
     # SMTP HELPER METHODS
     # --------------------------------------------------------------------------
@@ -246,15 +190,6 @@ class Mailer
             @smtp = @createSmtp options
         else
             @smtp2 = @createSmtp options
-
-    # CACHE METHODS
-    # --------------------------------------------------------------------------
-
-    # Force clear the templates cache.
-    clearCache: =>
-        count = Object.keys(templates.cache).length
-        templates.cache = {}
-        logger.info "Mailer.clearCache", "Cleared #{count} templates."
 
 # Singleton implementation
 # --------------------------------------------------------------------------

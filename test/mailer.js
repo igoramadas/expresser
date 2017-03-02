@@ -50,13 +50,13 @@ describe("Mailer Tests", function () {
     });
 
     it("Load and process an email template", function (done) {
-        var template = mailer.getTemplate("test");
+        var template = mailer.templates.get("test");
         var keywords = {
             name: "Joe Lee",
             email: "joelee@somemail.com"
         };
 
-        var result = mailer.parseTemplate(template, keywords);
+        var result = mailer.templates.parse(template, keywords);
 
         if (result.indexOf("test template") > 0 && result.indexOf(keywords.name) > 0 && result.indexOf(keywords.email) > 0) {
             done()
@@ -66,7 +66,7 @@ describe("Mailer Tests", function () {
     });
 
     it("Clears the template cache", function () {
-        mailer.clearCache();
+        mailer.templates.clearCache();
     });
 
     if (hasEnv) {
