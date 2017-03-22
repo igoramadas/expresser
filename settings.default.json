@@ -96,8 +96,8 @@
         "debug": false,
         // Default encoding to be used on IO and web requests.
         "encoding": "utf8",
-        // How long (seconds) should files read from disk (email templates for example) stay in cache?
-        "ioCacheTimeout": 60
+        // How long (seconds) should files read from disk stay in cache?
+        "ioCacheTimeout": 30
     },
     // LOGGER
     // -------------------------------------------------------------------------
