@@ -5,6 +5,7 @@ class Templates
 
     fs = require "fs"
     logger = null
+    moment = null
     path = require "path"
     settings = null
     utils = null
@@ -15,6 +16,7 @@ class Templates
     # Init the Templates class.
     init: (parent) =>
         logger = parent.expresser.logger
+        moment = parent.expresser.libs.moment
         settings = parent.expresser.settings
         utils = parent.expresser.utils
 
@@ -25,7 +27,7 @@ class Templates
     # The contents will be inserted on the {contents} tag.
     # @param {String} name The template name, without .html.
     # @return {String} The template HTML.
-    load: (name) =>
+    get: (name) =>
         name = name.toString()
         name = name.replace(".html", "") if name.indexOf(".html")
 
@@ -40,7 +42,7 @@ class Templates
 
         # Set file system reading options.
         readOptions = {encoding: settings.general.encoding}
-        baseFile = utils.getFilePath path.join(settings.mailer.templatesPath, settings.mailer.templates.baseFile)
+        baseFile = utils.getFilePath path.join(settings.mailer.templates.path, settings.mailer.templates.baseFile)
         templateFile = utils.getFilePath path.join(settings.mailer.templates.path, "#{name}.html")
 
         # Read base and `name` template and merge them together.
