@@ -189,6 +189,7 @@ class Utils
         return "mobile-iphone-5" if ua.indexOf("iPhone5") > 0
         return "mobile-iphone-4" if ua.indexOf("iPhone4") > 0
         return "mobile-iphone" if ua.indexOf("iPhone") > 0
+        return "mobile-android-9" if ua.indexOf("Android 9") > 0
         return "mobile-android-8" if ua.indexOf("Android 8") > 0
         return "mobile-android-7" if ua.indexOf("Android 7") > 0
         return "mobile-android-6" if ua.indexOf("Android 6") > 0
@@ -203,9 +204,6 @@ class Utils
         return "desktop-chrome" if ua.indexOf("Chrome/") > 0
         return "desktop-firefox" if ua.indexOf("Firefox/") > 0
         return "desktop-safari" if ua.indexOf("Safari/") > 0
-        return "desktop-ie-11" if ua.indexOf("MSIE 11") > 0
-        return "desktop-ie-10" if ua.indexOf("MSIE 10") > 0
-        return "desktop-ie-9" if ua.indexOf("MSIE 9") > 0
         return "desktop-ie" if ua.indexOf("MSIE") > 0 or ua.indexOf("Trident") > 0
 
         # Return default desktop value if no specific devices were found on user agent.

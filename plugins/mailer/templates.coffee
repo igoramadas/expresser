@@ -20,6 +20,8 @@ class Templates
         settings = parent.expresser.settings
         utils = parent.expresser.utils
 
+        delete @init
+
     # Load and return the specified template. Get from the cache or from the disk
     # if it wasn't loaded yet. Templates are stored inside the `/emailtemplates`
     # folder by default and should have a .html extension. The base template,
