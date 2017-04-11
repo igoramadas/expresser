@@ -32,6 +32,8 @@ class SNS
     # @option options {String} PhoneNumber The target phone number.
     # @option options {String} Message The SMS message to be sent.
     publish: (options, callback) =>
+        logger.debug "AWS.SNS.publish", options
+
         if not options.PhoneNumber? or options.PhoneNumber is ""
             return callback "A PhoneNumber is required."
 
@@ -45,7 +47,7 @@ class SNS
                 return callback err
             else
                 logger.info "AWS.SNS.publish", "Message published to #{digits}"
-                return callback null, userProfile
+                return callback null, data
 
 # Singleton implementation.
 # -----------------------------------------------------------------------------

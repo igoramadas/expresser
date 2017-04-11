@@ -178,6 +178,8 @@ class Utils
 
         ua = req.headers["user-agent"]
 
+        return "unknown" if not ua? or ua is ""
+
         # Find mobile devices.
         return "mobile-windows-10" if ua.indexOf("Windows 10 Mobile") > 0
         return "mobile-windows-8" if ua.indexOf("Windows Phone 8") > 0
@@ -207,7 +209,7 @@ class Utils
         return "desktop-ie" if ua.indexOf("MSIE") > 0 or ua.indexOf("Trident") > 0
 
         # Return default desktop value if no specific devices were found on user agent.
-        return "desktop"
+        return "unknown"
 
     # IO AND DATAUTILS
     # --------------------------------------------------------------------------
