@@ -19,7 +19,7 @@
         "test": "make test"
     },
     "dependencies": {
-        "coffee-script": ">= 1.12.4",
+        "coffee-script": ">= 1.12.5",
         "async": "2.1.x",
         "body-parser": "1.17.x",
         "chalk": "1.1.x",
