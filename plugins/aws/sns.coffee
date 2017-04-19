@@ -43,7 +43,7 @@ class SNS
         # Dispatch the message.
         sns.publish options, (err, data) =>
             if err?
-                logger.error "AWS.SNS.publish", "Error sending to #{digits}", err
+                logger.error "AWS.SNS.publish", "Error sending to #{digits}", err, err.stack
                 return callback err
             else
                 logger.info "AWS.SNS.publish", "Message published to #{digits}"
