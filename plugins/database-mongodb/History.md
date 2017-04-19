@@ -2,5 +2,4 @@
 
 1.2.0
 =====
-
 * History starts here :-)
