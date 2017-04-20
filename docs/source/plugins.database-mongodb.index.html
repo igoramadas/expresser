@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,11 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
               </a>
             
               
@@ -161,6 +181,8 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DatabaseMongoDb</span></span>
 
+    priority: <span class="hljs-number">3</span>
+
     mongodb = <span class="hljs-built_in">require</span>(<span class="hljs-string">"mongodb"</span>).MongoClient
     database = <span class="hljs-literal">null</span>
     lodash = <span class="hljs-literal">null</span>
@@ -202,7 +224,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>Init the MongoDB database module.
-@param {Object} options Database init options.</p>
+@return {Object} Returns the MongoDB connection created (only if default settings are set).</p>
 
             </div>
             
@@ -213,9 +235,10 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         logger = @expresser.logger
         settings = @expresser.settings
 
-        logger.debug <span class="hljs-string">"DatabaseMongoDb.init"</span>
+        database.drivers.mongodb = <span class="hljs-keyword">this</span>
 
-        database.drivers.mongodb = <span class="hljs-keyword">this</span></pre></div></div>
+        logger.debug <span class="hljs-string">"DatabaseMongoDb.init"</span>
+        events.emit <span class="hljs-string">"DatabaseMongoDb.before.init"</span></pre></div></div>
             
         </li>
         
@@ -234,6 +257,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
             result = database.register <span class="hljs-string">"mongodb"</span>, <span class="hljs-string">"mongodb"</span>, settings.database.mongodb.connString, settings.database.mongodb.options
 
         events.emit <span class="hljs-string">"DatabaseMongoDb.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init
 
         <span class="hljs-keyword">return</span> result</pre></div></div>
             
@@ -253,10 +277,14 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
             </div>
             
             <div class="content"><div class='highlight'><pre>    getConnection: <span class="hljs-function"><span class="hljs-params">(connString, options)</span> =&gt;</span>
-        sep = connString.indexOf <span class="hljs-string">"@"</span>
+        logger.debug <span class="hljs-string">"DatabaseMongoDb.getConnection"</span>, connString, options
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"DatabaseMongoDb"</span>, <span class="hljs-string">"getConnection"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.database.mongodb.enabled
+
         connStringSafe = connString
+        sep = connString.indexOf <span class="hljs-string">"@"</span>
         connStringSafe = connStringSafe.substring sep <span class="hljs-keyword">if</span> sep &gt; <span class="hljs-number">0</span>
-        logger.debug <span class="hljs-string">"DatabaseMongoDb.getConnection"</span>, connStringSafe, options
+        sep = connString.indexOf <span class="hljs-string">"/"</span>
+        connStringSafe = connStringSafe.substring <span class="hljs-number">0</span>, sep <span class="hljs-keyword">if</span> sep &gt; <span class="hljs-number">0</span>
 
         result = {connString: connString, connection: <span class="hljs-literal">null</span>}
 
@@ -264,6 +292,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
             <span class="hljs-keyword">if</span> err?
                 logger.error <span class="hljs-string">"DatabaseMongoDb.getConnection"</span>, <span class="hljs-string">"Could not connect to <span class="hljs-subst">#{connStringSafe}</span>."</span>, err
             <span class="hljs-keyword">else</span>
+                logger.info <span class="hljs-string">"DatabaseMongoDb.getConnection"</span>, <span class="hljs-string">"Connected to <span class="hljs-subst">#{connStringSafe}</span>"</span>
                 result.connection = db
 
         <span class="hljs-keyword">return</span> result</pre></div></div>
@@ -685,7 +714,7 @@ The <code>options</code> parameter is optional.
             filter = options.filter
         <span class="hljs-keyword">else</span>
             filter = {_id: id}
-            
+
         <span class="hljs-keyword">delete</span> options.filter</pre></div></div>
             
         </li>

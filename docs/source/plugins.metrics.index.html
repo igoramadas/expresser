@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,11 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
               </a>
             
               
@@ -161,10 +181,13 @@ monitoring systems.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Metrics</span></span>
 
-    percentile = <span class="hljs-built_in">require</span> <span class="hljs-string">"./percentile.coffee"</span>
+    priority: <span class="hljs-number">3</span>
+
+    events = <span class="hljs-literal">null</span>
     lodash = <span class="hljs-literal">null</span>
     logger = <span class="hljs-literal">null</span>
     moment = <span class="hljs-literal">null</span>
+    percentile = <span class="hljs-built_in">require</span> <span class="hljs-string">"./percentile.coffee"</span>
     settings = <span class="hljs-literal">null</span>
     utils = <span class="hljs-literal">null</span></pre></div></div>
             
@@ -227,13 +250,15 @@ monitoring systems.
             </div>
             
             <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+        events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         moment = @expresser.libs.moment
         settings = @expresser.settings
         utils = @expresser.utils
 
-        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>, <span class="hljs-string">"init"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled</pre></div></div>
+        logger.debug <span class="hljs-string">"Metrics.init"</span>
+        events.emit <span class="hljs-string">"Metrics.before.init"</span></pre></div></div>
             
         </li>
         
@@ -281,7 +306,10 @@ monitoring systems.
             </div>
             
             <div class="content"><div class='highlight'><pre>        @httpServer.init <span class="hljs-keyword">this</span>
-        @httpServer.start() <span class="hljs-keyword">if</span> settings.metrics.httpServer.port? <span class="hljs-keyword">and</span> settings.metrics.httpServer.autoStart</pre></div></div>
+        @httpServer.start() <span class="hljs-keyword">if</span> settings.metrics.httpServer.port? <span class="hljs-keyword">and</span> settings.metrics.httpServer.autoStart
+
+        events.emit <span class="hljs-string">"Metrics.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div></div>
             
         </li>
         
@@ -317,11 +345,15 @@ monitoring systems.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>Starts the counter for a specific metric. The data is optional.</p>
+              <p>Starts the counter for a specific metric. The data is optional.
+@param {String} id ID of the metric to be started.
+@param {Object} data Additional info about the current metric (URL data, for example).
+@return {Object} Returns the metric object to be used later on <code>end</code>.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(id, data)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"Metrics.start"</span>, obj, data
         <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>, <span class="hljs-string">"start"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
 
         obj = {}
@@ -345,8 +377,6 @@ monitoring systems.
             <div class="content"><div class='highlight'><pre>        metrics[id] = [] <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> metrics[id]?
         metrics[id].unshift obj
 
-        logger.debug <span class="hljs-string">"Metrics.start"</span>, obj, data
-
         <span class="hljs-keyword">return</span> obj</pre></div></div>
             
         </li>
@@ -358,7 +388,9 @@ monitoring systems.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>Ends the counter for the specified metric, with an optional error to be passed along.</p>
+              <p>Ends the counter for the specified metric, with an optional error to be passed along.
+@param {Object} obj The metric object started previsouly on <code>start</code>.
+@param {Object} error Optional error that ocurred while processing the metric.</p>
 
             </div>
             
@@ -378,7 +410,8 @@ monitoring systems.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>Get collected data for the specified metric.</p>
+              <p>Get collected data for the specified metric.
+@param {String} id ID of the metric.</p>
 
             </div>
             
@@ -400,9 +433,8 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
             </div>
             
             <div class="content"><div class='highlight'><pre>    cleanup: <span class="hljs-function">-&gt;</span>
-        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>, <span class="hljs-string">"cleanup"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
-
         logger.debug <span class="hljs-string">"Metrics.cleanup"</span>
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>, <span class="hljs-string">"cleanup"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
 
         now = moment().valueOf()
         keyCounter = <span class="hljs-number">0</span></pre></div></div>
@@ -499,7 +531,7 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Generate the JSON output with all metrics.
-@param {Object} options Options to filter the output.
+@param {Object} options Options to filter the output. Available options are same as settings.metrics.
 @return {Object} JSON output with relevant metrics.</p>
 
             </div>

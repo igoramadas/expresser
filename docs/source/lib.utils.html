@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,11 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
               </a>
             
               
@@ -651,7 +671,9 @@ return only the very first IP address found.
             <div class="content"><div class='highlight'><pre>    getClientDevice: <span class="hljs-function"><span class="hljs-params">(req)</span> -&gt;</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"unknown"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> req?.headers?
 
-        ua = req.headers[<span class="hljs-string">"user-agent"</span>]</pre></div></div>
+        ua = req.headers[<span class="hljs-string">"user-agent"</span>]
+
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"unknown"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> ua? <span class="hljs-keyword">or</span> ua <span class="hljs-keyword">is</span> <span class="hljs-string">""</span></pre></div></div>
             
         </li>
         
@@ -676,6 +698,7 @@ return only the very first IP address found.
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-5"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone5"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-4"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone4"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone"</span>) &gt; <span class="hljs-number">0</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-9"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 9"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-8"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 8"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-7"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 7"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-6"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 6"</span>) &gt; <span class="hljs-number">0</span>
@@ -702,9 +725,6 @@ return only the very first IP address found.
         <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-chrome"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Chrome/"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-firefox"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Firefox/"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-safari"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Safari/"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-ie-11"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"MSIE 11"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-ie-10"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"MSIE 10"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-ie-9"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"MSIE 9"</span>) &gt; <span class="hljs-number">0</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-ie"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"MSIE"</span>) &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> ua.indexOf(<span class="hljs-string">"Trident"</span>) &gt; <span class="hljs-number">0</span></pre></div></div>
             
         </li>
@@ -720,7 +740,7 @@ return only the very first IP address found.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-string">"unknown"</span></pre></div></div>
             
         </li>
         

@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,11 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
               </a>
             
               
@@ -314,7 +334,8 @@ IP address will be appended to logs depending on the settings.
 
         @setEvents()
 
-        events.emit <span class="hljs-string">"Logger.on.init"</span></pre></div></div>
+        events.emit <span class="hljs-string">"Logger.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div></div>
             
         </li>
         
@@ -685,7 +706,9 @@ All arguments are transformed to readable strings.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    deprecated: <span class="hljs-function"><span class="hljs-params">(func, message)</span> =&gt;</span>
-        @console <span class="hljs-string">"deprecated"</span>, <span class="hljs-string">"<span class="hljs-subst">#{func}</span> is deprecated. <span class="hljs-subst">#{message}</span>"</span></pre></div></div>
+        message = <span class="hljs-string">"<span class="hljs-subst">#{func}</span> is deprecated. <span class="hljs-subst">#{message}</span>"</span>
+        @console <span class="hljs-string">"deprecated"</span>, message
+        <span class="hljs-keyword">return</span> {error: <span class="hljs-string">"Method deprecated"</span>, message: message}</pre></div></div>
             
         </li>
         

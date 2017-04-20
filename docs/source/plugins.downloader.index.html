@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,11 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
               </a>
             
               
@@ -160,6 +180,8 @@ throttling, avoids duplicates, etc.
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Downloader</span></span>
+
+    priority: <span class="hljs-number">5</span>
 
     fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
     http = <span class="hljs-built_in">require</span> <span class="hljs-string">"http"</span>
@@ -236,10 +258,12 @@ throttling, avoids duplicates, etc.
         settings = @expresser.settings
 
         logger.debug <span class="hljs-string">"Downloader.init"</span>, options
+        events.emit <span class="hljs-string">"Downloader.before.init"</span>
 
         @setEvents()
 
-        events.emit <span class="hljs-string">"Downloader.on.init"</span>, options</pre></div></div>
+        events.emit <span class="hljs-string">"Downloader.on.init"</span>, options
+        <span class="hljs-keyword">delete</span> @init</pre></div></div>
             
         </li>
         
@@ -307,6 +331,9 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
             </div>
             
             <div class="content"><div class='highlight'><pre>    download: <span class="hljs-function"><span class="hljs-params">(remoteUrl, saveTo, options, callback)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Downloader.download"</span>, remoteUrl, saveTo, options
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Downloader"</span>, <span class="hljs-string">"download"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.downloader.enabled
+
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> remoteUrl? <span class="hljs-keyword">or</span> remoteUrl <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
             err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"First parameter 'remoteUrl' is mandatory!"</span>
             logger.error <span class="hljs-string">"Downloader.download"</span>, err

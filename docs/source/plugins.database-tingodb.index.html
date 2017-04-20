@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,11 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
               </a>
             
               
@@ -161,6 +181,8 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DatabaseTingoDb</span></span>
 
+    priority: <span class="hljs-number">3</span>
+
     path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
     tingodb = <span class="hljs-built_in">require</span>(<span class="hljs-string">"tingodb"</span>)()
     database = <span class="hljs-literal">null</span>
@@ -204,7 +226,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>Init the TingoDB database module.
-@param {Object} options Database init options.</p>
+@return {Object} Returns the TingoDB connection created (only if default settings are set).</p>
 
             </div>
             
@@ -216,9 +238,10 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         settings = @expresser.settings
         utils = @expresser.utils
 
-        logger.debug <span class="hljs-string">"DatabaseTingoDb.init"</span>
+        database.drivers.tingodb = <span class="hljs-keyword">this</span>
 
-        database.drivers.tingodb = <span class="hljs-keyword">this</span></pre></div></div>
+        logger.debug <span class="hljs-string">"DatabaseTingoDb.init"</span>
+        events.emit <span class="hljs-string">"DatabaseTingoDb.before.init"</span></pre></div></div>
             
         </li>
         
@@ -237,6 +260,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
             result = database.register <span class="hljs-string">"tingodb"</span>, <span class="hljs-string">"tingodb"</span>, settings.database.tingodb.dbPath, settings.database.tingodb.options
 
         events.emit <span class="hljs-string">"DatabaseTingoDb.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init
 
         <span class="hljs-keyword">return</span> result</pre></div></div>
             
@@ -256,7 +280,8 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
             </div>
             
             <div class="content"><div class='highlight'><pre>    getConnection: <span class="hljs-function"><span class="hljs-params">(dbPath, options)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"DatabaseTingoDb.getConnection"</span>, dbPath, options</pre></div></div>
+        logger.debug <span class="hljs-string">"DatabaseTingoDb.getConnection"</span>, dbPath, options
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"DatabaseTingoDb"</span>, <span class="hljs-string">"getConnection"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.database.tingodb.enabled</pre></div></div>
             
         </li>
         

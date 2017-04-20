@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,11 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
               </a>
             
               
@@ -161,11 +181,12 @@ providers, mainly by checking cloud environmental variables.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PaaS</span></span>
 
+    priority: <span class="hljs-number">1</span>
+
     events = <span class="hljs-literal">null</span>
     lodash = <span class="hljs-literal">null</span>
     logger = <span class="hljs-literal">null</span>
     settings = <span class="hljs-literal">null</span>
-
     env = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
@@ -206,15 +227,20 @@ providers, mainly by checking cloud environmental variables.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
-
         env = process.env
 
-        @setEvents()</pre></div></div>
+        logger.debug <span class="hljs-string">"PaaS.init"</span>
+        events.emit <span class="hljs-string">"PaaS.before.init"</span>
+
+        @setEvents()
+
+        events.emit <span class="hljs-string">"PaaS.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div></div>
             
         </li>
         
