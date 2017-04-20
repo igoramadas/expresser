@@ -4,7 +4,7 @@
         // Enable the Metrics module?
         "enabled": true,
         // Cleanup interval, in minutes.
-        "cleanupInterval": 20,
+        "cleanupInterval": 60,
         // Expire metrics data after X minutes.
         "expireAfter": 720,
         // Set the values below if you wish the module to spin up a HTTP server to serve the metrics output.

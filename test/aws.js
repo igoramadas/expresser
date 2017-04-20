@@ -10,10 +10,15 @@ describe("AWS Tests", function () {
 
     var settings = require("../lib/settings.coffee");
     var aws = null;
+    var hasKeys = false;
 
     before(function () {
         settings.loadFromJson("../plugins/aws/settings.default.json");
         settings.loadFromJson("settings.test.json");
+
+        if (env["AWS_ACCESS_KEY_ID"] && env["AWS_SECRET_ACCESS_KEY"]) {
+            hasKeys = true;
+        }
 
         utils = require("../lib/utils.coffee");
 
@@ -31,19 +36,21 @@ describe("AWS Tests", function () {
         aws.init();
     });
 
-    it.skip("Upload test file to S3", function () {
-        var callback = function (err, result) {
+    if (hasKeys) {
+        it("Upload test file to S3", function () {
+            var callback = function (err, result) {
 
-        };
+            };
 
-        aws.s3.upload("expresser.devv.com", "testimage.jpg", image, callback);
-    });
+            aws.s3.upload("expresser.devv.com", "testimage.jpg", image, callback);
+        });
 
-    it.skip("Download uploaded file from S3", function () {
+        it("Download uploaded file from S3", function () {
 
-    });
+        });
 
-    it.skip("Delete file from S3", function () {
+        it("Delete file from S3", function () {
 
-    });
+        });
+    }
 });
