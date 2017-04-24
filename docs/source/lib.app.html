@@ -413,7 +413,7 @@ manually you must do it BEFORE calling <code>init</code>.</p>
             <div class="content"><div class='highlight'><pre>        @server.use midBodyParser.json {limit: settings.app.bodyParser.limit}
         @server.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
         @server.use midCookieParser settings.app.cookieSecret <span class="hljs-keyword">if</span> settings.app.cookieEnabled
-        @server.use midSession {secret: settings.app.sessionSecret} <span class="hljs-keyword">if</span> settings.app.sessionEnabled</pre></div></div>
+        @server.use midSession {secret: settings.app.sessionSecret, cookie: {maxAge: <span class="hljs-keyword">new</span> Date(Date.now() + (settings.app.sessionMaxAge * <span class="hljs-number">1000</span>))}} <span class="hljs-keyword">if</span> settings.app.sessionEnabled</pre></div></div>
             
         </li>
         
