@@ -85,7 +85,7 @@ class App
         @server.use midBodyParser.json {limit: settings.app.bodyParser.limit}
         @server.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
         @server.use midCookieParser settings.app.cookieSecret if settings.app.cookieEnabled
-        @server.use midSession {secret: settings.app.sessionSecret} if settings.app.sessionEnabled
+        @server.use midSession {secret: settings.app.sessionSecret, cookie: {maxAge: new Date(Date.now() + (settings.app.sessionMaxAge * 1000))}} if settings.app.sessionEnabled
 
         # Use HTTP compression only if enabled on settings.
         @server.use midCompression if settings.app.compressionEnabled

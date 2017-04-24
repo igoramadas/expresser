@@ -22,6 +22,8 @@
         "port": 8080,
         // Enable session store? This will use the cookieSession implementation of Express.
         "sessionEnabled": true,
+        // Max age of session cookies, in seconds, default is 20min.
+        "sessionMaxAge": 1200,
         // Secret key used for session encryption.
         "sessionSecret": "ExpresserSession",
         // The view engine used by Express. Default is jade.
