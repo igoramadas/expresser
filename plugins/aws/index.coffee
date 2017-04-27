@@ -6,7 +6,7 @@
 # -->
 class AWS
 
-    priority: 3
+    priority: 2
 
     aws = require "aws-sdk"
     fs = require "fs"
