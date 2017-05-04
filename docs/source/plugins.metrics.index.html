@@ -494,7 +494,8 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
                 <span class="hljs-keyword">else</span>
                     i = <span class="hljs-number">-1</span>
 
-        logger.info <span class="hljs-string">"Metrics.cleanup"</span>, <span class="hljs-string">"Removed <span class="hljs-subst">#{counter}</span> records from <span class="hljs-subst">#{keyCounter}</span> keys."</span></pre></div></div>
+        <span class="hljs-keyword">if</span> counter &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> keyCounter &gt; <span class="hljs-number">0</span>
+            logger.info <span class="hljs-string">"Metrics.cleanup"</span>, <span class="hljs-string">"Removed <span class="hljs-subst">#{counter}</span> records from <span class="hljs-subst">#{keyCounter}</span> keys."</span></pre></div></div>
             
         </li>
         
