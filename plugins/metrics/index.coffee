@@ -118,7 +118,8 @@ class Metrics
                 else
                     i = -1
 
-        logger.info "Metrics.cleanup", "Removed #{counter} records from #{keyCounter} keys."
+        if counter > 0 and keyCounter > 0
+            logger.info "Metrics.cleanup", "Removed #{counter} records from #{keyCounter} keys."
 
     # OUTPUT
     # -------------------------------------------------------------------------

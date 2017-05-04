@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+2.2.5
+=====
+* New util: maskString, to mask phone numbers and other values.
+* Updated dependencies to their latest versions.
+
 2.2.4
 =====
 * New app.sessionMaxAge setting to expire sessions.

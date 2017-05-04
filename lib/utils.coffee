@@ -251,7 +251,7 @@ class Utils
         return callback target
 
     # Removes all the specified characters from a string. For example you can cleanup
-    # telephone numbers by using removeFromString(phone, [" ", "-", "(", ")"]).
+    # phone numbers by using removeFromString(phone, [" ", "-", "(", ")"]).
     # @param {String} value The original value / string.
     # @param {Array} charsToRemove List of characters to be removed from the original string.
     # @return {String} Resulting value with the characters removed.
@@ -259,6 +259,38 @@ class Utils
         result = value
         result = result.toString() if not lodash.isString result
         result = result.split(c).join("") for c in charsToRemove
+
+        return result
+
+    # Masks the specified string. For eaxmple to mask a phone number but leave the
+    # last 4 digits visible you could use maskString(phone, "X", 4).
+    # @param {String} value The original value / string.
+    # @param {String} maskChar Optional character to be used on the masking, default is *.
+    # @param {Number} leaveLast Optional, leave last X positiongs of the string unmasked.
+    # @return {String} Masked string.
+    maskString: (value, maskChar, leaveLast) =>
+        separators = [" ", "-", "_", "+", "=", "/"]
+        maskChar = "*" if not maskChar? or maskChar is ""
+        leaveLast = 0 if not leaveLast? or leaveLast < 1
+        result = ""
+        i = 0
+
+        # First split characters, then iterate to replace.
+        arr = value.split ""
+
+        while i < arr.length - leaveLast
+            char = arr[i]
+
+            if separators.indexOf(char) < 0
+                result += maskChar
+            else
+                result += char
+
+            i++
+
+        # Add last characters?
+        if leaveLast > 0
+            result += value.substr(value.length - leaveLast)
 
         return result
 
