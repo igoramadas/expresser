@@ -1,5 +1,12 @@
 # Changelog for expresser
 
+2.3.0
+=====
+* BREAKING! Session and Cookie options namespaced on settings (settings.app.session.*, settings.app.cookie.*)
+* Logger module is now more resilient (logging data from closed streams won't throw an exception for example).
+* Default name engine renamed from jade to pug.
+* Updated dependencies to their latest versions.
+
 2.2.5
 =====
 * New util: maskString, to mask phone numbers and other values.

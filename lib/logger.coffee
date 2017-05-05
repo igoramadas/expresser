@@ -233,19 +233,22 @@ class Logger
 
         # Iterate arguments and execute cleaner on objects.
         for argKey, arg of arguments
-            if lodash.isArray arg
-                for v in arg
-                    cloned = lodash.cloneDeep v
+            try
+                if lodash.isArray arg
+                    for v in arg
+                        cloned = lodash.cloneDeep v
+                        cleaner cloned, 0
+                        result.push cloned
+                else if lodash.isObject
+                    cloned = lodash.cloneDeep arg
                     cleaner cloned, 0
                     result.push cloned
-            else if lodash.isObject
-                cloned = lodash.cloneDeep arg
-                cleaner cloned, 0
-                result.push cloned
-            else if lodash.isFunction arg
-                result.push funcText
-            else
-                result.push a
+                else if lodash.isFunction arg
+                    result.push funcText
+                else
+                    result.push a
+            catch ex
+                console.warn "Logger.argsCleaner", argKey, ex
 
         return result
 
