@@ -1,5 +1,8 @@
+.history/
 .idea/
 .openshift/
-atlassian-ide-plugin.xml
-logs/*.*
+.vscode/
+logs/
 plugins/
+test/
+atlassian-ide-plugin.xml
