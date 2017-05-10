@@ -278,8 +278,8 @@ The contents will be inserted on the {contents} tag.
             </div>
             
             <div class="content"><div class='highlight'><pre>        readOptions = {encoding: settings.general.encoding}
-        baseFile = utils.getFilePath path.join(settings.mailer.templates.path, settings.mailer.templates.baseFile)
-        templateFile = utils.getFilePath path.join(settings.mailer.templates.path, <span class="hljs-string">"<span class="hljs-subst">#{name}</span>.html"</span>)</pre></div></div>
+        baseFile = utils.io.getFilePath path.join(settings.mailer.templates.path, settings.mailer.templates.baseFile)
+        templateFile = utils.io.getFilePath path.join(settings.mailer.templates.path, <span class="hljs-string">"<span class="hljs-subst">#{name}</span>.html"</span>)</pre></div></div>
             
         </li>
         

@@ -385,7 +385,7 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        filepath = utils.getFilePath filename</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        filepath = utils.io.getFilePath filename</pre></div></div>
             
         </li>
         
@@ -406,7 +406,7 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
 
             <span class="hljs-keyword">try</span>
                 cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
-                cronJson = utils.minifyJson cronJson
+                cronJson = utils.data.minifyJson cronJson
             <span class="hljs-keyword">catch</span> ex
                 err = <span class="hljs-string">"Could not parse <span class="hljs-subst">#{filepath}</span> as JSON. <span class="hljs-subst">#{ex.name}</span> <span class="hljs-subst">#{ex.message}</span>"</span>
                 logger.error <span class="hljs-string">"Cron.load"</span>, err

@@ -805,19 +805,22 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> argKey, arg <span class="hljs-keyword">of</span> arguments
-            <span class="hljs-keyword">if</span> lodash.isArray arg
-                <span class="hljs-keyword">for</span> v <span class="hljs-keyword">in</span> arg
-                    cloned = lodash.cloneDeep v
+            <span class="hljs-keyword">try</span>
+                <span class="hljs-keyword">if</span> lodash.isArray arg
+                    <span class="hljs-keyword">for</span> v <span class="hljs-keyword">in</span> arg
+                        cloned = lodash.cloneDeep v
+                        cleaner cloned, <span class="hljs-number">0</span>
+                        result.push cloned
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject
+                    cloned = lodash.cloneDeep arg
                     cleaner cloned, <span class="hljs-number">0</span>
                     result.push cloned
-            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject
-                cloned = lodash.cloneDeep arg
-                cleaner cloned, <span class="hljs-number">0</span>
-                result.push cloned
-            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction arg
-                result.push funcText
-            <span class="hljs-keyword">else</span>
-                result.push a
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction arg
+                    result.push funcText
+                <span class="hljs-keyword">else</span>
+                    result.push a
+            <span class="hljs-keyword">catch</span> ex
+                <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Logger.argsCleaner"</span>, argKey, ex
 
         <span class="hljs-keyword">return</span> result</pre></div></div>
             
@@ -894,7 +897,7 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">try</span>
-            serverIP = utils.getServerIP <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> settings.logger.sendIP
+            serverIP = utils.system.getIP <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> settings.logger.sendIP
             serverIP = <span class="hljs-literal">null</span> <span class="hljs-keyword">if</span> serverIP.error
         <span class="hljs-keyword">catch</span> ex
             serverIP = <span class="hljs-literal">null</span>

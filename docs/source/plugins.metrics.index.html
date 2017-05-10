@@ -541,7 +541,7 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>, <span class="hljs-string">"output"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
 
         logger.debug <span class="hljs-string">"Metrics.output"</span>, options
-        utils.getServerInfo()</pre></div></div>
+        utils.system.getInfo()</pre></div></div>
             
         </li>
         
@@ -591,7 +591,7 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.systemMetrics?.fields?.length &gt; <span class="hljs-number">0</span>
-            serverInfo = utils.getServerInfo()
+            serverInfo = utils.system.getInfo()
             serverKey = options.systemMetrics.key
             result[serverKey] = {}
 

@@ -297,7 +297,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
             </div>
             
             <div class="content"><div class='highlight'><pre>        dbPath = path.resolve dbPath
-        utils.mkdirRecursive dbPath
+        utils.io.mkdirRecursive dbPath
 
         <span class="hljs-keyword">return</span> {dbPath: dbPath, connection: <span class="hljs-keyword">new</span> tingodb.Db(dbPath, options)}</pre></div></div>
             
