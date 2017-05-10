@@ -2,6 +2,7 @@
 
 2.3.0
 =====
+* BREAKING! Utils split into smaller classes (utils.browser, utils.data, utils.io, utiils.network, utils.system).
 * BREAKING! Session and Cookie options namespaced on settings (settings.app.session.*, settings.app.cookie.*)
 * Logger module is now more resilient (logging data from closed streams won't throw an exception for example).
 * Default name engine renamed from jade to pug.

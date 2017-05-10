@@ -14,7 +14,7 @@ class SystemUtils
     # return only the very first IP address found.
     # @param {Boolean} firstOnly Optional, default is false which returns an array with all valid IPs, true returns a String will first valid IP.
     # @return {String} The server IPv4 address, or null.
-    getServerIP: (firstOnly) ->
+    getIP: (firstOnly) ->
         try
             ifaces = os.networkInterfaces()
         catch ex
@@ -37,7 +37,7 @@ class SystemUtils
 
     # Return an object with general information about the server.
     # @return {Object} Results with process pid, platform, memory, uptime and IP.
-    getServerInfo: =>
+    getInfo: =>
         result = {}
 
         # Save parsed OS info to the result object.
