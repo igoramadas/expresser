@@ -26,13 +26,17 @@ class IoUtils
         hasFile = fs.existsSync filename
         return filename if hasFile
 
-        # Try parent path...
-        filename = path.resolve __dirname, "../", originalFilename
+        # Try application root path.
+        filename = path.resolve path.dirname(require.main.filename), originalFilename
         hasFile = fs.existsSync filename
         return filename if hasFile
 
-        # If file does not exist on local path, try application root path.
-        filename = path.resolve path.dirname(require.main.filename), originalFilename
+        # Try parent paths...
+        filename = path.resolve __dirname, "../../", originalFilename
+        hasFile = fs.existsSync filename
+        return filename if hasFile
+
+        filename = path.resolve __dirname, "../", originalFilename
         hasFile = fs.existsSync filename
         return filename if hasFile
 

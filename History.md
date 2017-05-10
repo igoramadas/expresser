@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+2.3.1
+=====
+* Bug fix on utils.io.getFilePath.
+
 2.3.0
 =====
 * BREAKING! Utils split into smaller classes (utils.browser, utils.data, utils.io, utiils.network, utils.system).
