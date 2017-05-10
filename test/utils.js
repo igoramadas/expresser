@@ -45,7 +45,7 @@ describe("Utils Tests", function () {
             }
         };
 
-        utils.mkdirRecursive(recursiveTarget);
+        utils.io.mkdirRecursive(recursiveTarget);
 
         setTimeout(checkDir, 1000);
     });
@@ -67,13 +67,13 @@ describe("Utils Tests", function () {
         var validRangeArray = ["192.168.1.0/24", "192.168.0.0/16"];
         var invalidRange = "10.1.1.0/16";
 
-        if (!utils.ipInRange(ip, validIP)) {
+        if (!utils.network.ipInRange(ip, validIP)) {
             done("IP " + ip + " should be valid against " + validIP + ".")
-        } else if (!utils.ipInRange(ip, validRange)) {
+        } else if (!utils.network.ipInRange(ip, validRange)) {
             done("IP " + ip + " should be valid against " + validRange + ".")
-        } else if (!utils.ipInRange(ip, validRangeArray)) {
+        } else if (!utils.network.ipInRange(ip, validRangeArray)) {
             done("IP " + ip + " should be valid against " + validRangeArray.join(", ") + ".")
-        } else if (!utils.ipInRange(ip, validIP)) {
+        } else if (!utils.network.ipInRange(ip, validIP)) {
             done("IP " + ip + " should be invalid against " + invalidRange + ".")
         } else {
             done();
@@ -81,7 +81,7 @@ describe("Utils Tests", function () {
     });
 
     it("Check IP against multiple ranges", function (done) {
-        var serverInfo = utils.getServerInfo();
+        var serverInfo = utils.system.getInfo();
 
         if (serverInfo.cpuCores > 0) {
             done();
@@ -96,7 +96,7 @@ describe("Utils Tests", function () {
         var i;
 
         for (i = 0; i < max; i++) {
-            ids.push(utils.uuid());
+            ids.push(utils.data.uuid());
         }
 
         var noduplicates = lodash.uniq(ids);
