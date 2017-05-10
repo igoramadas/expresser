@@ -6,6 +6,7 @@ class SystemUtils
 
     moment = require "moment"
     os = require "os"
+    path = require "path"
 
     # Temporary variable used to calculate CPU usage.
     lastCpuLoad = null
@@ -47,7 +48,7 @@ class SystemUtils
         result.platform = os.platform() + " " + os.arch() + " " + os.release()
         result.memoryTotal = (os.totalmem() / 1024 / 1024).toFixed(0) + " MB"
         result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100).toFixed(0)
-        result.ips = @getServerIP()
+        result.ips = @getIP()
         result.process = {pid: process.pid, memoryUsage: (process.memoryUsage().rss / 1024 / 1024).toFixed(0) + " MB"}
         result.cpuCores = os.cpus().length
 

@@ -5,6 +5,7 @@ class NetworkUtils
     newInstance: -> return new NetworkUtils()
 
     ipaddr = require "ipaddr.js"
+    lodash = require "lodash"
 
     # Check if a specific IP is in the provided range.
     # @param {String} ip The IP to be checked (IPv4 or IPv6).
