@@ -53,7 +53,7 @@ class DatabaseTingoDb
 
         # Make sure database folder exists!
         dbPath = path.resolve dbPath
-        utils.mkdirRecursive dbPath
+        utils.io.mkdirRecursive dbPath
 
         return {dbPath: dbPath, connection: new tingodb.Db(dbPath, options)}
 

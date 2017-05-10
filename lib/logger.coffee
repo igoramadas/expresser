@@ -289,7 +289,7 @@ class Logger
 
         # Append IP address, if `serverIP` is set.
         try
-            serverIP = utils.getServerIP true if settings.logger.sendIP
+            serverIP = utils.system.getIP true if settings.logger.sendIP
             serverIP = null if serverIP.error
         catch ex
             serverIP = null

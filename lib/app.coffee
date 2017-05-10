@@ -130,7 +130,7 @@ class App
         # If debug is on, log requests to the console.
         if settings.general.debug
             @server.use (req, res, next) =>
-                ip = utils.getClientIP req
+                ip = utils.browser.getClientIP req
                 method = req.method
                 url = req.url
 
@@ -146,8 +146,8 @@ class App
     # Start the server using HTTP or HTTPS, depending on the settings.
     startServer: =>
         if settings.app.ssl.enabled and settings.app.ssl.keyFile? and settings.app.ssl.certFile?
-            sslKeyFile = utils.getFilePath settings.app.ssl.keyFile
-            sslCertFile = utils.getFilePath settings.app.ssl.certFile
+            sslKeyFile = utils.io.getFilePath settings.app.ssl.keyFile
+            sslCertFile = utils.io.getFilePath settings.app.ssl.certFile
 
             # Certificate files were found? Proceed, otherwise alert the user and throw an error.
             if sslKeyFile? and sslCertFile?
@@ -203,7 +203,7 @@ class App
         logger.debug "App.renderView", req.originalUrl, view, options
 
         options = {} if not options?
-        options.device = utils.getClientDevice req
+        options.device = utils.browser.getDeviceString req
         options.title = settings.app.title if not options.title?
 
         # View filename must jave .pug extension.

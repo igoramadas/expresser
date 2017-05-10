@@ -14,19 +14,19 @@ class Utils
     # --------------------------------------------------------------------------
 
     getFilePath: (filename) ->
-        console.warn "Utils.getFilePath", "DEPRECATED!", "Please use utils.io.getFilePath."
+        console.warn "utils.getFilePath", "DEPRECATED!", "Please use utils.io.getFilePath."
         return io.getFilePath filename
 
-    getIP: (firstOnly) ->
-        console.warn "Utils.getServerIP", "DEPRECATED!", "Please use utils.system.getIP."
+    getServerIP: (firstOnly) ->
+        console.warn "utils.getIP", "DEPRECATED!", "Please use utils.system.getIP."
         return system.getIP firstOnly
 
     getServerInfo: ->
-        console.warn "Utils.getServerInfo", "DEPRECATED!", "Please use utils.system.getInfo."
+        console.warn "utils.getInfo", "DEPRECATED!", "Please use utils.system.getInfo."
         return system.getInfo()
 
     getCpuLoad: ->
-        console.warn "Utils.getCpuLoad", "DEPRECATED!", "Please use utils.system.getCpuLoad."
+        console.warn "utils.getCpuLoad", "DEPRECATED!", "Please use utils.system.getCpuLoad."
         return system.getCpuLoad()
 
     ipInRange: (ip, range) ->
@@ -34,11 +34,11 @@ class Utils
         return network.ipInRange ip, range
 
     getClientIP: (reqOrSocket) ->
-        console.warn "Utils.getClientIP", "DEPRECATED!", "Please use utils.browser.getClientIP."
+        console.warn "utils.getClientIP", "DEPRECATED!", "Please use utils.browser.getClientIP."
         return browser.getClientIP reqOrSocket
 
     getClientDevice: (req) ->
-        console.warn "Utils.getClientDevice", "DEPRECATED!", "Please use utils.browser.getDeviceString."
+        console.warn "utils.getDeviceString", "DEPRECATED!", "Please use utils.browser.getDeviceString."
         return browser.getDeviceString req
 
     copyFileSync: (src, target) ->
@@ -46,7 +46,7 @@ class Utils
         return io.copyFileSync src, target
 
     mkdirRecursive: (target) ->
-        console.warn "Utils.mkdirRecursive", "DEPRECATED!", "Please use utils.io.mkdirRecursive."
+        console.warn "utils.mkdirRecursive", "DEPRECATED!", "Please use utils.io.mkdirRecursive."
         return io.mkdirRecursive target
 
     removeFromString: (value, charsToRemove) ->
@@ -58,7 +58,7 @@ class Utils
         return data.maskString value, maskChar, leaveLast
 
     minifyJson: (source, asString) ->
-        console.warn "Utils.minifyJson", "DEPRECATED!", "Please use utils.data.minifyJson."
+        console.warn "utils.minifyJson", "DEPRECATED!", "Please use utils.data.minifyJson."
         return data.minifyJson source, asString
 
     uuid: ->

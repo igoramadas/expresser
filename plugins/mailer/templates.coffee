@@ -44,8 +44,8 @@ class Templates
 
         # Set file system reading options.
         readOptions = {encoding: settings.general.encoding}
-        baseFile = utils.getFilePath path.join(settings.mailer.templates.path, settings.mailer.templates.baseFile)
-        templateFile = utils.getFilePath path.join(settings.mailer.templates.path, "#{name}.html")
+        baseFile = utils.io.getFilePath path.join(settings.mailer.templates.path, settings.mailer.templates.baseFile)
+        templateFile = utils.io.getFilePath path.join(settings.mailer.templates.path, "#{name}.html")
 
         # Read base and `name` template and merge them together.
         base = fs.readFileSync baseFile, readOptions

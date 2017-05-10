@@ -131,7 +131,7 @@ class Metrics
         return logger.notEnabled "Metrics", "output" if not settings.metrics.enabled
 
         logger.debug "Metrics.output", options
-        utils.getServerInfo()
+        utils.system.getInfo()
 
         # Get all metrics keys.
         keys = lodash.keys metrics
@@ -145,7 +145,7 @@ class Metrics
 
         # Add server info to the output?
         if options.systemMetrics?.fields?.length > 0
-            serverInfo = utils.getServerInfo()
+            serverInfo = utils.system.getInfo()
             serverKey = options.systemMetrics.key
             result[serverKey] = {}
 

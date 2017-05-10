@@ -94,7 +94,7 @@ class Cron
         filename = options.filename if not filename?
 
         # Get full path to the passed json file.
-        filepath = utils.getFilePath filename
+        filepath = utils.io.getFilePath filename
 
         # Found the cron json file? Read it.
         if filepath?
@@ -103,7 +103,7 @@ class Cron
 
             try
                 cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
-                cronJson = utils.minifyJson cronJson
+                cronJson = utils.data.minifyJson cronJson
             catch ex
                 err = "Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}"
                 logger.error "Cron.load", err
