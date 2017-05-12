@@ -15,13 +15,13 @@ describe("AWS Tests", function () {
     var hasKeys = false;
     var uploadTimestamp = 0;
 
+    if (env["AWS_ACCESS_KEY_ID"] || env["AWS_SECRET_ACCESS_KEY"] || env["AWS_CONFIGURED"]) {
+        hasKeys = true;
+    }
+
     before(function () {
         settings.loadFromJson("../plugins/aws/settings.default.json");
         settings.loadFromJson("settings.test.json");
-
-        if (env["AWS_ACCESS_KEY_ID"] && env["AWS_SECRET_ACCESS_KEY"]) {
-            hasKeys = true;
-        }
 
         utils = require("../lib/utils.coffee");
 
