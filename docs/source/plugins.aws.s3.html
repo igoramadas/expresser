@@ -382,6 +382,10 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>    upload: <span class="hljs-function"><span class="hljs-params">(bucket, key, body, options, callback)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction options
+            callback = options
+            options = {}
+
         s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
         options = lodash.defaults options, {acl: <span class="hljs-string">"public-read"</span>}</pre></div></div>
             
