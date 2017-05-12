@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "coffee-script": ">= 1.12.5",
-        "socket.io": "1.7.x"
+        "socket.io": "2.0.x"
     },
     "repository": {
         "type": "git",
