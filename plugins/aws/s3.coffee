@@ -80,6 +80,10 @@ class S3
     # @option options {String} contentType Content type of the file.
     # @param {Method} callback Callback (err, result).
     upload: (bucket, key, body, options, callback) =>
+        if not callback? and lodash.isFunction options
+            callback = options
+            options = {}
+
         s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
         options = lodash.defaults options, {acl: "public-read"}
 

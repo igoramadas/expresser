@@ -1,5 +1,9 @@
 # Changelog for expresser-aws
 
+1.0.2
+=====
+* Param "options" is now optional on s3.upload.
+
 1.0.1
 =====
 * Improved logging on SNS publish.

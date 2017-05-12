@@ -9,8 +9,11 @@ describe("AWS Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
+    var fs = require("fs");
+    var moment = require("moment");
     var aws = null;
     var hasKeys = false;
+    var uploadTimestamp = 0;
 
     before(function () {
         settings.loadFromJson("../plugins/aws/settings.default.json");
@@ -37,16 +40,40 @@ describe("AWS Tests", function () {
     });
 
     if (hasKeys) {
-        it("Upload test file to S3", function () {
-            var callback = function (err, result) {
+        it("Upload test file to S3", function (done) {
+            uploadTimestamp = moment().unix();
 
+            var contents = {
+                timestamp: uploadTimestamp
             };
 
-            aws.s3.upload("expresser.devv.com", "testimage.jpg", image, callback);
+            var callback = function (err, result) {
+                if (err) {
+                    done("Could not upload file to S3: " + err);
+                } else {
+                    done();
+                }
+            };
+
+            aws.s3.upload("expresser.devv.com", "test-s3.json", JSON.stringify(contents, null, 2), callback);
         });
 
-        it("Download uploaded file from S3", function () {
+        it("Download uploaded file from S3", function (done) {
+            var callback = function (err, result) {
+                if (err) {
+                    done("Could not upload file to S3: " + err);
+                } else {
+                    var contents = JSON.parse(result);
 
+                    if (result.timestamp != uploadTimestamp) {
+                        done("Timestamp of uploaded file does not match " + uploadTimestamp);
+                    } else {
+                        done();
+                    }
+                }
+            };
+
+            aws.s3.download("expresser.devv.com", "test-s3.json", callback);
         });
 
         it("Delete file from S3", function () {
