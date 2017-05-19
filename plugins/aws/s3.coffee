@@ -5,6 +5,7 @@ class S3
 
     aws = require "aws-sdk"
     fs = require "fs"
+    path = require "path"
 
     lodash = null
     logger = null
