@@ -65,8 +65,8 @@ describe("AWS Tests", function () {
                 } else {
                     var contents = JSON.parse(result);
 
-                    if (result.timestamp != uploadTimestamp) {
-                        done("Timestamp of uploaded file does not match " + uploadTimestamp);
+                    if (contents.timestamp != uploadTimestamp) {
+                        done("Timestamp of uploaded file does not match: " + contents.timestamp + ", " + uploadTimestamp);
                     } else {
                         done();
                     }
