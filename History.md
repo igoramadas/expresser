@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+2.3.2
+=====
+* Updated dependencies.
+
 2.3.1
 =====
 * Bug fix on utils.io.getFilePath.
