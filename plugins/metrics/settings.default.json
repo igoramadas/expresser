@@ -18,9 +18,8 @@
         "intervals": [1, 5, 30],
         // Percentiles to include on output. Leave empty to not calculate percentiles.
         "percentiles": [99, 98, 95],
-        // Include server CPU / RAM metrics on output? Any key returned by the
-        // utils.getServerInfo() is valid here. Leave "fields" empty if you
-        // don't want to include server metrics on the output.
+        // Include server CPU / RAM metrics on output? Leave "fields" empty if you
+        // don't want to include server metrics on the metrics output.
         "systemMetrics": {
             "key": "system",
             "fields": ["loadAvg", "memoryUsage"]
