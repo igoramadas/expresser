@@ -2,7 +2,7 @@
 
 1.1.1
 =====
-* Updated to Socket.IO 2.0.1.
+* Updated to Socket.IO 2.0.x.
 
 1.1.0
 =====
