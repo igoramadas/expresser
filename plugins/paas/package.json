@@ -1,6 +1,6 @@
 {
     "name": "expresser-paas",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "PaaS auto config for Expresser apps.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
