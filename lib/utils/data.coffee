@@ -12,6 +12,8 @@ class DataUtils
     # @param {Array} charsToRemove List of characters to be removed from the original string.
     # @return {String} Resulting value with the characters removed.
     removeFromString: (value, charsToRemove) =>
+        return value if not value? or value is ""
+
         result = value
         result = result.toString() if not lodash.isString result
         result = result.split(c).join("") for c in charsToRemove
@@ -25,6 +27,8 @@ class DataUtils
     # @param {Number} leaveLast Optional, leave last X positiongs of the string unmasked.
     # @return {String} Masked string.
     maskString: (value, maskChar, leaveLast) =>
+        return value if not value? or value is ""
+
         separators = [" ", "-", "_", "+", "=", "/"]
         maskChar = "*" if not maskChar? or maskChar is ""
         leaveLast = 0 if not leaveLast? or leaveLast < 1
