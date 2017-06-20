@@ -1,5 +1,9 @@
 # Changelog for expresser-aws
 
+1.0.4
+=====
+* Updated AWS module to 2.73.x.
+
 1.0.3
 =====
 * Updated AWS module to 2.55.x.

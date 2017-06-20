@@ -1,6 +1,6 @@
 {
     "name": "expresser-aws",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Wrapper for the AWS SDK on Expresser apps.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -14,8 +14,8 @@
         "node": "*"
     },
     "dependencies": {
-        "coffee-script": ">= 1.12.6",
-        "aws-sdk": "2.59.x"
+        "coffee-script": "^1.12.6",
+        "aws-sdk": "^2.73.x"
     },
     "repository": {
         "type": "git",
