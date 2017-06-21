@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+2.4.1
+=====
+* Fixed major bug initializing plugins introduced with 2.3.4 (unpublished).
+
 2.4.0
 =====
 * BREAKING! Old settings.path.viewDir|publicDir moved to settings.app.viewPath|publicPath.
