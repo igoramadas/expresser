@@ -11,10 +11,8 @@
         // Enable HTTP compression?
         "compressionEnabled": false,
         // Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
-        // This value might be overriden by PaaS environmental values.
         "ip": null,
-        // Node.js server port. Please note that this value might be overriden by PaaS
-        // environmental values (like in AppFog or OpenShift).
+        // Node.js server port.
         "port": 8080,
         // The view engine used by Express. Default is pug.
         "viewEngine": "pug",

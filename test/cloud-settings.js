@@ -45,15 +45,15 @@ describe("Cloud Settings Tests", function () {
         cloudSettings.expresser.logger = require("../lib/logger.coffee");
     });
 
-    it("Has settings defined", function () {
+    it.skip("Has settings defined", function () {
         settings.should.have.property("cloud");
     });
 
-    it("Inits", function () {
+    it.skip("Inits", function () {
         cloudSettings.init();
     });
 
-    it("Updates app settings", function (done) {
+    it.skip("Updates app settings", function (done) {
         var err;
         var originalEnv = env.OPENSHIFT_NODEJS_IP;
         var ip = "127.0.0.1";
@@ -70,7 +70,7 @@ describe("Cloud Settings Tests", function () {
         done(err);
     });
 
-    it("Updates database settings", function (done) {
+    it.skip("Updates database settings", function (done) {
         var err;
         var originalEnv = env.MONGOLAB_URI;
         var connString = "127.0.0.1/mongo-test";
@@ -87,7 +87,7 @@ describe("Cloud Settings Tests", function () {
         done(err);
     });
 
-    it("Updates logger settings", function (done) {
+    it.skip("Updates logger settings", function (done) {
         var err;
         var originalEnv = env.LOGGLY_SUBDOMAIN;
         var subdomain = "logger-test";
@@ -104,7 +104,7 @@ describe("Cloud Settings Tests", function () {
         done(err);
     });
 
-    it("Updates mailer settings", function (done) {
+    it.skip("Updates mailer settings", function (done) {
         var err;
         var originalEnv = env.MAILGUN_SMTP_LOGIN;
         var login = "mailer-test";

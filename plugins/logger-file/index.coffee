@@ -83,7 +83,7 @@ class LoggerFile
     # LOG METHODS
     # --------------------------------------------------------------------------
 
-    # Log locally. The path is defined on `Settings.Path.logsDir`.
+    # Log locally. The path is defined on `settings.logger.file.path`.
     # @param {String} logType The log type (info, warn, error, debug, etc).
     # @param {Array} args Array or string to be logged.
     # @param {Boolean} avoidConsole If true it will NOT log to the console.

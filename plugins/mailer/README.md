@@ -2,9 +2,9 @@
 
 *Before you start* make sure you have set the main SMTP server details on `settings.mailer.smtp` and `settings.mailer.from` with a default "from" email address. An optional secondary can be also set on `settings.mailer.smtp2`, and will be used only in case the main server fails.
 
-The email templates folder is set on `settings.path.emailTemplatesDir`. The template handler expects a base template called "base.html", with a keyword "{contents}" where the email contents should go.
+The template handler expects a base template called "base.html", with a keyword "{contents}" where the email contents should go.
 
-If `settings.app.paas` is true, the Mailer module will automatically figure out the SMTP details for the following email services: Mailgun, Mandrill, SendGrid.
+If `settings.app.cloud` is true, the Mailer module will automatically figure out the SMTP details for the following email services: Mailgun, Mandrill, SendGrid.
 
 ### Sample code
 
@@ -27,7 +27,7 @@ Please note that you can also use a different SMTP transport server if needed, b
         host: "my.smtp.com",
         port: "587"
     })
-    
+
     expresser.mailer.send({subject: "Login confirmation", to: "mailto@igor.com", smtp: customSmtp});
 
 The Mailer module is a wrapper around Nodemailer, so some of its features can be used directly. The default SMTP transport objects are exposed as "smtp" and "smtp2". More info at [url:http://www.nodemailer.com].
