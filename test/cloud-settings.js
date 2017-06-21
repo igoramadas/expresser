@@ -17,6 +17,8 @@ describe("Cloud Settings Tests", function () {
     var cloudSettings = null;
 
     before(function () {
+        return;
+
         settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
         settings.loadFromJson("../plugins/mailer/settings.default.json");
         settings.loadFromJson("../plugins/cloud-settings/settings.default.json");
