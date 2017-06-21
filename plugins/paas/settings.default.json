@@ -1,7 +1,0 @@
-// EXPRESSER PAAS SETTINGS
-{
-    "paas": {
-        // Enable the PaaS module?
-        "enabled": true
-    }
-}

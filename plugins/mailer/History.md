@@ -1,5 +1,9 @@
 # Changelog for expresser-mailer
 
+1.2.1
+=====
+* Maintenance release.
+
 1.2.0
 =====
 * BREAKING! Template related code was moved to the sub-class "Templates".

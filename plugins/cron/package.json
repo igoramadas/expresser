@@ -1,6 +1,6 @@
 {
     "name": "expresser-cron",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "description": "Task scheduler plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -14,7 +14,7 @@
         "node": "*"
     },
     "dependencies": {
-        "coffee-script": ">= 1.12.6"
+        "coffee-script": "~1.12.6"
     },
     "repository": {
         "type": "git",

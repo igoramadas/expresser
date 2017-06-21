@@ -3,7 +3,6 @@
 .idea/
 .openshift/
 .vscode/
-atlassian-ide-plugin.xml
 coverage/
 database/
 logs/

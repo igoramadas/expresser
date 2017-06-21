@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+2.3.4
+=====
+* Maintenance release.
+
 2.3.3
 =====
 * Improved utils.data to better handle empty and invalid strings.

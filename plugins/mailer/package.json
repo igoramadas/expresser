@@ -1,6 +1,6 @@
 {
     "name": "expresser-mailer",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Email sending plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -14,8 +14,8 @@
         "node": "*"
     },
     "dependencies": {
-        "coffee-script": ">= 1.12.6",
-        "nodemailer": "4.0.x"
+        "coffee-script": "~1.12.6",
+        "nodemailer": "~4.0.1"
     },
     "repository": {
         "type": "git",

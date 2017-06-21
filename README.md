@@ -70,6 +70,10 @@ Now to the main modules...
 
 And the official plugins...
 
+### Cloud Settings
+*   Automatically configuration of modules running on cloud providers.
+*   https://github.com/igoramadas/expresser/tree/master/plugins/cloud-settings
+
 ### Cron
 *   Configurable cron for scheduled tasks using JSON files.
 *   Supports multiple files and multiple modules.
@@ -109,10 +113,6 @@ And the official plugins...
 ### Metrics
 *   Generate and report metrics for your application.
 *   https://github.com/igoramadas/expresser/tree/master/plugins/metrics
-
-### PaaS
-*   Automatically configuration of modules running on PaaS providers.
-*   https://github.com/igoramadas/expresser/tree/master/plugins/paas
 
 ### Sockets
 *   Wrapper for the Socket.IO module.

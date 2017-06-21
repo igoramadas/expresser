@@ -1,11 +1,11 @@
-# EXPRESSER METRICS
+# EXPRESSER CLOUD SETTINGS
 # --------------------------------------------------------------------------
-# Auto configure the Expresser app and its modules to work on known PaaS
+# Auto configure the Expresser app and its modules to work on known cloud
 # providers, mainly by checking cloud environmental variables.
 # <!--
-# @see settings.paas
+# @see settings.cloud
 # -->
-class PaaS
+class CloudSettings
 
     priority: 1
 
@@ -18,7 +18,7 @@ class PaaS
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the PaaS plugin.
+    # Init the Cloud Settings plugin.
     init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -26,12 +26,12 @@ class PaaS
         settings = @expresser.settings
         env = process.env
 
-        logger.debug "PaaS.init"
-        events.emit "PaaS.before.init"
+        logger.debug "CloudSettings.init"
+        events.emit "CloudSettings.before.init"
 
         @setEvents()
 
-        events.emit "PaaS.on.init"
+        events.emit "CloudSettings.on.init"
         delete @init
 
     # Bind events.
@@ -52,7 +52,7 @@ class PaaS
         settings.app.port = port if port? and port isnt ""
 
         if settings.logger.console
-            console.log "PaaS.appSettings", "App settings were auto updated."
+            console.log "CloudSettings.appSettings", "App settings were auto updated."
 
     # Update database settings.
     databaseSettings: =>
@@ -77,7 +77,7 @@ class PaaS
         settings.database.mongodb.connString = mongoHq if mongoHq? and mongoHq isnt ""
 
         if settings.logger.console
-            console.log "PaaS.databaseSettings", "Database settings were auto updated."
+            console.log "CloudSettings.databaseSettings", "Database settings were auto updated."
 
     # Update logger settings.
     loggerSettings: =>
@@ -93,7 +93,7 @@ class PaaS
         settings.logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
         if settings.logger.console
-            console.log "PaaS.loggerSettings", "Logger settings were auto updated."
+            console.log "CloudSettings.loggerSettings", "Logger settings were auto updated."
 
     # Update mailer settings.
     mailerSettings: =>
@@ -137,12 +137,12 @@ class PaaS
                 settings.mailer.smtp.password = smtpPassword
 
         if settings.logger.console
-            console.log "PaaS.mailerSettings", "Mailer settings were auto updated."
+            console.log "CloudSettings.mailerSettings", "Mailer settings were auto updated."
 
 # Singleton implementation
 # --------------------------------------------------------------------------
-PaaS.getInstance = ->
-    @instance = new PaaS() if not @instance?
+CloudSettings.getInstance = ->
+    @instance = new CloudSettings() if not @instance?
     return @instance
 
-module.exports = exports = PaaS.getInstance()
+module.exports = exports = CloudSettings.getInstance()
