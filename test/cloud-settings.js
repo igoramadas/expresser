@@ -1,11 +1,11 @@
-// TEST: PAAS
+// TEST: CLOUD SETTINGS
 
 require("coffee-script/register");
 var env = process.env;
 var chai = require("chai");
 chai.should();
 
-describe("PaaS Tests", function () {
+describe("Cloud Settings Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
@@ -14,12 +14,12 @@ describe("PaaS Tests", function () {
     var logger = null;
     var loggerLoggly = null;
     var mailer = null;
-    var paas = null;
+    var cloudSettings = null;
 
     before(function () {
         settings.loadFromJson("../plugins/logger-loggly/settings.default.json");
         settings.loadFromJson("../plugins/mailer/settings.default.json");
-        settings.loadFromJson("../plugins/paas/settings.default.json");
+        settings.loadFromJson("../plugins/cloud-settings/settings.default.json");
         settings.loadFromJson("settings.test.json");
         settings.app.port = 18118;
 
@@ -39,18 +39,18 @@ describe("PaaS Tests", function () {
         mailer.expresser.events = require("../lib/events.coffee");
         mailer.expresser.logger = require("../lib/logger.coffee");
 
-        paas = require("../plugins/paas/index.coffee");
-        paas.expresser = require("../index.coffee");
-        paas.expresser.events = require("../lib/events.coffee");
-        paas.expresser.logger = require("../lib/logger.coffee");
+        cloudSettings = require("../plugins/cloud-settings/index.coffee");
+        cloudSettings.expresser = require("../index.coffee");
+        cloudSettings.expresser.events = require("../lib/events.coffee");
+        cloudSettings.expresser.logger = require("../lib/logger.coffee");
     });
 
     it("Has settings defined", function () {
-        settings.should.have.property("paas");
+        settings.should.have.property("cloud");
     });
 
     it("Inits", function () {
-        paas.init();
+        cloudSettings.init();
     });
 
     it("Updates app settings", function (done) {

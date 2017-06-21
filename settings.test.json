@@ -1,6 +1,7 @@
 {
     "app": {
-        "title": "Expresser Test"
+        "title": "Expresser Test",
+        "viewPath": "./test/"
     },
     "general": {
         "debug": false
@@ -41,9 +42,6 @@
         "httpServer": {
             "port": 8991
         }
-    },
-    "path": {
-        "viewsDir": "./test/"
     },
     "testingFileWatcher": true
 }

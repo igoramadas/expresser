@@ -8,3 +8,4 @@ database/
 logs/
 node_modules
 test/database
+package-lock.json

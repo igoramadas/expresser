@@ -65,6 +65,10 @@
             // or null to disable this feature.
             "redirectorPort": 0
         },
+        // Path to the public folder used by Express.
+        "publicPath": "./public/",
+        // Path to the views directory.
+        "viewPath": "./test/",
         // The app title. This must be set so Expresser can properly identify your app.
         "title": "Expresser",
         // The app's base URL, including http://.
@@ -96,10 +100,6 @@
     // GENERAL
     // -------------------------------------------------------------------------
     "general": {
-        // DEPRECATED (appTitle) Use settings.app.title instead.
-        "appTitle": null,
-        // DEPRECATED (appUrl) Use settings.app.url instead.
-        "appUrl": null,
         // Enable or disable debugging messages. Should be false on production environments.
         "debug": false,
         // Default encoding to be used on IO and web requests.
@@ -150,17 +150,5 @@
         // Set `uncaughtException` to true to bind the logger to the `uncaughtException`
         // event on the process and log all uncaught expcetions as errors.
         "uncaughtException": true
-    },
-    // PATH
-    // -------------------------------------------------------------------------
-    "path": {
-        // Path to the public folder used by Express.
-        "publicDir": "./public/",
-        // DEPRECATED!!! Please use settings.app.ssl.keyFile!
-        "sslKeyFile": null,
-        // DEPRECATED!!! Please use settings.app.ssl.certFile!
-        "sslCertFile": null,
-        // Path where the .pug views are stored.
-        "viewsDir": "./views/"
     }
 }

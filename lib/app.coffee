@@ -62,6 +62,10 @@ class App
             logger.deprecated "settings.app.cookieEnabled", "Please use settings.app.cookie.enabled."
         if settings.app.cookieSecret?
             logger.deprecated "settings.app.cookieSecret", "Please use settings.app.cookie.secret."
+        if settings.path?.viewsDir?
+            logger.deprecated "settings.path.viewsDir", "Please use settings.app.viewPath."
+        if settings.path?.publicDir?
+            logger.deprecated "settings.path.publicDir", "Please use settings.app.publicPath."
 
         nodeEnv = process.env.NODE_ENV
 
@@ -86,7 +90,7 @@ class App
         @server = express()
 
         # Set view options, use Pug for HTML templates.
-        @server.set "views", settings.path.viewsDir
+        @server.set "views", settings.app.viewPath
         @server.set "view engine", settings.app.viewEngine
         @server.set "view options", { layout: false }
 
@@ -125,7 +129,7 @@ class App
             @server.use midErrorHandler {dumpExceptions: true, showStack: true}
 
         # Use Express static routing.
-        @server.use express.static settings.path.publicDir
+        @server.use express.static settings.app.publicPath
 
         # If debug is on, log requests to the console.
         if settings.general.debug
@@ -202,15 +206,20 @@ class App
     renderView: (req, res, view, options) =>
         logger.debug "App.renderView", req.originalUrl, view, options
 
-        options = {} if not options?
-        options.device = utils.browser.getDeviceString req
-        options.title = settings.app.title if not options.title?
+        try
+            options = {} if not options?
+            options.device = utils.browser.getDeviceString req
+            options.title = settings.app.title if not options.title?
 
-        # View filename must jave .pug extension.
-        view += ".pug" if view.indexOf(".pug") < 0
+            # View filename must jave .pug extension.
+            view += ".pug" if view.indexOf(".pug") < 0
 
-        # Send rendered view to client.
-        res.render view, options
+            # Send rendered view to client.
+            res.render view, options
+
+        catch ex
+            logger.error "App.renderView", view, ex
+            @renderError req, res, ex
 
         events.emit "App.on.renderView", req, res, view, options
 

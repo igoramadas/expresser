@@ -1,8 +1,10 @@
 # Changelog for expresser
 
-2.3.4
+2.4.0
 =====
-* Maintenance release.
+* BREAKING! Old settings.path.viewDir|publicDir moved to settings.app.viewPath|publicPath.
+* Improved handling of errors rendering views and data on App.
+* Bits of code refactoring.
 
 2.3.3
 =====
