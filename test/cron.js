@@ -33,29 +33,83 @@ describe("Cron Tests", function () {
         cron.init();
     });
 
-    it("Loads jobs from a testcron.json file", function (done) {
-        cron.load("test/testcron.json", {
-            autoStart: false,
-            basePath: "../../../lib/"
+    it("Load jobs from a testcron1.json and testcron2.json files", function (done) {
+        cron.load("test/testcron-1.json", {
+            basePath: "../../../lib/",
+            autoStart: false
+        });
+
+        cron.load("test/testcron-2.json", {
+            basePath: "../../../lib/",
+            autoStart: true
         });
 
         if (cron.jobs.length == 2) {
             done();
         } else {
-            done("Cron should have two jobs loaded from testcron.json, but has " + cron.jobs.length + " jobs.");
+            done("Cron should have 2 jobs loaded from testcron-1.json and testcron-2.json, but has " + cron.jobs.length + " jobs.");
         }
     });
 
-    it("Start loaded cron jobs", function (done) {
+    it("Fails to load when filename or file JSON data is not valid", function (done) {
+        try {
+            cron.load(true);
+            return done("Cron.load(true) should have failed!");
+        } catch (ex) {}
+
+        try {
+            cron.load("invalidfilename.json");
+            done("Cron.load(invalidfilename) should have failed!");
+        } catch (ex) {}
+
+        try {
+            cron.load("test/testcron-invalid.json", {
+                autoStart: false,
+                basePath: "../../../lib/"
+            });
+            done("Cron.load(testcron-invalid should have failed!");
+        } catch (ex) {
+            done();
+        }
+    });
+
+    it("Start and stop a single specific job (job number 2)", function (done) {
+        this.timeout(10000);
+
+        var verify = function (ok) {
+            events.off("cron-2", verify);
+            cron.stop("cron-2");
+
+            if (ok == 2) {
+                done()
+            } else {
+                done("Event should emit 2, but we got " + ok);
+            }
+        };
+
+        events.on("cron-2", verify);
+
+        cron.start("cron-2");
+    });
+
+    it("Start specific job that does not exist", function (done) {
+        if (cron.start("cron-not-exist").notFound) {
+            done();
+        } else {
+            done("Starting a job that does not exist should return notFound = true.")
+        }
+    });
+
+    it("Start all loaded cron jobs", function (done) {
         this.timeout(10000);
 
         var verify = function (ok) {
             events.off("cron-seconds", verify);
 
-            if (ok === 1) {
+            if (ok == "seconds") {
                 done()
             } else {
-                done("Event should emit 1, but we got " + ok);
+                done("Event should emit 'seconds', but we got " + ok);
             }
         };
 
@@ -64,7 +118,7 @@ describe("Cron Tests", function () {
         cron.start();
     });
 
-    it("Remove cron-seconds job loaded from testcron.json", function (done) {
+    it("Remove cron-seconds job loaded from testcron-1.json", function (done) {
         var length = cron.jobs.length;
         cron.remove("cron-seconds");
 
@@ -135,15 +189,19 @@ describe("Cron Tests", function () {
     });
 
     it("Prevents duplicate jobs when 'allowReplacing' setting is false", function (done) {
+        settings.cron.allowReplacing = false;
+
         var callback = function () {
             return true;
         };
+
         var job1 = {
             id: "uniqueJob",
             callback: callback,
             schedule: 1000,
             once: true
         };
+
         var job2 = {
             id: "uniqueJob",
             callback: callback,
@@ -151,14 +209,24 @@ describe("Cron Tests", function () {
             once: false
         };
 
-        settings.cron.allowReplacing = false;
-
-        cron.add(job1);
-
-        if (cron.add(job2).error) {
+        try {
+            cron.add(job1);
+            cron.add(job2);
+            done("Duplicate job was added, and it shouldn't be.");
+        } catch (ex) {
             done();
+        }
+    });
+
+    it("Do not start cron jobs when module is not enabled", function (done) {
+        settings.cron.enabled = false;
+
+        if (!cron.load().notEnabled) {
+            done("Cron.load should not run when settings.cron.enabled is false.")
+        } else if (!cron.start().notEnabled) {
+            done("Cron.start should not run when settings.cron.enabled is false.")
         } else {
-            done("Duplicate job was added, and it shouldn't be.")
+            done();
         }
     });
 });

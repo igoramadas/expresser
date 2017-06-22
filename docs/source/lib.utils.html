@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,26 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.httpserver.html">
+                plugins/metrics/httpserver.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.index.html">
+                plugins/metrics/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.percentile.html">
+                plugins/metrics/percentile.coffee
               </a>
             
               
@@ -136,21 +171,18 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>General network, IO, client and server utilities. As this module can’t reference
-any other module but Settings, all its logging will be done to the console only.</p>
+              <p>General network, IO, client and server utilities.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Utils</span></span>
     newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Utils()
 
-    crypto = <span class="hljs-built_in">require</span> <span class="hljs-string">"crypto"</span>
-    fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
-    lodash = <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
-    moment = <span class="hljs-built_in">require</span> <span class="hljs-string">"moment"</span>
-    os = <span class="hljs-built_in">require</span> <span class="hljs-string">"os"</span>
-    path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
-    settings = <span class="hljs-built_in">require</span> <span class="hljs-string">"./settings.coffee"</span></pre></div></div>
+    browser: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils/browser.coffee"</span>
+    data: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils/data.coffee"</span>
+    io: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils/io.coffee"</span>
+    network: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils/network.coffee"</span>
+    system: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils/system.coffee"</span></pre></div></div>
             
         </li>
         
@@ -161,11 +193,9 @@ any other module but Settings, all its logging will be done to the console only.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Temporary variable used to calculate CPU usage.</p>
+              <h2 id="deprecated-methods">DEPRECATED METHODS</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    lastCpuLoad = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -176,9 +206,61 @@ any other module but Settings, all its logging will be done to the console only.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h2 id="server-info-utils">SERVER INFO UTILS</h2>
-
+              
             </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    getFilePath: <span class="hljs-function"><span class="hljs-params">(filename)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getFilePath"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.io.getFilePath."</span>
+        <span class="hljs-keyword">return</span> @io.getFilePath filename
+
+    getServerIP: <span class="hljs-function"><span class="hljs-params">(firstOnly)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getIP"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.system.getIP."</span>
+        <span class="hljs-keyword">return</span> @system.getIP firstOnly
+
+    getServerInfo: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getInfo"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.system.getInfo."</span>
+        <span class="hljs-keyword">return</span> @system.getInfo()
+
+    getCpuLoad: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getCpuLoad"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.system.getCpuLoad."</span>
+        <span class="hljs-keyword">return</span> @system.getCpuLoad()
+
+    ipInRange: <span class="hljs-function"><span class="hljs-params">(ip, range)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.ipInRange"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.network.ipInRange."</span>
+        <span class="hljs-keyword">return</span> @network.ipInRange ip, range
+
+    getClientIP: <span class="hljs-function"><span class="hljs-params">(reqOrSocket)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getClientIP"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.browser.getClientIP."</span>
+        <span class="hljs-keyword">return</span> @browser.getClientIP reqOrSocket
+
+    getClientDevice: <span class="hljs-function"><span class="hljs-params">(req)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getDeviceString"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.browser.getDeviceString."</span>
+        <span class="hljs-keyword">return</span> @browser.getDeviceString req
+
+    copyFileSync: <span class="hljs-function"><span class="hljs-params">(src, target)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.copyFileSync"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.io.copyFileSync."</span>
+        <span class="hljs-keyword">return</span> @io.copyFileSync src, target
+
+    mkdirRecursive: <span class="hljs-function"><span class="hljs-params">(target)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.mkdirRecursive"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.io.mkdirRecursive."</span>
+        <span class="hljs-keyword">return</span> @io.mkdirRecursive target
+
+    removeFromString: <span class="hljs-function"><span class="hljs-params">(value, charsToRemove)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.removeFromString"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.data.removeFromString."</span>
+        <span class="hljs-keyword">return</span> @data.removeFromString value, charsToRemove
+
+    maskString: <span class="hljs-function"><span class="hljs-params">(value, maskChar, leaveLast)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.maskString"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.data.maskString."</span>
+        <span class="hljs-keyword">return</span> @data.maskString value, maskChar, leaveLast
+
+    minifyJson: <span class="hljs-function"><span class="hljs-params">(source, asString)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.minifyJson"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.data.minifyJson."</span>
+        <span class="hljs-keyword">return</span> @data.minifyJson source, asString
+
+    uuid: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.uuid"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.data.uuid."</span>
+        <span class="hljs-keyword">return</span> @data.uuid()</pre></div></div>
             
         </li>
         
@@ -189,7 +271,8 @@ any other module but Settings, all its logging will be done to the console only.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
+              <h2 id="singleton-implementation">Singleton implementation</h2>
+
             </div>
             
         </li>
@@ -200,791 +283,6 @@ any other module but Settings, all its logging will be done to the console only.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>Helper to get the correct filename for general files. For example
-the settings.json file or cron.json for cron jobs. This will look into the current
-directory, the running directory and the root directory of the app.
-Returns null if no file is found.
-@param {String} filename The base filename (with extension) of the config file.
-@return {String} The full path to the config file if one was found, or null.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    getFilePath: <span class="hljs-function"><span class="hljs-params">(filename)</span> -&gt;</span>
-        originalFilename = <span class="hljs-string">"./"</span> + filename.toString()</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>Check if file exists.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        hasFile = fs.existsSync filename
-        <span class="hljs-keyword">return</span> filename <span class="hljs-keyword">if</span> hasFile</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>Try current path…</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        filename = path.resolve __dirname, originalFilename
-        hasFile = fs.existsSync filename
-        <span class="hljs-keyword">return</span> filename <span class="hljs-keyword">if</span> hasFile</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>Try parent path…</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        filename = path.resolve __dirname, <span class="hljs-string">"../"</span>, originalFilename
-        hasFile = fs.existsSync filename
-        <span class="hljs-keyword">return</span> filename <span class="hljs-keyword">if</span> hasFile</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <p>If file does not exist on local path, try application root path.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        filename = path.resolve path.dirname(<span class="hljs-built_in">require</span>.main.filename), originalFilename
-        hasFile = fs.existsSync filename
-        <span class="hljs-keyword">return</span> filename <span class="hljs-keyword">if</span> hasFile</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>Nothing found, so return null.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <p>Returns a list of valid server IP addresses. If <code>firstOnly</code> is true it will
-return only the very first IP address found.
-@param {Boolean} firstOnly Optional, default is false which returns an array with all valid IPs, true returns a String will first valid IP.
-@return {String} The server IPv4 address, or null.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    getServerIP: <span class="hljs-function"><span class="hljs-params">(firstOnly)</span> -&gt;</span>
-        ifaces = os.networkInterfaces()
-        result = []</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>Parse network interfaces and try getting the server IPv4 address.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">of</span> ifaces
-            ifaces[i].forEach (details) -&gt;
-                <span class="hljs-keyword">if</span> details.family <span class="hljs-keyword">is</span> <span class="hljs-string">"IPv4"</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> details.internal
-                    result.push details.address</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <p>Return only first IP or all of them?</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> firstOnly
-            <span class="hljs-keyword">return</span> result[<span class="hljs-number">0</span>]
-        <span class="hljs-keyword">else</span>
-            <span class="hljs-keyword">return</span> result</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>Return an object with general information about the server.
-@return {Object} Results with process pid, platform, memory, uptime and IP.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    getServerInfo: <span class="hljs-function">=&gt;</span>
-        result = {}</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
-              </div>
-              <p>Save parsed OS info to the result object.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        result.uptime = moment.duration(process.uptime(), <span class="hljs-string">"s"</span>).humanize()
-        result.hostname = os.hostname()
-        result.title = path.basename process.title
-        result.platform = os.platform() + <span class="hljs-string">" "</span> + os.arch() + <span class="hljs-string">" "</span> + os.release()
-        result.memoryTotal = (os.totalmem() / <span class="hljs-number">1024</span> / <span class="hljs-number">1024</span>).toFixed(<span class="hljs-number">0</span>) + <span class="hljs-string">" MB"</span>
-        result.memoryUsage = <span class="hljs-number">100</span> - (os.freemem() / os.totalmem() * <span class="hljs-number">100</span>).toFixed(<span class="hljs-number">0</span>)
-        result.ips = @getServerIP()
-        result.process = {pid: process.pid, memoryUsage: (process.memoryUsage().rss / <span class="hljs-number">1024</span> / <span class="hljs-number">1024</span>).toFixed(<span class="hljs-number">0</span>) + <span class="hljs-string">" MB"</span>}
-        result.cpuCores = os.cpus().length</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-17">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
-              <p>Calculate average CPU load.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        lastCpuLoad = @getCpuLoad() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lastCpuLoad?
-        currentCpuLoad = @getCpuLoad()
-        idleDifference = currentCpuLoad.idle - lastCpuLoad.idle
-        totalDifference = currentCpuLoad.total - lastCpuLoad.total
-
-        result.loadAvg = <span class="hljs-number">100</span> - ~~(<span class="hljs-number">100</span> * idleDifference / totalDifference)
-
-        <span class="hljs-keyword">return</span> result</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-18">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              <p>Get current CPU load (used mainly by getServerInfo).
-@return {Object} CPU load with idle and total ticks.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    getCpuLoad: <span class="hljs-function">-&gt;</span>
-        totalIdle = <span class="hljs-number">0</span>
-        totalTick = <span class="hljs-number">0</span>
-        cpus = os.cpus()
-        i = <span class="hljs-number">0</span>
-        len = cpus.length
-
-        <span class="hljs-keyword">while</span> i &lt; len
-            cpu = cpus[i]
-            totalTick += value <span class="hljs-keyword">for</span> t, value <span class="hljs-keyword">of</span> cpu.times
-            totalIdle += cpu.times.idle
-            i++
-
-        <span class="hljs-keyword">return</span> {idle: totalIdle / cpus.length, total: totalTick / cpus.length}</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <h2 id="client-info-utils">CLIENT INFO UTILS</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-20">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-21">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
-              </div>
-              <p>Get the client or browser IP. Works for http and socket requests, even when behind a proxy.
-@param {Object} reqOrSocket The request or socket object.
-@return {String} The client IP address, or null.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    getClientIP: <span class="hljs-function"><span class="hljs-params">(reqOrSocket)</span> -&gt;</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> reqOrSocket?</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-22">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
-              </div>
-              <p>Try getting the xforwarded header first.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> reqOrSocket.header?
-            xfor = reqOrSocket.header <span class="hljs-string">"X-Forwarded-For"</span>
-            <span class="hljs-keyword">if</span> xfor? <span class="hljs-keyword">and</span> xfor <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
-                <span class="hljs-keyword">return</span> xfor.split(<span class="hljs-string">","</span>)[<span class="hljs-number">0</span>]</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-23">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
-              </div>
-              <p>Get remote address.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> reqOrSocket.connection?
-            <span class="hljs-keyword">return</span> reqOrSocket.connection.remoteAddress
-        <span class="hljs-keyword">else</span>
-            <span class="hljs-keyword">return</span> reqOrSocket.remoteAddress</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-24">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
-              </div>
-              <p>Get the client’s device. This identifier string is based on the user agent.
-@param {Object} req The request object.
-@return {String} The client’s device.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    getClientDevice: <span class="hljs-function"><span class="hljs-params">(req)</span> -&gt;</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"unknown"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> req?.headers?
-
-        ua = req.headers[<span class="hljs-string">"user-agent"</span>]</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-25">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
-              </div>
-              <p>Find mobile devices.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-windows-10"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Windows 10 Mobile"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-windows-8"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Windows Phone 8"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-windows-7"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Windows Phone 7"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-windows"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Windows Phone"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-8"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone8"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-7"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone7"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-6"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone6"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-5"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone5"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone-4"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone4"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-iphone"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"iPhone"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-8"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 8"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-7"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 7"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-6"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 6"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-5"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 5"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android-4"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android 4"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"mobile-android"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Android"</span>) &gt; <span class="hljs-number">0</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-26">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
-              </div>
-              <p>Find desktop browsers.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-vivaldi"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Vivaldi/"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-edge"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Edge/"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-opera"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Opera/"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-chrome"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Chrome/"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-firefox"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Firefox/"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-safari"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"Safari/"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-ie-11"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"MSIE 11"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-ie-10"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"MSIE 10"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-ie-9"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"MSIE 9"</span>) &gt; <span class="hljs-number">0</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop-ie"</span> <span class="hljs-keyword">if</span> ua.indexOf(<span class="hljs-string">"MSIE"</span>) &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> ua.indexOf(<span class="hljs-string">"Trident"</span>) &gt; <span class="hljs-number">0</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-27">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              <p>Return default desktop value if no specific devices were found on user agent.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-string">"desktop"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <h2 id="io-and-datautils">IO AND DATAUTILS</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              <p>Copy the <code>src</code> file to the <code>target</code>, both must be the full file path.
-@param {String} src The full source file path.
-@param {String} target The full target file path.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    copyFileSync: <span class="hljs-function"><span class="hljs-params">(src, target)</span> =&gt;</span>
-        srcContents = fs.readFileSync src
-        fs.writeFileSync target, srcContents</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-31">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
-              </div>
-              <p>Make sure the “target” directory exists by recursively iterating through its parents
-and creating the directories. Returns nothing if all good or error.
-@param {String} target The full target path, with or without a trailing slash.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    mkdirRecursive: <span class="hljs-function"><span class="hljs-params">(target)</span> =&gt;</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> fs.existsSync path.resolve(target)
-<span class="hljs-function">
-        <span class="hljs-title">callback</span> = <span class="hljs-params">(p, made)</span> -&gt;</span>
-            made = <span class="hljs-literal">null</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> made
-
-            p = path.resolve p
-
-            <span class="hljs-keyword">try</span>
-                fs.mkdirSync p
-            <span class="hljs-keyword">catch</span> ex
-                <span class="hljs-keyword">if</span> ex.code <span class="hljs-keyword">is</span> <span class="hljs-string">"ENOENT"</span>
-                    made = callback path.dirname(p), made
-                    callback p, made
-                <span class="hljs-keyword">else</span>
-                    <span class="hljs-keyword">try</span>
-                        stat = fs.statSync p
-                    <span class="hljs-keyword">catch</span> ex1
-                        <span class="hljs-keyword">throw</span> ex
-                    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> stat.isDirectory()
-                        <span class="hljs-keyword">throw</span> ex
-
-            <span class="hljs-keyword">return</span> made
-
-        <span class="hljs-keyword">return</span> callback target</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-32">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
-              </div>
-              <p>Removes all the specified characters from a string. For example you can cleanup
-telephone numbers by using removeFromString(phone, [“ “, “-“, “(“, “)”]).
-@param {String} value The original value / string.
-@param {Array} charsToRemove List of characters to be removed from the original string.
-@return {String} Resulting value with the characters removed.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    removeFromString: <span class="hljs-function"><span class="hljs-params">(value, charsToRemove)</span> =&gt;</span>
-        result = value
-        result = result.toString() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString result
-        result = result.split(c).join(<span class="hljs-string">""</span>) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> charsToRemove
-
-        <span class="hljs-keyword">return</span> result</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-33">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
-              </div>
-              <p>Minify the passed JSON value. Removes comments, unecessary white spaces etc.
-@param {String} source The JSON text to be minified.
-@param {Boolean} asString If true, return as string instead of JSON object.
-@return {String} The minified JSON, or an empty string if there’s an error.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    minifyJson: <span class="hljs-function"><span class="hljs-params">(source, asString)</span> -&gt;</span>
-        source = JSON.stringify source <span class="hljs-keyword">if</span> <span class="hljs-keyword">typeof</span> source <span class="hljs-keyword">is</span> <span class="hljs-string">"object"</span>
-        index = <span class="hljs-number">0</span>
-        length = source.length
-        result = <span class="hljs-string">""</span>
-        symbol = <span class="hljs-literal">undefined</span>
-        position = <span class="hljs-literal">undefined</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-34">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
-              </div>
-              <p>Main iterator.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">while</span> index &lt; length
-
-            symbol = source.charAt index
-            <span class="hljs-keyword">switch</span> symbol</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-35">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
-              </div>
-              <p>Ignore whitespace tokens. According to ES 5.1 section 15.12.1.1,
-whitespace tokens include tabs, carriage returns, line feeds, and
-space characters.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">when</span> <span class="hljs-string">"\t"</span>, <span class="hljs-string">"\r"</span>
-                , <span class="hljs-string">"\n"</span>
-                , <span class="hljs-string">" "</span>
-                    index += <span class="hljs-number">1</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-36">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
-              </div>
-              <p>Ignore line and block comments.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">when</span> <span class="hljs-string">"/"</span>
-                    symbol = source.charAt(index += <span class="hljs-number">1</span>)
-                    <span class="hljs-keyword">switch</span> symbol</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-37">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
-              </div>
-              <p>Line comments.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">when</span> <span class="hljs-string">"/"</span>
-                            position = source.indexOf(<span class="hljs-string">"\n"</span>, index)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-38">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
-              </div>
-              <p>Check for CR-style line endings.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                            position = source.indexOf(<span class="hljs-string">"\r"</span>, index)  <span class="hljs-keyword">if</span> position &lt; <span class="hljs-number">0</span>
-                            index = (<span class="hljs-keyword">if</span> position &gt; <span class="hljs-number">-1</span> <span class="hljs-keyword">then</span> position <span class="hljs-keyword">else</span> length)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-39">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
-              </div>
-              <p>Block comments.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">when</span> <span class="hljs-string">"*"</span>
-                            position = source.indexOf(<span class="hljs-string">"*/"</span>, index)
-                            <span class="hljs-keyword">if</span> position &gt; <span class="hljs-number">-1</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-40">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
-              </div>
-              <p>Advance the scanner’s position past the end of the comment.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                index = position += <span class="hljs-number">2</span>
-                                <span class="hljs-keyword">break</span>
-                            <span class="hljs-keyword">throw</span> SyntaxError <span class="hljs-string">"Unterminated block comment."</span>
-                        <span class="hljs-keyword">else</span>
-                            <span class="hljs-keyword">throw</span> SyntaxError <span class="hljs-string">"Invalid comment."</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-41">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
-              </div>
-              <p>Parse strings separately to ensure that any whitespace characters and
-JavaScript-style comments within them are preserved.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">when</span> <span class="hljs-string">"\""</span>
-                    position = index
-                    <span class="hljs-keyword">while</span> index &lt; length
-                        symbol = source.charAt(index += <span class="hljs-number">1</span>)
-                        <span class="hljs-keyword">if</span> symbol <span class="hljs-keyword">is</span> <span class="hljs-string">"\\"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-42">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
-              </div>
-              <p>Skip past escaped characters.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                            index += <span class="hljs-number">1</span>
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">break</span>  <span class="hljs-keyword">if</span> symbol <span class="hljs-keyword">is</span> <span class="hljs-string">"\""</span>
-                    <span class="hljs-keyword">if</span> source.charAt(index) <span class="hljs-keyword">is</span> <span class="hljs-string">"\""</span>
-                        result += source.slice(position, index += <span class="hljs-number">1</span>)
-                        <span class="hljs-keyword">break</span>
-                    <span class="hljs-keyword">throw</span> SyntaxError <span class="hljs-string">"Unterminated string."</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-43">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
-              </div>
-              <p>Preserve all other characters.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">else</span>
-                    result += symbol
-                    index += <span class="hljs-number">1</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-44">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
-              </div>
-              <p>Check if should return as string or JSON.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> asString
-            <span class="hljs-keyword">return</span> result
-        <span class="hljs-keyword">else</span>
-            <span class="hljs-keyword">return</span> JSON.parse result</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-45">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
-              </div>
-              <p>Generates a RFC1422-compliant unique ID using random numbers.
-@return {String} A single unique ID.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    uuid: <span class="hljs-function">=&gt;</span>
-        baseStr = <span class="hljs-string">"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"</span>
-<span class="hljs-function">        <span class="hljs-title">generator</span> = <span class="hljs-params">(c)</span> -&gt;</span>
-            r = Math.random() * <span class="hljs-number">16</span> | <span class="hljs-number">0</span>
-            v = <span class="hljs-keyword">if</span> c <span class="hljs-keyword">is</span> <span class="hljs-string">"x"</span> <span class="hljs-keyword">then</span> r <span class="hljs-keyword">else</span> (r &amp; <span class="hljs-number">0x3</span>|<span class="hljs-number">0x8</span>)
-            v.toString <span class="hljs-number">16</span>
-
-        <span class="hljs-keyword">return</span> baseStr.replace(<span class="hljs-regexp">/[xy]/g</span>, generator)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-46">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
-              </div>
-              <h2 id="singleton-implementation">Singleton implementation</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-47">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               
             </div>

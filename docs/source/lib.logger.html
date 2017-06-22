@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,26 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.httpserver.html">
+                plugins/metrics/httpserver.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.index.html">
+                plugins/metrics/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.percentile.html">
+                plugins/metrics/percentile.coffee
               </a>
             
               
@@ -147,7 +182,7 @@ Multiple services can be enabled at the same time.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Logger</span></span>
     newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Logger()
-    
+
     chalk = <span class="hljs-built_in">require</span> <span class="hljs-string">"chalk"</span>
     events = <span class="hljs-built_in">require</span> <span class="hljs-string">"./events.coffee"</span>
     fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
@@ -299,7 +334,8 @@ IP address will be appended to logs depending on the settings.
 
         @setEvents()
 
-        events.emit <span class="hljs-string">"Logger.on.init"</span></pre></div></div>
+        events.emit <span class="hljs-string">"Logger.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div></div>
             
         </li>
         
@@ -479,7 +515,8 @@ IP address will be appended to logs depending on the settings.
               </div>
               <p>Internal generic log method.
 @param {String} logType The log type (for example: warning, error, info, security, etc).
-@param {Array} args Array to be stringified and logged.</p>
+@param {Array} args Array to be stringified and logged.
+@return {String} The human readable log line.</p>
 
             </div>
             
@@ -669,7 +706,9 @@ All arguments are transformed to readable strings.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    deprecated: <span class="hljs-function"><span class="hljs-params">(func, message)</span> =&gt;</span>
-        @console <span class="hljs-string">"deprecated"</span>, <span class="hljs-string">"<span class="hljs-subst">#{func}</span> is deprecated. <span class="hljs-subst">#{message}</span>"</span></pre></div></div>
+        message = <span class="hljs-string">"<span class="hljs-subst">#{func}</span> is deprecated. <span class="hljs-subst">#{message}</span>"</span>
+        @console <span class="hljs-string">"deprecated"</span>, message
+        <span class="hljs-keyword">return</span> {error: <span class="hljs-string">"Method deprecated"</span>, message: message}</pre></div></div>
             
         </li>
         
@@ -679,6 +718,23 @@ All arguments are transformed to readable strings.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Helper to log to console that module is not enabled on settings.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    notEnabled: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-built_in">module</span>, func)</span> =&gt;</span>
+        @console <span class="hljs-string">"debug"</span>, <span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-built_in">module</span>}</span>.<span class="hljs-subst">#{func}</span> abort! <span class="hljs-subst">#{<span class="hljs-built_in">module</span>}</span> is not enabled."</span>
+        <span class="hljs-keyword">return</span> {notEnabled: <span class="hljs-literal">true</span>}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Cleans the arguments passed according to the <code>removeFields</code> setting.
 The maximum level deep down the object is defined by the <code>maxDeepLevel</code>.
@@ -695,11 +751,11 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Recursive cleaning function.</p>
 
@@ -738,41 +794,44 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Iterate arguments and execute cleaner on objects.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> argKey, arg <span class="hljs-keyword">of</span> arguments
-            <span class="hljs-keyword">if</span> lodash.isArray arg
-                <span class="hljs-keyword">for</span> v <span class="hljs-keyword">in</span> arg
-                    cloned = lodash.cloneDeep v
+            <span class="hljs-keyword">try</span>
+                <span class="hljs-keyword">if</span> lodash.isArray arg
+                    <span class="hljs-keyword">for</span> v <span class="hljs-keyword">in</span> arg
+                        cloned = lodash.cloneDeep v
+                        cleaner cloned, <span class="hljs-number">0</span>
+                        result.push cloned
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject
+                    cloned = lodash.cloneDeep arg
                     cleaner cloned, <span class="hljs-number">0</span>
                     result.push cloned
-            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject
-                cloned = lodash.cloneDeep arg
-                cleaner cloned, <span class="hljs-number">0</span>
-                result.push cloned
-            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction arg
-                result.push funcText
-            <span class="hljs-keyword">else</span>
-                result.push a
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction arg
+                    result.push funcText
+                <span class="hljs-keyword">else</span>
+                    result.push a
+            <span class="hljs-keyword">catch</span> ex
+                <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Logger.argsCleaner"</span>, argKey, ex
 
         <span class="hljs-keyword">return</span> result</pre></div></div>
             
         </li>
         
         
-        <li id="section-36">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Returns a human readable message out of the arguments.
 @return {String} The human readable, parsed JSON message.
@@ -796,11 +855,11 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
         </li>
         
         
-        <li id="section-37">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Parse all arguments and stringify objects. Please note that fields defined
 on the <code>removeFields</code> setting won’t be added to the message.</p>
@@ -827,35 +886,25 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-38">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
-              </div>
-              <p>Append IP address, if <code>serverIP</code> is set.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        serverIP = utils.getServerIP <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> settings.logger.sendIP
-        separated.push <span class="hljs-string">"IP <span class="hljs-subst">#{serverIP}</span>"</span> <span class="hljs-keyword">if</span> serverIP?
-
-        separator = settings.logger.separator</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
-              <p>Return single string log message.</p>
+              <p>Append IP address, if <code>serverIP</code> is set.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> separated.join separator</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">try</span>
+            serverIP = utils.system.getIP <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> settings.logger.sendIP
+            serverIP = <span class="hljs-literal">null</span> <span class="hljs-keyword">if</span> serverIP.error
+        <span class="hljs-keyword">catch</span> ex
+            serverIP = <span class="hljs-literal">null</span>
+
+        separated.push <span class="hljs-string">"IP <span class="hljs-subst">#{serverIP}</span>"</span> <span class="hljs-keyword">if</span> serverIP?
+
+        separator = settings.logger.separator</pre></div></div>
             
         </li>
         
@@ -866,9 +915,11 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
-              <h2 id="singleton-implementation">Singleton implementation</h2>
+              <p>Return single string log message.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> separated.join separator</pre></div></div>
             
         </li>
         
@@ -878,6 +929,19 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <h2 id="singleton-implementation">Singleton implementation</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               
             </div>

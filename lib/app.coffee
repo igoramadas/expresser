@@ -47,8 +47,25 @@ class App
         logger.debug "App.init",
         events.emit "App.before.init"
 
+        # Init options are deprecated.
         if arguments.length > 0
             logger.deprecated "App.init(options)", "No options param anymore. App will be configured based on what's defiend on the settings module."
+
+        # Check for deprecated settings.
+        if settings.app.sessionEnabled?
+            logger.deprecated "settings.app.sessionEnabled", "Please use settings.app.session.enabled."
+        if settings.app.sessionMaxAge?
+            logger.deprecated "settings.app.sessionMaxAge", "Please use settings.app.session.maxAge."
+        if settings.app.sessionSecret?
+            logger.deprecated "settings.app.sessionSecret", "Please use settings.app.session.secret."
+        if settings.app.cookieEnabled?
+            logger.deprecated "settings.app.cookieEnabled", "Please use settings.app.cookie.enabled."
+        if settings.app.cookieSecret?
+            logger.deprecated "settings.app.cookieSecret", "Please use settings.app.cookie.secret."
+        if settings.path?.viewsDir?
+            logger.deprecated "settings.path.viewsDir", "Please use settings.app.viewPath."
+        if settings.path?.publicDir?
+            logger.deprecated "settings.path.publicDir", "Please use settings.app.publicPath."
 
         nodeEnv = process.env.NODE_ENV
 
@@ -57,6 +74,7 @@ class App
         @startServer()
 
         events.emit "App.on.init"
+        delete @init
 
     # Configure the server. Set views, options, use Express modules, etc.
     configureServer: =>
@@ -72,22 +90,27 @@ class App
         @server = express()
 
         # Set view options, use Pug for HTML templates.
-        @server.set "views", settings.path.viewsDir
+        @server.set "views", settings.app.viewPath
         @server.set "view engine", settings.app.viewEngine
         @server.set "view options", { layout: false }
 
         # Prepend middlewares, if any was specified.
         if @prependMiddlewares.length > 0
             @server.use mw for mw in @prependMiddlewares
-            
+
         # Use Express basic handlers.
         @server.use midBodyParser.json {limit: settings.app.bodyParser.limit}
         @server.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
-        @server.use midCookieParser settings.app.cookieSecret if settings.app.cookieEnabled
-        @server.use midSession {secret: settings.app.sessionSecret} if settings.app.sessionEnabled
+
+        if settings.app.cookie.enabled
+            @server.use midCookieParser settings.app.cookie.secret
+
+        if settings.app.session.enabled
+            @server.use midSession {secret: settings.app.session.secret, cookie: {maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))}}
 
         # Use HTTP compression only if enabled on settings.
-        @server.use midCompression if settings.app.compressionEnabled
+        if settings.app.compressionEnabled
+            @server.use midCompression
 
         # Fix connect assets helper context.
         connectAssetsOptions = lodash.cloneDeep settings.app.connectAssets
@@ -106,12 +129,12 @@ class App
             @server.use midErrorHandler {dumpExceptions: true, showStack: true}
 
         # Use Express static routing.
-        @server.use express.static settings.path.publicDir
+        @server.use express.static settings.app.publicPath
 
         # If debug is on, log requests to the console.
         if settings.general.debug
             @server.use (req, res, next) =>
-                ip = utils.getClientIP req
+                ip = utils.browser.getClientIP req
                 method = req.method
                 url = req.url
 
@@ -127,8 +150,8 @@ class App
     # Start the server using HTTP or HTTPS, depending on the settings.
     startServer: =>
         if settings.app.ssl.enabled and settings.app.ssl.keyFile? and settings.app.ssl.certFile?
-            sslKeyFile = utils.getFilePath settings.app.ssl.keyFile
-            sslCertFile = utils.getFilePath settings.app.ssl.certFile
+            sslKeyFile = utils.io.getFilePath settings.app.ssl.keyFile
+            sslCertFile = utils.io.getFilePath settings.app.ssl.certFile
 
             # Certificate files were found? Proceed, otherwise alert the user and throw an error.
             if sslKeyFile? and sslCertFile?
@@ -183,16 +206,21 @@ class App
     renderView: (req, res, view, options) =>
         logger.debug "App.renderView", req.originalUrl, view, options
 
-        options = {} if not options?
-        options.device = utils.getClientDevice req
-        options.title = settings.app.title if not options.title?
+        try
+            options = {} if not options?
+            options.device = utils.browser.getDeviceString req
+            options.title = settings.app.title if not options.title?
 
-        # View filename must jave .pug extension.
-        view += ".pug" if view.indexOf(".pug") < 0
+            # View filename must jave .pug extension.
+            view += ".pug" if view.indexOf(".pug") < 0
 
-        # Send rendered view to client.
-        res.render view, options
-        
+            # Send rendered view to client.
+            res.render view, options
+
+        catch ex
+            logger.error "App.renderView", view, ex
+            @renderError req, res, ex
+
         events.emit "App.on.renderView", req, res, view, options
 
     # Render response as human readable JSON data.
@@ -271,7 +299,7 @@ class App
         res.status(status).json {error: error, url: req.originalUrl}
 
         events.emit "App.on.renderError", req, res, error, status
-        
+
 # Singleton implementation
 # --------------------------------------------------------------------------
 App.getInstance = ->

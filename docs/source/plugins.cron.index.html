@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,26 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.httpserver.html">
+                plugins/metrics/httpserver.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.index.html">
+                plugins/metrics/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.percentile.html">
+                plugins/metrics/percentile.coffee
               </a>
             
               
@@ -163,6 +198,8 @@ setting `loadOnInit` is true.
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Cron</span></span>
 
+    priority: <span class="hljs-number">5</span>
+
     events = <span class="hljs-literal">null</span>
     fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
     lodash = <span class="hljs-literal">null</span>
@@ -221,13 +258,12 @@ setting `loadOnInit` is true.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Init the cron manager. If <code>loadOnInit</code> setting is true, the `cron.json
-file will be parsed and loaded straight away (if there’s one).
-@param {Object} options Cron init options.</p>
+              <p>Init the cron manager. If <code>loadOnInit</code> setting is true, the <code>cron.json</code>
+file will be parsed and loaded straight away (if there’s one).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -235,15 +271,15 @@ file will be parsed and loaded straight away (if there’s one).
         settings = @expresser.settings
         utils = @expresser.utils
 
-        logger.debug <span class="hljs-string">"Cron.init"</span>, options
-
-        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-        options = lodash.defaultsDeep options, settings.cron
+        logger.debug <span class="hljs-string">"Cron.init"</span>
+        events.emit <span class="hljs-string">"Cron.before.init"</span>
 
         @setEvents()
-        @load <span class="hljs-literal">true</span>, options <span class="hljs-keyword">if</span> options.loadOnInit
 
-        events.emit <span class="hljs-string">"Cron.on.init"</span>, options</pre></div></div>
+        @load settings.cron.defaultFilename <span class="hljs-keyword">if</span> settings.cron.loadOnInit
+
+        events.emit <span class="hljs-string">"Cron.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div></div>
             
         </li>
         
@@ -259,6 +295,7 @@ file will be parsed and loaded straight away (if there’s one).
             </div>
             
             <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">=&gt;</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"Cron.load"</span>, @load
         events.<span class="hljs-literal">on</span> <span class="hljs-string">"Cron.start"</span>, @start
         events.<span class="hljs-literal">on</span> <span class="hljs-string">"Cron.stop"</span>, @stop
         events.<span class="hljs-literal">on</span> <span class="hljs-string">"Cron.add"</span>, @add
@@ -277,13 +314,15 @@ file will be parsed and loaded straight away (if there’s one).
 If <code>autoStart</code> is true, it will automatically call the <code>start</code> method after loading.
 @param {String} filename Path to the JSON file containing jobs, optional, default is “cron.json”.
 @param {Object} options Options to be passed when loading cron jobs.
+@option options {String} filename Name of file to be loaded (in case filename was not set on first parameter)
 @option options {String} basePath Sets the base path of modules when requiring them.
-@option options {Boolean} autoStart If true, call “start” after loading.</p>
+@option options {Boolean} autoStart If true, call <code>start</code> after loading.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    load: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"Cron.load"</span>, filename, options</pre></div></div>
+        logger.debug <span class="hljs-string">"Cron.load"</span>, filename, options
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Cron"</span>, <span class="hljs-string">"load"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled</pre></div></div>
             
         </li>
         
@@ -294,20 +333,13 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Set default options.</p>
+              <p>DEPRECATED!</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-        options = lodash.defaults options, {autoStart: <span class="hljs-literal">false</span>, basePath: <span class="hljs-string">""</span>}
-
-        <span class="hljs-keyword">if</span> lodash.isBoolean filename
-            filename = <span class="hljs-literal">false</span>
-            options.autoStart = filename
-
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filename? <span class="hljs-keyword">or</span> filename <span class="hljs-keyword">is</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">or</span> filename <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
-            filename = <span class="hljs-string">"cron.json"</span>
-            doNotWarn = <span class="hljs-literal">true</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> lodash.isBoolean filename
+            err = logger.deprecated <span class="hljs-string">"Cron.load(boolean)"</span>, <span class="hljs-string">"First parameter must be the filename of the cron file to be loaded, or options object."</span>
+            <span class="hljs-keyword">throw</span> err</pre></div></div>
             
         </li>
         
@@ -318,11 +350,12 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Get full path to the passed json file.</p>
+              <p>Set default options.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        filepath = utils.getFilePath filename</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        options = filename <span class="hljs-keyword">if</span> lodash.isObject filename
+        options = lodash.defaults options, {autoStart: settings.cron.autoStart, basePath: settings.cron.basePath}</pre></div></div>
             
         </li>
         
@@ -332,6 +365,36 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Make sure filename is set.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        filename = options.filename <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filename?</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Get full path to the passed json file.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        filepath = utils.io.getFilePath filename</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Found the cron json file? Read it.</p>
 
@@ -343,20 +406,20 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
 
             <span class="hljs-keyword">try</span>
                 cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
-                cronJson = utils.minifyJson cronJson
+                cronJson = utils.data.minifyJson cronJson
             <span class="hljs-keyword">catch</span> ex
-                err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Could not parse <span class="hljs-subst">#{filepath}</span> as JSON. <span class="hljs-subst">#{ex.name}</span> <span class="hljs-subst">#{ex.message}</span>"</span>
+                err = <span class="hljs-string">"Could not parse <span class="hljs-subst">#{filepath}</span> as JSON. <span class="hljs-subst">#{ex.name}</span> <span class="hljs-subst">#{ex.message}</span>"</span>
                 logger.error <span class="hljs-string">"Cron.load"</span>, err
-                <span class="hljs-keyword">throw</span> err</pre></div></div>
+                <span class="hljs-keyword">throw</span> {error: <span class="hljs-string">"Invalid JSON"</span>, message: err}</pre></div></div>
             
         </li>
         
         
-        <li id="section-12">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Iterate jobs, but do not add if job’s <code>enabled</code> is false.</p>
 
@@ -368,11 +431,11 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
         </li>
         
         
-        <li id="section-13">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Only proceed if the cronDisabled flag is not present on the module.
 If no ID is set for the job, use module key + callback name.</p>
@@ -384,47 +447,16 @@ If no ID is set for the job, use module key + callback name.</p>
                         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> d.enabled? <span class="hljs-keyword">or</span> d.enabled
                             cb = <span class="hljs-built_in">module</span>[d.callback]
                             job = d
+                            job.filename = filename
                             job.<span class="hljs-built_in">module</span> = key
                             job.id = key + <span class="hljs-string">"."</span> + d.callback <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> job.id?
                             job.callback = cb
                             job.timer = <span class="hljs-literal">null</span>
                             @add job
                         <span class="hljs-keyword">else</span>
-                            logger.debug <span class="hljs-string">"Cron.load"</span>, filename, key, d.callback, <span class="hljs-string">"Job 'enabled' is false. Skip!"</span>
+                            logger.info <span class="hljs-string">"Cron.load"</span>, filename, key, d.callback, <span class="hljs-string">"Job 'enabled' is false. Skip!"</span>
                 <span class="hljs-keyword">else</span>
-                    logger.debug <span class="hljs-string">"Cron.load"</span>, filename, <span class="hljs-string">"Module has 'cronDisabled' set. Skip!"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <p>Start all jobs automatically if <code>autoStart</code> is true.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            @start() <span class="hljs-keyword">if</span> options.autoStart
-
-            logger.info <span class="hljs-string">"Cron.load"</span>, <span class="hljs-string">"<span class="hljs-subst">#{basename}</span> loaded."</span>, options
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> doNotWarn
-            logger.warn <span class="hljs-string">"Cron.load"</span>, <span class="hljs-string">"<span class="hljs-subst">#{basename}</span> not found."</span>, options</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <h2 id="methods">METHODS</h2>
-
-            </div>
+                    logger.info <span class="hljs-string">"Cron.load"</span>, filename, <span class="hljs-string">"Module has 'cronDisabled' set. Skip!"</span></pre></div></div>
             
         </li>
         
@@ -435,8 +467,21 @@ If no ID is set for the job, use module key + callback name.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              
+              <p>Start all jobs automatically if <code>autoStart</code> is true.</p>
+
             </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.autoStart
+                <span class="hljs-keyword">if</span> filename
+                    @start {filename: filename}
+                <span class="hljs-keyword">else</span>
+                    @start()
+
+            logger.info <span class="hljs-string">"Cron.load"</span>, <span class="hljs-string">"<span class="hljs-subst">#{basename}</span> loaded."</span>, options
+        <span class="hljs-keyword">else</span>
+            err = <span class="hljs-string">"Cron file <span class="hljs-subst">#{filename}</span> not found."</span>
+            logger.error <span class="hljs-string">"Cron.load"</span>, err
+            <span class="hljs-keyword">throw</span> {error: <span class="hljs-string">"Not found"</span>, message: <span class="hljs-string">"Could not load cron file <span class="hljs-subst">#{filename}</span>."</span>}</pre></div></div>
             
         </li>
         
@@ -447,30 +492,9 @@ If no ID is set for the job, use module key + callback name.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>Start the specified cron job. If no <code>id</code> is specified, all jobs will be started.
-A filter can also be passed as an object. For example to start all jobs for
-the module “email”, use start({module: “email”}).
-@param {String} idOrFilter The job id or filter, optional (if not specified, start everything).</p>
+              <h2 id="methods">METHODS</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(idOrFilter)</span> =&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> idOrFilter?
-            logger.info <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"All jobs"</span>
-            arr = @jobs
-        <span class="hljs-keyword">if</span> lodash.isString idOrFilter <span class="hljs-keyword">or</span> lodash.isNumber idOrFilter
-            logger.info <span class="hljs-string">"Cron.start"</span>, idOrFilter
-            arr = lodash.find @jobs, {id: idOrFilter.toString()}
-        <span class="hljs-keyword">else</span>
-            logger.info <span class="hljs-string">"Cron.start"</span>, idOrFilter
-            arr = lodash.find @jobs, idOrFilter
-
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> arr? <span class="hljs-keyword">or</span> arr.length &lt; <span class="hljs-number">1</span>
-            logger.debug <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"Job <span class="hljs-subst">#{idOrFilter}</span> does not exist. Abort!"</span>
-        <span class="hljs-keyword">else</span>
-            <span class="hljs-keyword">for</span> job <span class="hljs-keyword">in</span> arr
-                clearTimeout job.timer <span class="hljs-keyword">if</span> job.timer?
-                setTimer job</pre></div></div>
             
         </li>
         
@@ -481,30 +505,8 @@ the module “email”, use start({module: “email”}).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>Stop the specified cron job. If no <code>id</code> is specified, all jobs will be stopped.
-A filter can also be passed as an object. For example to stop all jobs for
-the module “mymodule”, use stop({module: “mymodule”}).
-@param {String} idOrFilter The job id or filter, optional (if not specified, stop everything).</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    stop: <span class="hljs-function"><span class="hljs-params">(idOrFilter)</span> =&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> idOrFilter?
-            logger.info <span class="hljs-string">"Cron.stop"</span>, <span class="hljs-string">"All jobs"</span>
-            arr = @jobs
-        <span class="hljs-keyword">if</span> lodash.isString idOrFilter <span class="hljs-keyword">or</span> lodash.isNumber idOrFilter
-            logger.info <span class="hljs-string">"Cron.stop"</span>, idOrFilter
-            arr = lodash.find @jobs, {id: idOrFilter.toString()}
-        <span class="hljs-keyword">else</span>
-            logger.info <span class="hljs-string">"Cron.stop"</span>, idOrFilter
-            arr = lodash.find @jobs, idOrFilter
-
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> arr? <span class="hljs-keyword">or</span> arr.length &lt; <span class="hljs-number">1</span>
-            logger.debug <span class="hljs-string">"Cron.stop"</span>, <span class="hljs-string">"Job <span class="hljs-subst">#{idOrFilter}</span> does not exist. Abort!"</span>
-        <span class="hljs-keyword">else</span>
-            <span class="hljs-keyword">for</span> job <span class="hljs-keyword">in</span> arr
-                clearTimeout job.timer <span class="hljs-keyword">if</span> job.timer?
-                job.timer = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -515,7 +517,88 @@ the module “mymodule”, use stop({module: “mymodule”}).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>Add a scheduled job to the cron, passing an <code>id</code> and <code>job</code>.
+              <p>Start the specified cron job. If no <code>id</code> is specified, all jobs will be started.
+A filter can also be passed as an object. For example to start all jobs for
+the module “email”, use start({module: “email”}).
+@param {String} idOrFilter The job id or filter, optional (if not specified, start everything).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(idOrFilter)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Cron.start"</span>, idOrFilter
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Cron"</span>, <span class="hljs-string">"start"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> idOrFilter?
+            logger.info <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"All jobs"</span>
+            arr = @jobs
+
+        <span class="hljs-keyword">if</span> lodash.isString idOrFilter <span class="hljs-keyword">or</span> lodash.isNumber idOrFilter
+            logger.info <span class="hljs-string">"Cron.start"</span>, idOrFilter
+            arr = lodash.find @jobs, {id: idOrFilter.toString()}
+        <span class="hljs-keyword">else</span>
+            logger.info <span class="hljs-string">"Cron.start"</span>, idOrFilter
+            arr = lodash.find @jobs, idOrFilter
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> arr? <span class="hljs-keyword">or</span> arr.length &lt; <span class="hljs-number">1</span>
+            filterString = idOrFilter
+            filterString = JSON.stringify filterString, <span class="hljs-literal">null</span>, <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> lodash.isObject filterString
+            logger.warn <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"No jobs matching <span class="hljs-subst">#{filterString}</span>."</span>
+            <span class="hljs-keyword">return</span> {notFound: <span class="hljs-literal">true</span>}
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">for</span> job <span class="hljs-keyword">in</span> arr
+                clearTimeout job.timer <span class="hljs-keyword">if</span> job.timer?
+                setTimer job</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Stop the specified cron job. If no <code>id</code> is specified, all jobs will be stopped.
+A filter can also be passed as an object. For example to stop all jobs for
+the module “mymodule”, use stop({module: “mymodule”}).
+@param {String} idOrFilter The job id or filter, optional (if not specified, stop everything).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    stop: <span class="hljs-function"><span class="hljs-params">(idOrFilter)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Cron.stop"</span>, idOrFilter
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> idOrFilter?
+            logger.info <span class="hljs-string">"Cron.stop"</span>, <span class="hljs-string">"All jobs"</span>
+            arr = @jobs
+
+        <span class="hljs-keyword">if</span> lodash.isString idOrFilter <span class="hljs-keyword">or</span> lodash.isNumber idOrFilter
+            logger.info <span class="hljs-string">"Cron.stop"</span>, idOrFilter
+            arr = lodash.find @jobs, {id: idOrFilter.toString()}
+        <span class="hljs-keyword">else</span>
+            logger.info <span class="hljs-string">"Cron.stop"</span>, idOrFilter
+            arr = lodash.find @jobs, idOrFilter
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> arr? <span class="hljs-keyword">or</span> arr.length &lt; <span class="hljs-number">1</span>
+            filterString = idOrFilter
+            filterString = JSON.stringify filterString, <span class="hljs-literal">null</span>, <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> lodash.isObject filterString
+            logger.warn <span class="hljs-string">"Cron.stop"</span>, <span class="hljs-string">"No jobs matching <span class="hljs-subst">#{filterString}</span>."</span>
+            <span class="hljs-keyword">return</span> {notFound: <span class="hljs-literal">true</span>}
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">for</span> job <span class="hljs-keyword">in</span> arr
+                clearTimeout job.timer <span class="hljs-keyword">if</span> job.timer?
+                job.timer = <span class="hljs-literal">null</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Add a scheduled job to the cron, passing a <code>job</code>.
 You can also pass only the <code>job</code> if it has an id property.
 @param {String} id The job ID, optional, overrides job.id in case it has one.
 @param {Object} job The job object.
@@ -528,43 +611,8 @@ You can also pass only the <code>job</code> if it has an id property.
             </div>
             
             <div class="content"><div class='highlight'><pre>    add: <span class="hljs-function"><span class="hljs-params">(job)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"Cron.add"</span>, job</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-20">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
-              </div>
-              <p>Throw error if no <code>id</code> was provided.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> job.id? <span class="hljs-keyword">or</span> job.id <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
-            err = Error <span class="hljs-string">"Job must have an ID. Please set the job.id property."</span>
-            logger.error <span class="hljs-string">"Cron.add"</span>, err
-            <span class="hljs-keyword">throw</span> err</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-21">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
-              </div>
-              <p>Throw error if job callback is not a valid function.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isFunction job.callback
-            err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Job <span class="hljs-subst">#{job.id}</span> callback is not a valid, please set job.callback as a valid Function."</span>
-            logger.error <span class="hljs-string">"Cron.add"</span>, err
-            <span class="hljs-keyword">throw</span> err</pre></div></div>
+        logger.debug <span class="hljs-string">"Cron.add"</span>, job
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Cron"</span>, <span class="hljs-string">"add"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled</pre></div></div>
             
         </li>
         
@@ -575,11 +623,14 @@ You can also pass only the <code>job</code> if it has an id property.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Find existing job.</p>
+              <p>Throw error if no <code>id</code> was provided.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        existing = lodash.find @jobs, {id: job.id}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> job.id? <span class="hljs-keyword">or</span> job.id <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+            err = <span class="hljs-string">"Job must have an ID. Please set the job.id property."</span>
+            logger.error <span class="hljs-string">"Cron.add"</span>, err
+            <span class="hljs-keyword">throw</span> {error: <span class="hljs-string">"Missing job ID"</span>, message: err}</pre></div></div>
             
         </li>
         
@@ -590,18 +641,14 @@ You can also pass only the <code>job</code> if it has an id property.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>Handle existing jobs.</p>
+              <p>Throw error if job callback is not a valid function.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> existing?
-            <span class="hljs-keyword">if</span> settings.cron.allowReplacing
-                clearTimeout existing.timer <span class="hljs-keyword">if</span> existing.timer?
-                existing.timer = <span class="hljs-literal">null</span>
-            <span class="hljs-keyword">else</span>
-                errorMsg = <span class="hljs-string">"Job <span class="hljs-subst">#{job.id}</span> already exists and 'allowReplacing' is false. Abort!"</span>
-                logger.error <span class="hljs-string">"Cron.add"</span>, errorMsg
-                <span class="hljs-keyword">return</span> {error: errorMsg}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isFunction job.callback
+            err = <span class="hljs-string">"Job <span class="hljs-subst">#{job.id}</span> callback is not a valid, please set job.callback to a valid Function."</span>
+            logger.error <span class="hljs-string">"Cron.add"</span>, err
+            <span class="hljs-keyword">throw</span> {error: <span class="hljs-string">"Missing job callback"</span>, message: err}</pre></div></div>
             
         </li>
         
@@ -611,6 +658,43 @@ You can also pass only the <code>job</code> if it has an id property.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Find existing job.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        existing = lodash.find @jobs, {id: job.id}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Handle existing jobs.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> existing?
+            <span class="hljs-keyword">if</span> settings.cron.allowReplacing
+                clearTimeout existing.timer <span class="hljs-keyword">if</span> existing.timer?
+                existing.timer = <span class="hljs-literal">null</span>
+            <span class="hljs-keyword">else</span>
+                err = <span class="hljs-string">"Job <span class="hljs-subst">#{job.id}</span> already exists and 'allowReplacing' is false. Abort!"</span>
+                logger.error <span class="hljs-string">"Cron.add"</span>, err
+                <span class="hljs-keyword">throw</span> {error: <span class="hljs-string">"Job exists"</span>, message: err}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Set <code>startTime</code> and <code>endTime</code> if not set.</p>
 
@@ -622,11 +706,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-25">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Only create the timer if <code>autoStart</code> is not false, add to the jobs list.</p>
 
@@ -640,11 +724,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-26">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Remove and stop a current job. If job does not exist, a warning will be logged.
 @param {String} id The job ID.</p>
@@ -657,28 +741,28 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-27">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Job exists?</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> existing?
-            logger.debug <span class="hljs-string">"Cron.remove"</span>, <span class="hljs-string">"Job <span class="hljs-subst">#{id}</span> does not exist. Abort!"</span>
+            logger.warn <span class="hljs-string">"Cron.remove"</span>, <span class="hljs-string">"Job <span class="hljs-subst">#{id}</span> does not exist."</span>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-28">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Clear timer and remove job from array.</p>
 
@@ -690,11 +774,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-29">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <h2 id="helpers">HELPERS</h2>
 
@@ -703,11 +787,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-30">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               
             </div>
@@ -715,11 +799,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-31">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>Helper to get the timeout value (ms) to the next job callback.
 @private</p>
@@ -733,11 +817,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-32">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>If <code>schedule</code> is not an array, parse it as integer / seconds.</p>
 
@@ -752,11 +836,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-33">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Get the next and minimum times from <code>schedule</code>.</p>
 
@@ -769,11 +853,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-34">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>If no times were found for today then set for tomorrow, minimum time.</p>
 
@@ -786,11 +870,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-35">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Return the timeout.</p>
 
@@ -805,11 +889,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-36">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Helper to prepare and get a job callback function.
 @private</p>
@@ -828,11 +912,11 @@ You can also pass only the <code>job</code> if it has an id property.
         </li>
         
         
-        <li id="section-37">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>The parameters can be force set using “params”.
 If not present, pass the job itself to the callback instead.</p>
@@ -847,11 +931,11 @@ If not present, pass the job itself to the callback instead.</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>Job end time should be set on the callback, but if it wasn’t, we force set it here.</p>
 
@@ -864,11 +948,11 @@ If not present, pass the job itself to the callback instead.</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Only reset timer if once is not true.</p>
 
@@ -879,11 +963,11 @@ If not present, pass the job itself to the callback instead.</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Return generated callback.</p>
 
@@ -894,11 +978,11 @@ If not present, pass the job itself to the callback instead.</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>Helper to get a timer / interval based on the defined options.
 @private</p>
@@ -913,11 +997,11 @@ If not present, pass the job itself to the callback instead.</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>Get the correct schedule / timeout value.</p>
 
@@ -929,11 +1013,11 @@ If not present, pass the job itself to the callback instead.</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>Make sure timer is not running.</p>
 
@@ -944,11 +1028,11 @@ If not present, pass the job itself to the callback instead.</p>
         </li>
         
         
-        <li id="section-44">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>Set the timeout based on the defined schedule.</p>
 
@@ -961,11 +1045,11 @@ If not present, pass the job itself to the callback instead.</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <h2 id="singleton-implementation-">Singleton implementation.</h2>
 
@@ -974,11 +1058,11 @@ If not present, pass the job itself to the callback instead.</p>
         </li>
         
         
-        <li id="section-46">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               
             </div>

@@ -9,7 +9,6 @@ describe("Expresser (Main) Tests", function () {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var expresser = require("../index.coffee").newInstance();
-    var events = require("../lib/events.coffee");
 
     before(function () {
         expresser.settings.loadFromJson("settings.test.json");

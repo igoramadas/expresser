@@ -27,7 +27,7 @@ class Settings
         obj = new Settings()
         obj.load()
         return obj
-        
+
     crypto = require "crypto"
     events = require "./events.coffee"
     fs = require "fs"
@@ -56,7 +56,7 @@ class Settings
     # @return {Object} Returns the JSON representation of the loaded file.
     loadFromJson: (filename, extend) =>
         extend = false if not extend?
-        filename = utils.getFilePath filename
+        filename = utils.io.getFilePath filename
         settingsJson = null
 
         # Has json? Load it. Try using UTF8 first, if failed, use ASCII.
@@ -67,10 +67,10 @@ class Settings
             # Try parsing the file with UTF8 first, if fails, try ASCII.
             try
                 settingsJson = fs.readFileSync filename, encUtf8
-                settingsJson = utils.minifyJson settingsJson
+                settingsJson = utils.data.minifyJson settingsJson
             catch ex
                 settingsJson = fs.readFileSync filename, encAscii
-                settingsJson = utils.minifyJson settingsJson
+                settingsJson = utils.data.minifyJson settingsJson
 
             # Helper function to overwrite properties.
             xtend = (source, target) ->
@@ -223,7 +223,7 @@ class Settings
         logToConsole = @general.debug and @logger.console
 
         # Add / remove watcher for the @json file if it exists.
-        filename = utils.getFilePath "settings.json"
+        filename = utils.io.getFilePath "settings.json"
         if filename?
             if enable
                 fs.watchFile filename, {persistent: true}, (evt, filename) =>
@@ -234,7 +234,7 @@ class Settings
                 fs.unwatchFile filename, callback
 
         # Add / remove watcher for the settings.NODE_ENV.json file if it exists.
-        filename = utils.getFilePath "settings.#{@currentEnv.toString().toLowerCase()}.json"
+        filename = utils.io.getFilePath "settings.#{@currentEnv.toString().toLowerCase()}.json"
         if filename?
             if enable
                 fs.watchFile filename, {persistent: true}, (evt, filename) =>

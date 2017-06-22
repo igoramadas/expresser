@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,26 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.httpserver.html">
+                plugins/metrics/httpserver.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.index.html">
+                plugins/metrics/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.percentile.html">
+                plugins/metrics/percentile.coffee
               </a>
             
               
@@ -164,7 +199,7 @@ AFTER the main <code>settings.json</code> file.</p>
         obj = <span class="hljs-keyword">new</span> Settings()
         obj.load()
         <span class="hljs-keyword">return</span> obj
-        
+
     crypto = <span class="hljs-built_in">require</span> <span class="hljs-string">"crypto"</span>
     events = <span class="hljs-built_in">require</span> <span class="hljs-string">"./events.coffee"</span>
     fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
@@ -239,7 +274,7 @@ AFTER the main <code>settings.json</code> file.</p>
             
             <div class="content"><div class='highlight'><pre>    loadFromJson: <span class="hljs-function"><span class="hljs-params">(filename, extend)</span> =&gt;</span>
         extend = <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> extend?
-        filename = utils.getFilePath filename
+        filename = utils.io.getFilePath filename
         settingsJson = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
@@ -274,10 +309,10 @@ AFTER the main <code>settings.json</code> file.</p>
             
             <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">try</span>
                 settingsJson = fs.readFileSync filename, encUtf8
-                settingsJson = utils.minifyJson settingsJson
+                settingsJson = utils.data.minifyJson settingsJson
             <span class="hljs-keyword">catch</span> ex
                 settingsJson = fs.readFileSync filename, encAscii
-                settingsJson = utils.minifyJson settingsJson</pre></div></div>
+                settingsJson = utils.data.minifyJson settingsJson</pre></div></div>
             
         </li>
         
@@ -726,7 +761,7 @@ The <code>callback</code> is optional in case you want to notify another module 
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        filename = utils.getFilePath <span class="hljs-string">"settings.json"</span>
+            <div class="content"><div class='highlight'><pre>        filename = utils.io.getFilePath <span class="hljs-string">"settings.json"</span>
         <span class="hljs-keyword">if</span> filename?
             <span class="hljs-keyword">if</span> enable
                 fs.watchFile filename, {persistent: <span class="hljs-literal">true</span>}, <span class="hljs-function"><span class="hljs-params">(evt, filename)</span> =&gt;</span>
@@ -749,7 +784,7 @@ The <code>callback</code> is optional in case you want to notify another module 
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        filename = utils.getFilePath <span class="hljs-string">"settings.<span class="hljs-subst">#{@currentEnv.toString().toLowerCase()}</span>.json"</span>
+            <div class="content"><div class='highlight'><pre>        filename = utils.io.getFilePath <span class="hljs-string">"settings.<span class="hljs-subst">#{@currentEnv.toString().toLowerCase()}</span>.json"</span>
         <span class="hljs-keyword">if</span> filename?
             <span class="hljs-keyword">if</span> enable
                 fs.watchFile filename, {persistent: <span class="hljs-literal">true</span>}, <span class="hljs-function"><span class="hljs-params">(evt, filename)</span> =&gt;</span>

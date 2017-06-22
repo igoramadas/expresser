@@ -11,6 +11,8 @@
 # -->
 class Mailer
 
+    priority: 3
+
     events = null
     fs = require "fs"
     lodash = null
@@ -21,19 +23,18 @@ class Mailer
     settings = null
     utils = null
 
+    # Templates manager.
+    templates: require "./templates.coffee"
+
     # SMTP objects will be instantiated on `init`.
     smtp: null
     smtp2: null
-
-    # Templates cache to avoid disk reads.
-    templateCache = {}
 
     # INIT
     # --------------------------------------------------------------------------
 
     # Init the Mailer module and create the SMTP objects.
-    # @param {Object} options Mailer init options.
-    init: (options) =>
+    init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -41,27 +42,28 @@ class Mailer
         settings = @expresser.settings
         utils = @expresser.utils
 
-        logger.debug "Mailer.init", options
+        logger.debug "Mailer.init"
         events.emit "Mailer.before.init"
 
-        options = {} if not options?
-        options = lodash.defaultsDeep options, settings.mailer
+        # Init the templates helper.
+        @templates.init this
 
         # Define default primary SMTP.
-        if options.smtp.service? and options.smtp.service isnt ""
-            @setSmtp options.smtp, false
-        else if options.smtp.host? and options.smtp.host isnt "" and options.smtp.port > 0
-            @setSmtp options.smtp, false
+        if settings.mailer.smtp.service? and settings.mailer.smtp.service isnt ""
+            @setSmtp settings.mailer.smtp, false
+        else if settings.mailer.smtp.host? and settings.mailer.smtp.host isnt "" and settings.mailer.smtp.port > 0
+            @setSmtp settings.mailer.smtp, false
 
         # Define default secondary SMTP.
-        if options.smtp2.service? and options.smtp2.service isnt ""
-            @setSmtp options.smtp2, true
-        else if options.smtp2.host? and options.smtp2.host isnt "" and options.smtp2.port > 0
-            @setSmtp options.smtp2, true
+        if settings.mailer.smtp2.service? and settings.mailer.smtp2.service isnt ""
+            @setSmtp settings.mailer.smtp2, true
+        else if settings.mailer.smtp2.host? and settings.mailer.smtp2.host isnt "" and settings.mailer.smtp2.port > 0
+            @setSmtp settings.mailer.smtp2, true
 
         @setEvents()
 
-        events.emit "Mailer.on.init", options
+        events.emit "Mailer.on.init"
+        delete @init
 
     # Bind event listeners.
     setEvents: =>
@@ -80,6 +82,7 @@ class Mailer
     # @param {Method} callback Callback (err, result) when message is sent or fails.
     send: (options, callback) =>
         logger.debug "Mailer.send", options
+        return logger.notEnabled "Mailer", "send" if not settings.mailer.enabled
 
         # Get passed SMTP servers or the default ones.
         smtp = options.smtp or @smtp
@@ -115,21 +118,20 @@ class Mailer
 
         # Load template if a `template` was passed.
         if options.template? and options.template isnt ""
-            template = @getTemplate options.template
-            html = @parseTemplate template, {contents: html}
+            template = @templates.get options.template
+            html = @templates.parse template, {contents: html}
 
             # Parse template keywords if a `keywords` was passed.
             if lodash.isObject options.keywords
-                html = @parseTemplate html, options.keywords
+                html = @templates.parse html, options.keywords
 
         # Parse final template and set it on the `options`.
-        html = @parseTemplate html, {to: toName, appTitle: settings.app.title, appUrl: settings.app.url}
+        html = @templates.parse html, {to: toName, appTitle: settings.app.title, appUrl: settings.app.url}
         options.html = html
 
         # Check if `doNotSend` flag is set, and if so, do not send anything.
         if settings.mailer.doNotSend
-            callback null, "The 'doNotSend' setting is true, will not send anything!" if callback?
-            return
+            return callback null, "The 'doNotSend' setting is true, will not send anything!" if callback?
 
         # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.
         smtpSend smtp, options, (err, result) =>
@@ -140,62 +142,6 @@ class Mailer
                     callback err, result if callback?
             else
                 callback err, result if callback?
-
-    # TEMPLATES
-    # --------------------------------------------------------------------------
-
-    # Load and return the specified template. Get from the cache or from the disk
-    # if it wasn't loaded yet. Templates are stored inside the `/emailtemplates`
-    # folder by default and should have a .html extension. The base template,
-    # which is always loaded first, should be called base.html by default.
-    # The contents will be inserted on the {contents} tag.
-    # @param {String} name The template name, without .html.
-    # @return {String} The template HTML.
-    getTemplate: (name) =>
-        name = name.toString()
-        name = name.replace(".html", "") if name.indexOf(".html")
-
-        cached = templateCache[name]
-
-        # Is it already cached? If so do not hit the disk.
-        if cached? and cached.expires > moment()
-            logger.debug "Mailer.getTemplate", name, "Loaded from cache."
-            return templateCache[name].template
-        else
-            logger.debug "Mailer.getTemplate", name
-
-        # Set file system reading options.
-        readOptions = {encoding: settings.general.encoding}
-        baseFile = utils.getFilePath path.join(settings.mailer.templatesPath, settings.mailer.baseTemplateFile)
-        templateFile = utils.getFilePath path.join(settings.mailer.templatesPath, "#{name}.html")
-
-        # Read base and `name` template and merge them together.
-        base = fs.readFileSync baseFile, readOptions
-        template = fs.readFileSync templateFile, readOptions
-        result = @parseTemplate base, {contents: template}
-
-        # Save to cache.
-        templateCache[name] = {}
-        templateCache[name].template = result
-        templateCache[name].expires = moment().add settings.general.ioCacheTimeout, "s"
-
-        return result
-
-    # Parse the specified template to replace keywords. The `keywords` is a set of key-values
-    # to be replaced. For example if keywords is `{id: 1, friendlyUrl: "abc"}` then the tags
-    # `{id}` and `{friendlyUrl}` will be replaced with the values 1 and abc.
-    # @param {String} template The template (its value, not its name!) to be parsed.
-    # @param {Object} keywords Object with keys to be replaced with its values.
-    # @return {String} The parsed template, keywords replaced with values.
-    parseTemplate: (template, keywords) =>
-        logger.debug "Mailer.parseTemplate", template, keywords
-
-        template = template.toString()
-
-        for key, value of keywords
-            template = template.replace new RegExp("\\{#{key}\\}", "gi"), value
-
-        return template
 
     # SMTP HELPER METHODS
     # --------------------------------------------------------------------------
@@ -215,6 +161,7 @@ class Mailer
     # @return {Object} A Nodemailer SMTP transport object, or null if a problem was found.
     createSmtp: (options) ->
         logger.debug "Mailer.createSmtp", options
+        return logger.notEnabled "Mailer", "createSmtp" if not settings.mailer.enabled
 
         options.debug = settings.general.debug if not options.debug?
         options.secureConnection = options.secure if not options.secureConnection?
@@ -243,15 +190,6 @@ class Mailer
             @smtp = @createSmtp options
         else
             @smtp2 = @createSmtp options
-
-    # CACHE METHODS
-    # --------------------------------------------------------------------------
-
-    # Force clear the templates cache.
-    clearCache: =>
-        count = Object.keys(templateCache).length
-        templateCache = {}
-        logger.info "Mailer.clearCache", "Cleared #{count} templates."
 
 # Singleton implementation
 # --------------------------------------------------------------------------

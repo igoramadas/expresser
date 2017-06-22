@@ -1,22 +1,42 @@
 # Expresser
 
 A Node.js platform with web, database, email, logging and other special features, built on top of Express.
-Official project page: http://github.com/igoramadas/expresser
 
 [![Build Status](https://travis-ci.org/igoramadas/expresser.png?branch=master)](https://travis-ci.org/igoramadas/expresser)
 [![Coverage Status](https://coveralls.io/repos/github/igoramadas/expresser/badge.svg?branch=master)](https://coveralls.io/github/igoramadas/expresser?branch=master)
 
 ### Why Expresser?
 
-Even if Express itself does a good job as a web application framework, it can still be considered low level by some.
-So the idea of Expresser is to aggregate common modules and utilities into a single package, to make it even easier to
-start your Node.js web app.
+Even if Express itself does a good job as a web application framework, it can still be considered quite "low level"
+by some. So the idea of Expresser is to aggregate common modules and utilities into a single package, to make it
+even easier to start and streamline your Node.js application. Developed with Coffee-Script.
 
-### How to configure
+### Settings
 
 Settings for the app and all modules are loaded by the `settings.coffee` module. If you wish to customize any of
 these settings, please create a `settings.json` file on the root of your app folder with the specific keys
 and values. For more info please head to https://github.com/igoramadas/expresser/blob/master/docs/settings.md.
+
+### Example app
+
+    expresser = require "expresser"
+    logger = expresser.logger
+    metrics = require "expresser-metrics"
+    settings = expresser.settings
+    app = expresser.app
+
+    # Init the app!
+    expresser.init()
+    logger.info "Server started!"
+
+    # Renders the index.pug view from /views folder
+    app.server.get "/", (req, res) -> app.renderView req, res, "index"
+
+    # Renders output from the Metrics plugin.
+    app.server.get "/metrics", (req, res) -> app.renderJson req, res, metrics.output()
+
+It seems pretty simple, right? Most configuration is done on the `settings.json` file. Paths, default views,
+server port, etc etc...
 
 # Main modules
 
@@ -31,7 +51,7 @@ Now to the main modules...
 *   https://github.com/igoramadas/expresser/blob/master/docs/events.md
 
 ### Database
-*   Supports reading, updating and deleting documents on general databases.
+*   Supports reading, updating and deleting documents on databases.
 *   https://github.com/igoramadas/expresser/blob/master/docs/database.md
 
 ### Logger
@@ -49,6 +69,10 @@ Now to the main modules...
 # Plugins
 
 And the official plugins...
+
+### Cloud Settings
+*   Automatically configuration of modules running on cloud providers.
+*   https://github.com/igoramadas/expresser/tree/master/plugins/cloud-settings
 
 ### Cron
 *   Configurable cron for scheduled tasks using JSON files.
@@ -86,9 +110,9 @@ And the official plugins...
 *   Automatic switching to a failover SMTP server in case the main one fails to send.
 *   https://github.com/igoramadas/expresser/tree/master/plugins/mailer
 
-### PaaS
-*   Automatically configures other modules while running on PaaS providers.
-*   https://github.com/igoramadas/expresser/tree/master/plugins/paas
+### Metrics
+*   Generate and report metrics for your application.
+*   https://github.com/igoramadas/expresser/tree/master/plugins/metrics
 
 ### Sockets
 *   Wrapper for the Socket.IO module.

@@ -25,6 +25,8 @@
 # -->
 class Cron
 
+    priority: 5
+
     events = null
     fs = require "fs"
     lodash = null
@@ -40,10 +42,9 @@ class Cron
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the cron manager. If `loadOnInit` setting is true, the `cron.json
+    # Init the cron manager. If `loadOnInit` setting is true, the `cron.json`
     # file will be parsed and loaded straight away (if there's one).
-    # @param {Object} options Cron init options.
-    init: (options) =>
+    init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -51,18 +52,19 @@ class Cron
         settings = @expresser.settings
         utils = @expresser.utils
 
-        logger.debug "Cron.init", options
-
-        options = {} if not options?
-        options = lodash.defaultsDeep options, settings.cron
+        logger.debug "Cron.init"
+        events.emit "Cron.before.init"
 
         @setEvents()
-        @load true, options if options.loadOnInit
 
-        events.emit "Cron.on.init", options
+        @load settings.cron.defaultFilename if settings.cron.loadOnInit
+
+        events.emit "Cron.on.init"
+        delete @init
 
     # Bind events.
     setEvents: =>
+        events.on "Cron.load", @load
         events.on "Cron.start", @start
         events.on "Cron.stop", @stop
         events.on "Cron.add", @add
@@ -72,28 +74,27 @@ class Cron
     # If `autoStart` is true, it will automatically call the `start` method after loading.
     # @param {String} filename Path to the JSON file containing jobs, optional, default is "cron.json".
     # @param {Object} options Options to be passed when loading cron jobs.
+    # @option options {String} filename Name of file to be loaded (in case filename was not set on first parameter)
     # @option options {String} basePath Sets the base path of modules when requiring them.
-    # @option options {Boolean} autoStart If true, call "start" after loading.
+    # @option options {Boolean} autoStart If true, call `start` after loading.
     load: (filename, options) =>
         logger.debug "Cron.load", filename, options
+        return logger.notEnabled "Cron", "load" if not settings.cron.enabled
 
-        if not settings.cron.enabled
-            return logger.warn "Cron.load", filename, "The cron module is not enabled (settings.cron.enabled = false). Abort!"
+        # DEPRECATED!
+        if lodash.isBoolean filename
+            err = logger.deprecated "Cron.load(boolean)", "First parameter must be the filename of the cron file to be loaded, or options object."
+            throw err
 
         # Set default options.
-        options = {} if not options?
-        options = lodash.defaults options, {autoStart: settings.cron.autoStart, basePath: ""}
+        options = filename if lodash.isObject filename
+        options = lodash.defaults options, {autoStart: settings.cron.autoStart, basePath: settings.cron.basePath}
 
-        if lodash.isBoolean filename
-            filename = false
-            options.autoStart = filename
-
-        if not filename? or filename is false or filename is ""
-            filename = "cron.json"
-            doNotWarn = true
+        # Make sure filename is set.
+        filename = options.filename if not filename?
 
         # Get full path to the passed json file.
-        filepath = utils.getFilePath filename
+        filepath = utils.io.getFilePath filename
 
         # Found the cron json file? Read it.
         if filepath?
@@ -102,11 +103,11 @@ class Cron
 
             try
                 cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
-                cronJson = utils.minifyJson cronJson
+                cronJson = utils.data.minifyJson cronJson
             catch ex
-                err = new Error "Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}"
+                err = "Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}"
                 logger.error "Cron.load", err
-                throw err
+                throw {error: "Invalid JSON", message: err}
 
             # Iterate jobs, but do not add if job's `enabled` is false.
             for key, data of cronJson
@@ -126,9 +127,9 @@ class Cron
                             job.timer = null
                             @add job
                         else
-                            logger.debug "Cron.load", filename, key, d.callback, "Job 'enabled' is false. Skip!"
+                            logger.info "Cron.load", filename, key, d.callback, "Job 'enabled' is false. Skip!"
                 else
-                    logger.debug "Cron.load", filename, "Module has 'cronDisabled' set. Skip!"
+                    logger.info "Cron.load", filename, "Module has 'cronDisabled' set. Skip!"
 
             # Start all jobs automatically if `autoStart` is true.
             if options.autoStart
@@ -138,8 +139,10 @@ class Cron
                     @start()
 
             logger.info "Cron.load", "#{basename} loaded.", options
-        else if not doNotWarn
-            logger.warn "Cron.load", "#{basename} not found.", options
+        else
+            err = "Cron file #{filename} not found."
+            logger.error "Cron.load", err
+            throw {error: "Not found", message: "Could not load cron file #{filename}."}
 
     # METHODS
     # -------------------------------------------------------------------------
@@ -149,12 +152,13 @@ class Cron
     # the module "email", use start({module: "email"}).
     # @param {String} idOrFilter The job id or filter, optional (if not specified, start everything).
     start: (idOrFilter) =>
-        if not settings.cron.enabled
-            return logger.warn "Cron.start", idOrFilter, "The cron module is not enabled (settings.cron.enabled = false). Abort!"
+        logger.debug "Cron.start", idOrFilter
+        return logger.notEnabled "Cron", "start" if not settings.cron.enabled
 
         if not idOrFilter?
             logger.info "Cron.start", "All jobs"
             arr = @jobs
+
         if lodash.isString idOrFilter or lodash.isNumber idOrFilter
             logger.info "Cron.start", idOrFilter
             arr = lodash.find @jobs, {id: idOrFilter.toString()}
@@ -165,7 +169,8 @@ class Cron
         if not arr? or arr.length < 1
             filterString = idOrFilter
             filterString = JSON.stringify filterString, null, 0 if lodash.isObject filterString
-            logger.debug "Cron.start", "No jobs matching #{filterString}."
+            logger.warn "Cron.start", "No jobs matching #{filterString}."
+            return {notFound: true}
         else
             for job in arr
                 clearTimeout job.timer if job.timer?
@@ -176,9 +181,12 @@ class Cron
     # the module "mymodule", use stop({module: "mymodule"}).
     # @param {String} idOrFilter The job id or filter, optional (if not specified, stop everything).
     stop: (idOrFilter) =>
+        logger.debug "Cron.stop", idOrFilter
+
         if not idOrFilter?
             logger.info "Cron.stop", "All jobs"
             arr = @jobs
+
         if lodash.isString idOrFilter or lodash.isNumber idOrFilter
             logger.info "Cron.stop", idOrFilter
             arr = lodash.find @jobs, {id: idOrFilter.toString()}
@@ -189,13 +197,14 @@ class Cron
         if not arr? or arr.length < 1
             filterString = idOrFilter
             filterString = JSON.stringify filterString, null, 0 if lodash.isObject filterString
-            logger.debug "Cron.stop", "No jobs matching #{idOrFilter}."
+            logger.warn "Cron.stop", "No jobs matching #{filterString}."
+            return {notFound: true}
         else
             for job in arr
                 clearTimeout job.timer if job.timer?
                 job.timer = null
 
-    # Add a scheduled job to the cron, passing an `id` and `job`.
+    # Add a scheduled job to the cron, passing a `job`.
     # You can also pass only the `job` if it has an id property.
     # @param {String} id The job ID, optional, overrides job.id in case it has one.
     # @param {Object} job The job object.
@@ -206,21 +215,19 @@ class Cron
     # @return {Object} Returns {error, job}, where job is the job object and error is the error message (if any).
     add: (job) =>
         logger.debug "Cron.add", job
-
-        if not settings.cron.enabled
-            return logger.warn "Cron.add", job.id, "The cron module is not enabled (settings.cron.enabled = false). Abort!"
+        return logger.notEnabled "Cron", "add" if not settings.cron.enabled
 
         # Throw error if no `id` was provided.
         if not job.id? or job.id is ""
-            err = Error "Job must have an ID. Please set the job.id property."
+            err = "Job must have an ID. Please set the job.id property."
             logger.error "Cron.add", err
-            throw err
+            throw {error: "Missing job ID", message: err}
 
         # Throw error if job callback is not a valid function.
         if not lodash.isFunction job.callback
-            err = new Error "Job #{job.id} callback is not a valid, please set job.callback as a valid Function."
+            err = "Job #{job.id} callback is not a valid, please set job.callback to a valid Function."
             logger.error "Cron.add", err
-            throw err
+            throw {error: "Missing job callback", message: err}
 
         # Find existing job.
         existing = lodash.find @jobs, {id: job.id}
@@ -231,9 +238,9 @@ class Cron
                 clearTimeout existing.timer if existing.timer?
                 existing.timer = null
             else
-                errorMsg = "Job #{job.id} already exists and 'allowReplacing' is false. Abort!"
-                logger.error "Cron.add", errorMsg
-                return {error: errorMsg}
+                err = "Job #{job.id} already exists and 'allowReplacing' is false. Abort!"
+                logger.error "Cron.add", err
+                throw {error: "Job exists", message: err}
 
         # Set `startTime` and `endTime` if not set.
         job.startTime = moment 0 if not job.startTime?
@@ -252,7 +259,7 @@ class Cron
 
         # Job exists?
         if not existing?
-            logger.debug "Cron.remove", "Job #{id} does not exist. Abort!"
+            logger.warn "Cron.remove", "Job #{id} does not exist."
             return false
 
         # Clear timer and remove job from array.

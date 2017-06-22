@@ -45,7 +45,7 @@ describe("Utils Tests", function () {
             }
         };
 
-        utils.mkdirRecursive(recursiveTarget);
+        utils.io.mkdirRecursive(recursiveTarget);
 
         setTimeout(checkDir, 1000);
     });
@@ -60,13 +60,43 @@ describe("Utils Tests", function () {
         }
     });
 
+    it("Check IP against multiple ranges", function (done) {
+        var ip = "192.168.1.1";
+        var validIP = "192.168.1.1";
+        var validRange = "192.168.1.0/24";
+        var validRangeArray = ["192.168.1.0/24", "192.168.0.0/16"];
+        var invalidRange = "10.1.1.0/16";
+
+        if (!utils.network.ipInRange(ip, validIP)) {
+            done("IP " + ip + " should be valid against " + validIP + ".")
+        } else if (!utils.network.ipInRange(ip, validRange)) {
+            done("IP " + ip + " should be valid against " + validRange + ".")
+        } else if (!utils.network.ipInRange(ip, validRangeArray)) {
+            done("IP " + ip + " should be valid against " + validRangeArray.join(", ") + ".")
+        } else if (!utils.network.ipInRange(ip, validIP)) {
+            done("IP " + ip + " should be invalid against " + invalidRange + ".")
+        } else {
+            done();
+        }
+    });
+
+    it("Check IP against multiple ranges", function (done) {
+        var serverInfo = utils.system.getInfo();
+
+        if (serverInfo.cpuCores > 0) {
+            done();
+        } else {
+            done("Could not get CPU core count from server info result.");
+        }
+    });
+
     it("Generate unique IDs", function (done) {
         var ids = [];
         var max = 500;
         var i;
 
         for (i = 0; i < max; i++) {
-            ids.push(utils.uuid());
+            ids.push(utils.data.uuid());
         }
 
         var noduplicates = lodash.uniq(ids);

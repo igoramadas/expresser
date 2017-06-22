@@ -50,13 +50,13 @@ describe("Mailer Tests", function () {
     });
 
     it("Load and process an email template", function (done) {
-        var template = mailer.getTemplate("test");
+        var template = mailer.templates.get("test");
         var keywords = {
             name: "Joe Lee",
             email: "joelee@somemail.com"
         };
 
-        var result = mailer.parseTemplate(template, keywords);
+        var result = mailer.templates.parse(template, keywords);
 
         if (result.indexOf("test template") > 0 && result.indexOf(keywords.name) > 0 && result.indexOf(keywords.email) > 0) {
             done()
@@ -66,21 +66,26 @@ describe("Mailer Tests", function () {
     });
 
     it("Clears the template cache", function () {
-        mailer.clearCache();
+        mailer.templates.clearCache();
     });
 
     if (hasEnv) {
-        it("Sends a test email using Mailgun (SMTP)", function (done) {
+        it("Sends a template test email using Mailgun (SMTP)", function (done) {
             this.timeout(12000);
 
             var smtp = mailer.createSmtp(settings.mailer.smtp);
 
             var msgOptions = {
+                smtp: smtp,
                 body: "SMTP testing: app {appTitle}, to {to}, using Mailgun.",
                 subject: "Test mail",
                 to: "Expresser <expresser@mailinator.com>",
                 from: "devv@devv.com",
-                smtp: smtp
+                template: "test",
+                keywords: {
+                    name: "Joe Lee",
+                    email: "joelee@somemail.com"
+                }
             };
 
             var callback = function (err) {
@@ -100,11 +105,11 @@ describe("Mailer Tests", function () {
             var smtp = mailer.createSmtp(settings.mailer.smtp2);
 
             var msgOptions = {
+                smtp: smtp,
                 body: "SMTP2 testing: app {appTitle}, to {to}, using Debug Mail.",
                 subject: "Test mail",
                 to: ["expresser@mailinator.com", "expresser-mailer@mailinator.com"],
-                from: "devv@devv.com",
-                smtp: smtp
+                from: "devv@devv.com"
             };
 
             var callback = function (err) {
@@ -112,6 +117,32 @@ describe("Mailer Tests", function () {
                     done();
                 } else {
                     done(err);
+                }
+            };
+
+            mailer.send(msgOptions, callback);
+        });
+
+        it("Dummy send an email (doNotSend option is true)", function (done) {
+            settings.mailer.doNotSend = true;
+
+            var smtp = mailer.createSmtp(settings.mailer.smtp2);
+
+            var msgOptions = {
+                smtp: smtp,
+                body: "Dummy sending.",
+                subject: "Test mail",
+                to: ["expresser@mailinator.com"],
+                from: "devv@devv.com"
+            };
+
+            var callback = function (err, result) {
+                settings.mailer.doNotSend = false;
+
+                if (!err && result.indexOf("doNotSend") > 0) {
+                    done();
+                } else {
+                    done("Result of mailer.send should return a message having 'doNotSend'.");
                 }
             };
 

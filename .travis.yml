@@ -1,9 +1,9 @@
 sudo: false
 language: node_js
 node_js:
-  - "7.3"
-  - "6.9"
-  - "4.6"
+  - "8.1"
+  - "7.10"
+  - "6.11"
 services:
   - mongodb
 before_script:
@@ -14,4 +14,12 @@ before_script:
   - npm install socket.io
   - npm install tingodb
 after_script:
-- NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+  - NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8

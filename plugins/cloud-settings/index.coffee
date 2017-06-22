@@ -1,32 +1,38 @@
-# EXPRESSER SOCKETS
+# EXPRESSER CLOUD SETTINGS
 # --------------------------------------------------------------------------
-# Auto configure the Expresser app and its modules to work on known PaaS 
+# Auto configure the Expresser app and its modules to work on known cloud
 # providers, mainly by checking cloud environmental variables.
 # <!--
-# @see settings.paas
+# @see settings.cloud
 # -->
-class PaaS
+class CloudSettings
+
+    priority: 1
 
     events = null
     lodash = null
     logger = null
     settings = null
-
     env = null
 
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the PaaS plugin.
-    init: (options) =>
+    # Init the Cloud Settings plugin.
+    init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
-
         env = process.env
 
+        logger.debug "CloudSettings.init"
+        events.emit "CloudSettings.before.init"
+
         @setEvents()
+
+        events.emit "CloudSettings.on.init"
+        delete @init
 
     # Bind events.
     setEvents: =>
@@ -39,14 +45,14 @@ class PaaS
     # --------------------------------------------------------------------------
 
     # Update app settings.
-    appSettings: =>        
+    appSettings: =>
         ip = env.OPENSHIFT_NODEJS_IP or env.IP
         port = env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
         settings.app.ip = ip if ip? and ip isnt ""
         settings.app.port = port if port? and port isnt ""
 
         if settings.logger.console
-            console.log "PaaS.appSettings", "App settings were auto updated."
+            console.log "CloudSettings.appSettings", "App settings were auto updated."
 
     # Update database settings.
     databaseSettings: =>
@@ -71,7 +77,7 @@ class PaaS
         settings.database.mongodb.connString = mongoHq if mongoHq? and mongoHq isnt ""
 
         if settings.logger.console
-            console.log "PaaS.databaseSettings", "Database settings were auto updated."
+            console.log "CloudSettings.databaseSettings", "Database settings were auto updated."
 
     # Update logger settings.
     loggerSettings: =>
@@ -87,7 +93,7 @@ class PaaS
         settings.logger.loggly.subdomain = logglySubdomain if logglySubdomain? and logglySubdomain isnt ""
 
         if settings.logger.console
-            console.log "PaaS.loggerSettings", "Logger settings were auto updated."
+            console.log "CloudSettings.loggerSettings", "Logger settings were auto updated."
 
     # Update mailer settings.
     mailerSettings: =>
@@ -131,12 +137,12 @@ class PaaS
                 settings.mailer.smtp.password = smtpPassword
 
         if settings.logger.console
-            console.log "PaaS.mailerSettings", "Mailer settings were auto updated."
+            console.log "CloudSettings.mailerSettings", "Mailer settings were auto updated."
 
 # Singleton implementation
 # --------------------------------------------------------------------------
-PaaS.getInstance = ->
-    @instance = new PaaS() if not @instance?
+CloudSettings.getInstance = ->
+    @instance = new CloudSettings() if not @instance?
     return @instance
 
-module.exports = exports = PaaS.getInstance()
+module.exports = exports = CloudSettings.getInstance()

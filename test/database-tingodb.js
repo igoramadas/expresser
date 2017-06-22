@@ -20,6 +20,7 @@ describe("Database TingoDB Tests", function () {
         try {
             if (fs.existsSync(__dirname + "/database/test.tingo")) {
                 fs.unlinkSync(__dirname + "/database/test.tingo");
+                fs.rmdirSync(__dirname + "/database");
             }
         } catch (ex) {
             console.error("Could not delete TingoDB test database files.", ex);
@@ -95,22 +96,22 @@ describe("Database TingoDB Tests", function () {
     });
 
     it("Get record added on the previous step, by ID", function (done) {
-            var callback = function (err, result) {
-                if (err) {
-                    done(err);
-                } else if (!result) {
-                    done("No record returned for ID " + recordId);
-                } else {
-                    done();
-                }
-            };
+        var callback = function (err, result) {
+            if (err) {
+                done(err);
+            } else if (!result) {
+                done("No record returned for ID " + recordId);
+            } else {
+                done();
+            }
+        };
 
-            var filter = {
-                _id: recordId
-            };
+        var filter = {
+            _id: recordId
+        };
 
-            dbTingo.get("test", filter, callback);
-        });
+        dbTingo.get("test", filter, callback);
+    });
 
     it("Get all records from database", function (done) {
         var callback = function (err, result) {
@@ -133,7 +134,9 @@ describe("Database TingoDB Tests", function () {
             }
         };
 
-        dbTingo.get("test", {limit: 3}, callback);
+        dbTingo.get("test", {
+            limit: 3
+        }, callback);
     });
 
     it("Updated record on database", function (done) {
@@ -144,7 +147,7 @@ describe("Database TingoDB Tests", function () {
                 done();
             }
         };
-        
+
         var options = {
             filter: {
                 testId: testTimestamp
@@ -203,7 +206,9 @@ describe("Database TingoDB Tests", function () {
 
         if (!err) {
             try {
-                dbTingo.get("test", {something: true});
+                dbTingo.get("test", {
+                    something: true
+                });
                 err = "DatabaseTingoDb.get(invalid connection) should throw an error, but did not.";
             } catch (ex) {}
         }

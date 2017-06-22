@@ -10,22 +10,12 @@
     "app": {
         // Enable HTTP compression?
         "compressionEnabled": false,
-        // Enable cookies on Express?
-        "cookieEnabled": true,
-        // Secret key used for cookie encryption.
-        "cookieSecret": "ExpresserCookie",
         // Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
-        // This value might be overriden by PaaS environmental values.
         "ip": null,
-        // Node.js server port. Please note that this value might be overriden by PaaS
-        // environmental values (like in AppFog or OpenShift).
+        // Node.js server port.
         "port": 8080,
-        // Enable session store? This will use the cookieSession implementation of Express.
-        "sessionEnabled": true,
-        // Secret key used for session encryption.
-        "sessionSecret": "ExpresserSession",
-        // The view engine used by Express. Default is jade.
-        "viewEngine": "jade",
+        // The view engine used by Express. Default is pug.
+        "viewEngine": "pug",
         // Body parser module options.
         "bodyParser": {
             // Extended URL encoded?
@@ -43,6 +33,22 @@
             "compress": true,
             "gzip": true
         },
+        // Cookie options.
+        "cookie": {
+            // Enable cookies on Express?
+            "enabled": true,
+            // Secret key used for cookie encryption.
+            "secret": "ExpresserCookie"
+        },
+        // Session options.
+        "session": {
+            // Enable session store? This will use the cookieSession implementation of Express.
+            "enabled": true,
+            // Max age of session cookies, in seconds, default is 20min.
+            "maxAge": 1200,
+            // Secret key used for session encryption.
+            "secret": "ExpresserSession"
+        },
         // SSL options to bind server to HTTPS.
         "ssl": {
             // Is SSL enabled? Please note that you must specify the path to the
@@ -57,6 +63,10 @@
             // or null to disable this feature.
             "redirectorPort": 0
         },
+        // Path to the public folder used by Express.
+        "publicPath": "./public/",
+        // Path to the views directory.
+        "viewPath": "./views/",
         // The app title. This must be set so Expresser can properly identify your app.
         "title": "Expresser",
         // The app's base URL, including http://.
@@ -88,16 +98,12 @@
     // GENERAL
     // -------------------------------------------------------------------------
     "general": {
-        // DEPRECATED (appTitle) Use settings.app.title instead.
-        "appTitle": null,
-        // DEPRECATED (appUrl) Use settings.app.url instead.
-        "appUrl": null,
         // Enable or disable debugging messages. Should be false on production environments.
         "debug": false,
         // Default encoding to be used on IO and web requests.
         "encoding": "utf8",
-        // How long (seconds) should files read from disk (email templates for example) stay in cache?
-        "ioCacheTimeout": 60
+        // How long (seconds) should files read from disk stay in cache?
+        "ioCacheTimeout": 30
     },
     // LOGGER
     // -------------------------------------------------------------------------
@@ -118,7 +124,7 @@
         "maxDeepLevel": 8,
         // List of properties to be obfuscated. This is useful to mask out passwords, secret keys, etc.
         // Values separated by comma.
-        "obfuscateFields": "Password,password,passwordHash,passwordEncrypted,accessToken,refreshToken,Token,token,Auth,auth",
+        "obfuscateFields": "Password,password,passwordHash,passwordEncrypted,accessToken,access_token,refreshToken,refresh_token,Token,token,Auth,auth",
         // List of properties to be removed. This is used to take out specific data from logs (functions for example).
         // Values separated by comma.
         "removeFields": null,
@@ -134,25 +140,14 @@
         // Colours and styles of logs sent to the console (using the Chalk module).
         // For more info see https://github.com/chalk/chalk
         "styles": {
+            "debug": ["cyan"],
             "info": ["white"],
             "warn": ["yellow"],
-            "error": ["red"],
+            "error": ["red", "bold"],
             "critical": ["red", "bold"]
         },
         // Set `uncaughtException` to true to bind the logger to the `uncaughtException`
         // event on the process and log all uncaught expcetions as errors.
         "uncaughtException": true
-    },
-    // PATH
-    // -------------------------------------------------------------------------
-    "path": {
-        // Path to the public folder used by Express.
-        "publicDir": "./public/",
-        // DEPRECATED!!! Please use settings.app.ssl.keyFile!
-        "sslKeyFile": null,
-        // DEPRECATED!!! Please use settings.app.ssl.certFile!
-        "sslCertFile": null,
-        // Path where the .pug views are stored.
-        "viewsDir": "./views/"
     }
 }

@@ -7,6 +7,8 @@
 # -->
 class LoggerFile
 
+    priority: 3
+
     events = null
     fs = require "fs"
     lodash = null
@@ -20,7 +22,7 @@ class LoggerFile
 
     # Init the File module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
-    # @param {Object} options File init options.
+    # @return {Object} Returns the File transport created (only if default settings are set).
     init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -30,17 +32,24 @@ class LoggerFile
 
         logger.drivers.file = this
 
+        logger.debug "LoggerFile.init"
+        events.emit "LoggerFile.before.init"
+
         # Auto register as "file" if a default path is defined on the settings.
         if settings.logger.file.enabled and settings.logger.file.path?
             result = logger.register "file", "file", settings.logger.file
 
         events.emit "LoggerFile.on.init"
-        
+        delete @init
+
         return result
 
     # Get the file transport object.
     # @param {Object} options File logging options.
     getTransport: (options) =>
+        logger.debug "LoggerFile.getTransport", options
+        return logger.notEnabled "LoggerFile", "getTransport" if not settings.logger.file.enabled
+
         if not options?.path? or options.path is ""
             err = new Error "The options.path is mandatory! Please specify a valid path to the logs folder."
             logger.error "LoggerFile.getTransport", err, options
@@ -74,7 +83,7 @@ class LoggerFile
     # LOG METHODS
     # --------------------------------------------------------------------------
 
-    # Log locally. The path is defined on `Settings.Path.logsDir`.
+    # Log locally. The path is defined on `settings.logger.file.path`.
     # @param {String} logType The log type (info, warn, error, debug, etc).
     # @param {Array} args Array or string to be logged.
     # @param {Boolean} avoidConsole If true it will NOT log to the console.

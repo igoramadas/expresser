@@ -7,6 +7,8 @@
 # -->
 class DatabaseTingoDb
 
+    priority: 3
+
     path = require "path"
     tingodb = require("tingodb")()
     database = null
@@ -19,7 +21,7 @@ class DatabaseTingoDb
     # -------------------------------------------------------------------------
 
     # Init the TingoDB database module.
-    # @param {Object} options Database init options.
+    # @return {Object} Returns the TingoDB connection created (only if default settings are set).
     init: =>
         database = @expresser.database
         events = @expresser.events
@@ -28,15 +30,17 @@ class DatabaseTingoDb
         settings = @expresser.settings
         utils = @expresser.utils
 
-        logger.debug "DatabaseTingoDb.init"
+        database.drivers.tingodb = this
 
-        database.drivers.tingodb = this        
+        logger.debug "DatabaseTingoDb.init"
+        events.emit "DatabaseTingoDb.before.init"
 
         # Auto register as "tingodb" if a `dbPath` is defined on the settings.
         if settings.database.tingodb.enabled and settings.database.tingodb.dbPath?
             result = database.register "tingodb", "tingodb", settings.database.tingodb.dbPath, settings.database.tingodb.options
 
         events.emit "DatabaseTingoDb.on.init"
+        delete @init
 
         return result
 
@@ -45,10 +49,11 @@ class DatabaseTingoDb
     # @param {Object} options Additional options to be passed when creating the TingoDB connection.
     getConnection: (dbPath, options) =>
         logger.debug "DatabaseTingoDb.getConnection", dbPath, options
+        return logger.notEnabled "DatabaseTingoDb", "getConnection" if not settings.database.tingodb.enabled
 
         # Make sure database folder exists!
         dbPath = path.resolve dbPath
-        utils.mkdirRecursive dbPath
+        utils.io.mkdirRecursive dbPath
 
         return {dbPath: dbPath, connection: new tingodb.Db(dbPath, options)}
 

@@ -8,7 +8,7 @@
 # -->
 class Logger
     newInstance: -> return new Logger()
-    
+
     chalk = require "chalk"
     events = require "./events.coffee"
     fs = require "fs"
@@ -57,6 +57,7 @@ class Logger
         @setEvents()
 
         events.emit "Logger.on.init"
+        delete @init
 
     # Bind events.
     setEvents: =>
@@ -103,7 +104,7 @@ class Logger
         # Only parse message if doNotClean is false or unset.
         msg = @getMessage msg if not doNotParse
 
-        if console[logType]?
+        if console[logType]? and logType isnt "debug"
             method = console[logType]
         else
             method = console.log
@@ -124,6 +125,7 @@ class Logger
     # Internal generic log method.
     # @param {String} logType The log type (for example: warning, error, info, security, etc).
     # @param {Array} args Array to be stringified and logged.
+    # @return {String} The human readable log line.
     log: (logType, args) =>
         return if settings.logger.levels.indexOf(logType) < 0 and not settings.general.debug
 
@@ -180,7 +182,14 @@ class Logger
 
     # Helper to log to console about methods / features deprecation.
     deprecated: (func, message) =>
-        @console "deprecated", "#{func} is deprecated. #{message}"
+        message = "#{func} is deprecated. #{message}"
+        @console "deprecated", message
+        return {error: "Method deprecated", message: message}
+
+    # Helper to log to console that module is not enabled on settings.
+    notEnabled: (module, func) =>
+        @console "debug", "#{module}.#{func} abort! #{module} is not enabled."
+        return {notEnabled: true}
 
     # Cleans the arguments passed according to the `removeFields` setting.
     # The maximum level deep down the object is defined by the `maxDeepLevel`.
@@ -224,19 +233,22 @@ class Logger
 
         # Iterate arguments and execute cleaner on objects.
         for argKey, arg of arguments
-            if lodash.isArray arg
-                for v in arg
-                    cloned = lodash.cloneDeep v
+            try
+                if lodash.isArray arg
+                    for v in arg
+                        cloned = lodash.cloneDeep v
+                        cleaner cloned, 0
+                        result.push cloned
+                else if lodash.isObject
+                    cloned = lodash.cloneDeep arg
                     cleaner cloned, 0
                     result.push cloned
-            else if lodash.isObject
-                cloned = lodash.cloneDeep arg
-                cleaner cloned, 0
-                result.push cloned
-            else if lodash.isFunction arg
-                result.push funcText
-            else
-                result.push a
+                else if lodash.isFunction arg
+                    result.push funcText
+                else
+                    result.push a
+            catch ex
+                console.warn "Logger.argsCleaner", argKey, ex
 
         return result
 
@@ -277,7 +289,7 @@ class Logger
 
         # Append IP address, if `serverIP` is set.
         try
-            serverIP = utils.getServerIP true if settings.logger.sendIP
+            serverIP = utils.system.getIP true if settings.logger.sendIP
             serverIP = null if serverIP.error
         catch ex
             serverIP = null

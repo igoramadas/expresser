@@ -8,6 +8,8 @@
 # -->
 class Sockets
 
+    priority: 5
+
     app = null
     events = null
     lodash =  null
@@ -30,9 +32,13 @@ class Sockets
         logger = @expresser.logger
         settings = @expresser.settings
 
+        logger.debug "Sockets.init"
+        events.emit "Sockets.before.init"
+
         @setEvents()
 
         events.emit "Sockets.on.init"
+        delete @init
 
     # Bind events.
     setEvents: =>
@@ -43,6 +49,8 @@ class Sockets
     # @param {Object} options Sockets init options.
     # @option options {Object} server The Express server object to bind to.
     bind: (server) =>
+        return logger.notEnabled "Sockets", "bind" if not settings.sockets.enabled
+
         @io = require("socket.io") server
 
         # Listen to user connection count updates.
@@ -52,7 +60,7 @@ class Sockets
 
             # Bind all current event listeners.
             for listener in @currentListeners
-                socket.on listener.key, listener.callback if listener?
+                socket.on listener.key, listener.callback if listener?.callback?
 
     # EVENTS
     # ----------------------------------------------------------------------
@@ -61,13 +69,15 @@ class Sockets
     # @param {String} key The event key.
     # @param {Object} data The JSON data to be sent out to clients.
     emit: (key, data) =>
+        return logger.notEnabled "Sockets", "emit" if not settings.sockets.enabled
+
         if not @io?
             logger.error "Sockets.emit", key, JSON.stringify(data).length + " bytes", "Sockets not initiated yet, abort!"
             throw new Error "Sockets not initiated (@io is not set)."
-            
+
         logger.debug "Sockets.emit", key, data
 
-        @io.emit key, data            
+        @io.emit key, data
 
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.
@@ -75,6 +85,8 @@ class Sockets
     # @param {Method} callback The callback to be called when key is triggered.
     # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
     listenTo: (key, callback, onlyNewClients) =>
+        return logger.notEnabled "Sockets", "listenTo" if not settings.sockets.enabled
+
         if not @io?.sockets?
             logger.error "Sockets.listenTo", key, "Sockets not initiated yet, abort!"
             throw new Error "Sockets not initiated (@io is not set)."

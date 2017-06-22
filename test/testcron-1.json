@@ -1,0 +1,15 @@
+{
+    "events.coffee": [{
+        "id": "cron-seconds",
+        "callback": "emit",
+        "params": ["cron-seconds", "seconds"],
+        "description": "Testing cron on a seconds based interval.",
+        "schedule": 1
+    }, {
+        "id": "cron-disabled",
+        "callback": "emit",
+        "enabled": false,
+        "description": "Testing cron on specific times (disabled).",
+        "schedule": ["07:00:00"]
+    }]
+}

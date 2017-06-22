@@ -54,6 +54,21 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -91,6 +106,26 @@
               
               <a class="source" href="plugins.mailer.index.html">
                 plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.httpserver.html">
+                plugins/metrics/httpserver.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.index.html">
+                plugins/metrics/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.percentile.html">
+                plugins/metrics/percentile.coffee
               </a>
             
               
@@ -198,6 +233,7 @@ If you need help check the project page at <a href="http://github.com/igoramadas
             
             <div class="content"><div class='highlight'><pre>    libs:
         async: <span class="hljs-built_in">require</span> <span class="hljs-string">"async"</span>
+        express: <span class="hljs-built_in">require</span> <span class="hljs-string">"express"</span>
         lodash: <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
         moment: <span class="hljs-built_in">require</span> <span class="hljs-string">"moment"</span></pre></div></div>
             
@@ -242,7 +278,7 @@ for plugins installed via NPM (most production scenarios).</p>
             pluginsFolder = <span class="hljs-literal">false</span>
             plugins = fs.readdirSync <span class="hljs-string">"<span class="hljs-subst">#{self.rootPath}</span>/node_modules"</span>
 
-        plugins.sort()</pre></div></div>
+        initializers = []</pre></div></div>
             
         </li>
         
@@ -352,7 +388,9 @@ should have its options set under settings.database.mongodb.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> optionsRef?.enabled
-                        self[pluginName].init? optionsRef</pre></div></div>
+                        initializers.push {priority: self[pluginName].priority, init: self[pluginName].init}
+
+        sortedInit = self.libs.lodash.sortBy initializers, [<span class="hljs-string">"priority"</span>]</pre></div></div>
             
         </li>
         
@@ -362,6 +400,21 @@ should have its options set under settings.database.mongodb.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Init all loaded plugins on the correct order, by checking their ‘priority’ value.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        i.init?() <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> sortedInit</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Helper to init all modules. Load settings first, then Logger, then general
 modules, and finally the App. The <code>options</code> can have properties to be
@@ -377,11 +430,11 @@ passed to the <code>init</code> of each module.
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>App must be the last thing to be started!</p>
 
@@ -393,11 +446,11 @@ passed to the <code>init</code> of each module.
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
@@ -406,11 +459,11 @@ passed to the <code>init</code> of each module.
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               
             </div>

@@ -7,6 +7,8 @@
 # -->
 class Downloader
 
+    priority: 5
+
     fs = require "fs"
     http = require "http"
     https = require "https"
@@ -36,10 +38,12 @@ class Downloader
         settings = @expresser.settings
 
         logger.debug "Downloader.init", options
+        events.emit "Downloader.before.init"
 
         @setEvents()
 
         events.emit "Downloader.on.init", options
+        delete @init
 
     # Bind events.
     setEvents: =>
@@ -61,6 +65,9 @@ class Downloader
     # @param {Method} callback Optional, a function (err, result) to be called when download has finished.
     # @return {Object} Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
     download: (remoteUrl, saveTo, options, callback) =>
+        logger.debug "Downloader.download", remoteUrl, saveTo, options
+        return logger.notEnabled "Downloader", "download" if not settings.downloader.enabled
+
         if not remoteUrl? or remoteUrl is ""
             err = new Error "First parameter 'remoteUrl' is mandatory!"
             logger.error "Downloader.download", err

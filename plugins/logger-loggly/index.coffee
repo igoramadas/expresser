@@ -6,13 +6,15 @@
 # -->
 class LoggerLoggly
 
+    priority: 3
+
     fs = require "fs"
     loggly = require "loggly"
     path = require "path"
     lodash = null
     logger = null
     settings = null
-    
+
     # Wrapper for the Loggly client.
     logglyClient = null
 
@@ -21,7 +23,7 @@ class LoggerLoggly
 
     # Init the Loggly module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
-    # @param {Object} options LoggerLoggly init options.
+    # @return {Object} Returns the Loggly transport created (only if default settings are set).
     init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -30,17 +32,24 @@ class LoggerLoggly
 
         logger.drivers.loggly = this
 
+        logger.debug "LoggerLoggly.init"
+        events.emit "LoggerLoggly.before.init"
+
         # Auto register as "loggly" if a default token is defined on the settings.
         if settings.logger.loggly.enabled and settings.logger.loggly.token?
             result = logger.register "loggly", "loggly", settings.logger.loggly
 
         events.emit "LoggerLoggly.on.init"
+        delete @init
 
         return result
 
     # Get the transport object.
     # @param {Object} options Transport options including the token.
     getTransport: (options) =>
+        logger.debug "LoggerLoggly.getTransport", options
+        return logger.notEnabled "LoggerLoggly", "getTransport" if not settings.logger.loggly.enabled
+
         if not options?.token? or options.token is "" or not options?.subdomain? or options.subdomain is ""
             err = new Error "The options.token and options.subdomain are mandatory! Please specify a valid Loggly token / subdomain."
             logger.error "LoggerLoggly.getTransport", err, options

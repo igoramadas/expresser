@@ -7,6 +7,8 @@
 # -->
 class DatabaseMongoDb
 
+    priority: 3
+
     mongodb = require("mongodb").MongoClient
     database = null
     lodash = null
@@ -17,7 +19,7 @@ class DatabaseMongoDb
     # -------------------------------------------------------------------------
 
     # Init the MongoDB database module.
-    # @param {Object} options Database init options.
+    # @return {Object} Returns the MongoDB connection created (only if default settings are set).
     init: =>
         database = @expresser.database
         events = @expresser.events
@@ -25,15 +27,17 @@ class DatabaseMongoDb
         logger = @expresser.logger
         settings = @expresser.settings
 
-        logger.debug "DatabaseMongoDb.init"
+        database.drivers.mongodb = this
 
-        database.drivers.mongodb = this        
+        logger.debug "DatabaseMongoDb.init"
+        events.emit "DatabaseMongoDb.before.init"
 
         # Auto register as "mongodb" if a `connString` is defined on the settings.
         if settings.database.mongodb.enabled and settings.database.mongodb.connString?
             result = database.register "mongodb", "mongodb", settings.database.mongodb.connString, settings.database.mongodb.options
 
         events.emit "DatabaseMongoDb.on.init"
+        delete @init
 
         return result
 
@@ -41,10 +45,14 @@ class DatabaseMongoDb
     # @param {Object} connString The connection string, for example user:password@hostname/dbname.
     # @param {Object} options Additional options to be passed when creating the DB connection object.
     getConnection: (connString, options) =>
-        sep = connString.indexOf "@"
+        logger.debug "DatabaseMongoDb.getConnection", connString, options
+        return logger.notEnabled "DatabaseMongoDb", "getConnection" if not settings.database.mongodb.enabled
+
         connStringSafe = connString
+        sep = connString.indexOf "@"
         connStringSafe = connStringSafe.substring sep if sep > 0
-        logger.debug "DatabaseMongoDb.getConnection", connStringSafe, options
+        sep = connString.indexOf "/"
+        connStringSafe = connStringSafe.substring 0, sep if sep > 0
 
         result = {connString: connString, connection: null}
 
@@ -52,6 +60,7 @@ class DatabaseMongoDb
             if err?
                 logger.error "DatabaseMongoDb.getConnection", "Could not connect to #{connStringSafe}.", err
             else
+                logger.info "DatabaseMongoDb.getConnection", "Connected to #{connStringSafe}"
                 result.connection = db
 
         return result
@@ -200,7 +209,7 @@ class DatabaseMongoDb
             filter = options.filter
         else
             filter = {_id: id}
-            
+
         delete options.filter
 
         # If options patch is set, replace specified document properties only instead of replacing the whole document.

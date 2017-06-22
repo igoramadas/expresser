@@ -1,9 +1,7 @@
 {
     "app": {
-        "title": "Expresser Test"
-    },
-    "cron": {
-        "loadOnInit": false
+        "title": "Expresser Test",
+        "viewPath": "./test/"
     },
     "general": {
         "debug": false
@@ -23,7 +21,6 @@
         "console": true
     },
     "mailer": {
-        "templatesPath": "test/emailtemplates",
         "smtp": {
             "host": "smtp.mailgun.com",
             "port": 25,
@@ -36,10 +33,15 @@
             "secure": false,
             "service": "debugmail.io",
             "ignoreTLS": true
+        },
+        "templates": {
+            "path": "test/emailtemplates"
         }
     },
-    "path": {
-        "viewsDir": "./test/"
+    "metrics": {
+        "httpServer": {
+            "port": 8991
+        }
     },
     "testingFileWatcher": true
 }

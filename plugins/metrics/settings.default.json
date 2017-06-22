@@ -1,0 +1,28 @@
+// EXPRESSER METRICS SETTINGS
+{
+    "metrics": {
+        // Enable the Metrics module?
+        "enabled": true,
+        // Cleanup interval, in minutes.
+        "cleanupInterval": 60,
+        // Expire metrics data after X minutes.
+        "expireAfter": 720,
+        // Set the values below if you wish the module to spin up a HTTP server to serve the metrics output.
+        // You can also set the path (default is /, but for example you could use /metrics).
+        "httpServer": {
+            "autoStart": false,
+            "port": null,
+            "path": "/"
+        },
+        // Intervals to show on the output (default is 1min, 5min, 30min).
+        "intervals": [1, 5, 30],
+        // Percentiles to include on output. Leave empty to not calculate percentiles.
+        "percentiles": [99, 98, 95],
+        // Include server CPU / RAM metrics on output? Leave "fields" empty if you
+        // don't want to include server metrics on the metrics output.
+        "systemMetrics": {
+            "key": "system",
+            "fields": ["loadAvg", "memoryUsage"]
+        }
+    }
+}

@@ -1,6 +1,6 @@
 {
     "name": "expresser-database-tingodb",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "TingoDB database plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -14,8 +14,8 @@
         "node": "*"
     },
     "dependencies": {
-        "coffee-script": ">= 1.12.2",
-        "tingodb": "0.5.x"
+        "coffee-script": "~1.12.6",
+        "tingodb": "~0.5.1"
     },
     "repository": {
         "type": "git",

@@ -6,6 +6,8 @@
 # -->
 class LoggerLogentries
 
+    priority: 3
+
     fs = require "fs"
     lodash = null
     logentries = require "node-logentries"
@@ -21,7 +23,7 @@ class LoggerLogentries
 
     # Init the Logentries module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
-    # @param {Object} options Logentries init options.
+    # @return {Object} Returns the Logentries transport created (only if default settings are set).
     init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -30,17 +32,24 @@ class LoggerLogentries
 
         logger.drivers.logentries = this
 
+        logger.debug "LoggerLogentries.init"
+        events.emit "LoggerLogentries.before.init"
+
         # Auto register as "logentries" if a default token is defined on the settings.
         if settings.logger.logentries.enabled and settings.logger.logentries.token?
             result = logger.register "logentries", "logentries", settings.logger.logentries
 
         events.emit "LoggerLogentries.on.init"
+        delete @init
 
         return result
 
     # Get the transport object.
     # @param {Object} options Transport options including the token.
     getTransport: (options) =>
+        logger.debug "LoggerLogentries.getTransport", options
+        return logger.notEnabled "LoggerLogentries", "getTransport" if not settings.logger.logentries.enabled
+
         if not options?.token? or options.token is ""
             err = new Error "The options.token is mandatory! Please specify a valid Logentries token."
             logger.error "LoggerLogentries.getTransport", err, options

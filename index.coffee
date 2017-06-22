@@ -7,7 +7,7 @@ class Expresser
     isTest = process.env.NODE_ENV is "test"
 
     fs = require "fs"
-    path = require "path"    
+    path = require "path"
 
     # Set application root path.
     rootPath: path.dirname require.main.filename
@@ -23,8 +23,12 @@ class Expresser
     # Expose 3rd party modules.
     libs:
         async: require "async"
+        express: require "express"
         lodash: require "lodash"
         moment: require "moment"
+
+    # Holds all loaded plugins.
+    plugins: {}
 
     # Helper to load default modules. Basically everything inside the lib folder.
     initDefaultModules = (self) ->
@@ -36,14 +40,14 @@ class Expresser
     # folder for local development setups, or directly under /node_modules
     # for plugins installed via NPM (most production scenarios).
     loadPlugins = (self) ->
+        initializers = []
+
         if fs.existsSync "#{__dirname}/plugins"
             pluginsFolder = true
             plugins = fs.readdirSync "#{__dirname}/plugins"
         else
             pluginsFolder = false
             plugins = fs.readdirSync "#{self.rootPath}/node_modules"
-
-        plugins.sort()
 
         # Iterate plugins and get it's ID by removing the "expresser-" prefix.
         for p in plugins
@@ -54,34 +58,42 @@ class Expresser
                     pluginName = pluginId.replace "expresser-", ""
 
                     # Check if plugin was already attached.
-                    if not self[pluginName]?
+                    if not self.plugins[pluginName]?
                         if pluginsFolder
-                            self[pluginName] = require "./plugins/#{pluginId}"
                             pluginSettingsPath = "#{__dirname}/plugins/#{p}/settings.default.json"
                         else
-                            self[pluginName] = require pluginId
                             pluginSettingsPath = "#{self.rootPath}/node_modules/#{pluginId}/settings.default.json"
 
-                        # Attach itself to the plugin.
-                        self[pluginName].expresser = self
+                        # Check if there are default settings to be loaded for the plugin.
+                        if fs.existsSync pluginSettingsPath
+                            self.settings.loadFromJson pluginSettingsPath, true
 
-                    # Check if there are default settings to be loaded for the plugin.
-                    if fs.existsSync pluginSettingsPath
-                        self.settings.loadFromJson pluginSettingsPath, true
+                        # Get options accordingly to plugin name. For example the expresser-database-mongodb
+                        # should have its options set under settings.database.mongodb.
+                        pluginArr = pluginName.split "-"
+                        optionsRef = self.settings
+                        i = 0
 
-                    # Get options accordingly to plugin name. For example the expresser-database-mongodb
-                    # should have its options set under settings.database.mongodb.
-                    pluginArr = pluginName.split "-"
-                    optionsRef = self.settings
-                    i = 0
+                        while i < pluginArr.length
+                            optionsRef = optionsRef?[pluginArr[i]]
+                            i++
 
-                    while i < pluginArr.length
-                        optionsRef = optionsRef?[pluginArr[i]]
-                        i++
+                        # Only load if plugin is enabled.
+                        if optionsRef?.enabled
+                            if pluginsFolder
+                                self.plugins[pluginName] = require "./plugins/#{pluginId}"
+                            else
+                                self.plugins[pluginName] = require pluginId
 
-                    # Init plugin only if enabled is not set to false on its settings.
-                    if optionsRef?.enabled
-                        self[pluginName].init? optionsRef
+                            # Attach itself to the plugin.
+                            self.plugins[pluginName].expresser = self
+                            initializers.push {priority: self.plugins[pluginName].priority, plugin: self.plugins[pluginName]}
+
+        sortedInit = self.libs.lodash.sortBy initializers, ["priority"]
+
+        # Init all loaded plugins on the correct order, by checking their 'priority' value.
+        for i in sortedInit
+            i.plugin.init?()
 
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App. The `options` can have properties to be
