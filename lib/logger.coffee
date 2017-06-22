@@ -104,7 +104,7 @@ class Logger
         # Only parse message if doNotClean is false or unset.
         msg = @getMessage msg if not doNotParse
 
-        if console[logType]?
+        if console[logType]? and logType isnt "debug"
             method = console[logType]
         else
             method = console.log
