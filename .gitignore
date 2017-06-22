@@ -6,6 +6,6 @@
 coverage/
 database/
 logs/
-test/database
-package-lock.json
 node_modules/
+test/database/
+package-lock.json
