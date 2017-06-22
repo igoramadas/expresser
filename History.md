@@ -3,6 +3,7 @@
 2.4.2
 =====
 * Fixed default views path (/views).
+* Updated styles for the Logger console.
 * General fixes.
 
 2.4.1
