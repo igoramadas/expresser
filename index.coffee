@@ -40,14 +40,14 @@ class Expresser
     # folder for local development setups, or directly under /node_modules
     # for plugins installed via NPM (most production scenarios).
     loadPlugins = (self) ->
+        initializers = []
+
         if fs.existsSync "#{__dirname}/plugins"
             pluginsFolder = true
             plugins = fs.readdirSync "#{__dirname}/plugins"
         else
             pluginsFolder = false
             plugins = fs.readdirSync "#{self.rootPath}/node_modules"
-
-        initializers = []
 
         # Iterate plugins and get it's ID by removing the "expresser-" prefix.
         for p in plugins
@@ -58,7 +58,7 @@ class Expresser
                     pluginName = pluginId.replace "expresser-", ""
 
                     # Check if plugin was already attached.
-                    if not self[pluginName]?
+                    if not self.plugins[pluginName]?
                         if pluginsFolder
                             pluginSettingsPath = "#{__dirname}/plugins/#{p}/settings.default.json"
                         else

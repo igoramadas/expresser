@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+2.4.2
+=====
+* Fixed default views path (/views).
+* General fixes.
+
 2.4.1
 =====
 * Fixed major bug initializing plugins introduced with 2.3.4 (unpublished).
