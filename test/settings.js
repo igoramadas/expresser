@@ -24,14 +24,9 @@ describe("Settings Tests", function () {
 
         var doneCalled = false;
         var filename = "./settings.test.json";
-
-        if (process.versions.node.indexOf(".10.") > 0) {
-            var originalJson = fs.readFileSync(filename, {
-                encoding: "utf8"
-            });
-        } else {
-            var originalJson = fs.readFileSync(filename, "utf8");
-        }
+        var originalJson = fs.readFileSync(filename, {
+            encoding: "utf8"
+        });
 
         var newJson = utils.data.minifyJson(originalJson);
 
