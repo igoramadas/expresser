@@ -284,7 +284,7 @@ class DatabaseTingoDb
         dbCollection = @connection.collection "#{collection}.tingo"
         dbCollection.count filter, dbCallback
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 DatabaseTingoDb.getInstance = ->
     @instance = new DatabaseTingoDb() if not @instance?

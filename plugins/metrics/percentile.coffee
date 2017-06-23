@@ -37,7 +37,7 @@ class Percentile
 
         return null
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 Percentile.getInstance = ->
     @instance = new Percentile() if not @instance?

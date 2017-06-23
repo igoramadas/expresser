@@ -39,7 +39,7 @@ class Events
         emitter.removeListener id, callback
         return this
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 Events.getInstance = ->
     @instance = new Events() if not @instance?

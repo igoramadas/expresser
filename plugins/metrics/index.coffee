@@ -222,7 +222,7 @@ class Metrics
             data: value.data
         }
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 Metrics.getInstance = ->
     @instance = new Metrics() if not @instance?

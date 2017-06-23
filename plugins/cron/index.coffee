@@ -346,7 +346,7 @@ class Cron
         job.timer = setTimeout callback, timeout
         job.nextRun = moment().add timeout, "ms"
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 Cron.getInstance = ->
     @instance = new Cron() if not @instance?

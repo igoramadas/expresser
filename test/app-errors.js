@@ -1,6 +1,6 @@
 // TEST: APP ERRORS
 
-require("coffee-script/register");
+require("coffeescript/register");
 var env = process.env;
 var chai = require("chai");
 chai.should();

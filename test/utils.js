@@ -1,6 +1,6 @@
 // TEST: UTILS
 
-require("coffee-script/register");
+require("coffeescript/register");
 var env = process.env;
 var chai = require("chai");
 var fs = require("fs");

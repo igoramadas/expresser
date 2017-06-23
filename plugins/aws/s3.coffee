@@ -136,7 +136,7 @@ class S3
 
             callback? err, result
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 S3.getInstance = ->
     @instance = new S3() if not @instance?

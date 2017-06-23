@@ -49,7 +49,7 @@ class SNS
                 logger.info "AWS.SNS.publish", "Message published to #{digits}"
                 return callback null, data
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 SNS.getInstance = ->
     @instance = new SNS() if not @instance?

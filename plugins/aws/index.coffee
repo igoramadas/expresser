@@ -47,7 +47,7 @@ class AWS
         events.on "AWS.S3.upload", @s3.upload
         events.on "AWS.SNS.publish", @sns.publish
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 AWS.getInstance = ->
     @instance = new AWS() if not @instance?

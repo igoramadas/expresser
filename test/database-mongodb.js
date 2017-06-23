@@ -1,6 +1,6 @@
 // TEST: DATABASE MONGODB
 
-require("coffee-script/register");
+require("coffeescript/register");
 var env = process.env;
 var chai = require("chai");
 chai.should();
@@ -230,7 +230,7 @@ describe("Database MongoDB Tests", function () {
 
             dbMongo.remove("test", filter, callback);
         });
-        
+
         it("Tries to insert, update, remove, count using invalid params and connection", function (done) {
             var err = false;
             var connection = dbMongo.connection;

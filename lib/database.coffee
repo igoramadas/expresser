@@ -51,6 +51,7 @@ class Database
     # @param {Object} driver The database driver to be used, for example mongo.
     # @param {Object} connString The connection string, for example user:password@hostname/dbname.
     # @param {Object} options Additional options to be passed when creating the DB connection object.
+    # @return {Object} THe registered database object, or false if a problem occurs.
     register: (id, driver, connString, options) ->
         if not @drivers[driver]?
             logger.error "Database.register", "The driver #{driver} is not installed! Please check if plugin expresser-database-#{driver} is available on the current environment."
@@ -67,7 +68,7 @@ class Database
 
             return @db[id]
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 Database.getInstance = ->
     @instance = new Database() if not @instance?

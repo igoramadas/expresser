@@ -52,7 +52,7 @@ class HttpServer
 
         logger.info "Metrics.httpServer.kill"
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 HttpServer.getInstance = ->
     @instance = new HttpServer() if not @instance?

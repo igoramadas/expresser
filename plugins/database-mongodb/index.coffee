@@ -297,7 +297,7 @@ class DatabaseMongoDb
         dbCollection = @connection.collection collection
         dbCollection.count filter, dbCallback
 
-# Singleton implementation.
+# Singleton implementation
 # -----------------------------------------------------------------------------
 DatabaseMongoDb.getInstance = ->
     @instance = new DatabaseMongoDb() if not @instance?
