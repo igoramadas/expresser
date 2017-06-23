@@ -1,7 +1,0 @@
-// EXPRESSER CLOUD SETTINGS
-{
-    "cloud": {
-        // Enable the Cloud Settings module?
-        "enabled": true
-    }
-}
