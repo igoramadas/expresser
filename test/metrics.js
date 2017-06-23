@@ -64,7 +64,8 @@ describe("Metrics Tests", function () {
     });
 
     it("Output has system metrics", function (done) {
-        var output = metrics.output();
+        metrics.output();
+        output = metrics.output();
 
         if (!output.system || !output.system.loadAvg || !output.system.memoryUsage) {
             done("Metrics output expects server's loadAvg and memoryUsage.");

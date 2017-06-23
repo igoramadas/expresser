@@ -10,7 +10,6 @@ class Sockets
 
     priority: 5
 
-    app = null
     events = null
     lodash =  null
     logger = null
@@ -126,6 +125,7 @@ class Sockets
 
     # Get how many users are currenly connected to the app.
     getConnectionCount: =>
+        return 0 if not @io?.sockets?
         return Object.keys(@io.sockets.connected).length
 
     # When user disconnects, emit an event with the new connection count to all clients.
