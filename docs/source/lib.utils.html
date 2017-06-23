@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="plugins.cloud-settings.index.html">
+                plugins/cloud-settings/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -76,11 +81,6 @@
               
               <a class="source" href="plugins.database-mongodb.index.html">
                 plugins/database-mongodb/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -126,11 +126,6 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.paas.index.html">
-                plugins/paas/index.coffee
               </a>
             
               
@@ -193,7 +188,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <h2 id="deprecated-methods">DEPRECATED METHODS</h2>
+              <h2 id="singleton-implementation">Singleton implementation</h2>
 
             </div>
             
@@ -205,84 +200,6 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-    getFilePath: <span class="hljs-function"><span class="hljs-params">(filename)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getFilePath"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.io.getFilePath."</span>
-        <span class="hljs-keyword">return</span> @io.getFilePath filename
-
-    getServerIP: <span class="hljs-function"><span class="hljs-params">(firstOnly)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getIP"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.system.getIP."</span>
-        <span class="hljs-keyword">return</span> @system.getIP firstOnly
-
-    getServerInfo: <span class="hljs-function">=&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getInfo"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.system.getInfo."</span>
-        <span class="hljs-keyword">return</span> @system.getInfo()
-
-    getCpuLoad: <span class="hljs-function">=&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getCpuLoad"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.system.getCpuLoad."</span>
-        <span class="hljs-keyword">return</span> @system.getCpuLoad()
-
-    ipInRange: <span class="hljs-function"><span class="hljs-params">(ip, range)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.ipInRange"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.network.ipInRange."</span>
-        <span class="hljs-keyword">return</span> @network.ipInRange ip, range
-
-    getClientIP: <span class="hljs-function"><span class="hljs-params">(reqOrSocket)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getClientIP"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.browser.getClientIP."</span>
-        <span class="hljs-keyword">return</span> @browser.getClientIP reqOrSocket
-
-    getClientDevice: <span class="hljs-function"><span class="hljs-params">(req)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.getDeviceString"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.browser.getDeviceString."</span>
-        <span class="hljs-keyword">return</span> @browser.getDeviceString req
-
-    copyFileSync: <span class="hljs-function"><span class="hljs-params">(src, target)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.copyFileSync"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.io.copyFileSync."</span>
-        <span class="hljs-keyword">return</span> @io.copyFileSync src, target
-
-    mkdirRecursive: <span class="hljs-function"><span class="hljs-params">(target)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.mkdirRecursive"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.io.mkdirRecursive."</span>
-        <span class="hljs-keyword">return</span> @io.mkdirRecursive target
-
-    removeFromString: <span class="hljs-function"><span class="hljs-params">(value, charsToRemove)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.removeFromString"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.data.removeFromString."</span>
-        <span class="hljs-keyword">return</span> @data.removeFromString value, charsToRemove
-
-    maskString: <span class="hljs-function"><span class="hljs-params">(value, maskChar, leaveLast)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.maskString"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.data.maskString."</span>
-        <span class="hljs-keyword">return</span> @data.maskString value, maskChar, leaveLast
-
-    minifyJson: <span class="hljs-function"><span class="hljs-params">(source, asString)</span> =&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"utils.minifyJson"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.data.minifyJson."</span>
-        <span class="hljs-keyword">return</span> @data.minifyJson source, asString
-
-    uuid: <span class="hljs-function">=&gt;</span>
-        <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Utils.uuid"</span>, <span class="hljs-string">"DEPRECATED!"</span>, <span class="hljs-string">"Please use utils.data.uuid."</span>
-        <span class="hljs-keyword">return</span> @data.uuid()</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <h2 id="singleton-implementation">Singleton implementation</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               
             </div>

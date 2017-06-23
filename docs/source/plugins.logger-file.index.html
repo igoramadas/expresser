@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="plugins.cloud-settings.index.html">
+                plugins/cloud-settings/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -76,11 +81,6 @@
               
               <a class="source" href="plugins.database-mongodb.index.html">
                 plugins/database-mongodb/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -126,11 +126,6 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.paas.index.html">
-                plugins/paas/index.coffee
               </a>
             
               
@@ -394,7 +389,7 @@ IP address and timestamp will be appended to logs depending on the settings.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>Log locally. The path is defined on <code>Settings.Path.logsDir</code>.
+              <p>Log locally. The path is defined on <code>settings.logger.file.path</code>.
 @param {String} logType The log type (info, warn, error, debug, etc).
 @param {Array} args Array or string to be logged.
 @param {Boolean} avoidConsole If true it will NOT log to the console.</p>

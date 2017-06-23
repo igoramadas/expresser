@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="plugins.cloud-settings.index.html">
+                plugins/cloud-settings/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -76,11 +81,6 @@
               
               <a class="source" href="plugins.database-mongodb.index.html">
                 plugins/database-mongodb/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -126,11 +126,6 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.paas.index.html">
-                plugins/paas/index.coffee
               </a>
             
               
@@ -317,7 +312,7 @@ IP address will be appended to logs depending on the settings.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">-&gt;</span>
         events.emit <span class="hljs-string">"Logger.before.init"</span>
 
         <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">0</span>
@@ -350,7 +345,7 @@ IP address will be appended to logs depending on the settings.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">=&gt;</span>
+            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">-&gt;</span>
         events.<span class="hljs-literal">on</span> <span class="hljs-string">"Logger.console"</span>, @console
         events.<span class="hljs-literal">on</span> <span class="hljs-string">"Logger.debug"</span>, @debug
         events.<span class="hljs-literal">on</span> <span class="hljs-string">"Logger.info"</span>, @info
@@ -396,7 +391,7 @@ IP address will be appended to logs depending on the settings.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    register: <span class="hljs-function"><span class="hljs-params">(id, driver, options)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    register: <span class="hljs-function"><span class="hljs-params">(id, driver, options)</span> -&gt;</span>
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @drivers[driver]?
             <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Logger.register"</span>, <span class="hljs-string">"The transport <span class="hljs-subst">#{driver}</span> is not installed! Please check if plugin expresser-logger-<span class="hljs-subst">#{driver}</span> is available on the current environment."</span>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
@@ -456,7 +451,7 @@ IP address will be appended to logs depending on the settings.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    console: <span class="hljs-function"><span class="hljs-params">(logType, msg, doNotParse)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    console: <span class="hljs-function"><span class="hljs-params">(logType, msg, doNotParse)</span> -&gt;</span>
         timestamp = moment().format <span class="hljs-string">"HH:mm:ss.SS"</span></pre></div></div>
             
         </li>
@@ -474,7 +469,7 @@ IP address will be appended to logs depending on the settings.
             
             <div class="content"><div class='highlight'><pre>        msg = @getMessage msg <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> doNotParse
 
-        <span class="hljs-keyword">if</span> <span class="hljs-built_in">console</span>[logType]?
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">console</span>[logType]? <span class="hljs-keyword">and</span> logType <span class="hljs-keyword">isnt</span> <span class="hljs-string">"debug"</span>
             method = <span class="hljs-built_in">console</span>[logType]
         <span class="hljs-keyword">else</span>
             method = <span class="hljs-built_in">console</span>.log</pre></div></div>
@@ -520,7 +515,7 @@ IP address will be appended to logs depending on the settings.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    log: <span class="hljs-function"><span class="hljs-params">(logType, args)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    log: <span class="hljs-function"><span class="hljs-params">(logType, args)</span> -&gt;</span>
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> settings.logger.levels.indexOf(logType) &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> settings.general.debug</pre></div></div>
             
         </li>
@@ -705,7 +700,7 @@ All arguments are transformed to readable strings.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    deprecated: <span class="hljs-function"><span class="hljs-params">(func, message)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    deprecated: <span class="hljs-function"><span class="hljs-params">(func, message)</span> -&gt;</span>
         message = <span class="hljs-string">"<span class="hljs-subst">#{func}</span> is deprecated. <span class="hljs-subst">#{message}</span>"</span>
         @console <span class="hljs-string">"deprecated"</span>, message
         <span class="hljs-keyword">return</span> {error: <span class="hljs-string">"Method deprecated"</span>, message: message}</pre></div></div>
@@ -723,7 +718,7 @@ All arguments are transformed to readable strings.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    notEnabled: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-built_in">module</span>, func)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    notEnabled: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-built_in">module</span>, func)</span> -&gt;</span>
         @console <span class="hljs-string">"debug"</span>, <span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-built_in">module</span>}</span>.<span class="hljs-subst">#{func}</span> abort! <span class="hljs-subst">#{<span class="hljs-built_in">module</span>}</span> is not enabled."</span>
         <span class="hljs-keyword">return</span> {notEnabled: <span class="hljs-literal">true</span>}</pre></div></div>
             

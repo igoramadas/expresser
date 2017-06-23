@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="plugins.cloud-settings.index.html">
+                plugins/cloud-settings/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -76,11 +81,6 @@
               
               <a class="source" href="plugins.database-mongodb.index.html">
                 plugins/database-mongodb/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -126,11 +126,6 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.paas.index.html">
-                plugins/paas/index.coffee
               </a>
             
               
@@ -246,6 +241,21 @@ If you need help check the project page at <a href="http://github.com/igoramadas
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
+              <p>Holds all loaded plugins.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    plugins: {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
               <p>Helper to load default modules. Basically everything inside the lib folder.</p>
 
             </div>
@@ -258,11 +268,11 @@ If you need help check the project page at <a href="http://github.com/igoramadas
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Helper to load plugins. This will look first inside a /plugins
 folder for local development setups, or directly under /node_modules
@@ -271,23 +281,23 @@ for plugins installed via NPM (most production scenarios).</p>
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">loadPlugins</span> = <span class="hljs-params">(self)</span> -&gt;</span>
+        initializers = []
+
         <span class="hljs-keyword">if</span> fs.existsSync <span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/plugins"</span>
             pluginsFolder = <span class="hljs-literal">true</span>
             plugins = fs.readdirSync <span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/plugins"</span>
         <span class="hljs-keyword">else</span>
             pluginsFolder = <span class="hljs-literal">false</span>
-            plugins = fs.readdirSync <span class="hljs-string">"<span class="hljs-subst">#{self.rootPath}</span>/node_modules"</span>
-
-        initializers = []</pre></div></div>
+            plugins = fs.readdirSync <span class="hljs-string">"<span class="hljs-subst">#{self.rootPath}</span>/node_modules"</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Iterate plugins and get it’s ID by removing the “expresser-“ prefix.</p>
 
@@ -303,38 +313,21 @@ for plugins installed via NPM (most production scenarios).</p>
         </li>
         
         
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>Check if plugin was already attached.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> self[pluginName]?
-                        <span class="hljs-keyword">if</span> pluginsFolder
-                            self[pluginName] = <span class="hljs-built_in">require</span> <span class="hljs-string">"./plugins/<span class="hljs-subst">#{pluginId}</span>"</span>
-                            pluginSettingsPath = <span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/plugins/<span class="hljs-subst">#{p}</span>/settings.default.json"</span>
-                        <span class="hljs-keyword">else</span>
-                            self[pluginName] = <span class="hljs-built_in">require</span> pluginId
-                            pluginSettingsPath = <span class="hljs-string">"<span class="hljs-subst">#{self.rootPath}</span>/node_modules/<span class="hljs-subst">#{pluginId}</span>/settings.default.json"</span></pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Attach itself to the plugin.</p>
+              <p>Check if plugin was already attached.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        self[pluginName].expresser = self</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> self.plugins[pluginName]?
+                        <span class="hljs-keyword">if</span> pluginsFolder
+                            pluginSettingsPath = <span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/plugins/<span class="hljs-subst">#{p}</span>/settings.default.json"</span>
+                        <span class="hljs-keyword">else</span>
+                            pluginSettingsPath = <span class="hljs-string">"<span class="hljs-subst">#{self.rootPath}</span>/node_modules/<span class="hljs-subst">#{pluginId}</span>/settings.default.json"</span></pre></div></div>
             
         </li>
         
@@ -349,8 +342,8 @@ for plugins installed via NPM (most production scenarios).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> fs.existsSync pluginSettingsPath
-                        self.settings.loadFromJson pluginSettingsPath, <span class="hljs-literal">true</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> fs.existsSync pluginSettingsPath
+                            self.settings.loadFromJson pluginSettingsPath, <span class="hljs-literal">true</span></pre></div></div>
             
         </li>
         
@@ -366,13 +359,13 @@ should have its options set under settings.database.mongodb.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    pluginArr = pluginName.split <span class="hljs-string">"-"</span>
-                    optionsRef = self.settings
-                    i = <span class="hljs-number">0</span>
+            <div class="content"><div class='highlight'><pre>                        pluginArr = pluginName.split <span class="hljs-string">"-"</span>
+                        optionsRef = self.settings
+                        i = <span class="hljs-number">0</span>
 
-                    <span class="hljs-keyword">while</span> i &lt; pluginArr.length
-                        optionsRef = optionsRef?[pluginArr[i]]
-                        i++</pre></div></div>
+                        <span class="hljs-keyword">while</span> i &lt; pluginArr.length
+                            optionsRef = optionsRef?[pluginArr[i]]
+                            i++</pre></div></div>
             
         </li>
         
@@ -383,14 +376,15 @@ should have its options set under settings.database.mongodb.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Init plugin only if enabled is not set to false on its settings.</p>
+              <p>Only load if plugin is enabled.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> optionsRef?.enabled
-                        initializers.push {priority: self[pluginName].priority, init: self[pluginName].init}
-
-        sortedInit = self.libs.lodash.sortBy initializers, [<span class="hljs-string">"priority"</span>]</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> optionsRef?.enabled
+                            <span class="hljs-keyword">if</span> pluginsFolder
+                                self.plugins[pluginName] = <span class="hljs-built_in">require</span> <span class="hljs-string">"./plugins/<span class="hljs-subst">#{pluginId}</span>"</span>
+                            <span class="hljs-keyword">else</span>
+                                self.plugins[pluginName] = <span class="hljs-built_in">require</span> pluginId</pre></div></div>
             
         </li>
         
@@ -401,11 +395,14 @@ should have its options set under settings.database.mongodb.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>Init all loaded plugins on the correct order, by checking their ‘priority’ value.</p>
+              <p>Attach itself to the plugin.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        i.init?() <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> sortedInit</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                            self.plugins[pluginName].expresser = self
+                            initializers.push {priority: self.plugins[pluginName].priority, plugin: self.plugins[pluginName]}
+
+        sortedInit = self.libs.lodash.sortBy initializers, [<span class="hljs-string">"priority"</span>]</pre></div></div>
             
         </li>
         
@@ -415,6 +412,22 @@ should have its options set under settings.database.mongodb.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Init all loaded plugins on the correct order, by checking their ‘priority’ value.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> sortedInit
+            i.plugin.init?()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Helper to init all modules. Load settings first, then Logger, then general
 modules, and finally the App. The <code>options</code> can have properties to be
@@ -430,11 +443,11 @@ passed to the <code>init</code> of each module.
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>App must be the last thing to be started!</p>
 
@@ -446,11 +459,11 @@ passed to the <code>init</code> of each module.
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
@@ -459,11 +472,11 @@ passed to the <code>init</code> of each module.
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               
             </div>

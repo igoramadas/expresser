@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="plugins.cloud-settings.index.html">
+                plugins/cloud-settings/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -76,11 +81,6 @@
               
               <a class="source" href="plugins.database-mongodb.index.html">
                 plugins/database-mongodb/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -126,11 +126,6 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.paas.index.html">
-                plugins/paas/index.coffee
               </a>
             
               
@@ -227,7 +222,7 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    emit: <span class="hljs-function"><span class="hljs-params">(id, args)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    emit: <span class="hljs-function"><span class="hljs-params">(id, args)</span> -&gt;</span>
         emitter.emit.apply emitter, arguments
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div></div>
             
@@ -247,7 +242,7 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    on: <span class="hljs-function"><span class="hljs-params">(id, callback)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    on: <span class="hljs-function"><span class="hljs-params">(id, callback)</span> -&gt;</span>
         emitter.addListener id, callback
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div></div>
             
@@ -267,7 +262,7 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    off: <span class="hljs-function"><span class="hljs-params">(id, callback)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    off: <span class="hljs-function"><span class="hljs-params">(id, callback)</span> -&gt;</span>
         emitter.removeListener id, callback
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div></div>
             
@@ -280,7 +275,7 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <h2 id="singleton-implementation-">Singleton implementation.</h2>
+              <h2 id="singleton-implementation">Singleton implementation</h2>
 
             </div>
             

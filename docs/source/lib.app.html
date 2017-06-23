@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="plugins.cloud-settings.index.html">
+                plugins/cloud-settings/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -76,11 +81,6 @@
               
               <a class="source" href="plugins.database-mongodb.index.html">
                 plugins/database-mongodb/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -126,11 +126,6 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.paas.index.html">
-                plugins/paas/index.coffee
               </a>
             
               
@@ -299,7 +294,7 @@ manually you must do it BEFORE calling <code>init</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">-&gt;</span>
         logger.debug <span class="hljs-string">"App.init"</span>,
         events.emit <span class="hljs-string">"App.before.init"</span></pre></div></div>
             
@@ -342,6 +337,10 @@ manually you must do it BEFORE calling <code>init</code>.</p>
             logger.deprecated <span class="hljs-string">"settings.app.cookieEnabled"</span>, <span class="hljs-string">"Please use settings.app.cookie.enabled."</span>
         <span class="hljs-keyword">if</span> settings.app.cookieSecret?
             logger.deprecated <span class="hljs-string">"settings.app.cookieSecret"</span>, <span class="hljs-string">"Please use settings.app.cookie.secret."</span>
+        <span class="hljs-keyword">if</span> settings.path?.viewsDir?
+            logger.deprecated <span class="hljs-string">"settings.path.viewsDir"</span>, <span class="hljs-string">"Please use settings.app.viewPath."</span>
+        <span class="hljs-keyword">if</span> settings.path?.publicDir?
+            logger.deprecated <span class="hljs-string">"settings.path.publicDir"</span>, <span class="hljs-string">"Please use settings.app.publicPath."</span>
 
         nodeEnv = process.env.NODE_ENV</pre></div></div>
             
@@ -377,7 +376,7 @@ manually you must do it BEFORE calling <code>init</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    configureServer: <span class="hljs-function">=&gt;</span>
+            <div class="content"><div class='highlight'><pre>    configureServer: <span class="hljs-function">-&gt;</span>
         midBodyParser = <span class="hljs-built_in">require</span> <span class="hljs-string">"body-parser"</span>
         midCookieParser = <span class="hljs-built_in">require</span> <span class="hljs-string">"cookie-parser"</span>
         midSession = <span class="hljs-built_in">require</span> <span class="hljs-string">"cookie-session"</span>
@@ -414,7 +413,7 @@ manually you must do it BEFORE calling <code>init</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        @server.set <span class="hljs-string">"views"</span>, settings.path.viewsDir
+            <div class="content"><div class='highlight'><pre>        @server.set <span class="hljs-string">"views"</span>, settings.app.viewPath
         @server.set <span class="hljs-string">"view engine"</span>, settings.app.viewEngine
         @server.set <span class="hljs-string">"view options"</span>, { layout: <span class="hljs-literal">false</span> }</pre></div></div>
             
@@ -549,7 +548,7 @@ manually you must do it BEFORE calling <code>init</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        @server.use express.static settings.path.publicDir</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        @server.use express.static settings.app.publicPath</pre></div></div>
             
         </li>
         
@@ -604,7 +603,7 @@ manually you must do it BEFORE calling <code>init</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    startServer: <span class="hljs-function">=&gt;</span>
+            <div class="content"><div class='highlight'><pre>    startServer: <span class="hljs-function">-&gt;</span>
         <span class="hljs-keyword">if</span> settings.app.ssl.enabled <span class="hljs-keyword">and</span> settings.app.ssl.keyFile? <span class="hljs-keyword">and</span> settings.app.ssl.certFile?
             sslKeyFile = utils.io.getFilePath settings.app.ssl.keyFile
             sslCertFile = utils.io.getFilePath settings.app.ssl.certFile</pre></div></div>
@@ -707,7 +706,7 @@ manually you must do it BEFORE calling <code>init</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    kill: <span class="hljs-function">=&gt;</span>
+            <div class="content"><div class='highlight'><pre>    kill: <span class="hljs-function">-&gt;</span>
         @webServer.close()</pre></div></div>
             
         </li>
@@ -753,12 +752,13 @@ and the options argument is optional.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    renderView: <span class="hljs-function"><span class="hljs-params">(req, res, view, options)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    renderView: <span class="hljs-function"><span class="hljs-params">(req, res, view, options)</span> -&gt;</span>
         logger.debug <span class="hljs-string">"App.renderView"</span>, req.originalUrl, view, options
 
-        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-        options.device = utils.browser.getDeviceString req
-        options.title = settings.app.title <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.title?</pre></div></div>
+        <span class="hljs-keyword">try</span>
+            options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
+            options.device = utils.browser.getDeviceString req
+            options.title = settings.app.title <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.title?</pre></div></div>
             
         </li>
         
@@ -773,7 +773,7 @@ and the options argument is optional.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        view += <span class="hljs-string">".pug"</span> <span class="hljs-keyword">if</span> view.indexOf(<span class="hljs-string">".pug"</span>) &lt; <span class="hljs-number">0</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>            view += <span class="hljs-string">".pug"</span> <span class="hljs-keyword">if</span> view.indexOf(<span class="hljs-string">".pug"</span>) &lt; <span class="hljs-number">0</span></pre></div></div>
             
         </li>
         
@@ -788,7 +788,11 @@ and the options argument is optional.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        res.render view, options
+            <div class="content"><div class='highlight'><pre>            res.render view, options
+
+        <span class="hljs-keyword">catch</span> ex
+            logger.error <span class="hljs-string">"App.renderView"</span>, view, ex
+            @renderError req, res, ex
 
         events.emit <span class="hljs-string">"App.on.renderView"</span>, req, res, view, options</pre></div></div>
             
@@ -808,7 +812,7 @@ and the options argument is optional.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    renderJson: <span class="hljs-function"><span class="hljs-params">(req, res, data)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    renderJson: <span class="hljs-function"><span class="hljs-params">(req, res, data)</span> -&gt;</span>
         logger.debug <span class="hljs-string">"App.renderJson"</span>, req.originalUrl, data
 
         <span class="hljs-keyword">if</span> lodash.isString data
@@ -951,7 +955,7 @@ send an error response with the specified status code and error output.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    renderError: <span class="hljs-function"><span class="hljs-params">(req, res, error, status)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    renderError: <span class="hljs-function"><span class="hljs-params">(req, res, error, status)</span> -&gt;</span>
         logger.error <span class="hljs-string">"App.renderError"</span>, req.originalUrl, status, error
 
         status = <span class="hljs-number">408</span> <span class="hljs-keyword">if</span> status <span class="hljs-keyword">is</span> <span class="hljs-string">"ETIMEDOUT"</span></pre></div></div>

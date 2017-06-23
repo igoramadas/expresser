@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="plugins.cloud-settings.index.html">
+                plugins/cloud-settings/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -76,11 +81,6 @@
               
               <a class="source" href="plugins.database-mongodb.index.html">
                 plugins/database-mongodb/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -129,11 +129,6 @@
               </a>
             
               
-              <a class="source" href="plugins.paas.index.html">
-                plugins/paas/index.coffee
-              </a>
-            
-              
               <a class="source" href="plugins.sockets.index.html">
                 plugins/sockets/index.coffee
               </a>
@@ -158,7 +153,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h2 id="expresser-metrics">EXPRESSER METRICS</h2>
+              <h2 id="expresser-cloud-settings">EXPRESSER CLOUD SETTINGS</h2>
 
             </div>
             
@@ -171,15 +166,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Auto configure the Expresser app and its modules to work on known PaaS
+              <p>Auto configure the Expresser app and its modules to work on known cloud
 providers, mainly by checking cloud environmental variables.
 <!--
-@see settings.paas
+@see settings.cloud
 --></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PaaS</span></span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CloudSettings</span></span>
 
     priority: <span class="hljs-number">1</span>
 
@@ -223,7 +218,7 @@ providers, mainly by checking cloud environmental variables.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Init the PaaS plugin.</p>
+              <p>Init the Cloud Settings plugin.</p>
 
             </div>
             
@@ -234,12 +229,12 @@ providers, mainly by checking cloud environmental variables.
         settings = @expresser.settings
         env = process.env
 
-        logger.debug <span class="hljs-string">"PaaS.init"</span>
-        events.emit <span class="hljs-string">"PaaS.before.init"</span>
+        logger.debug <span class="hljs-string">"CloudSettings.init"</span>
+        events.emit <span class="hljs-string">"CloudSettings.before.init"</span>
 
         @setEvents()
 
-        events.emit <span class="hljs-string">"PaaS.on.init"</span>
+        events.emit <span class="hljs-string">"CloudSettings.on.init"</span>
         <span class="hljs-keyword">delete</span> @init</pre></div></div>
             
         </li>
@@ -306,7 +301,7 @@ providers, mainly by checking cloud environmental variables.
         settings.app.port = port <span class="hljs-keyword">if</span> port? <span class="hljs-keyword">and</span> port <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
 
         <span class="hljs-keyword">if</span> settings.logger.<span class="hljs-built_in">console</span>
-            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"PaaS.appSettings"</span>, <span class="hljs-string">"App settings were auto updated."</span></pre></div></div>
+            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"CloudSettings.appSettings"</span>, <span class="hljs-string">"App settings were auto updated."</span></pre></div></div>
             
         </li>
         
@@ -379,7 +374,7 @@ providers, mainly by checking cloud environmental variables.
         settings.database.mongodb.connString = mongoHq <span class="hljs-keyword">if</span> mongoHq? <span class="hljs-keyword">and</span> mongoHq <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
 
         <span class="hljs-keyword">if</span> settings.logger.<span class="hljs-built_in">console</span>
-            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"PaaS.databaseSettings"</span>, <span class="hljs-string">"Database settings were auto updated."</span></pre></div></div>
+            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"CloudSettings.databaseSettings"</span>, <span class="hljs-string">"Database settings were auto updated."</span></pre></div></div>
             
         </li>
         
@@ -407,7 +402,7 @@ providers, mainly by checking cloud environmental variables.
         settings.logger.loggly.subdomain = logglySubdomain <span class="hljs-keyword">if</span> logglySubdomain? <span class="hljs-keyword">and</span> logglySubdomain <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
 
         <span class="hljs-keyword">if</span> settings.logger.<span class="hljs-built_in">console</span>
-            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"PaaS.loggerSettings"</span>, <span class="hljs-string">"Logger settings were auto updated."</span></pre></div></div>
+            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"CloudSettings.loggerSettings"</span>, <span class="hljs-string">"Logger settings were auto updated."</span></pre></div></div>
             
         </li>
         
@@ -499,7 +494,7 @@ providers, mainly by checking cloud environmental variables.
                 settings.mailer.smtp.password = smtpPassword
 
         <span class="hljs-keyword">if</span> settings.logger.<span class="hljs-built_in">console</span>
-            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"PaaS.mailerSettings"</span>, <span class="hljs-string">"Mailer settings were auto updated."</span></pre></div></div>
+            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"CloudSettings.mailerSettings"</span>, <span class="hljs-string">"Mailer settings were auto updated."</span></pre></div></div>
             
         </li>
         
@@ -526,11 +521,11 @@ providers, mainly by checking cloud environmental variables.
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>PaaS.getInstance = <span class="hljs-function">-&gt;</span>
-    @instance = <span class="hljs-keyword">new</span> PaaS() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+            <div class="content"><div class='highlight'><pre>CloudSettings.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> CloudSettings() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
     <span class="hljs-keyword">return</span> @instance
 
-<span class="hljs-built_in">module</span>.exports = exports = PaaS.getInstance()</pre></div></div>
+<span class="hljs-built_in">module</span>.exports = exports = CloudSettings.getInstance()</pre></div></div>
             
         </li>
         

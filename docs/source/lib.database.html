@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="plugins.cloud-settings.index.html">
+                plugins/cloud-settings/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -76,11 +81,6 @@
               
               <a class="source" href="plugins.database-mongodb.index.html">
                 plugins/database-mongodb/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -126,11 +126,6 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.paas.index.html">
-                plugins/paas/index.coffee
               </a>
             
               
@@ -281,7 +276,7 @@ need to add database driver plugins for your desired DB.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">-&gt;</span>
         logger.debug <span class="hljs-string">"Database.init"</span>
         events.emit <span class="hljs-string">"Database.before.init"</span>
 
@@ -306,7 +301,7 @@ need to add database driver plugins for your desired DB.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">=&gt;</span>
+            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">-&gt;</span>
         events.<span class="hljs-literal">on</span> <span class="hljs-string">"Database.register"</span>, @register</pre></div></div>
             
         </li>
@@ -347,11 +342,12 @@ need to add database driver plugins for your desired DB.
 @param {Object} id The ID of the database to be registered. Must be unique.
 @param {Object} driver The database driver to be used, for example mongo.
 @param {Object} connString The connection string, for example user:password@hostname/dbname.
-@param {Object} options Additional options to be passed when creating the DB connection object.</p>
+@param {Object} options Additional options to be passed when creating the DB connection object.
+@return {Object} THe registered database object, or false if a problem occurs.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    register: <span class="hljs-function"><span class="hljs-params">(id, driver, connString, options)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    register: <span class="hljs-function"><span class="hljs-params">(id, driver, connString, options)</span> -&gt;</span>
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @drivers[driver]?
             logger.error <span class="hljs-string">"Database.register"</span>, <span class="hljs-string">"The driver <span class="hljs-subst">#{driver}</span> is not installed! Please check if plugin expresser-database-<span class="hljs-subst">#{driver}</span> is available on the current environment."</span>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
@@ -376,7 +372,7 @@ need to add database driver plugins for your desired DB.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <h2 id="singleton-implementation-">Singleton implementation.</h2>
+              <h2 id="singleton-implementation">Singleton implementation</h2>
 
             </div>
             

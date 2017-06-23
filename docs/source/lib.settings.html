@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="plugins.cloud-settings.index.html">
+                plugins/cloud-settings/index.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
               </a>
@@ -76,11 +81,6 @@
               
               <a class="source" href="plugins.database-mongodb.index.html">
                 plugins/database-mongodb/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-tingodb.index.html">
-                plugins/database-tingodb/index.coffee
               </a>
             
               
@@ -126,11 +126,6 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.paas.index.html">
-                plugins/paas/index.coffee
               </a>
             
               
@@ -247,7 +242,7 @@ AFTER the main <code>settings.json</code> file.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    load: <span class="hljs-function">=&gt;</span>
+            <div class="content"><div class='highlight'><pre>    load: <span class="hljs-function">-&gt;</span>
         @currentEnv = process.env.NODE_ENV <span class="hljs-keyword">or</span> <span class="hljs-string">"development"</span>
 
         @loadFromJson <span class="hljs-string">"settings.default.json"</span>
@@ -272,7 +267,7 @@ AFTER the main <code>settings.json</code> file.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    loadFromJson: <span class="hljs-function"><span class="hljs-params">(filename, extend)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    loadFromJson: <span class="hljs-function"><span class="hljs-params">(filename, extend)</span> -&gt;</span>
         extend = <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> extend?
         filename = utils.io.getFilePath filename
         settingsJson = <span class="hljs-literal">null</span></pre></div></div>
@@ -419,7 +414,7 @@ The default cipher algorithm is AES 256.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    cryptoHelper: <span class="hljs-function"><span class="hljs-params">(encrypt, filename, options)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    cryptoHelper: <span class="hljs-function"><span class="hljs-params">(encrypt, filename, options)</span> -&gt;</span>
         env = process.env
 
         options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
@@ -679,7 +674,7 @@ abort encryption and log to the console.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    encrypt: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    encrypt: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> -&gt;</span>
         @cryptoHelper <span class="hljs-literal">true</span>, filename, options</pre></div></div>
             
         </li>
@@ -698,7 +693,7 @@ abort encryption and log to the console.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    decrypt: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    decrypt: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> -&gt;</span>
         @cryptoHelper <span class="hljs-literal">false</span>, filename, options</pre></div></div>
             
         </li>
@@ -742,7 +737,7 @@ The <code>callback</code> is optional in case you want to notify another module 
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    watch: <span class="hljs-function"><span class="hljs-params">(enable, callback)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>    watch: <span class="hljs-function"><span class="hljs-params">(enable, callback)</span> -&gt;</span>
         <span class="hljs-keyword">if</span> callback? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> lodash.isFunction callback
             <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> TypeError <span class="hljs-string">"The callback must be a valid function, or null/undefined."</span>
 
