@@ -80,7 +80,7 @@ describe("Logger Tests", function () {
         var time = new Date().getTime();
         var message = logger.getMessage(1, "A", time).toString();
 
-        if (message.indexOf(1) < 0 || message.indexOf("A") < 0) {
+        if (!message || message.indexOf(1) < 0 || message.indexOf("A") < 0) {
             done("Stringified message should have values 1 and A on.");
         } else {
             done();
@@ -103,7 +103,7 @@ describe("Logger Tests", function () {
         var cleanMessage = logger.getMessage([privateObj, someMessage]);
         var loggedMessage = JSON.stringify(logger.console("info", cleanMessage));
 
-        if (loggedMessage.indexOf("Welcome123") > 0 || loggedMessage.indexOf("lalala") > 0) {
+        if (!loggedMessage || loggedMessage.indexOf("Welcome123") > 0 || loggedMessage.indexOf("lalala") > 0) {
             done("Fields were not hidden from log message.");
         } else {
             done();

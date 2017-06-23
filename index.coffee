@@ -96,16 +96,17 @@ class Expresser
             i.plugin.init?()
 
     # Helper to init all modules. Load settings first, then Logger, then general
-    # modules, and finally the App. The `options` can have properties to be
-    # passed to the `init` of each module.
-    # @param {Object} options Options to be passed to each init module.
-    init: =>
+    # modules, and finally the App.
+    # @param {Boolean} forceTest Used for testing the module init.
+    init: (forceTest = false) ->
+        isTest = false if forceTest
+
         initDefaultModules this
         loadPlugins this
 
         # App must be the last thing to be started!
         @app.expresser = this
-        @app.init() if not isTest
+        @app.init() if not isTest and not forceTest
 
 # Singleton implementation
 # --------------------------------------------------------------------------
