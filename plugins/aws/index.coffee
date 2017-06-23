@@ -24,7 +24,7 @@ class AWS
 
     # Init the cron manager. If `loadOnInit` setting is true, the `cron.json`
     # file will be parsed and loaded straight away (if there's one).
-    init: =>
+    init: ->
         events = @expresser.events
         logger = @expresser.logger
         settings = @expresser.settings
@@ -42,7 +42,7 @@ class AWS
         delete @init
 
     # Bind events.
-    setEvents: =>
+    setEvents: ->
         events.on "AWS.S3.download", @s3.download
         events.on "AWS.S3.upload", @s3.upload
         events.on "AWS.SNS.publish", @sns.publish

@@ -25,7 +25,7 @@ class Sockets
     # --------------------------------------------------------------------------
 
     # Init the Sockets plugin.
-    init: =>
+    init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -40,14 +40,14 @@ class Sockets
         delete @init
 
     # Bind events.
-    setEvents: =>
-        events.on "App.on.startServer", @bind
+    setEvents: ->
+        events.on "App.on.startServer", @bind.bind(this)
 
     # Bind the Socket.IO object to the Express app. This will also set the counter
     # to increase / decrease when users connects or disconnects from the app.
     # @param {Object} options Sockets init options.
     # @option options {Object} server The Express server object to bind to.
-    bind: (server) =>
+    bind: (server) ->
         return logger.notEnabled "Sockets", "bind" if not settings.sockets.enabled
 
         @io = require("socket.io") server
@@ -67,7 +67,7 @@ class Sockets
     # Emit the specified key and data to clients.
     # @param {String} key The event key.
     # @param {Object} data The JSON data to be sent out to clients.
-    emit: (key, data) =>
+    emit: (key, data) ->
         return logger.notEnabled "Sockets", "emit" if not settings.sockets.enabled
 
         if not @io?
@@ -83,7 +83,7 @@ class Sockets
     # @param {String} key The event key.
     # @param {Method} callback The callback to be called when key is triggered.
     # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
-    listenTo: (key, callback, onlyNewClients) =>
+    listenTo: (key, callback, onlyNewClients) ->
         return logger.notEnabled "Sockets", "listenTo" if not settings.sockets.enabled
 
         if not @io?.sockets?
@@ -102,7 +102,7 @@ class Sockets
     # Stops listening to the specified event key.
     # @param {String} key The event key.
     # @param {Object} callback The callback to stop triggering.
-    stopListening: (key, callback) =>
+    stopListening: (key, callback) ->
         for socketKey, socket of @io.sockets.connected
             if callback?
                 socket.removeListener key, callback
@@ -117,19 +117,19 @@ class Sockets
         logger.debug "Sockets.stopListening", key
 
     # Remove invalid and expired event listeners.
-    compact: =>
+    compact: ->
         @currentListeners = lodash.compact @currentListeners
 
     # HELPERS
     # ----------------------------------------------------------------------
 
     # Get how many users are currenly connected to the app.
-    getConnectionCount: =>
+    getConnectionCount: ->
         return 0 if not @io?.sockets?
         return Object.keys(@io.sockets.connected).length
 
     # When user disconnects, emit an event with the new connection count to all clients.
-    onDisconnect: =>
+    onDisconnect: ->
         count = @getConnectionCount()
         logger.debug "Sockets.onDisconnect", "New count: #{count}."
 

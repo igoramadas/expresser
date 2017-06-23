@@ -41,7 +41,7 @@ class Database
 
     # Bind events.
     setEvents: ->
-        events.on "Database.register", @register
+        events.on "Database.register", @register.bind(this)
 
     # IMPLEMENTATION
     # -------------------------------------------------------------------------

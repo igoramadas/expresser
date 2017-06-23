@@ -61,6 +61,7 @@ class Logger
 
     # Bind events.
     setEvents: ->
+        events.on "Logger.register", @register.bind(this)
         events.on "Logger.console", @console
         events.on "Logger.debug", @debug
         events.on "Logger.info", @info
@@ -89,6 +90,11 @@ class Logger
             @transports[id].critical = @critical
 
             return @transports[id]
+
+    # Unregister a Logger transport.
+    # @param {String} id Unique ID of the transport to be unregistered.
+    unregister: (id) ->
+        delete @transports[id]
 
     # LOG METHODS
     # --------------------------------------------------------------------------

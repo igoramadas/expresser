@@ -20,7 +20,7 @@ class DatabaseMongoDb
 
     # Init the MongoDB database module.
     # @return {Object} Returns the MongoDB connection created (only if default settings are set).
-    init: =>
+    init: ->
         database = @expresser.database
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -44,7 +44,7 @@ class DatabaseMongoDb
     # Get the DB connection object.
     # @param {Object} connString The connection string, for example user:password@hostname/dbname.
     # @param {Object} options Additional options to be passed when creating the DB connection object.
-    getConnection: (connString, options) =>
+    getConnection: (connString, options) ->
         logger.debug "DatabaseMongoDb.getConnection", connString, options
         return logger.notEnabled "DatabaseMongoDb", "getConnection" if not settings.database.mongodb.enabled
 

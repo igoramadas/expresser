@@ -24,7 +24,7 @@ class LoggerLogentries
     # Init the Logentries module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
     # @return {Object} Returns the Logentries transport created (only if default settings are set).
-    init: =>
+    init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -46,7 +46,7 @@ class LoggerLogentries
 
     # Get the transport object.
     # @param {Object} options Transport options including the token.
-    getTransport: (options) =>
+    getTransport: (options) ->
         logger.debug "LoggerLogentries.getTransport", options
         return logger.notEnabled "LoggerLogentries", "getTransport" if not settings.logger.logentries.enabled
 

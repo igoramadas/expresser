@@ -122,6 +122,7 @@ describe("Logger Tests", function () {
 
         logger.drivers["dummydriver"] = driver;
         logger.register("testlogger", "dummydriver");
+        logger.unregister("testlogger");
     });
 
     it("Try to register invalid log driver", function (done) {

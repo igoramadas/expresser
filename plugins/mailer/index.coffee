@@ -34,7 +34,7 @@ class Mailer
     # --------------------------------------------------------------------------
 
     # Init the Mailer module and create the SMTP objects.
-    init: =>
+    init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -66,7 +66,7 @@ class Mailer
         delete @init
 
     # Bind event listeners.
-    setEvents: =>
+    setEvents: ->
         events.on "Mailer.send", @send
 
     # OUTBOUND
@@ -80,7 +80,7 @@ class Mailer
     # @option options {String} from The "from" address, optional, if blank use default from settings.
     # @option options {String} template The template file to be loaded, optional.
     # @param {Method} callback Callback (err, result) when message is sent or fails.
-    send: (options, callback) =>
+    send: (options, callback) ->
         logger.debug "Mailer.send", options
         return logger.notEnabled "Mailer", "send" if not settings.mailer.enabled
 
@@ -185,7 +185,7 @@ class Mailer
     # Use the specified options and create a new SMTP server.
     # @param {Object} options Options to be passed to SMTP creator.
     # @param {Boolean} secondary If false set as the main SMTP server, if true set as secondary.
-    setSmtp: (options, secondary) =>
+    setSmtp: (options, secondary) ->
         if not secondary or secondary < 1
             @smtp = @createSmtp options
         else

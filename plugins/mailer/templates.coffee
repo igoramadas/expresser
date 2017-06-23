@@ -14,7 +14,7 @@ class Templates
     cache = {}
 
     # Init the Templates class.
-    init: (parent) =>
+    init: (parent) ->
         logger = parent.expresser.logger
         moment = parent.expresser.libs.moment
         settings = parent.expresser.settings
@@ -29,7 +29,7 @@ class Templates
     # The contents will be inserted on the {contents} tag.
     # @param {String} name The template name, without .html.
     # @return {String} The template HTML.
-    get: (name) =>
+    get: (name) ->
         name = name.toString()
         name = name.replace(".html", "") if name.indexOf(".html")
 
@@ -65,7 +65,7 @@ class Templates
     # @param {String} template The template (its value, not its name!) to be parsed.
     # @param {Object} keywords Object with keys to be replaced with its values.
     # @return {String} The parsed template, keywords replaced with values.
-    parse: (template, keywords) =>
+    parse: (template, keywords) ->
         logger.debug "Mailer.templates.parse", template, keywords
 
         template = template.toString()
@@ -76,7 +76,7 @@ class Templates
         return template
 
     # Force clear the templates cache.
-    clearCache: =>
+    clearCache: ->
         count = Object.keys(cache).length
         cache = {}
         logger.info "Mailer.templates.clearCache", "Cleared #{count} templates."

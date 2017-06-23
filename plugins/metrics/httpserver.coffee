@@ -13,14 +13,14 @@ class HttpServer
     server: null
 
     # Init the HTTP server class.
-    init: (parent) =>
+    init: (parent) ->
         metrics = parent
         express = metrics.expresser.libs.express
         logger = metrics.expresser.logger
         settings = metrics.expresser.settings
 
     # Start the server.
-    start: =>
+    start: ->
         logger.debug "Metrics.httpServer.start"
 
         return logger.notEnabled "Metrics.httpServer", "start" if not settings.metrics.enabled
@@ -38,7 +38,7 @@ class HttpServer
         logger.info "Metrics.httpServer.start", settings.metrics.httpServer.port
 
     # Kill the server.
-    kill: =>
+    kill: ->
         logger.debug "Metrics.httpServer.kill"
 
         return if not webServer?

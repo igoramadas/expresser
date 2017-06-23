@@ -15,7 +15,7 @@ class SNS
     # -------------------------------------------------------------------------
 
     # Init the SNS module.
-    init: (parent) =>
+    init: (parent) ->
         logger = parent.expresser.logger
         settings = parent.expresser.settings
 
@@ -31,7 +31,7 @@ class SNS
     # @param {String} options The SNS message options.
     # @option options {String} PhoneNumber The target phone number.
     # @option options {String} Message The SMS message to be sent.
-    publish: (options, callback) =>
+    publish: (options, callback) ->
         logger.debug "AWS.SNS.publish", options
 
         if not options.PhoneNumber? or options.PhoneNumber is ""

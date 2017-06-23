@@ -27,7 +27,7 @@ class Metrics
     httpServer: require "./httpserver.coffee"
 
     # Init metrics and set up cleanup timer.
-    init: =>
+    init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger

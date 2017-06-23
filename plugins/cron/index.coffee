@@ -44,7 +44,7 @@ class Cron
 
     # Init the cron manager. If `loadOnInit` setting is true, the `cron.json`
     # file will be parsed and loaded straight away (if there's one).
-    init: =>
+    init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -63,7 +63,7 @@ class Cron
         delete @init
 
     # Bind events.
-    setEvents: =>
+    setEvents: ->
         events.on "Cron.load", @load
         events.on "Cron.start", @start
         events.on "Cron.stop", @stop
@@ -77,7 +77,7 @@ class Cron
     # @option options {String} filename Name of file to be loaded (in case filename was not set on first parameter)
     # @option options {String} basePath Sets the base path of modules when requiring them.
     # @option options {Boolean} autoStart If true, call `start` after loading.
-    load: (filename, options) =>
+    load: (filename, options) ->
         logger.debug "Cron.load", filename, options
         return logger.notEnabled "Cron", "load" if not settings.cron.enabled
 
@@ -151,7 +151,7 @@ class Cron
     # A filter can also be passed as an object. For example to start all jobs for
     # the module "email", use start({module: "email"}).
     # @param {String} idOrFilter The job id or filter, optional (if not specified, start everything).
-    start: (idOrFilter) =>
+    start: (idOrFilter) ->
         logger.debug "Cron.start", idOrFilter
         return logger.notEnabled "Cron", "start" if not settings.cron.enabled
 
@@ -180,7 +180,7 @@ class Cron
     # A filter can also be passed as an object. For example to stop all jobs for
     # the module "mymodule", use stop({module: "mymodule"}).
     # @param {String} idOrFilter The job id or filter, optional (if not specified, stop everything).
-    stop: (idOrFilter) =>
+    stop: (idOrFilter) ->
         logger.debug "Cron.stop", idOrFilter
 
         if not idOrFilter?
@@ -213,7 +213,7 @@ class Cron
     # @option job {Method} callback The callback (job) to be triggered.
     # @option job {Boolean} once If true, the job will be triggered only once no matter which schedule it has.
     # @return {Object} Returns {error, job}, where job is the job object and error is the error message (if any).
-    add: (job) =>
+    add: (job) ->
         logger.debug "Cron.add", job
         return logger.notEnabled "Cron", "add" if not settings.cron.enabled
 
@@ -254,7 +254,7 @@ class Cron
 
     # Remove and stop a current job. If job does not exist, a warning will be logged.
     # @param {String} id The job ID.
-    remove: (id) =>
+    remove: (id) ->
         existing = lodash.find @jobs, {id: id}
 
         # Job exists?

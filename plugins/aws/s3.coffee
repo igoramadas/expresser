@@ -15,7 +15,7 @@ class S3
     # -------------------------------------------------------------------------
 
     # Init the S3 module.
-    init: (parent) =>
+    init: (parent) ->
         lodash = parent.expresser.libs.lodash
         logger = parent.expresser.logger
         settings = parent.expresser.settings
@@ -30,7 +30,7 @@ class S3
     # @param {String} key Key of the target S3 bucket resource (usually a filename).
     # @param {String} destination Optional, full path to the destination where file should be saved.
     # @param {Method} callback Callback (err, body), with body being the contents as String.
-    download: (bucket, key, destination, callback) =>
+    download: (bucket, key, destination, callback) ->
         if not callback? and lodash.isFunction destination
             callback = destination
             destination = null
@@ -80,7 +80,7 @@ class S3
     # @option options {String} acl ACL to be used, default is "public-read".
     # @option options {String} contentType Content type of the file.
     # @param {Method} callback Callback (err, result).
-    upload: (bucket, key, body, options, callback) =>
+    upload: (bucket, key, body, options, callback) ->
         if not callback? and lodash.isFunction options
             callback = options
             options = {}
@@ -113,7 +113,7 @@ class S3
             callback? err, result
 
     # Delete object(s) from S3. Keys can be a string or an array of strings.
-    delete: (bucket, keys, callback) =>
+    delete: (bucket, keys, callback) ->
         s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
         objects = []
 

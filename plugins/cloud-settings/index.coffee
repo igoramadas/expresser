@@ -19,7 +19,7 @@ class CloudSettings
     # --------------------------------------------------------------------------
 
     # Init the Cloud Settings plugin.
-    init: =>
+    init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -35,7 +35,7 @@ class CloudSettings
         delete @init
 
     # Bind events.
-    setEvents: =>
+    setEvents: ->
         events.on "App.before.init", => @appSettings()
         events.on "Database.before.init", => @databaseSettings()
         events.on "Logger.before.init", => @loggerSettings()
@@ -45,7 +45,7 @@ class CloudSettings
     # --------------------------------------------------------------------------
 
     # Update app settings.
-    appSettings: =>
+    appSettings: ->
         ip = env.OPENSHIFT_NODEJS_IP or env.IP
         port = env.OPENSHIFT_NODEJS_PORT or env.VCAP_APP_PORT or env.PORT
         settings.app.ip = ip if ip? and ip isnt ""
@@ -55,7 +55,7 @@ class CloudSettings
             console.log "CloudSettings.appSettings", "App settings were auto updated."
 
     # Update database settings.
-    databaseSettings: =>
+    databaseSettings: ->
         vcap = env.VCAP_SERVICES
         vcap = JSON.parse vcap if vcap? and lodash.isString vcap
 
@@ -80,7 +80,7 @@ class CloudSettings
             console.log "CloudSettings.databaseSettings", "Database settings were auto updated."
 
     # Update logger settings.
-    loggerSettings: =>
+    loggerSettings: ->
         logentriesToken = env.LOGENTRIES_TOKEN
         logglyToken = env.LOGGLY_TOKEN
         logglySubdomain = env.LOGGLY_SUBDOMAIN
@@ -96,7 +96,7 @@ class CloudSettings
             console.log "CloudSettings.loggerSettings", "Logger settings were auto updated."
 
     # Update mailer settings.
-    mailerSettings: =>
+    mailerSettings: ->
         currentSmtpHost = settings.mailer?.smtp?.host?.toLowerCase()
         currentSmtpHost = "" if not currentSmtpHost?
 

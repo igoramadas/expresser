@@ -6,14 +6,14 @@ class Percentile
     calculate: (durations, perc) ->
         return findK durations.concat(), 0, durations.length, Math.ceil(durations.length * perc / 100) - 1
 
-    swap = (data, i, j) =>
+    swap = (data, i, j) ->
         return if i is j
 
         tmp = data[j]
         data[j] = data[i]
         data[i] = tmp
 
-    partition = (data, start, end) =>
+    partition = (data, start, end) ->
         i = start + 1
         j = start
 
@@ -24,7 +24,7 @@ class Percentile
         swap data, start, j
         return j
 
-    findK = (data, start, end, k) =>
+    findK = (data, start, end, k) ->
         while start < end
             pos = partition data, start, end
 

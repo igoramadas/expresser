@@ -23,7 +23,7 @@ class LoggerFile
     # Init the File module. Verify which services are set, and add the necessary transports.
     # IP address and timestamp will be appended to logs depending on the settings.
     # @return {Object} Returns the File transport created (only if default settings are set).
-    init: =>
+    init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -46,7 +46,7 @@ class LoggerFile
 
     # Get the file transport object.
     # @param {Object} options File logging options.
-    getTransport: (options) =>
+    getTransport: (options) ->
         logger.debug "LoggerFile.getTransport", options
         return logger.notEnabled "LoggerFile", "getTransport" if not settings.logger.file.enabled
 

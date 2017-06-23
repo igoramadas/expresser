@@ -30,7 +30,7 @@ class Downloader
 
     # Init the module.
     # @param {Object} options Downloader init options.
-    init: (options) =>
+    init: (options) ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -46,7 +46,7 @@ class Downloader
         delete @init
 
     # Bind events.
-    setEvents: =>
+    setEvents: ->
         events.on "Downloader.download", @download
         events.on "Downloader.stop", @stop
 
@@ -64,7 +64,7 @@ class Downloader
     # @param {Object} options Optional, object with request options, for example auth.
     # @param {Method} callback Optional, a function (err, result) to be called when download has finished.
     # @return {Object} Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
-    download: (remoteUrl, saveTo, options, callback) =>
+    download: (remoteUrl, saveTo, options, callback) ->
         logger.debug "Downloader.download", remoteUrl, saveTo, options
         return logger.notEnabled "Downloader", "download" if not settings.downloader.enabled
 
@@ -111,7 +111,7 @@ class Downloader
     # @param {String} remoteUrl The URL of the download to stop.
     # @param {String} saveTo The full local path of the download to stop.
     # @return {Boolean} Returns true if a match was found, or false if no matching download to stop.
-    stop: (remoteUrl, saveTo) =>
+    stop: (remoteUrl, saveTo) ->
         existing = lodash.find downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
 
         # Download exists? If so set its stop flag and return true, otherwise false.
