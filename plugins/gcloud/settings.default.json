@@ -1,0 +1,15 @@
+// EXPRESSER GOOGLE CLOUD SETTINGS
+{
+    "gcloud": {
+        // Enable the AWS plugin?
+        "enabled": true,
+        "s3": {
+            // Default S3 region is EU Frankfurt.
+            "region": "eu-central-1"
+        },
+        "sns": {
+            // Default SNS region is EU Ireland.
+            "region": "eu-west-1"
+        }
+    }
+}

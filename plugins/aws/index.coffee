@@ -22,8 +22,7 @@ class AWS
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the cron manager. If `loadOnInit` setting is true, the `cron.json`
-    # file will be parsed and loaded straight away (if there's one).
+    # Init the AWS plugin.
     init: ->
         events = @expresser.events
         logger = @expresser.logger

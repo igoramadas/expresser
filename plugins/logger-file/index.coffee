@@ -144,7 +144,7 @@ class LoggerFile
     # Delete old log files from disk. The maximum date is taken from the settings
     # if not passed.
     # @param {Integer} maxAge Max age of logs, in days.
-    clean: (maxAge) =>
+    clean: (maxAge) ->
         maxAge = settings.logger.file.maxAge if not maxAge?
         maxDate = moment().subtract maxAge, "d"
 

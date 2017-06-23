@@ -8,7 +8,6 @@ class SNS
 
     logger = null
     settings = null
-
     sns = null
 
     # INIT

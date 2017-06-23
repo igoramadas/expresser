@@ -36,7 +36,7 @@
         "stylus": "^0.54.5"
     },
     "devDependencies": {
-        "aws-sdk": "~2.74.0",
+        "aws-sdk": "~2.76.0",
         "betterdocco": "~0.7.6",
         "chai": "~4.0.2",
         "coffee-coverage": "~2.0.1",
