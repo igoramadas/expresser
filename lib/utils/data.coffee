@@ -26,7 +26,7 @@ class DataUtils
     # @param {String} maskChar Optional character to be used on the masking, default is *.
     # @param {Number} leaveLast Optional, leave last X positiongs of the string unmasked.
     # @return {String} Masked string.
-    maskString: (value, maskChar, leaveLast) =>
+    maskString: (value, maskChar, leaveLast) ->
         return value if not value? or value is ""
 
         separators = [" ", "-", "_", "+", "=", "/"]
@@ -134,7 +134,7 @@ class DataUtils
 
     # Generates a RFC1422-compliant unique ID using random numbers.
     # @return {String} A single unique ID.
-    uuid: =>
+    uuid: ->
         baseStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
         generator = (c) ->
             r = Math.random() * 16 | 0

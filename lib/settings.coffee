@@ -90,7 +90,7 @@ class Settings
         return settingsJson
 
     # Reset to default settings.
-    reset: =>
+    reset: ->
         @instance = new Settings()
         @instance.load()
 
