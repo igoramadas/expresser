@@ -99,6 +99,8 @@ class Logger
     # @param {Boolean} doNotParse If true, message won't be parsed and cleaned using the argsCleaner helper.
     # @return {String} The human readable log sent to the console.
     console: (logType, msg, doNotParse) ->
+        return if process.env.NODE_ENV is "test" and logType isnt "test"
+
         timestamp = moment().format "HH:mm:ss.SS"
 
         # Only parse message if doNotClean is false or unset.
@@ -127,7 +129,7 @@ class Logger
     # @param {Array} args Array to be stringified and logged.
     # @return {String} The human readable log line.
     log: (logType, args) ->
-        return if settings.logger.levels.indexOf(logType) < 0 and not settings.general.debug
+        return if settings.logger.levels?.indexOf(logType) < 0 and not settings.general.debug
 
         # Get message out of the arguments.
         msg = @getMessage args

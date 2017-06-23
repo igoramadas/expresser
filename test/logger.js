@@ -25,6 +25,10 @@ describe("Logger Tests", function () {
         logger.init();
     });
 
+    it("Logs tests to console", function () {
+        logger.console("test", "This is a test console log");
+    });
+
     it("Logs on diffent levels (debug, info, warn, error, critical)", function () {
         logger.debug("THIS IS DEBUG");
         logger.info("THIS IS INFO");

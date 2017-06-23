@@ -452,6 +452,8 @@ IP address will be appended to logs depending on the settings.
             </div>
             
             <div class="content"><div class='highlight'><pre>    console: <span class="hljs-function"><span class="hljs-params">(logType, msg, doNotParse)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> process.env.NODE_ENV <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span> <span class="hljs-keyword">and</span> logType <span class="hljs-keyword">isnt</span> <span class="hljs-string">"test"</span>
+
         timestamp = moment().format <span class="hljs-string">"HH:mm:ss.SS"</span></pre></div></div>
             
         </li>
@@ -516,7 +518,7 @@ IP address will be appended to logs depending on the settings.
             </div>
             
             <div class="content"><div class='highlight'><pre>    log: <span class="hljs-function"><span class="hljs-params">(logType, args)</span> -&gt;</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> settings.logger.levels.indexOf(logType) &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> settings.general.debug</pre></div></div>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> settings.logger.levels?.indexOf(logType) &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> settings.general.debug</pre></div></div>
             
         </li>
         

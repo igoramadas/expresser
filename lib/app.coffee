@@ -47,26 +47,6 @@ class App
         logger.debug "App.init",
         events.emit "App.before.init"
 
-        # Init options are deprecated.
-        if arguments.length > 0
-            logger.deprecated "App.init(options)", "No options param anymore. App will be configured based on what's defiend on the settings module."
-
-        # Check for deprecated settings.
-        if settings.app.sessionEnabled?
-            logger.deprecated "settings.app.sessionEnabled", "Please use settings.app.session.enabled."
-        if settings.app.sessionMaxAge?
-            logger.deprecated "settings.app.sessionMaxAge", "Please use settings.app.session.maxAge."
-        if settings.app.sessionSecret?
-            logger.deprecated "settings.app.sessionSecret", "Please use settings.app.session.secret."
-        if settings.app.cookieEnabled?
-            logger.deprecated "settings.app.cookieEnabled", "Please use settings.app.cookie.enabled."
-        if settings.app.cookieSecret?
-            logger.deprecated "settings.app.cookieSecret", "Please use settings.app.cookie.secret."
-        if settings.path?.viewsDir?
-            logger.deprecated "settings.path.viewsDir", "Please use settings.app.viewPath."
-        if settings.path?.publicDir?
-            logger.deprecated "settings.path.publicDir", "Please use settings.app.publicPath."
-
         nodeEnv = process.env.NODE_ENV
 
         # Configure Express server and start server.
