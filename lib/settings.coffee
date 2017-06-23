@@ -41,7 +41,7 @@ class Settings
     # --------------------------------------------------------------------------
 
     # Load settings from settings.default.json, then settings.json, then environment specific settings.
-    load: =>
+    load: ->
         @currentEnv = process.env.NODE_ENV or "development"
 
         @loadFromJson "settings.default.json"
@@ -54,7 +54,7 @@ class Settings
     # @param {String} filename The filename or path to the settings file.
     # @param {Boolean} extend If true it won't update settings that are already existing.
     # @return {Object} Returns the JSON representation of the loaded file.
-    loadFromJson: (filename, extend) =>
+    loadFromJson: (filename, extend) ->
         extend = false if not extend?
         filename = utils.io.getFilePath filename
         settingsJson = null
@@ -107,7 +107,7 @@ class Settings
     # @param {Object} options Options to be passed to the cipher.
     # @option options {String} cipher The cipher to be used, default is aes256.
     # @option options {String} password The encryption key.
-    cryptoHelper: (encrypt, filename, options) =>
+    cryptoHelper: (encrypt, filename, options) ->
         env = process.env
 
         options = {} if not options?
@@ -199,14 +199,14 @@ class Settings
     # @param {String} filename The file to be encrypted.
     # @param {Object} options Options to be passed to the cipher.
     # @return {Boolean} Returns true if encryption OK, false if something went wrong.
-    encrypt: (filename, options) =>
+    encrypt: (filename, options) ->
         @cryptoHelper true, filename, options
 
     # Helper to decrypt the specified settings file. Please see `cryptoHelper` above.
     # @param {String} filename The file to be decrypted.
     # @param {Object} options Options to be passed to the cipher.
     # @return {Boolean} Returns true if decryption OK, false if something went wrong.
-    decrypt: (filename, options) =>
+    decrypt: (filename, options) ->
         @cryptoHelper false, filename, options
 
     # FILE WATCHER
@@ -216,7 +216,7 @@ class Settings
     # The `callback` is optional in case you want to notify another module about settings updates.
     # @param {Boolean} enable If enabled is true activate the fs watcher, otherwise deactivate.
     # @param {Method} callback A function (event, filename) triggered when a settings file changes.
-    watch: (enable, callback) =>
+    watch: (enable, callback) ->
         if callback? and not lodash.isFunction callback
             throw new TypeError "The callback must be a valid function, or null/undefined."
 

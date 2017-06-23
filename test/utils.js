@@ -51,7 +51,7 @@ describe("Utils Tests", function () {
     });
 
     it("Get valid server info", function (done) {
-        var serverInfo = utils.getServerInfo();
+        var serverInfo = utils.system.getInfo();
 
         if (serverInfo.cpuCores > 0) {
             done();

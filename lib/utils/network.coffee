@@ -11,7 +11,7 @@ class NetworkUtils
     # @param {String} ip The IP to be checked (IPv4 or IPv6).
     # @param {Object} range A string or array of strings representing the valid ranges.
     # @return {Boolean} True if valid, false otherwise.
-    ipInRange: (ip, range) =>
+    ipInRange: (ip, range) ->
         if lodash.isString range
             ipParsed = ipaddr.parse ip
             ipVer = ipParsed.kind()

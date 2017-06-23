@@ -11,7 +11,7 @@ class DataUtils
     # @param {String} value The original value / string.
     # @param {Array} charsToRemove List of characters to be removed from the original string.
     # @return {String} Resulting value with the characters removed.
-    removeFromString: (value, charsToRemove) =>
+    removeFromString: (value, charsToRemove) ->
         return value if not value? or value is ""
 
         result = value

@@ -27,7 +27,7 @@ class Database
 
     # Init the database module.
     # @param {Object} options Database init options.
-    init: =>
+    init: ->
         logger.debug "Database.init"
         events.emit "Database.before.init"
 
@@ -40,7 +40,7 @@ class Database
         delete @init
 
     # Bind events.
-    setEvents: =>
+    setEvents: ->
         events.on "Database.register", @register
 
     # IMPLEMENTATION
@@ -51,7 +51,7 @@ class Database
     # @param {Object} driver The database driver to be used, for example mongo.
     # @param {Object} connString The connection string, for example user:password@hostname/dbname.
     # @param {Object} options Additional options to be passed when creating the DB connection object.
-    register: (id, driver, connString, options) =>
+    register: (id, driver, connString, options) ->
         if not @drivers[driver]?
             logger.error "Database.register", "The driver #{driver} is not installed! Please check if plugin expresser-database-#{driver} is available on the current environment."
             return false

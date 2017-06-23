@@ -43,7 +43,7 @@ class App
     # Init the Express server.
     # @param {Object} options App init options. If passed as an array, assume it's the array with extra middlewares.
     # @option options {Array} appendMiddlewares Array with extra middlewares to be loaded.
-    init: =>
+    init: ->
         logger.debug "App.init",
         events.emit "App.before.init"
 
@@ -77,7 +77,7 @@ class App
         delete @init
 
     # Configure the server. Set views, options, use Express modules, etc.
-    configureServer: =>
+    configureServer: ->
         midBodyParser = require "body-parser"
         midCookieParser = require "cookie-parser"
         midSession = require "cookie-session"
@@ -148,7 +148,7 @@ class App
         events.emit "App.on.configureServer"
 
     # Start the server using HTTP or HTTPS, depending on the settings.
-    startServer: =>
+    startServer: ->
         if settings.app.ssl.enabled and settings.app.ssl.keyFile? and settings.app.ssl.certFile?
             sslKeyFile = utils.io.getFilePath settings.app.ssl.keyFile
             sslCertFile = utils.io.getFilePath settings.app.ssl.certFile
@@ -191,7 +191,7 @@ class App
         events.emit "App.on.startServer", serverRef
 
     # Kill the underlying Express server and shut down the app.
-    kill: =>
+    kill: ->
         @webServer.close()
 
     # HELPER AND UTILS
@@ -203,7 +203,7 @@ class App
     # @param {Object} res The response object.
     # @param {String} view The Pug filename.
     # @param {Object} options Options passed to the view, optional.
-    renderView: (req, res, view, options) =>
+    renderView: (req, res, view, options) ->
         logger.debug "App.renderView", req.originalUrl, view, options
 
         try
@@ -227,7 +227,7 @@ class App
     # @param {Object} req The request object.
     # @param {Object} res The response object.
     # @param {Object} data The JSON data to be sent.
-    renderJson: (req, res, data) =>
+    renderJson: (req, res, data) ->
         logger.debug "App.renderJson", req.originalUrl, data
 
         if lodash.isString data
@@ -286,7 +286,7 @@ class App
     # @param {Object} res The response object.
     # @param {Object} error The error object or message to be sent to the client.
     # @param {Integer} status The response status code, optional, default is 500.
-    renderError: (req, res, error, status) =>
+    renderError: (req, res, error, status) ->
         logger.error "App.renderError", req.originalUrl, status, error
 
         status = 408 if status is "ETIMEDOUT"

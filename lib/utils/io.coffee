@@ -46,14 +46,14 @@ class IoUtils
     # Copy the `src` file to the `target`, both must be the full file path.
     # @param {String} src The full source file path.
     # @param {String} target The full target file path.
-    copyFileSync: (src, target) =>
+    copyFileSync: (src, target) ->
         srcContents = fs.readFileSync src
         fs.writeFileSync target, srcContents
 
     # Make sure the "target" directory exists by recursively iterating through its parents
     # and creating the directories. Returns nothing if all good or error.
     # @param {String} target The full target path, with or without a trailing slash.
-    mkdirRecursive: (target) =>
+    mkdirRecursive: (target) ->
         return if fs.existsSync path.resolve(target)
 
         callback = (p, made) ->

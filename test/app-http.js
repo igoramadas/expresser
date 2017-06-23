@@ -102,4 +102,8 @@ describe("App HTTP Tests", function () {
 
         supertest(app.server).get("/middleware").expect("Content-Type", /json/).expect(200, done);
     });
+
+    it("Kills the server", function () {
+        app.kill();
+    });
 });

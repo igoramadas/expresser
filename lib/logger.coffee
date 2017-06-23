@@ -39,7 +39,7 @@ class Logger
     # Init the Logger module. Verify which services are set, and add the necessary transports.
     # IP address will be appended to logs depending on the settings.
     # @param {Object} options Logger init options.
-    init: =>
+    init: ->
         events.emit "Logger.before.init"
 
         if arguments.length > 0
@@ -60,7 +60,7 @@ class Logger
         delete @init
 
     # Bind events.
-    setEvents: =>
+    setEvents: ->
         events.on "Logger.console", @console
         events.on "Logger.debug", @debug
         events.on "Logger.info", @info
@@ -72,7 +72,7 @@ class Logger
     # -------------------------------------------------------------------------
 
     # Register a Logger transport. This is called by Logger plugins.
-    register: (id, driver, options) =>
+    register: (id, driver, options) ->
         if not @drivers[driver]?
             console.error "Logger.register", "The transport #{driver} is not installed! Please check if plugin expresser-logger-#{driver} is available on the current environment."
             return false
@@ -98,7 +98,7 @@ class Logger
     # @param {Array} args Array of arguments to be stringified and logged.
     # @param {Boolean} doNotParse If true, message won't be parsed and cleaned using the argsCleaner helper.
     # @return {String} The human readable log sent to the console.
-    console: (logType, msg, doNotParse) =>
+    console: (logType, msg, doNotParse) ->
         timestamp = moment().format "HH:mm:ss.SS"
 
         # Only parse message if doNotClean is false or unset.
@@ -126,7 +126,7 @@ class Logger
     # @param {String} logType The log type (for example: warning, error, info, security, etc).
     # @param {Array} args Array to be stringified and logged.
     # @return {String} The human readable log line.
-    log: (logType, args) =>
+    log: (logType, args) ->
         return if settings.logger.levels.indexOf(logType) < 0 and not settings.general.debug
 
         # Get message out of the arguments.
@@ -181,13 +181,13 @@ class Logger
     # --------------------------------------------------------------------------
 
     # Helper to log to console about methods / features deprecation.
-    deprecated: (func, message) =>
+    deprecated: (func, message) ->
         message = "#{func} is deprecated. #{message}"
         @console "deprecated", message
         return {error: "Method deprecated", message: message}
 
     # Helper to log to console that module is not enabled on settings.
-    notEnabled: (module, func) =>
+    notEnabled: (module, func) ->
         @console "debug", "#{module}.#{func} abort! #{module} is not enabled."
         return {notEnabled: true}
 

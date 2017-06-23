@@ -38,7 +38,7 @@ class SystemUtils
 
     # Return an object with general information about the server.
     # @return {Object} Results with process pid, platform, memory, uptime and IP.
-    getInfo: =>
+    getInfo: ->
         result = {}
 
         # Save parsed OS info to the result object.

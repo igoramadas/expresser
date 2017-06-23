@@ -19,7 +19,7 @@ class Events
     # @param {String} id The event ID.
     # @param {Arguments} args Arguments to be passed to the emitter.
     # @return {Object} Returns itself so calls can be chained.
-    emit: (id, args) =>
+    emit: (id, args) ->
         emitter.emit.apply emitter, arguments
         return this
 
@@ -27,7 +27,7 @@ class Events
     # @param {String} id The event ID.
     # @param {Method} callback The callback to be triggered.
     # @return {Object} Returns itself so calls can be chained.
-    on: (id, callback) =>
+    on: (id, callback) ->
         emitter.addListener id, callback
         return this
 
@@ -35,7 +35,7 @@ class Events
     # @param {String} id The event ID.
     # @param {Method} callback The callback to be removed.
     # @return {Object} Returns itself so calls can be chained.
-    off: (id, callback) =>
+    off: (id, callback) ->
         emitter.removeListener id, callback
         return this
 

@@ -33,7 +33,7 @@ describe("Settings Tests", function () {
             var originalJson = fs.readFileSync(filename, "utf8");
         }
 
-        var newJson = utils.minifyJson(originalJson);
+        var newJson = utils.data.minifyJson(originalJson);
 
         var callback = function () {
             if (doneCalled) return;
