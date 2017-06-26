@@ -97,7 +97,7 @@ class App
         connectAssetsOptions.helperContext = @server.locals
 
         # Connect assets and dynamic compiling.
-        ConnectAssets = (require "connect-assets") connectAssetsOptions
+        ConnectAssets = (require "./app/mincer-middleware.js") connectAssetsOptions
         @server.use ConnectAssets
 
         # Append extra middlewares, if any was specified.
