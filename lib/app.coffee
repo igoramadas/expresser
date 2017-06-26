@@ -44,7 +44,7 @@ class App
     # @param {Object} options App init options. If passed as an array, assume it's the array with extra middlewares.
     # @option options {Array} appendMiddlewares Array with extra middlewares to be loaded.
     init: ->
-        logger.debug "App.init",
+        logger.debug "App.init"
         events.emit "App.before.init"
 
         nodeEnv = process.env.NODE_ENV

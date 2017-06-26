@@ -9,6 +9,9 @@ class Datastore
     logger = null
     settings = null
 
+    # Expose the datastore object.
+    ds: null
+
     # INIT
     # -------------------------------------------------------------------------
 
@@ -18,7 +21,7 @@ class Datastore
         settings = parent.expresser.settings
 
         # Create the SNS handler.
-        ds = gcloudDatastore {projectId: settings.app.id}
+        @ds = gcloudDatastore {projectId: settings.app.id}
 
         delete @init
 
@@ -29,7 +32,7 @@ class Datastore
     get: (kind, options) ->
         options = options or {}
 
-        q = ds.createQuery kind
+        q = @ds.createQuery kind
 
         q = q.limit options.limit if options.limit?
         q = q.order options.order if options.order?
@@ -37,7 +40,7 @@ class Datastore
 
         # Query the Datastore!
         try
-            query = await ds.runQuery q
+            query = await @ds.runQuery q
             endCursor = if query.moreResults isnt Datastore.NO_MORE_RESULTS then query.endCursor else false
             entities = query[0].map fromDs
         catch ex
@@ -51,9 +54,9 @@ class Datastore
     # Create / update records on the Datastore.
     upsert = (kind, id, data) ->
         if id?
-            key = ds.key [kind, parseInt(id, 10)]
+            key = @ds.key [kind, parseInt(id, 10)]
         else
-            key = ds.key kind
+            key = @ds.key kind
 
         # Create entity object to be sent out.
         entity = {
@@ -63,7 +66,7 @@ class Datastore
 
         # Try saving the entity to the Datastore.
         try
-            result = await ds.save entity
+            result = await @ds.save entity
             data.id = entity.key.id
         catch ex
             logger.error "GCloud.Datastore.upsert", kind, ex
@@ -74,8 +77,8 @@ class Datastore
     # Remove (delete) a record from the Datastore.
     remove: (kind, id) ->
         try
-            key = ds.key [kind, parseInt(id, 10)]
-            result = await ds.delete key
+            key = @ds.key [kind, parseInt(id, 10)]
+            result = await @ds.delete key
         catch ex
             logger.error "GCloud.Datastore.remove", kind, id, ex
             throw ex
