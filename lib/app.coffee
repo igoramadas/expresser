@@ -1,6 +1,7 @@
 # EXPRESSER APP
 # -----------------------------------------------------------------------------
-# The Express server. By default it will run on HTTP port 8080
+# This is the "core" of an Expresser based application. The App contains
+# an Express server, running on HTTP or HTTPs (or both!).
 # <!--
 # @see settings.app
 # -->
@@ -22,8 +23,10 @@ class App
     # Current node environment and HTTP server handler are set on init.
     nodeEnv = null
 
-    # @property {Object} Exposes the Express HTTP or HTTPS `server` object.
+    # @property {Object} Exposes the Express app.
     server: null
+
+    # @property {Object} Exposes the underlying HTTP(s) server.
     webServer: null
 
     # @property [Array<Object>] Array of additional middlewares to be used
