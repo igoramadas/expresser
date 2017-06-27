@@ -44,7 +44,7 @@ class App
     # @param {Object} options App init options. If passed as an array, assume it's the array with extra middlewares.
     # @option options {Array} appendMiddlewares Array with extra middlewares to be loaded.
     init: ->
-        logger.debug "App.init",
+        logger.debug "App.init"
         events.emit "App.before.init"
 
         nodeEnv = process.env.NODE_ENV
@@ -97,7 +97,7 @@ class App
         connectAssetsOptions.helperContext = @server.locals
 
         # Connect assets and dynamic compiling.
-        ConnectAssets = (require "connect-assets") connectAssetsOptions
+        ConnectAssets = (require "./app/connect-assets.js") connectAssetsOptions
         @server.use ConnectAssets
 
         # Append extra middlewares, if any was specified.
