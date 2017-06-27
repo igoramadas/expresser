@@ -1,5 +1,11 @@
 # Changelog for expresser
 
+3.0.0
+=====
+* NEW! Now using async / await whenever applicable.
+* Lots of unecessary modules and code removed. More performance, less memory comsumption.
+* Now using CoffeeScript v2.
+
 2.4.2
 =====
 * Fixed default views path (/views).
@@ -56,3 +62,7 @@
 2.2.2
 =====
 * History starts here :-)
+
+1.0.0
+=====
+* First public release.

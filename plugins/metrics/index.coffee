@@ -7,7 +7,7 @@
 # -->
 class Metrics
 
-    priority: 3
+    priority: 2
 
     events = null
     lodash = null

@@ -28,8 +28,7 @@ class App
 
     # @property [Array<Object>] Array of additional middlewares to be used
     # by the Express server. These will be called before anything is processed,
-    # so should be used for things that need immediate processing
-    # (firewall, for example).
+    # so should be used for things that need immediate processing.
     prependMiddlewares: []
 
     # @property [Array<Object>] Array of additional middlewares to be used

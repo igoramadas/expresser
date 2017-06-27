@@ -25,7 +25,7 @@
 # -->
 class Cron
 
-    priority: 5
+    priority: 3
 
     events = null
     fs = require "fs"

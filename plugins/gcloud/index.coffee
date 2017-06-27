@@ -13,6 +13,7 @@ class GCloud
     settings = null
 
     datastore: require "./datastore"
+    storage: require "./storage"
 
     # INIT
     # -------------------------------------------------------------------------
@@ -28,6 +29,7 @@ class GCloud
 
         # Init the implemented Google Cloud modules.
         @datastore.init this
+        @storage.init this
 
         @setEvents()
 

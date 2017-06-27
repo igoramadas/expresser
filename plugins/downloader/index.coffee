@@ -7,7 +7,7 @@
 # -->
 class Downloader
 
-    priority: 5
+    priority: 3
 
     fs = require "fs"
     http = require "http"

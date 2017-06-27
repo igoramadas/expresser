@@ -8,7 +8,7 @@
 # -->
 class Sockets
 
-    priority: 5
+    priority: 3
 
     events = null
     lodash =  null

@@ -7,7 +7,7 @@
 # -->
 class LoggerFile
 
-    priority: 3
+    priority: 1
 
     events = null
     fs = require "fs"

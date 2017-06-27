@@ -6,7 +6,7 @@
 # -->
 class LoggerLoggly
 
-    priority: 3
+    priority: 1
 
     fs = require "fs"
     loggly = require "loggly"
