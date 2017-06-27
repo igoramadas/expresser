@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>index.coffee - Docs</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="index.html">
+                index.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.app.html">
+                lib/app.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.database.html">
+                lib/database.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.events.html">
+                lib/events.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.logger.html">
+                lib/logger.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.settings.html">
+                lib/settings.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.utils.html">
+                lib/utils.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.cron.index.html">
+                plugins/cron/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.database-mongodb.index.html">
+                plugins/database-mongodb/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.downloader.index.html">
+                plugins/downloader/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.gcloud.datastore.html">
+                plugins/gcloud/datastore.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.gcloud.index.html">
+                plugins/gcloud/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.gcloud.storage.html">
+                plugins/gcloud/storage.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.logger-file.index.html">
+                plugins/logger-file/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.logger-logentries.index.html">
+                plugins/logger-logentries/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.logger-loggly.index.html">
+                plugins/logger-loggly/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.index.html">
+                plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.httpserver.html">
+                plugins/metrics/httpserver.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.index.html">
+                plugins/metrics/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.percentile.html">
+                plugins/metrics/percentile.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.sockets.index.html">
+                plugins/sockets/index.coffee
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>index.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h2 id="expresser-downloader">EXPRESSER DOWNLOADER</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Helper to manage downloads from external sources. Supports downloading
+throttling, avoids duplicates, etc.
+<!--
+@see settings.downloader
+--></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Downloader</span></span>
+
+    priority: <span class="hljs-number">3</span>
+
+    fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+    http = <span class="hljs-built_in">require</span> <span class="hljs-string">"http"</span>
+    https = <span class="hljs-built_in">require</span> <span class="hljs-string">"https"</span>
+    path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
+    url = <span class="hljs-built_in">require</span> <span class="hljs-string">"url"</span>
+
+    events = <span class="hljs-literal">null</span>
+    lodash = <span class="hljs-literal">null</span>
+    logger = <span class="hljs-literal">null</span>
+    moment = <span class="hljs-literal">null</span>
+    settings = <span class="hljs-literal">null</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>The download queue and simultaneous count.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    queue = []
+    downloading = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="init">INIT</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Init the module.
+@param {Object} options Downloader init options.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        moment = @expresser.libs.moment
+        settings = @expresser.settings
+
+        logger.debug <span class="hljs-string">"Downloader.init"</span>, options
+        events.emit <span class="hljs-string">"Downloader.before.init"</span>
+
+        @setEvents()
+
+        events.emit <span class="hljs-string">"Downloader.on.init"</span>, options
+        <span class="hljs-keyword">delete</span> @init</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Bind events.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">-&gt;</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"Downloader.download"</span>, @download
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"Downloader.stop"</span>, @stop</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h2 id="methods">METHODS</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Download an external file and save it to the specified location. The <code>callback</code>
+has the signature (error, data). Returns the downloader object which is added
+to the <code>queue</code>, which has the download properties and a <code>stop</code> helper to force
+stopping it. Returns false on error or duplicate.
+Tip: if you want to get the downloaded data without having to read the target file
+you can get the downloaded contents via the <code>options.downloadedData</code>.
+@param {String} remoteUrl The URL of the remote file to be downloaded.
+@param {String} saveTo The full local path and destination filename.
+@param {Object} options Optional, object with request options, for example auth.
+@param {Method} callback Optional, a function (err, result) to be called when download has finished.
+@return {Object} Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    download: <span class="hljs-function"><span class="hljs-params">(remoteUrl, saveTo, options, callback)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"Downloader.download"</span>, remoteUrl, saveTo, options
+        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Downloader"</span>, <span class="hljs-string">"download"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.downloader.enabled
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> remoteUrl? <span class="hljs-keyword">or</span> remoteUrl <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+            err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"First parameter 'remoteUrl' is mandatory!"</span>
+            logger.error <span class="hljs-string">"Downloader.download"</span>, err
+            <span class="hljs-keyword">throw</span> err</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Check options and callback.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction options
+            callback = options
+            options = <span class="hljs-literal">null</span>
+
+        now = <span class="hljs-keyword">new</span> Date().getTime()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Create the download object.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Prevent duplicates?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.downloader.preventDuplicates
+            existing = lodash.find downloading, {remoteUrl: remoteUrl, saveTo: saveTo}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>If downloading the same file and to the same location, abort download.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> existing?.saveTo <span class="hljs-keyword">is</span> saveTo
+                logger.error <span class="hljs-string">"Downloader.download"</span>, <span class="hljs-string">"Aborted, already downloading."</span>, remoteUrl, saveTo
+                err = {message: <span class="hljs-string">"Download aborted: same file is already downloading."</span>, duplicate: <span class="hljs-literal">true</span>}
+                callback(err, downloadObj) <span class="hljs-keyword">if</span> callback?
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Create a <code>stop</code> method to force stop the download by setting the <code>stopFlag</code>.
+Accepts a <code>keep</code> boolean, if true the already downloaded data will be kept on forced stop.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">stopHelper</span> = <span class="hljs-params">(keep)</span> -&gt;</span> @stopFlag = (<span class="hljs-keyword">if</span> keep <span class="hljs-keyword">then</span> <span class="hljs-number">1</span> <span class="hljs-keyword">else</span> <span class="hljs-number">2</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Update download object with stop helper and add to queue.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        downloadObj.stop = stopHelper
+        queue.push downloadObj</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Start download immediatelly if not exceeding the <code>maxSimultaneous</code> setting.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        next() <span class="hljs-keyword">if</span> downloading.length &lt; settings.downloader.maxSimultaneous
+
+        <span class="hljs-keyword">return</span> downloadObj</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Force stop a current download.
+@param {String} remoteUrl The URL of the download to stop.
+@param {String} saveTo The full local path of the download to stop.
+@return {Boolean} Returns true if a match was found, or false if no matching download to stop.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    stop: <span class="hljs-function"><span class="hljs-params">(remoteUrl, saveTo)</span> -&gt;</span>
+        existing = lodash.find downloading, {remoteUrl: remoteUrl, saveTo: saveTo}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Download exists? If so set its stop flag and return true, otherwise false.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> existing?
+            existing.stop()
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h2 id="internal-implementation">INTERNAL IMPLEMENTATION</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Helper to remove a download from the <code>downloading</code> list.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">removeDownloading</span> = <span class="hljs-params">(obj)</span> -&gt;</span>
+        filter = {timestamp: obj.timestamp, remoteUrl: obj.remoteUrl, saveTo: obj.saveTo}
+        downloading = lodash.reject downloading, filter</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Helper function to proccess download errors.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">downloadError</span> = <span class="hljs-params">(err, obj)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"Downloader.downloadError"</span>, err, obj
+        removeDownloading obj
+        next()
+        obj.callback(err, obj) <span class="hljs-keyword">if</span> obj.callback?</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Helper function to parse the URL and get its options.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">parseUrlOptions</span> = <span class="hljs-params">(obj, options)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> obj.redirectUrl? <span class="hljs-keyword">and</span> obj.redirectUrl <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            urlInfo = url.parse obj.redirectUrl
+        <span class="hljs-keyword">else</span>
+            urlInfo = url.parse obj.remoteUrl</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Set URL options.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        options =
+            host: urlInfo.hostname
+            hostname: urlInfo.hostname
+            port: urlInfo.port
+            path: urlInfo.path</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Check for credentials on the URL.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> urlInfo.auth? <span class="hljs-keyword">and</span> urlInfo.auth <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            options.auth = urlInfo.auth
+
+        <span class="hljs-keyword">return</span> options</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Helper function to start a download request.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">reqStart</span> = <span class="hljs-params">(obj, options)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> obj.remoteUrl.indexOf(<span class="hljs-string">"https"</span>) <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+            options.port = <span class="hljs-number">443</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.port?
+            httpHandler = https
+        <span class="hljs-keyword">else</span>
+            httpHandler = http</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Start the request.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        req = httpHandler.get options, <span class="hljs-function"><span class="hljs-params">(response)</span> =&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>Downloaded contents will be appended also to the <code>downloadedData</code>
+property of the options object.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            obj.downloadedData = <span class="hljs-string">""</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Set the estination temp file.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            saveToTemp = obj.saveTo + settings.downloader.tempExtension</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>If status is 301 or 302, redirect to the specified location and stop the current request.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> response.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">301</span> <span class="hljs-keyword">or</span> response.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">302</span>
+
+                obj.redirectUrl = response.headers.location
+                options = lodash.assign options, parseUrlOptions obj
+                req.end()
+
+                reqStart obj, options</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>If status is not 200 or 304, it means something went wrong so do not proceed
+with the download. Otherwise proceed and listen to the <code>data</code> and <code>end</code> events.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> response.statusCode <span class="hljs-keyword">isnt</span> <span class="hljs-number">200</span> <span class="hljs-keyword">and</span> response.statusCode <span class="hljs-keyword">isnt</span> <span class="hljs-number">304</span>
+
+                err = {code: response.statusCode, message: <span class="hljs-string">"Server returned an unexpected status code: <span class="hljs-subst">#{response.statusCode}</span>"</span>}
+                downloadError err, obj
+
+            <span class="hljs-keyword">else</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Create the file stream with a .download extension. This will be renamed after the
+download has finished and the file is totally written.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                fileWriter = fs.createWriteStream saveToTemp, {<span class="hljs-string">"flags"</span>: <span class="hljs-string">"w+"</span>}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>Helper called response gets new data. The data will also be
+appended to <code>options.data</code> property.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onData</span> = <span class="hljs-params">(data)</span> -&gt;</span>
+                    <span class="hljs-keyword">if</span> obj.stopFlag
+                        req.end()
+                        onEnd()
+                    <span class="hljs-keyword">else</span>
+                        fileWriter.write data
+                        obj.downloadedData += data</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Helper called when response ends.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onEnd</span> = -&gt;</span>
+                    response.removeListener <span class="hljs-string">"data"</span>, onData
+
+                    fileWriter.addListener <span class="hljs-string">"close"</span>, <span class="hljs-function">-&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>Check if temp file exists.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        tempExists = fs.existsSync saveToTemp</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>If temp download file can’t be found, set error message.
+If <code>stopFlag</code> is 2 means download was stopped and should not keep partial data.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> tempExists
+                            err = {message:<span class="hljs-string">"Can't find downloaded file: <span class="hljs-subst">#{saveToTemp}</span>"</span>}
+                        <span class="hljs-keyword">else</span>
+                            fs.unlinkSync saveToTemp <span class="hljs-keyword">if</span> obj.stopFlag <span class="hljs-keyword">is</span> <span class="hljs-number">2</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>Check if destination file already exists.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        fileExists = fs.existsSync obj.saveTo</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>Only proceed with renaming if <code>stopFlag</code> wasn’t set and destionation is valid.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj.stopFlag? <span class="hljs-keyword">or</span> obj.stopFlag &lt; <span class="hljs-number">1</span>
+                            fs.unlinkSync obj.saveTo <span class="hljs-keyword">if</span> fileExists
+                            fs.renameSync saveToTemp, obj.saveTo <span class="hljs-keyword">if</span> tempExists</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>Remove from <code>downloading</code> list and proceed with the callback.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        removeDownloading obj
+                        obj.callback(err, obj) <span class="hljs-keyword">if</span> obj.callback?
+
+                        logger.debug <span class="hljs-string">"Downloader.next"</span>, <span class="hljs-string">"End"</span>, obj.remoteUrl, obj.saveTo
+
+                    fileWriter.end()
+                    fileWriter.destroySoon()
+                    next()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>Attachd response listeners.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                response.addListener <span class="hljs-string">"data"</span>, onData
+                response.addListener <span class="hljs-string">"end"</span>, onEnd</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>Unhandled error, call the downloadError helper.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        req.<span class="hljs-literal">on</span> <span class="hljs-string">"error"</span>, <span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span>
+            downloadError err, obj</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>Process next download.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">next</span> = -&gt;</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> queue.length &lt; <span class="hljs-number">0</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>Get first download from queue.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        obj = queue.shift()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>Check if download is valid.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?
+            logger.debug <span class="hljs-string">"Downloader.next"</span>, <span class="hljs-string">"Skip"</span>, <span class="hljs-string">"Downloader object is invalid."</span>
+            <span class="hljs-keyword">return</span>
+        <span class="hljs-keyword">else</span>
+            logger.debug <span class="hljs-string">"Downloader.next"</span>, obj</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p>Add to downloading array.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        downloading.push obj
+
+        <span class="hljs-keyword">if</span> settings.downloader.headers? <span class="hljs-keyword">and</span> settings.downloader.headers <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            headers = settings.web.downloaderHeaders
+        <span class="hljs-keyword">else</span>
+            headers = <span class="hljs-literal">null</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p>Set and extend default options.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        options = lodash.assign {headers: headers, rejectUnauthorized: settings.downloader.rejectUnauthorized}, obj.options, parseUrlOptions(obj)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>Start download</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> obj.stopFlag? <span class="hljs-keyword">and</span> obj.stopFlag &gt; <span class="hljs-number">0</span>
+            logger.debug <span class="hljs-string">"Downloader.next"</span>, <span class="hljs-string">"Skip, 'stopFlag' is <span class="hljs-subst">#{obj.stopFlag}</span>."</span>, obj
+            removeDownloading obj
+            next()
+        <span class="hljs-keyword">else</span>
+            reqStart obj, options</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <h2 id="singleton-implementation">Singleton implementation</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Downloader.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> Downloader() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = exports = Downloader.getInstance()</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

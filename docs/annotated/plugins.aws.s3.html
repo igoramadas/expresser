@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>s3.coffee - Docs</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="index.html">
+                index.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.app.html">
+                lib/app.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.database.html">
+                lib/database.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.events.html">
+                lib/events.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.logger.html">
+                lib/logger.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.settings.html">
+                lib/settings.coffee
+              </a>
+            
+              
+              <a class="source" href="lib.utils.html">
+                lib/utils.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.index.html">
+                plugins/aws/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.s3.html">
+                plugins/aws/s3.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.aws.sns.html">
+                plugins/aws/sns.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.cron.index.html">
+                plugins/cron/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.database-mongodb.index.html">
+                plugins/database-mongodb/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.downloader.index.html">
+                plugins/downloader/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.gcloud.datastore.html">
+                plugins/gcloud/datastore.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.gcloud.index.html">
+                plugins/gcloud/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.gcloud.storage.html">
+                plugins/gcloud/storage.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.logger-file.index.html">
+                plugins/logger-file/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.logger-logentries.index.html">
+                plugins/logger-logentries/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.logger-loggly.index.html">
+                plugins/logger-loggly/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.index.html">
+                plugins/mailer/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mailer.templates.html">
+                plugins/mailer/templates.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.httpserver.html">
+                plugins/metrics/httpserver.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.index.html">
+                plugins/metrics/index.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.metrics.percentile.html">
+                plugins/metrics/percentile.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.sockets.index.html">
+                plugins/sockets/index.coffee
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>s3.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h2 id="aws-s3">AWS S3</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Handles communication with AWS S3.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">S3</span></span>
+
+    aws = <span class="hljs-built_in">require</span> <span class="hljs-string">"aws-sdk"</span>
+    fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+    path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
+
+    lodash = <span class="hljs-literal">null</span>
+    logger = <span class="hljs-literal">null</span>
+    settings = <span class="hljs-literal">null</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="init">INIT</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Init the S3 module.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(parent)</span> -&gt;</span>
+        lodash = parent.expresser.libs.lodash
+        logger = parent.expresser.logger
+        settings = parent.expresser.settings
+
+        <span class="hljs-keyword">delete</span> @init</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h2 id="methods">METHODS</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Download a file from S3 and optionally save to the specified destination.
+@param {String} bucket Name of the S3 bucket to download from.
+@param {String} key Key of the target S3 bucket resource (usually a filename).
+@param {String} destination Optional, full path to the destination where file should be saved.
+@param {Method} callback Callback (err, body), with body being the contents as String.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    download: <span class="hljs-function"><span class="hljs-params">(bucket, key, destination, callback)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction destination
+            callback = destination
+            destination = <span class="hljs-literal">null</span>
+
+        s3 = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region}
+        params = {Bucket: bucket, Key: key}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Make sure the file exists in the S3 bucket.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        s3.headObject params, <span class="hljs-function"><span class="hljs-params">(err, meta)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> err?</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Check if request is retryable. If so, warn and try again in a few seconds.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> err.retryable <span class="hljs-keyword">and</span> err.retryDelay &lt; <span class="hljs-number">60</span>
+                    logger.warn <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, <span class="hljs-string">"Retry in <span class="hljs-subst">#{err.retryDelay}</span>s"</span>, bucket, key, err
+                    lodash.delay @download, err.retryDelay * <span class="hljs-number">1000</span>, bucket, key, destination, callback
+                <span class="hljs-keyword">else</span>
+                    logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, bucket, key, err</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Hint for the user to login with the “mai” command.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">401</span> <span class="hljs-keyword">or</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">403</span>
+                        logger.warn <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"Invalid permissions or not authorized to read <span class="hljs-subst">#{bucket}</span> <span class="hljs-subst">#{key}</span>."</span>
+
+                    <span class="hljs-keyword">return</span> callback? err</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Get data from S3 and write it to local disk.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            s3.getObject params, <span class="hljs-function"><span class="hljs-params">(err, data)</span> -&gt;</span>
+                <span class="hljs-keyword">if</span> err?
+                    logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"getObject"</span>, bucket, key, err
+                    <span class="hljs-keyword">return</span> callback? err
+
+                body = data.Body.toString()
+
+                <span class="hljs-keyword">if</span> destination?
+                    fs.writeFile destination, body, {encoding: settings.general.encoding}, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+                        <span class="hljs-keyword">if</span> err?
+                            logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"writeFile"</span>, bucket, key, destination, err
+                        <span class="hljs-keyword">return</span> callback? err, body
+
+                <span class="hljs-keyword">else</span>
+                    <span class="hljs-keyword">return</span> callback? <span class="hljs-literal">null</span>, body</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Upload a file to S3.
+@param {String} bucket Name of the S3 bucket to upload to.
+@param {String} key Key of the target S3 bucket resource (usually a filename).
+@param {Object} body Contents of the file to be uploaded.
+@param {Object} options Upload options.
+@option options {String} acl ACL to be used, default is “public-read”.
+@option options {String} contentType Content type of the file.
+@param {Method} callback Callback (err, result).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    upload: <span class="hljs-function"><span class="hljs-params">(bucket, key, body, options, callback)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction options
+            callback = options
+            options = {}
+
+        s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
+        options = lodash.defaults options, {acl: <span class="hljs-string">"public-read"</span>}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Automagically discover the content type, if not set.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.contentType?
+            ext = path.extname key
+            options.contentType = <span class="hljs-string">"image/jpeg"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".jpg"</span>
+            options.contentType = <span class="hljs-string">"image/gif"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".gif"</span>
+            options.contentType = <span class="hljs-string">"image/png"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".png"</span>
+            options.contentType = <span class="hljs-string">"image/bmp"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".bmp"</span>
+
+        s3upload = s3Bucket.upload {
+            ACL: options.acl,
+            Body: body,
+            Key: key,
+            ContentType: options.contentType
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Send file to S3!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        s3upload.send (err, result) =&gt;
+            <span class="hljs-keyword">if</span> err?
+                logger.error <span class="hljs-string">"AWS.S3.upload"</span>, bucket, key, err
+            <span class="hljs-keyword">else</span>
+                logger.info <span class="hljs-string">"AWS.S3.upload"</span>, bucket, key
+
+            callback? err, result</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Delete object(s) from S3. Keys can be a string or an array of strings.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    delete: <span class="hljs-function"><span class="hljs-params">(bucket, keys, callback)</span> -&gt;</span>
+        s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
+        objects = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Make sure keys is an array and set the delete parameters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        keys = [keys] <span class="hljs-keyword">if</span> lodash.isString keys
+        objects.push {Key: value} <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> keys
+
+        params = {
+            Delete: {
+                Objects: objects
+            }
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Delete files!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        s3Bucket.deleteObjects params, <span class="hljs-function"><span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> err?
+                logger.error <span class="hljs-string">"AWS.S3.delete"</span>, bucket, keys, err
+            <span class="hljs-keyword">else</span>
+                logger.info <span class="hljs-string">"AWS.S3.delete"</span>, bucket, keys
+
+            callback? err, result</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <h2 id="singleton-implementation">Singleton implementation</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>S3.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> S3() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = exports = S3.getInstance()</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
