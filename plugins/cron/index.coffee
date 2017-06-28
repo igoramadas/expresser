@@ -82,11 +82,6 @@ class Cron
         logger.debug "Cron.load", filename, options
         return logger.notEnabled "Cron", "load" if not settings.cron.enabled
 
-        # DEPRECATED!
-        if lodash.isBoolean filename
-            err = logger.deprecated "Cron.load(boolean)", "First parameter must be the filename of the cron file to be loaded, or options object."
-            throw err
-
         # Set default options.
         options = filename if lodash.isObject filename
         options = lodash.defaults options, {autoStart: settings.cron.autoStart, basePath: settings.cron.basePath}
