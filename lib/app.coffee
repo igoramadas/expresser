@@ -23,6 +23,9 @@ class App
     # Current node environment and HTTP server handler are set on init.
     nodeEnv = null
 
+    # EXPOSED OBJECTS
+    # --------------------------------------------------------------------------
+
     # @property {Object} Exposes the Express app.
     server: null
 

@@ -14,11 +14,10 @@
 # @example Sample settings.json file
 #   {
 #     "general": {
-#       "debug": true,
-#       "appTitle": "A Super Cool App"
+#       "debug": true
 #     },
-#     "firewall" {
-#       "enabled": false
+#     "app" {
+#       "title": "My Super App"
 #     }
 #   }
 # -->
