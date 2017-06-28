@@ -27,12 +27,13 @@ class Cron
 
     priority: 3
 
-    events = null
     fs = require "fs"
+    path = require "path"
+
+    events = null
     lodash = null
     logger = null
     moment = null
-    path = require "path"
     settings = null
     utils = null
 

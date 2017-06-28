@@ -32,11 +32,11 @@ class Events
     # @param {Method} callback The callback to be triggered.
     # @param {Boolean} prepend If true, prepend the callback to the list, default is false.
     # @return {Object} Returns itself.
-    on: (id, callback, prepend) ->
+    on: (id, callback, prepend = false) ->
         if prepend is true
             emitter.prependListener id, callback
         else
-            emitter.on id, callback
+            emitter.addListener id, callback
         return this
 
     # Bind a specific one time callback to an event ID.
@@ -44,7 +44,7 @@ class Events
     # @param {Method} callback The callback to be triggered only once.
     # @param {Boolean} prepend If true, prepend the callback to the list, default is false.
     # @return {Object} Returns itself.
-    once: (id, callback, prepend) ->
+    once: (id, callback, prepend = false) ->
         if prepend is true
             emitter.prependOnceListener id, callback
         else
@@ -56,7 +56,7 @@ class Events
     # @param {Method} callback The callback to be removed.
     # @return {Object} Returns itself.
     off: (id, callback) ->
-        emitter.off id, callback
+        emitter.removeListener id, callback
         return this
 
     # Returns an array with all listeners attached to the specified event ID.
