@@ -78,11 +78,23 @@ This module acts as a wrapper to Node&#39;s EventEmitter class.
       <a href='#on-dynamic'>
         #
 (Object)
-<b>on</b><span>(id, callback)</span>
+<b>on</b><span>(id, callback, prepend = false)</span>
       </a>
     </span>
     <span class='desc'>
       Bind a specific callback to an event ID. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#once-dynamic'>
+        #
+(Object)
+<b>once</b><span>(id, callback, prepend = false)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Bind a specific one time callback to an event ID. 
     </span>
   </li>
   <li>
@@ -97,7 +109,35 @@ This module acts as a wrapper to Node&#39;s EventEmitter class.
       Remove a specific callback from the listeners related to an event ID. 
     </span>
   </li>
+  <li>
+    <span class='signature'>
+      <a href='#listeners-dynamic'>
+        #
+(Object)
+<b>listeners</b><span>(id)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Returns an array with all listeners attached to the specified event ID. 
+    </span>
+  </li>
 </ul>
+      <h2>Constructor Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='constructor-dynamic'>
+      #
+(void)
+<b>constructor</b><span>()</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Set event emitter defaults.</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+</div>
       <h2>Instance Method Details</h2>
       <div class='methods'>
   <div class='method_details'>
@@ -152,7 +192,7 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
         <tt>Object</tt>
       )
       &mdash;
-      <span class='desc'>Returns itself so calls can be chained. </span>
+      <span class='desc'>Returns itself. </span>
     </li>
   </ul>
 </div>
@@ -161,7 +201,7 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
     <p class='signature' id='on-dynamic'>
       #
 (Object)
-<b>on</b><span>(id, callback)</span>
+<b>on</b><span>(id, callback, prepend = false)</span>
       <br>
     </p>
     <div class='docstring'>
@@ -190,6 +230,16 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
       &mdash;
       <span class='desc'>The callback to be triggered. </span>
     </li>
+    <li>
+      <span class='name'>prepend</span>
+      <span class='type'>
+        (
+          <tt>Boolean</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>If true, prepend the callback to the list, default is false. </span>
+    </li>
   </ul>
   <h3>Returns:</h3>
   <ul class='return'>
@@ -199,7 +249,64 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
         <tt>Object</tt>
       )
       &mdash;
-      <span class='desc'>Returns itself so calls can be chained. </span>
+      <span class='desc'>Returns itself. </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='once-dynamic'>
+      #
+(Object)
+<b>once</b><span>(id, callback, prepend = false)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Bind a specific one time callback to an event ID.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>id</span>
+      <span class='type'>
+        (
+          <tt>String</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>The event ID. </span>
+    </li>
+    <li>
+      <span class='name'>callback</span>
+      <span class='type'>
+        (
+          <tt>Method</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>The callback to be triggered only once. </span>
+    </li>
+    <li>
+      <span class='name'>prepend</span>
+      <span class='type'>
+        (
+          <tt>Boolean</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>If true, prepend the callback to the list, default is false. </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Object</tt>
+      )
+      &mdash;
+      <span class='desc'>Returns itself. </span>
     </li>
   </ul>
 </div>
@@ -246,7 +353,44 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
         <tt>Object</tt>
       )
       &mdash;
-      <span class='desc'>Returns itself so calls can be chained. </span>
+      <span class='desc'>Returns itself. </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='listeners-dynamic'>
+      #
+(Object)
+<b>listeners</b><span>(id)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Returns an array with all listeners attached to the specified event ID.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>id</span>
+      <span class='type'>
+        (
+          <tt>String</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>The event ID. </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Object</tt>
+      )
+      &mdash;
+      <span class='desc'>Returns an array with listeners. </span>
     </li>
   </ul>
 </div>

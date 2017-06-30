@@ -35,7 +35,8 @@
       </table>
       <h2>Overview</h2>
       <div class='docstring'>
-  <h2 id="expresser-app">EXPRESSER APP</h2><p>The Express server. By default it will run on HTTP port 8080
+  <h2 id="expresser-app">EXPRESSER APP</h2><p>This is the &quot;core&quot; of an Expresser based application. The App contains
+an Express server, running on HTTP or HTTPs (or both!).
 <!--
 --></p>
 </div>
@@ -58,39 +59,48 @@
           </span>
         </dt>
         <dd class='desc'>
-          Exposes the Express HTTP or HTTPS <code>server</code> object. 
+          Exposes the Express app. 
+        </dd>
+        <dt id='webServer-property'>
+          <span class='signature'>
+            (Object)
+            <b>
+              webServer
+            </b>
+          </span>
+        </dt>
+        <dd class='desc'>
+          Exposes the underlying HTTP(s) server(s). 
         </dd>
         <dt id='prependMiddlewares-property'>
           <span class='signature'>
-            (Array&lt;Object&gt;)
+            (Array)
             <b>
               prependMiddlewares
             </b>
           </span>
         </dt>
         <dd class='desc'>
-          Array of additional middlewares to be used by the Express server. These will be called before anything is processed,
-so should be used for things that need immediate processing.
+          Additional middlewares to be used by the Express server. These will be called before the default middlewares.
 
         </dd>
         <dt id='appendMiddlewares-property'>
           <span class='signature'>
-            (Array&lt;Object&gt;)
+            (Array)
             <b>
               appendMiddlewares
             </b>
           </span>
         </dt>
         <dd class='desc'>
-          Array of additional middlewares to be used by the Express server. Please note that if you&#39;re adding middlewares
-manually you must do it BEFORE calling <code>init</code>.
+          Additional middlewares to be used by the Express server. These will be called after the default middlewares.
 
         </dd>
       </dl>
       <h2>Variables Summary</h2>
       <dl class='constants'>
-  <dt id='webServer-variable'>
-    webServer
+  <dt id='redirectorServer-variable'>
+    redirectorServer
     =
   </dt>
   <dd>
@@ -120,27 +130,15 @@ manually you must do it BEFORE calling <code>init</code>.
       </a>
     </span>
     <span class='desc'>
-      Init the Express server. 
+      Create, configure and run the Express server. 
     </span>
   </li>
   <li>
     <span class='signature'>
-      <a href='#configureServer-dynamic'>
+      <a href='#start-dynamic'>
         #
 (void)
-<b>configureServer</b><span>()</span>
-      </a>
-    </span>
-    <span class='desc'>
-      Configure the server. 
-    </span>
-  </li>
-  <li>
-    <span class='signature'>
-      <a href='#startServer-dynamic'>
-        #
-(void)
-<b>startServer</b><span>()</span>
+<b>start</b><span>()</span>
       </a>
     </span>
     <span class='desc'>
@@ -156,7 +154,7 @@ manually you must do it BEFORE calling <code>init</code>.
       </a>
     </span>
     <span class='desc'>
-      Kill the underlying Express server and shut down the app. 
+      Kill the underlying HTTP(S) server(s). 
     </span>
   </li>
   <li>
@@ -227,58 +225,18 @@ manually you must do it BEFORE calling <code>init</code>.
       <br>
     </p>
     <div class='docstring'>
-  <p>Init the Express server.</p>
-</div>
-<div class='tags'>
-  <h3>Parameters:</h3>
-  <ul class='param'>
-    <li>
-      <span class='name'>options</span>
-      <span class='type'>
-        (
-          <tt>Object</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>App init options. If passed as an array, assume it&#39;s the array with extra middlewares. </span>
-    </li>
-  </ul>
-  <h3>
-    Options Hash:
-    (options):
-  </h3>
-  <ul class='options'>
-    <li>
-      <span class='name'>appendMiddlewares</span>
-      <span class='type'>
-        (
-          <tt>Array</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>Array with extra middlewares to be loaded. </span>
-    </li>
-  </ul>
-</div>
-  </div>
-  <div class='method_details'>
-    <p class='signature' id='configureServer-dynamic'>
-      #
-(void)
-<b>configureServer</b><span>()</span>
-      <br>
-    </p>
-    <div class='docstring'>
-  <p>Configure the server. Set views, options, use Express modules, etc.</p>
+  <p>Create, configure and run the Express server. In most cases this should be
+the last step of you app loading, after loading custom modules, setting
+custom configuration, etc.</p>
 </div>
 <div class='tags'>
 </div>
   </div>
   <div class='method_details'>
-    <p class='signature' id='startServer-dynamic'>
+    <p class='signature' id='start-dynamic'>
       #
 (void)
-<b>startServer</b><span>()</span>
+<b>start</b><span>()</span>
       <br>
     </p>
     <div class='docstring'>
@@ -295,7 +253,7 @@ manually you must do it BEFORE calling <code>init</code>.
       <br>
     </p>
     <div class='docstring'>
-  <p>Kill the underlying Express server and shut down the app.</p>
+  <p>Kill the underlying HTTP(S) server(s).</p>
 </div>
 <div class='tags'>
 </div>

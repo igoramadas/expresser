@@ -70,9 +70,9 @@ Now to the main modules...
 
 And the official plugins...
 
-### Cloud Settings
-*   Automatically configuration of modules running on cloud providers.
-*   https://github.com/igoramadas/expresser/tree/master/plugins/cloud-settings
+### AWS
+*   Wrapper around some of the AWS SDK features.
+*   https://github.com/igoramadas/expresser/tree/master/plugins/aws
 
 ### Cron
 *   Configurable cron for scheduled tasks using JSON files.
@@ -91,6 +91,10 @@ And the official plugins...
 ### Downloader
 *   Configurable download manager supporting standard web protocols.
 *   https://github.com/igoramadas/expresser/tree/master/plugins/downloader
+
+### Google Cloud
+*   Wrapper around some of the Google Cloud SDK features.
+*   https://github.com/igoramadas/expresser/tree/master/plugins/gcloud
 
 ### Logger: File
 *   Local file driver for the Logger module.

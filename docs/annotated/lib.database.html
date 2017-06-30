@@ -290,9 +290,6 @@ need to add database driver plugins for your desired DB.
         logger.debug <span class="hljs-string">"Database.init"</span>
         events.emit <span class="hljs-string">"Database.before.init"</span>
 
-        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">0</span>
-            logger.deprecated <span class="hljs-string">"Database.init(options)"</span>, <span class="hljs-string">"No options param anymore. Database will be configured based on what's defiend on the settings module."</span>
-
         @setEvents()
 
         events.emit <span class="hljs-string">"Database.on.init"</span>

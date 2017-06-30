@@ -31,9 +31,6 @@ class Database
         logger.debug "Database.init"
         events.emit "Database.before.init"
 
-        if arguments.length > 0
-            logger.deprecated "Database.init(options)", "No options param anymore. Database will be configured based on what's defiend on the settings module."
-
         @setEvents()
 
         events.emit "Database.on.init"

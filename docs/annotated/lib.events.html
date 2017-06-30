@@ -269,11 +269,11 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    on: <span class="hljs-function"><span class="hljs-params">(id, callback, prepend)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    on: <span class="hljs-function"><span class="hljs-params">(id, callback, prepend = <span class="hljs-literal">false</span>)</span> -&gt;</span>
         <span class="hljs-keyword">if</span> prepend <span class="hljs-keyword">is</span> <span class="hljs-literal">true</span>
             emitter.prependListener id, callback
         <span class="hljs-keyword">else</span>
-            emitter.<span class="hljs-literal">on</span> id, callback
+            emitter.addListener id, callback
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div></div>
             
         </li>
@@ -293,7 +293,7 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    once: <span class="hljs-function"><span class="hljs-params">(id, callback, prepend)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    once: <span class="hljs-function"><span class="hljs-params">(id, callback, prepend = <span class="hljs-literal">false</span>)</span> -&gt;</span>
         <span class="hljs-keyword">if</span> prepend <span class="hljs-keyword">is</span> <span class="hljs-literal">true</span>
             emitter.prependOnceListener id, callback
         <span class="hljs-keyword">else</span>
@@ -317,7 +317,7 @@ passed to the event emitter. Only if <code>settings.events.enabled</code> is tru
             </div>
             
             <div class="content"><div class='highlight'><pre>    off: <span class="hljs-function"><span class="hljs-params">(id, callback)</span> -&gt;</span>
-        emitter.<span class="hljs-literal">off</span> id, callback
+        emitter.removeListener id, callback
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div></div>
             
         </li>

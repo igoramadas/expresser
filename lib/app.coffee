@@ -15,7 +15,6 @@ class App
     https = require "https"
     lodash = require "lodash"
     logger = require "./logger.coffee"
-    net = require "net"
     path = require "path"
     settings = require "./settings.coffee"
     utils = require "./utils.coffee"
@@ -29,40 +28,41 @@ class App
     # @property {Object} Exposes the Express app.
     server: null
 
-    # @property {Object} Exposes the underlying HTTP(s) server.
+    # @property {Object} Exposes the underlying HTTP(s) server(s).
     webServer: null
+    redirectorServer: null
 
-    # @property [Array<Object>] Array of additional middlewares to be used
-    # by the Express server. These will be called before anything is processed,
-    # so should be used for things that need immediate processing.
+    # @property [Array] Additional middlewares to be used by the Express server.
+    # These will be called before the default middlewares.
     prependMiddlewares: []
 
-    # @property [Array<Object>] Array of additional middlewares to be used
-    # by the Express server. Please note that if you're adding middlewares
-    # manually you must do it BEFORE calling `init`.
+    # @property [Array] Additional middlewares to be used by the Express server.
+    # These will be called after the default middlewares.
     appendMiddlewares: []
 
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Express server.
-    # @param {Object} options App init options. If passed as an array, assume it's the array with extra middlewares.
-    # @option options {Array} appendMiddlewares Array with extra middlewares to be loaded.
+    # Create, configure and run the Express server. In most cases this should be
+    # the last step of you app loading, after loading custom modules, setting
+    # custom configuration, etc.
     init: ->
         logger.debug "App.init"
         events.emit "App.before.init"
 
         nodeEnv = process.env.NODE_ENV
 
-        # Configure Express server and start server.
-        @configureServer()
-        @startServer()
+        # Configure the Express server.
+        configureServer()
+
+        # Start web server!
+        @start()
 
         events.emit "App.on.init"
         delete @init
 
     # Configure the server. Set views, options, use Express modules, etc.
-    configureServer: ->
+    configureServer = ->
         midBodyParser = require "body-parser"
         midCookieParser = require "cookie-parser"
         midSession = require "cookie-session"
@@ -116,24 +116,22 @@ class App
         # Use Express static routing.
         @server.use express.static settings.app.publicPath
 
-        # If debug is on, log requests to the console.
+        # Log all requests if debug is true.
         if settings.general.debug
-            @server.use (req, res, next) =>
-                ip = utils.browser.getClientIP req
-                method = req.method
-                url = req.url
-
-                # Check if request flash is present before logging.
-                if req.flash? and lodash.isFunction req.flash
-                    console.log "Request from #{ip}", method, url, req.flash()
-                else
-                    console.log "Request from #{ip}", method, url
-                next() if next?
+            @server.use requestLogger
 
         events.emit "App.on.configureServer"
 
+    # START AND KILL
+    # --------------------------------------------------------------------------
+
     # Start the server using HTTP or HTTPS, depending on the settings.
-    startServer: ->
+    start: ->
+        if @webServer?
+            throw new Error "Server is already running on port #{settings.app.port}."
+
+        events.emit "App.before.start"
+
         if settings.app.ssl.enabled and settings.app.ssl.keyFile? and settings.app.ssl.certFile?
             sslKeyFile = utils.io.getFilePath settings.app.ssl.keyFile
             sslCertFile = utils.io.getFilePath settings.app.ssl.certFile
@@ -152,6 +150,9 @@ class App
         else
             serverRef = http.createServer @server
 
+        # Expose the web server.
+        @webServer = serverRef
+
         # Start the app!
         if settings.app.ip? and settings.app.ip isnt ""
             serverRef.listen settings.app.port, settings.app.ip
@@ -167,20 +168,44 @@ class App
             redirServer = express()
             redirServer.get "*", (req, res) -> res.redirect "https://#{req.hostname}:#{settings.app.port}#{req.url}"
 
+            # Log all redirector requests if debug is true.
+            if settings.general.debug
+                redirServer.use requestLogger
+
             @redirectorServer = http.createServer redirServer
             @redirectorServer.listen settings.app.ssl.redirectorPort
 
-        @webServer = serverRef
-
         # Pass the HTTP(s) server created to external modules.
-        events.emit "App.on.startServer", serverRef
+        events.emit "App.on.start", serverRef
 
-    # Kill the underlying Express server and shut down the app.
+    # Kill the underlying HTTP(S) server(s).
     kill: ->
-        @webServer.close()
+        events.emit "App.before.kill"
+
+        @redirectorServer?.close()
+        @redirectorServer = null
+
+        @webServer?.close()
+        webServer = null
+
+        events.emit "App.on.kill"
 
     # HELPER AND UTILS
     # --------------------------------------------------------------------------
+
+    # Helper to log all requests when debug is true.
+    requestLogger = (req, res, next) ->
+        ip = utils.browser.getClientIP req
+        method = req.method
+        url = req.url
+
+        # Check if request flash is present before logging.
+        if req.flash? and lodash.isFunction req.flash
+            console.log "Request from #{ip}", method, url, req.flash()
+        else
+            console.log "Request from #{ip}", method, url
+
+        next() if next?
 
     # Helper to render Pug views. The request, response and view are mandatory,
     # and the options argument is optional.
