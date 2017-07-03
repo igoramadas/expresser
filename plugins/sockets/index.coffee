@@ -41,7 +41,7 @@ class Sockets
 
     # Bind events.
     setEvents: ->
-        events.on "App.on.startServer", @bind.bind(this)
+        events.on "App.on.start", @bind.bind(this)
 
     # Bind the Socket.IO object to the Express app. This will also set the counter
     # to increase / decrease when users connects or disconnects from the app.

@@ -53,7 +53,7 @@ class App
         nodeEnv = process.env.NODE_ENV
 
         # Configure the Express server.
-        @configureServer()
+        @configure()
 
         # Start web server!
         @start()
@@ -62,7 +62,7 @@ class App
         delete @init
 
     # Configure the server. Set views, options, use Express modules, etc.
-    configureServer: ->
+    configure: ->
         midBodyParser = require "body-parser"
         midCookieParser = require "cookie-parser"
         midSession = require "cookie-session"
@@ -120,10 +120,8 @@ class App
         if settings.general.debug
             @server.use requestLogger
 
-        events.emit "App.on.configureServer"
-
         # Delete!
-        delete @configureServer
+        delete @configure
 
     # START AND KILL
     # --------------------------------------------------------------------------
