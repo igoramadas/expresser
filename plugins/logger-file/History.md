@@ -1,5 +1,9 @@
 # Changelog for expresser-logger-file
 
+1.2.0
+=====
+* Maintenance release for Expresser 3.0.0.
+
 1.1.1
 =====
 * Maintenance release.

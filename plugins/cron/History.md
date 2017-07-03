@@ -1,5 +1,9 @@
 # Changelog for expresser-cron
 
+1.3.0
+=====
+* Maintenance release for Expresser 3.0.0.
+
 1.2.3
 =====
 * Maintenance release.
