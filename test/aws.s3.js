@@ -71,7 +71,15 @@ describe("AWS S3 Tests", function() {
         });
 
         it("Delete file from S3", function() {
+            var callback = function(err, result) {
+                if (err) {
+                    done("Could not delete file from S3: " + err);
+                } else {
+                    done();
+                }
+            };
 
+            aws.s3.delete("expresser.devv.com", "test-s3.json", callback);
         });
     }
 });
