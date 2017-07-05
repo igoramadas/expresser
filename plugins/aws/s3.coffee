@@ -38,39 +38,46 @@ class S3
         s3 = new aws.S3 {region: settings.aws.s3.region}
         params = {Bucket: bucket, Key: key}
 
-        # Make sure the file exists in the S3 bucket.
-        s3.headObject params, (err, meta) =>
-            if err?
-
-                # Check if request is retryable. If so, warn and try again in a few seconds.
-                if err.retryable and err.retryDelay < 60
-                    logger.warn "AWS.S3.download", "headObject", "Retry in #{err.retryDelay}s", bucket, key, err
-                    lodash.delay @download, err.retryDelay * 1000, bucket, key, destination, callback
-                else
-                    logger.error "AWS.S3.download", "headObject", bucket, key, err
+        # First make sure the file exists in the S3 bucket, then fetch it.
+        return await new Promise (resolve, reject) ->
+            s3.headObject params, (err, meta) =>
+                if err?
+                    if err.retryable and err.retryDelay < 60
+                        logger.error "AWS.S3.download", "headObject", "Retry in #{err.retryDelay}s", bucket, key, err
+                    else
+                        logger.error "AWS.S3.download", "headObject", bucket, key, err
 
                     # Hint for the user to login with the "mai" command.
                     if err.statusCode is 401 or err.statusCode is 403
                         logger.warn "AWS.S3.download", "Invalid permissions or not authorized to read #{bucket} #{key}."
 
-                    return callback? err
+                    callback? err
+                    return reject err
 
-            # Get data from S3 and write it to local disk.
-            s3.getObject params, (err, data) ->
-                if err?
-                    logger.error "AWS.S3.download", "getObject", bucket, key, err
-                    return callback? err
+                # Get data from S3 and write it to local disk.
+                s3.getObject params, (err, data) ->
+                    if err?
+                        logger.error "AWS.S3.download", "getObject", bucket, key, err
+                        callback? err
+                        return reject err
 
-                body = data.Body.toString()
+                    body = data.Body.toString()
 
-                if destination?
-                    fs.writeFile destination, body, {encoding: settings.general.encoding}, (err) ->
-                        if err?
-                            logger.error "AWS.S3.download", "writeFile", bucket, key, destination, err
-                        return callback? err, body
+                    # Destination set? If so, write to disk.
+                    if destination?
+                        fs.writeFile destination, body, {encoding: settings.general.encoding}, (err) ->
+                            if err?
+                                logger.error "AWS.S3.download", "writeFile", bucket, key, destination, err
+                                callback? err
+                                reject err
+                            else
+                                callback? null, body
+                                resolve body
 
-                else
-                    return callback? null, body
+                    # No destination? Simply return the file contents.
+                    else
+                        callback? null, body
+                        resolve body
 
     # Upload a file to S3.
     # @param {String} bucket Name of the S3 bucket to upload to.
@@ -104,13 +111,16 @@ class S3
         }
 
         # Send file to S3!
-        s3upload.send (err, result) =>
-            if err?
-                logger.error "AWS.S3.upload", bucket, key, err
-            else
-                logger.info "AWS.S3.upload", bucket, key
-
-            callback? err, result
+        return await new Promise (resolve, reject) ->
+            s3upload.send (err, result) ->
+                if err?
+                    logger.error "AWS.S3.upload", bucket, key, err
+                    callback? err
+                    reject err
+                else
+                    logger.info "AWS.S3.upload", bucket, key
+                    callback? null, result
+                    resolve result
 
     # Delete object(s) from S3. Keys can be a string or an array of strings.
     delete: (bucket, keys, callback) ->
@@ -128,13 +138,16 @@ class S3
         }
 
         # Delete files!
-        s3Bucket.deleteObjects params, (err, result) =>
-            if err?
-                logger.error "AWS.S3.delete", bucket, keys, err
-            else
-                logger.info "AWS.S3.delete", bucket, keys
-
-            callback? err, result
+        return await new Promise (resolve, reject) ->
+            s3Bucket.deleteObjects params, (err, result) =>
+                if err?
+                    logger.error "AWS.S3.delete", bucket, keys, err
+                    callback? err
+                    reject err
+                else
+                    logger.info "AWS.S3.delete", bucket, keys
+                    callback? null, result
+                    resolve result
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

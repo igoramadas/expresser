@@ -34,22 +34,19 @@ describe("AWS S3 Tests", function() {
     });
 
     if (hasKeys) {
-        it("Upload test file to S3", function(done) {
+        it("Upload test file to S3", async function(done) {
             uploadTimestamp = moment().unix();
 
             var contents = {
                 timestamp: uploadTimestamp
             };
 
-            var callback = function(err, result) {
-                if (err) {
-                    done("Could not upload file to S3: " + err);
-                } else {
-                    done();
-                }
-            };
-
-            aws.s3.upload("expresser.devv.com", "test-s3.json", JSON.stringify(contents, null, 2), callback);
+            try {
+                var result = await aws.s3.upload("expresser.devv.com", "test-s3.json", JSON.stringify(contents, null, 2));
+                done();
+            } catch (ex) {
+                done("Could not upload file to S3: " + ex);
+            }
         });
 
         it("Download uploaded file from S3", function(done) {

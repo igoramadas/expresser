@@ -22,7 +22,7 @@
         "async": "^2.5.0",
         "body-parser": "^1.17.2",
         "chalk": "^2.0.1",
-        "coffeescript": "^2.0.0-beta2",
+        "coffeescript": "^2.0.0-beta3",
         "compressible": "^2.0.10",
         "compression": "^1.6.2",
         "cookie-parser": "^1.4.3",
