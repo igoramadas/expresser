@@ -1,11 +1,11 @@
-// TEST: AWS
+// TEST: AWS - S3
 
 require("coffeescript/register");
 var env = process.env;
 var chai = require("chai");
 chai.should();
 
-describe("AWS Tests", function () {
+describe("AWS S3 Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
@@ -19,7 +19,7 @@ describe("AWS Tests", function () {
         hasKeys = true;
     }
 
-    before(function () {
+    before(function() {
         settings.loadFromJson("../plugins/aws/settings.default.json");
         settings.loadFromJson("settings.test.json");
 
@@ -29,25 +29,19 @@ describe("AWS Tests", function () {
         aws.expresser = require("../index.coffee");
         aws.expresser.events = require("../lib/events.coffee");
         aws.expresser.logger = require("../lib/logger.coffee");
-    });
 
-    it("Has settings defined", function () {
-        settings.should.have.property("aws");
-    });
-
-    it("Inits", function () {
         aws.init();
     });
 
     if (hasKeys) {
-        it("Upload test file to S3", function (done) {
+        it("Upload test file to S3", function(done) {
             uploadTimestamp = moment().unix();
 
             var contents = {
                 timestamp: uploadTimestamp
             };
 
-            var callback = function (err, result) {
+            var callback = function(err, result) {
                 if (err) {
                     done("Could not upload file to S3: " + err);
                 } else {
@@ -58,8 +52,8 @@ describe("AWS Tests", function () {
             aws.s3.upload("expresser.devv.com", "test-s3.json", JSON.stringify(contents, null, 2), callback);
         });
 
-        it("Download uploaded file from S3", function (done) {
-            var callback = function (err, result) {
+        it("Download uploaded file from S3", function(done) {
+            var callback = function(err, result) {
                 if (err) {
                     done("Could not upload file to S3: " + err);
                 } else {
@@ -76,7 +70,7 @@ describe("AWS Tests", function () {
             aws.s3.download("expresser.devv.com", "test-s3.json", callback);
         });
 
-        it("Delete file from S3", function () {
+        it("Delete file from S3", function() {
 
         });
     }
