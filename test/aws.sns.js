@@ -32,8 +32,4 @@ describe("AWS SNS Tests", function() {
 
         aws.init();
     });
-
-    if (hasKeys) {
-
-    }
 });

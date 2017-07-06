@@ -27,7 +27,5 @@ describe("^Google Cloud Storage Tests", function() {
         gcloud.init();
     });
 
-    it("Upload file to storage", function() {
-
-    });
+    it.skip("Upload file to storage", function() {});
 });

@@ -27,6 +27,6 @@ describe("^Google Cloud Datastore Tests", function() {
         gcloud.init();
     });
 
-    it("Create an entity", function() {
+    it.skip("Create an entity", function() {
     });
 });
