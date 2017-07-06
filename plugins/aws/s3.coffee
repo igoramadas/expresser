@@ -39,7 +39,7 @@ class S3
         params = {Bucket: bucket, Key: key}
 
         # First make sure the file exists in the S3 bucket, then fetch it.
-        return await new Promise (resolve, reject) ->
+        return new Promise (resolve, reject) ->
             s3.headObject params, (err, meta) =>
                 if err?
                     if err.retryable and err.retryDelay < 60
@@ -78,6 +78,8 @@ class S3
                     else
                         callback? null, body
                         resolve body
+
+        return await
 
     # Upload a file to S3.
     # @param {String} bucket Name of the S3 bucket to upload to.
