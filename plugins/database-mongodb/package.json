@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "coffeescript": "^2.0.0-beta3",
-        "mongodb": "~2.2.29"
+        "mongodb": "~2.2.30"
     },
     "repository": {
         "type": "git",
