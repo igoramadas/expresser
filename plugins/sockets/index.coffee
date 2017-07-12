@@ -40,22 +40,24 @@ class Sockets
         delete @init
 
     # Bind events.
-    setEvents: ->
-        events.on "App.on.start", @bind.bind(this)
+    setEvents: =>
+        events.on "App.on.start", @bind
 
     # Bind the Socket.IO object to the Express app. This will also set the counter
     # to increase / decrease when users connects or disconnects from the app.
     # @param {Object} options Sockets init options.
     # @option options {Object} server The Express server object to bind to.
-    bind: (server) ->
+    bind: (server) =>
         return logger.notEnabled "Sockets", "bind" if not settings.sockets.enabled
 
         @io = require("socket.io") server
 
         # Listen to user connection count updates.
         @io.sockets.on "connection", (socket) =>
-            @io.emit "connection-count", @getConnectionCount()
             socket.on "disconnect", @onDisconnect
+
+            if settings.sockets.emitConnectionCount
+                events.emit "Sockets.ConnectionCount", @getConnectionCount()
 
             # Bind all current event listeners.
             for listener in @currentListeners
@@ -117,21 +119,23 @@ class Sockets
         logger.debug "Sockets.stopListening", key
 
     # Remove invalid and expired event listeners.
-    compact: ->
+    compact: =>
         @currentListeners = lodash.compact @currentListeners
 
     # HELPERS
     # ----------------------------------------------------------------------
 
     # Get how many users are currenly connected to the app.
-    getConnectionCount: ->
+    getConnectionCount: =>
         return 0 if not @io?.sockets?
         return Object.keys(@io.sockets.connected).length
 
     # When user disconnects, emit an event with the new connection count to all clients.
-    onDisconnect: ->
-        count = @getConnectionCount()
-        logger.debug "Sockets.onDisconnect", "New count: #{count}."
+    onDisconnect: =>
+        logger.debug "Sockets.onDisconnect"
+
+        if settings.sockets.emitConnectionCount
+            events.emit "Sockets.ConnectionCount", @getConnectionCount()
 
 # Singleton implementation
 # --------------------------------------------------------------------------

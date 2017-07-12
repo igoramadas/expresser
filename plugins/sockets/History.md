@@ -1,8 +1,9 @@
 # Changelog for expresser-sockets
 
-1.2.0
+3.0.0
 =====
 * Maintenance release for Expresser 3.0.0.
+* Connection count is now emitted (new setting: emitConnectionCount).
 
 1.1.2
 =====

@@ -2,6 +2,8 @@
 {
     "sockets": {
         // Enable the Sockets module?
-        "enabled": true
+        "enabled": true,
+        // Emit connection count to other modules?
+        "emitConnectionCount": false
     }
 }
