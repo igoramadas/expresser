@@ -35,14 +35,7 @@
       </table>
       <h2>Overview</h2>
       <div class='docstring'>
-  <h2 id="expresser-cron">EXPRESSER CRON</h2><p>Handle scheduled cron jobs. You can use intervals (seconds) or specific
-times to trigger jobs, and the module will take care of setting the proper timers.
-Jobs are added using &quot;job&quot; objects with id, schedule, callback and other options.</p><!--
-
-This module will load scheduled tasks from the "cron.json" file if the
-setting `loadOnInit` is true.
-
--->
+  class 
   <div class='examples'>
     <h3>Examples:</h3>
     <h4>
@@ -82,7 +75,7 @@ setting `loadOnInit` is true.
           </span>
         </dt>
         <dd class='desc'>
-          The jobs collection, please do not edit this object manually! 
+          class 
         </dd>
       </dl>
       <h2>Variables Summary</h2>
@@ -107,7 +100,7 @@ setting `loadOnInit` is true.
       </a>
     </span>
     <span class='desc'>
-      Init the cron manager. 
+      class 
     </span>
   </li>
   <li>
@@ -119,7 +112,7 @@ setting `loadOnInit` is true.
       </a>
     </span>
     <span class='desc'>
-      Bind events. 
+      class 
     </span>
   </li>
   <li>
@@ -131,7 +124,7 @@ setting `loadOnInit` is true.
       </a>
     </span>
     <span class='desc'>
-      Load jobs from the specified (default cron.json) file. 
+      class 
     </span>
   </li>
   <li>
@@ -143,7 +136,7 @@ setting `loadOnInit` is true.
       </a>
     </span>
     <span class='desc'>
-      Start the specified cron job. 
+      class 
     </span>
   </li>
   <li>
@@ -155,7 +148,7 @@ setting `loadOnInit` is true.
       </a>
     </span>
     <span class='desc'>
-      Stop the specified cron job. 
+      class 
     </span>
   </li>
   <li>
@@ -167,7 +160,7 @@ setting `loadOnInit` is true.
       </a>
     </span>
     <span class='desc'>
-      Add a scheduled job to the cron, passing a <code>job</code>. 
+      class 
     </span>
   </li>
   <li>
@@ -179,7 +172,7 @@ setting `loadOnInit` is true.
       </a>
     </span>
     <span class='desc'>
-      Remove and stop a current job. 
+      class 
     </span>
   </li>
 </ul>
@@ -193,8 +186,7 @@ setting `loadOnInit` is true.
       <br>
     </p>
     <div class='docstring'>
-  <p>Init the cron manager. If <code>loadOnInit</code> setting is true, the <code>cron.json</code>
-file will be parsed and loaded straight away (if there&#39;s one).</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -207,7 +199,7 @@ file will be parsed and loaded straight away (if there&#39;s one).</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Bind events.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -220,8 +212,7 @@ file will be parsed and loaded straight away (if there&#39;s one).</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Load jobs from the specified (default cron.json) file.
-If <code>autoStart</code> is true, it will automatically call the <code>start</code> method after loading.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -234,7 +225,7 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
         )
       </span>
       &mdash;
-      <span class='desc'>Path to the JSON file containing jobs, optional, default is &quot;cron.json&quot;. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>options</span>
@@ -244,7 +235,7 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
         )
       </span>
       &mdash;
-      <span class='desc'>Options to be passed when loading cron jobs. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>
@@ -260,7 +251,7 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
         )
       </span>
       &mdash;
-      <span class='desc'>Name of file to be loaded (in case filename was not set on first parameter) </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>basePath</span>
@@ -270,7 +261,7 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
         )
       </span>
       &mdash;
-      <span class='desc'>Sets the base path of modules when requiring them. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>autoStart</span>
@@ -280,7 +271,7 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
         )
       </span>
       &mdash;
-      <span class='desc'>If true, call <code>start</code> after loading. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -293,9 +284,7 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
       <br>
     </p>
     <div class='docstring'>
-  <p>Start the specified cron job. If no <code>id</code> is specified, all jobs will be started.
-A filter can also be passed as an object. For example to start all jobs for
-the module &quot;email&quot;, use start({module: &quot;email&quot;}).</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -308,7 +297,7 @@ the module &quot;email&quot;, use start({module: &quot;email&quot;}).</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The job id or filter, optional (if not specified, start everything). </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -321,9 +310,7 @@ the module &quot;email&quot;, use start({module: &quot;email&quot;}).</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Stop the specified cron job. If no <code>id</code> is specified, all jobs will be stopped.
-A filter can also be passed as an object. For example to stop all jobs for
-the module &quot;mymodule&quot;, use stop({module: &quot;mymodule&quot;}).</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -336,7 +323,7 @@ the module &quot;mymodule&quot;, use stop({module: &quot;mymodule&quot;}).</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The job id or filter, optional (if not specified, stop everything). </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -349,8 +336,7 @@ the module &quot;mymodule&quot;, use stop({module: &quot;mymodule&quot;}).</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Add a scheduled job to the cron, passing a <code>job</code>.
-You can also pass only the <code>job</code> if it has an id property.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -363,7 +349,7 @@ You can also pass only the <code>job</code> if it has an id property.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The job ID, optional, overrides job.id in case it has one. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>job</span>
@@ -373,7 +359,7 @@ You can also pass only the <code>job</code> if it has an id property.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The job object. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>
@@ -389,7 +375,7 @@ You can also pass only the <code>job</code> if it has an id property.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The job ID, optional. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>schedule</span>
@@ -399,7 +385,7 @@ You can also pass only the <code>job</code> if it has an id property.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>If a number assume it&#39;s the interval in seconds, otherwise a times array. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>callback</span>
@@ -409,7 +395,7 @@ You can also pass only the <code>job</code> if it has an id property.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The callback (job) to be triggered. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>once</span>
@@ -419,7 +405,7 @@ You can also pass only the <code>job</code> if it has an id property.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>If true, the job will be triggered only once no matter which schedule it has. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>Returns:</h3>
@@ -430,7 +416,7 @@ You can also pass only the <code>job</code> if it has an id property.</p>
         <tt>Object</tt>
       )
       &mdash;
-      <span class='desc'>Returns {error, job}, where job is the job object and error is the error message (if any). </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -443,7 +429,7 @@ You can also pass only the <code>job</code> if it has an id property.</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Remove and stop a current job. If job does not exist, a warning will be logged.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -456,7 +442,7 @@ You can also pass only the <code>job</code> if it has an id property.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The job ID. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -468,7 +454,7 @@ You can also pass only the <code>job</code> if it has an id property.</p>
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>
-  2.1.2
+  2.1.4
   &#10034;
   Press H to see the keyboard shortcuts
   &#10034;

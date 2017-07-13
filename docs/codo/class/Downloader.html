@@ -35,10 +35,7 @@
       </table>
       <h2>Overview</h2>
       <div class='docstring'>
-  <h2 id="expresser-downloader">EXPRESSER DOWNLOADER</h2><p>Helper to manage downloads from external sources. Supports downloading
-throttling, avoids duplicates, etc.
-<!--
---></p>
+  class 
 </div>
 <div class='tags'>
   <h3>See also:</h3>
@@ -70,7 +67,7 @@ throttling, avoids duplicates, etc.
       </a>
     </span>
     <span class='desc'>
-      Init the module. 
+      class 
     </span>
   </li>
   <li>
@@ -82,7 +79,7 @@ throttling, avoids duplicates, etc.
       </a>
     </span>
     <span class='desc'>
-      Bind events. 
+      class 
     </span>
   </li>
   <li>
@@ -94,7 +91,7 @@ throttling, avoids duplicates, etc.
       </a>
     </span>
     <span class='desc'>
-      Download an external file and save it to the specified location. 
+      class 
     </span>
   </li>
   <li>
@@ -106,7 +103,7 @@ throttling, avoids duplicates, etc.
       </a>
     </span>
     <span class='desc'>
-      Force stop a current download. 
+      class 
     </span>
   </li>
 </ul>
@@ -120,7 +117,7 @@ throttling, avoids duplicates, etc.
       <br>
     </p>
     <div class='docstring'>
-  <p>Init the module.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -133,7 +130,7 @@ throttling, avoids duplicates, etc.
         )
       </span>
       &mdash;
-      <span class='desc'>Downloader init options. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -146,7 +143,7 @@ throttling, avoids duplicates, etc.
       <br>
     </p>
     <div class='docstring'>
-  <p>Bind events.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -159,12 +156,7 @@ throttling, avoids duplicates, etc.
       <br>
     </p>
     <div class='docstring'>
-  <p>Download an external file and save it to the specified location. The <code>callback</code>
-has the signature (error, data). Returns the downloader object which is added
-to the <code>queue</code>, which has the download properties and a <code>stop</code> helper to force
-stopping it. Returns false on error or duplicate.
-Tip: if you want to get the downloaded data without having to read the target file
-you can get the downloaded contents via the <code>options.downloadedData</code>.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -177,7 +169,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
         )
       </span>
       &mdash;
-      <span class='desc'>The URL of the remote file to be downloaded. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>saveTo</span>
@@ -187,7 +179,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
         )
       </span>
       &mdash;
-      <span class='desc'>The full local path and destination filename. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>options</span>
@@ -197,7 +189,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
         )
       </span>
       &mdash;
-      <span class='desc'>Optional, object with request options, for example auth. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>callback</span>
@@ -207,7 +199,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
         )
       </span>
       &mdash;
-      <span class='desc'>Optional, a function (err, result) to be called when download has finished. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>Returns:</h3>
@@ -218,7 +210,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
         <tt>Object</tt>
       )
       &mdash;
-      <span class='desc'>Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -231,7 +223,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
       <br>
     </p>
     <div class='docstring'>
-  <p>Force stop a current download.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -244,7 +236,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
         )
       </span>
       &mdash;
-      <span class='desc'>The URL of the download to stop. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>saveTo</span>
@@ -254,7 +246,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
         )
       </span>
       &mdash;
-      <span class='desc'>The full local path of the download to stop. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>Returns:</h3>
@@ -265,7 +257,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
         <tt>Boolean</tt>
       )
       &mdash;
-      <span class='desc'>Returns true if a match was found, or false if no matching download to stop. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -277,7 +269,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>
-  2.1.2
+  2.1.4
   &#10034;
   Press H to see the keyboard shortcuts
   &#10034;

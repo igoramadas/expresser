@@ -35,14 +35,7 @@
       </table>
       <h2>Overview</h2>
       <div class='docstring'>
-  <h2 id="expresser-settings">EXPRESSER SETTINGS</h2><p>All main settings for the Expresser platform are set and described on the
-settings.default.json file. Do not edit it!!! To change settings please
-create a settings.json file and put your values there.</p><p>You can also create specific settings for different runtime environments.
-For example to set settings on development, create <code>settings.development.json</code>
-and for production a <code>settings.production.json</code> file. These will be parsed
-AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code>settings.json</code> must ne located on the root of your app!
-<!--
---></p>
+  class 
   <div class='examples'>
     <h3>Examples:</h3>
     <h4>
@@ -93,7 +86,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       </a>
     </span>
     <span class='desc'>
-      Load settings from settings.default.json, then settings.json, then environment specific settings. 
+      class 
     </span>
   </li>
   <li>
@@ -105,7 +98,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       </a>
     </span>
     <span class='desc'>
-      Helper to load values from the specified settings file. 
+      class 
     </span>
   </li>
   <li>
@@ -117,7 +110,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       </a>
     </span>
     <span class='desc'>
-      Reset to default settings. 
+      class 
     </span>
   </li>
   <li>
@@ -129,7 +122,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       </a>
     </span>
     <span class='desc'>
-      Helper to encrypt or decrypt settings files. 
+      class 
     </span>
   </li>
   <li>
@@ -141,7 +134,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       </a>
     </span>
     <span class='desc'>
-      Helper to encrypt the specified settings file. 
+      class 
     </span>
   </li>
   <li>
@@ -153,7 +146,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       </a>
     </span>
     <span class='desc'>
-      Helper to decrypt the specified settings file. 
+      class 
     </span>
   </li>
   <li>
@@ -165,7 +158,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       </a>
     </span>
     <span class='desc'>
-      Enable or disable the settings files watcher to auto reload settings when file changes. 
+      class 
     </span>
   </li>
 </ul>
@@ -188,7 +181,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       <br>
     </p>
     <div class='docstring'>
-  <p>Load settings from settings.default.json, then settings.json, then environment specific settings.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -201,7 +194,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       <br>
     </p>
     <div class='docstring'>
-  <p>Helper to load values from the specified settings file.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -214,7 +207,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
         )
       </span>
       &mdash;
-      <span class='desc'>The filename or path to the settings file. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>extend</span>
@@ -224,7 +217,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
         )
       </span>
       &mdash;
-      <span class='desc'>If true it won&#39;t update settings that are already existing. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>Returns:</h3>
@@ -235,7 +228,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
         <tt>Object</tt>
       )
       &mdash;
-      <span class='desc'>Returns the JSON representation of the loaded file. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -248,7 +241,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       <br>
     </p>
     <div class='docstring'>
-  <p>Reset to default settings.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -261,11 +254,7 @@ AFTER the main <code>settings.json</code> file.</p><p>Please note that the <code
       <br>
     </p>
     <div class='docstring'>
-  <p>Helper to encrypt or decrypt settings files. The default encryption key
-defined on the <code>Settings.coffee</code> file is &quot;ExpresserSettings&quot;, which
-you should change to your desired value. You can also set the key
-via the EXPRESSER_SETTINGS_CRYPTOKEY environment variable.
-The default cipher algorithm is AES 256.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -278,7 +267,7 @@ The default cipher algorithm is AES 256.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Pass true to encrypt, false to decrypt. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>filename</span>
@@ -288,7 +277,7 @@ The default cipher algorithm is AES 256.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The file to be encrypted or decrypted. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>options</span>
@@ -298,7 +287,7 @@ The default cipher algorithm is AES 256.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Options to be passed to the cipher. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>
@@ -314,7 +303,7 @@ The default cipher algorithm is AES 256.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The cipher to be used, default is aes256. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>password</span>
@@ -324,7 +313,7 @@ The default cipher algorithm is AES 256.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The encryption key. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -337,7 +326,7 @@ The default cipher algorithm is AES 256.</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Helper to encrypt the specified settings file. Please see <code>cryptoHelper</code> above.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -350,7 +339,7 @@ The default cipher algorithm is AES 256.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The file to be encrypted. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>options</span>
@@ -360,7 +349,7 @@ The default cipher algorithm is AES 256.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Options to be passed to the cipher. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>Returns:</h3>
@@ -371,7 +360,7 @@ The default cipher algorithm is AES 256.</p>
         <tt>Boolean</tt>
       )
       &mdash;
-      <span class='desc'>Returns true if encryption OK, false if something went wrong. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -384,7 +373,7 @@ The default cipher algorithm is AES 256.</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Helper to decrypt the specified settings file. Please see <code>cryptoHelper</code> above.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -397,7 +386,7 @@ The default cipher algorithm is AES 256.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The file to be decrypted. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>options</span>
@@ -407,7 +396,7 @@ The default cipher algorithm is AES 256.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Options to be passed to the cipher. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>Returns:</h3>
@@ -418,7 +407,7 @@ The default cipher algorithm is AES 256.</p>
         <tt>Boolean</tt>
       )
       &mdash;
-      <span class='desc'>Returns true if decryption OK, false if something went wrong. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -431,8 +420,7 @@ The default cipher algorithm is AES 256.</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Enable or disable the settings files watcher to auto reload settings when file changes.
-The <code>callback</code> is optional in case you want to notify another module about settings updates.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -445,7 +433,7 @@ The <code>callback</code> is optional in case you want to notify another module 
         )
       </span>
       &mdash;
-      <span class='desc'>If enabled is true activate the fs watcher, otherwise deactivate. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>callback</span>
@@ -455,7 +443,7 @@ The <code>callback</code> is optional in case you want to notify another module 
         )
       </span>
       &mdash;
-      <span class='desc'>A function (event, filename) triggered when a settings file changes. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -467,7 +455,7 @@ The <code>callback</code> is optional in case you want to notify another module 
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>
-  2.1.2
+  2.1.4
   &#10034;
   Press H to see the keyboard shortcuts
   &#10034;

@@ -23,7 +23,6 @@ h2 {
 #fuzzySearch {
   -webkit-box-shadow: rgba(0,0,0,0.5) 0px 10px 30px 10px;
   box-shadow: rgba(0,0,0,0.5) 0px 10px 30px 10px;
-  -webkit-border-radius: 10px;
   border-radius: 10px;
   position: fixed;
   z-index: 8000;
@@ -40,7 +39,6 @@ h2 {
 }
 #fuzzySearch input {
   margin-left: 10%;
-  -webkit-border-radius: 5px;
   border-radius: 5px;
   width: 80%;
   border: 2px solid #05a;
@@ -95,7 +93,6 @@ h2 {
 #help {
   -webkit-box-shadow: rgba(0,0,0,0.5) 0px 10px 30px 10px;
   box-shadow: rgba(0,0,0,0.5) 0px 10px 30px 10px;
-  -webkit-border-radius: 10px;
   border-radius: 10px;
   position: fixed;
   z-index: 8000;
@@ -122,7 +119,6 @@ h2 {
 #help ul li span {
   -webkit-box-shadow: rgba(0,0,0,0.5) 1px 1px 2px;
   box-shadow: rgba(0,0,0,0.5) 1px 1px 2px;
-  -webkit-border-radius: 3px;
   border-radius: 3px;
   display: block;
   float: left;
@@ -228,7 +224,6 @@ h2 {
 }
 #content ul.summary .signature,
 #content .properties .signature {
-  -webkit-border-radius: 3px;
   border-radius: 3px;
   padding: 1px 10px;
   color: #05a;
@@ -289,7 +284,6 @@ h2 {
   border: none;
 }
 #content .method_details p.signature {
-  -webkit-border-radius: 3px;
   border-radius: 3px;
   font-size: 1.1em;
   font-weight: normal;
@@ -339,7 +333,6 @@ h2 {
   padding-bottom: 2px;
 }
 #content .note {
-  -webkit-border-radius: 3px;
   border-radius: 3px;
   margin-top: 10px;
   color: #222;
@@ -655,7 +648,6 @@ body #content.list #search {
   color: #888;
 }
 #content.list #search input {
-  -webkit-border-radius: 3px;
   border-radius: 3px;
   border: 1px solid #bbb;
 }

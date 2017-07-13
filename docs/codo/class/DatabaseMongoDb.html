@@ -35,10 +35,7 @@
       </table>
       <h2>Overview</h2>
       <div class='docstring'>
-  <h2 id="expresser-database-mongodb">EXPRESSER DATABASE - MONGODB</h2><p>Handles MongoDB database transactions using the native <code>mongodb</code> module. This
-plugin attaches itself to the main <code>database</code> module of Expresser.
-<!--
---></p>
+  class 
 </div>
 <div class='tags'>
   <h3>See also:</h3>
@@ -70,7 +67,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
       </a>
     </span>
     <span class='desc'>
-      Init the MongoDB database module. 
+      class 
     </span>
   </li>
   <li>
@@ -82,7 +79,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
       </a>
     </span>
     <span class='desc'>
-      Get the DB connection object. 
+      class 
     </span>
   </li>
   <li>
@@ -94,7 +91,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
       </a>
     </span>
     <span class='desc'>
-      Get data from the database. 
+      class 
     </span>
   </li>
   <li>
@@ -106,7 +103,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
       </a>
     </span>
     <span class='desc'>
-      Add new documents to the database. 
+      class 
     </span>
   </li>
   <li>
@@ -118,7 +115,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
       </a>
     </span>
     <span class='desc'>
-      Update existing documents on the database. 
+      class 
     </span>
   </li>
   <li>
@@ -130,7 +127,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
       </a>
     </span>
     <span class='desc'>
-      Delete an object from the database. 
+      class 
     </span>
   </li>
   <li>
@@ -142,7 +139,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
       </a>
     </span>
     <span class='desc'>
-      Count documents from the database. 
+      class 
     </span>
   </li>
 </ul>
@@ -156,7 +153,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
       <br>
     </p>
     <div class='docstring'>
-  <p>Init the MongoDB database module.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Returns:</h3>
@@ -167,7 +164,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         <tt>Object</tt>
       )
       &mdash;
-      <span class='desc'>Returns the MongoDB connection created (only if default settings are set). </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -180,7 +177,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
       <br>
     </p>
     <div class='docstring'>
-  <p>Get the DB connection object.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -193,7 +190,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         )
       </span>
       &mdash;
-      <span class='desc'>The connection string, for example user:password@hostname/dbname. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>options</span>
@@ -203,7 +200,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
         )
       </span>
       &mdash;
-      <span class='desc'>Additional options to be passed when creating the DB connection object. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -216,9 +213,7 @@ plugin attaches itself to the main <code>database</code> module of Expresser.
       <br>
     </p>
     <div class='docstring'>
-  <p>Get data from the database. A <code>collection</code> and <code>callback</code> must be specified. The <code>filter</code> is optional.
-Please note that if <code>filter</code> has an _id or id field, or if it&#39;s a plain string or number, it will be used
-to return documents by ID. Otherwise it&#39;s used as keys-values object for filtering.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -231,7 +226,7 @@ to return documents by ID. Otherwise it&#39;s used as keys-values object for fil
         )
       </span>
       &mdash;
-      <span class='desc'>The collection name. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>filter</span>
@@ -241,7 +236,7 @@ to return documents by ID. Otherwise it&#39;s used as keys-values object for fil
         )
       </span>
       &mdash;
-      <span class='desc'>Optional, if a string or number, assume it&#39;s the document ID. Otherwise assume keys-values filter. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>options</span>
@@ -251,7 +246,7 @@ to return documents by ID. Otherwise it&#39;s used as keys-values object for fil
         )
       </span>
       &mdash;
-      <span class='desc'>Options to be passed to the query. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>callback</span>
@@ -261,7 +256,7 @@ to return documents by ID. Otherwise it&#39;s used as keys-values object for fil
         )
       </span>
       &mdash;
-      <span class='desc'>Callback (err, result) when operation has finished. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>
@@ -277,7 +272,7 @@ to return documents by ID. Otherwise it&#39;s used as keys-values object for fil
         )
       </span>
       &mdash;
-      <span class='desc'>Limits the resultset to X documents. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -290,8 +285,7 @@ to return documents by ID. Otherwise it&#39;s used as keys-values object for fil
       <br>
     </p>
     <div class='docstring'>
-  <p>Add new documents to the database.
-The <code>options</code> parameter is optional.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -304,7 +298,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The collection name. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>obj</span>
@@ -314,7 +308,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Document or array of documents to be added. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>callback</span>
@@ -324,7 +318,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Callback (err, result) when operation has finished. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -337,8 +331,7 @@ The <code>options</code> parameter is optional.</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Update existing documents on the database.
-The <code>options</code> parameter is optional.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -351,7 +344,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The collection name. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>obj</span>
@@ -361,7 +354,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Document or data to be updated. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>options</span>
@@ -371,7 +364,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Optional, options to control and filter the insert behaviour. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>callback</span>
@@ -381,7 +374,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Callback (err, result) when operation has finished. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>
@@ -397,7 +390,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Defines the query filter. If not specified, will try using the ID of the passed object. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>patch</span>
@@ -407,7 +400,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Default is false, if true replace only the specific properties of documents instead of the whole data, using $set. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>upsert</span>
@@ -417,7 +410,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Default is false, if true it will create documents if none was found. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -430,7 +423,7 @@ The <code>options</code> parameter is optional.</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Delete an object from the database. The <code>obj</code> argument can be either the document itself, or its integer/string ID.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -443,7 +436,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The collection name. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>filter</span>
@@ -453,7 +446,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>If a string or number, assume it&#39;s the document ID. Otherwise assume the document itself. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>callback</span>
@@ -463,7 +456,7 @@ The <code>options</code> parameter is optional.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Callback (err, result) when operation has finished. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -476,8 +469,7 @@ The <code>options</code> parameter is optional.</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Count documents from the database. A <code>collection</code> must be specified.
-If no <code>filter</code> is not passed then count all documents.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -490,7 +482,7 @@ If no <code>filter</code> is not passed then count all documents.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The collection name. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>filter</span>
@@ -500,7 +492,7 @@ If no <code>filter</code> is not passed then count all documents.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Optional, keys-values filter of documents to be counted. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>callback</span>
@@ -510,7 +502,7 @@ If no <code>filter</code> is not passed then count all documents.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Callback (err, result) when operation has finished. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -522,7 +514,7 @@ If no <code>filter</code> is not passed then count all documents.</p>
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>
-  2.1.2
+  2.1.4
   &#10034;
   Press H to see the keyboard shortcuts
   &#10034;

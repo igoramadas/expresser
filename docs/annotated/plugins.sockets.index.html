@@ -289,8 +289,8 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">-&gt;</span>
-        events.<span class="hljs-literal">on</span> <span class="hljs-string">"App.on.startServer"</span>, @bind.bind(<span class="hljs-keyword">this</span>)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">=&gt;</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"App.on.start"</span>, @bind</pre></div></div>
             
         </li>
         
@@ -308,7 +308,7 @@ to increase / decrease when users connects or disconnects from the app.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    bind: <span class="hljs-function"><span class="hljs-params">(server)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    bind: <span class="hljs-function"><span class="hljs-params">(server)</span> =&gt;</span>
         <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Sockets"</span>, <span class="hljs-string">"bind"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.sockets.enabled
 
         @io = <span class="hljs-built_in">require</span>(<span class="hljs-string">"socket.io"</span>) server</pre></div></div>
@@ -327,8 +327,10 @@ to increase / decrease when users connects or disconnects from the app.
             </div>
             
             <div class="content"><div class='highlight'><pre>        @io.sockets.<span class="hljs-literal">on</span> <span class="hljs-string">"connection"</span>, <span class="hljs-function"><span class="hljs-params">(socket)</span> =&gt;</span>
-            @io.emit <span class="hljs-string">"connection-count"</span>, @getConnectionCount()
-            socket.<span class="hljs-literal">on</span> <span class="hljs-string">"disconnect"</span>, @onDisconnect</pre></div></div>
+            socket.<span class="hljs-literal">on</span> <span class="hljs-string">"disconnect"</span>, @onDisconnect
+
+            <span class="hljs-keyword">if</span> settings.sockets.emitConnectionCount
+                events.emit <span class="hljs-string">"Sockets.ConnectionCount"</span>, @getConnectionCount()</pre></div></div>
             
         </li>
         
@@ -484,7 +486,7 @@ event from currently connected clients.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    compact: <span class="hljs-function">-&gt;</span>
+            <div class="content"><div class='highlight'><pre>    compact: <span class="hljs-function">=&gt;</span>
         @currentListeners = lodash.compact @currentListeners</pre></div></div>
             
         </li>
@@ -525,7 +527,7 @@ event from currently connected clients.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    getConnectionCount: <span class="hljs-function">-&gt;</span>
+            <div class="content"><div class='highlight'><pre>    getConnectionCount: <span class="hljs-function">=&gt;</span>
         <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @io?.sockets?
         <span class="hljs-keyword">return</span> Object.keys(@io.sockets.connected).length</pre></div></div>
             
@@ -542,9 +544,11 @@ event from currently connected clients.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    onDisconnect: <span class="hljs-function">-&gt;</span>
-        count = @getConnectionCount()
-        logger.debug <span class="hljs-string">"Sockets.onDisconnect"</span>, <span class="hljs-string">"New count: <span class="hljs-subst">#{count}</span>."</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    onDisconnect: <span class="hljs-function">=&gt;</span>
+        logger.debug <span class="hljs-string">"Sockets.onDisconnect"</span>
+
+        <span class="hljs-keyword">if</span> settings.sockets.emitConnectionCount
+            events.emit <span class="hljs-string">"Sockets.ConnectionCount"</span>, @getConnectionCount()</pre></div></div>
             
         </li>
         

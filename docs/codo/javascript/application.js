@@ -138,8 +138,7 @@
     return done;
   };
 
-}).call(this);
-/*
+}).call(this);/*
 Syntax highlighting with language autodetection.
 http://softwaremaniacs.org/soft/highlight/
 */
@@ -781,9 +780,7 @@ var hljs = new function() {
         result[key] = obj[key];
     return result;
   }
-}();
-
-
+}();//(=) require ./highlight
 
 /*
 Language: CoffeeScript
@@ -896,9 +893,7 @@ hljs.LANGUAGES.coffeescript = function() {
       ]
     }
   };
-}();
-
-/*!
+}();/*!
  * jQuery JavaScript Library v1.8.1
  * http://jquery.com/
  *
@@ -10198,9 +10193,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 	define( "jquery", [], function () { return jQuery; } );
 }
 
-})( window );
-
-//     keymaster.js
+})( window );//     keymaster.js
 //     (c) 2011 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
 
@@ -10383,9 +10376,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
   if(typeof module !== 'undefined') module.exports = key;
 
-})(this);
-
-//     Underscore.js 1.3.3
+})(this);//     Underscore.js 1.3.3
 //     (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
 //     Portions of Underscore are inspired or borrowed from Prototype,
@@ -11443,9 +11434,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
     return this._wrapped;
   };
 
-}).call(this);
-
-(function() {
+}).call(this);(function() {
   $(function() {
     $('pre code').each(function(i, e) {
       return hljs.highlightBlock(e, '  ');
@@ -11457,8 +11446,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
     });
   });
 
-}).call(this);
-(function() {
+}).call(this);(function() {
   $(function() {
     window.createStripes = function() {
       return $('#content.list li:visible').each(function(i, el) {
@@ -11526,8 +11514,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
     return createStripes();
   });
 
-}).call(this);
-(function() {
+}).call(this);(function() {
   $(function() {
     $('#filecontents').each(function() {
       var ancestors, depth, heading, i, index, j, k, len, level, list, nav, ref, ref1, target;
@@ -11571,8 +11558,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
     });
   });
 
-}).call(this);
-(function() {
+}).call(this);(function() {
   $(function() {
     var loadSearch;
     loadSearch = function(url, link) {
@@ -11659,8 +11645,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
     });
   });
 
-}).call(this);
-(function() {
+}).call(this);(function() {
   $(function() {
     $('#search_frame').hide();
     window.lastSearch = '';
@@ -11723,8 +11708,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
     });
   });
 
-}).call(this);
-(function() {
+}).call(this);(function() {
   $(function() {
     var parser, starter;
     if ($('frameset').length > 0) {
@@ -11746,6 +11730,11 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
     }
   });
 
-}).call(this);
-
+}).call(this);//(=) require_tree './vendor'
+//(=) require ./codo
+//(=) require ./sidebar
+//(=) require ./toc
+//(=) require ./keys
+//(=) require ./fuzzy
+//(=) require ./frames
 ;

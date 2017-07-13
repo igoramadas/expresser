@@ -294,12 +294,17 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Make sure the file exists in the S3 bucket.</p>
+              <p>First make sure the file exists in the S3 bucket, then fetch it.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        s3.headObject params, <span class="hljs-function"><span class="hljs-params">(err, meta)</span> =&gt;</span>
-            <span class="hljs-keyword">if</span> err?</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            s3.headObject params, <span class="hljs-function"><span class="hljs-params">(err, meta)</span> =&gt;</span>
+                <span class="hljs-keyword">if</span> err?
+                    <span class="hljs-keyword">if</span> err.retryable <span class="hljs-keyword">and</span> err.retryDelay &lt; <span class="hljs-number">60</span>
+                        logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, <span class="hljs-string">"Retry in <span class="hljs-subst">#{err.retryDelay}</span>s"</span>, bucket, key, err
+                    <span class="hljs-keyword">else</span>
+                        logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, bucket, key, err</pre></div></div>
             
         </li>
         
@@ -310,15 +315,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Check if request is retryable. If so, warn and try again in a few seconds.</p>
+              <p>Hint for the user to login with the “mai” command.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> err.retryable <span class="hljs-keyword">and</span> err.retryDelay &lt; <span class="hljs-number">60</span>
-                    logger.warn <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, <span class="hljs-string">"Retry in <span class="hljs-subst">#{err.retryDelay}</span>s"</span>, bucket, key, err
-                    lodash.delay @download, err.retryDelay * <span class="hljs-number">1000</span>, bucket, key, destination, callback
-                <span class="hljs-keyword">else</span>
-                    logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, bucket, key, err</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">401</span> <span class="hljs-keyword">or</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">403</span>
+                        logger.warn <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"Invalid permissions or not authorized to read <span class="hljs-subst">#{bucket}</span> <span class="hljs-subst">#{key}</span>."</span>
+
+                    callback? err
+                    <span class="hljs-keyword">return</span> reject err</pre></div></div>
             
         </li>
         
@@ -329,14 +334,17 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Hint for the user to login with the “mai” command.</p>
+              <p>Get data from S3 and write it to local disk.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">401</span> <span class="hljs-keyword">or</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">403</span>
-                        logger.warn <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"Invalid permissions or not authorized to read <span class="hljs-subst">#{bucket}</span> <span class="hljs-subst">#{key}</span>."</span>
+            <div class="content"><div class='highlight'><pre>                s3.getObject params, <span class="hljs-function"><span class="hljs-params">(err, data)</span> -&gt;</span>
+                    <span class="hljs-keyword">if</span> err?
+                        logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"getObject"</span>, bucket, key, err
+                        callback? err
+                        <span class="hljs-keyword">return</span> reject err
 
-                    <span class="hljs-keyword">return</span> callback? err</pre></div></div>
+                    body = data.Body.toString()</pre></div></div>
             
         </li>
         
@@ -347,25 +355,19 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>Get data from S3 and write it to local disk.</p>
+              <p>Destination set? If so, write to disk.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            s3.getObject params, <span class="hljs-function"><span class="hljs-params">(err, data)</span> -&gt;</span>
-                <span class="hljs-keyword">if</span> err?
-                    logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"getObject"</span>, bucket, key, err
-                    <span class="hljs-keyword">return</span> callback? err
-
-                body = data.Body.toString()
-
-                <span class="hljs-keyword">if</span> destination?
-                    fs.writeFile destination, body, {encoding: settings.general.encoding}, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
-                        <span class="hljs-keyword">if</span> err?
-                            logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"writeFile"</span>, bucket, key, destination, err
-                        <span class="hljs-keyword">return</span> callback? err, body
-
-                <span class="hljs-keyword">else</span>
-                    <span class="hljs-keyword">return</span> callback? <span class="hljs-literal">null</span>, body</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> destination?
+                        fs.writeFile destination, body, {encoding: settings.general.encoding}, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+                            <span class="hljs-keyword">if</span> err?
+                                logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"writeFile"</span>, bucket, key, destination, err
+                                callback? err
+                                reject err
+                            <span class="hljs-keyword">else</span>
+                                callback? <span class="hljs-literal">null</span>, body
+                                resolve body</pre></div></div>
             
         </li>
         
@@ -375,6 +377,25 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>No destination? Simply return the file contents.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">else</span>
+                        callback? <span class="hljs-literal">null</span>, body
+                        resolve body
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Upload a file to S3.
 @param {String} bucket Name of the S3 bucket to upload to.
@@ -398,11 +419,11 @@
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Automagically discover the content type, if not set.</p>
 
@@ -425,32 +446,37 @@
         </li>
         
         
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>Send file to S3!</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        s3upload.send (err, result) =&gt;
-            <span class="hljs-keyword">if</span> err?
-                logger.error <span class="hljs-string">"AWS.S3.upload"</span>, bucket, key, err
-            <span class="hljs-keyword">else</span>
-                logger.info <span class="hljs-string">"AWS.S3.upload"</span>, bucket, key
-
-            callback? err, result</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Send file to S3!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            s3upload.send (err, result) -&gt;
+                <span class="hljs-keyword">if</span> err?
+                    logger.error <span class="hljs-string">"AWS.S3.upload"</span>, bucket, key, err
+                    callback? err
+                    reject err
+                <span class="hljs-keyword">else</span>
+                    logger.info <span class="hljs-string">"AWS.S3.upload"</span>, bucket, key
+                    callback? <span class="hljs-literal">null</span>, result
+                    resolve result
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Delete object(s) from S3. Keys can be a string or an array of strings.</p>
 
@@ -463,11 +489,11 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Make sure keys is an array and set the delete parameters.</p>
 
@@ -485,36 +511,28 @@
         </li>
         
         
-        <li id="section-18">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              <p>Delete files!</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        s3Bucket.deleteObjects params, <span class="hljs-function"><span class="hljs-params">(err, result)</span> =&gt;</span>
-            <span class="hljs-keyword">if</span> err?
-                logger.error <span class="hljs-string">"AWS.S3.delete"</span>, bucket, keys, err
-            <span class="hljs-keyword">else</span>
-                logger.info <span class="hljs-string">"AWS.S3.delete"</span>, bucket, keys
-
-            callback? err, result</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <h2 id="singleton-implementation">Singleton implementation</h2>
+              <p>Delete files!</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            s3Bucket.deleteObjects params, <span class="hljs-function"><span class="hljs-params">(err, result)</span> =&gt;</span>
+                <span class="hljs-keyword">if</span> err?
+                    logger.error <span class="hljs-string">"AWS.S3.delete"</span>, bucket, keys, err
+                    callback? err
+                    reject err
+                <span class="hljs-keyword">else</span>
+                    logger.info <span class="hljs-string">"AWS.S3.delete"</span>, bucket, keys
+                    callback? <span class="hljs-literal">null</span>, result
+                    resolve result
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span></pre></div></div>
             
         </li>
         
@@ -524,6 +542,19 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h2 id="singleton-implementation">Singleton implementation</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               
             </div>

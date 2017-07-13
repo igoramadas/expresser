@@ -35,11 +35,7 @@
       </table>
       <h2>Overview</h2>
       <div class='docstring'>
-  <h2 id="expresser-sockets">EXPRESSER SOCKETS</h2><p>Handles sockets communication using the module Socket.IO.
-ATTENTION! The Sockets module is started automatically by the App module.
-If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
-<!--
---></p>
+  class 
 </div>
 <div class='tags'>
   <h3>See also:</h3>
@@ -60,7 +56,7 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
           </span>
         </dt>
         <dd class='desc'>
-          Holds a list of current event listeners. 
+          class 
         </dd>
         <dt id='io-property'>
           <span class='signature'>
@@ -71,7 +67,7 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
           </span>
         </dt>
         <dd class='desc'>
-          Exposes Socket.IO object to external modules. 
+          class 
         </dd>
       </dl>
       <h2>Variables Summary</h2>
@@ -96,7 +92,7 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
       </a>
     </span>
     <span class='desc'>
-      Init the Sockets plugin. 
+      class 
     </span>
   </li>
   <li>
@@ -107,8 +103,9 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
 <b>setEvents</b><span>()</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
-      Bind events. 
+      class 
     </span>
   </li>
   <li>
@@ -119,8 +116,9 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
 <b>bind</b><span>(server)</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
-      Bind the Socket.IO object to the Express app. 
+      class 
     </span>
   </li>
   <li>
@@ -132,7 +130,7 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
       </a>
     </span>
     <span class='desc'>
-      Emit the specified key and data to clients. 
+      class 
     </span>
   </li>
   <li>
@@ -144,7 +142,7 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
       </a>
     </span>
     <span class='desc'>
-      Listen to a specific event. 
+      class 
     </span>
   </li>
   <li>
@@ -156,7 +154,7 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
       </a>
     </span>
     <span class='desc'>
-      Stops listening to the specified event key. 
+      class 
     </span>
   </li>
   <li>
@@ -167,8 +165,9 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
 <b>compact</b><span>()</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
-      Remove invalid and expired event listeners. 
+      class 
     </span>
   </li>
   <li>
@@ -179,8 +178,9 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
 <b>getConnectionCount</b><span>()</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
-      Get how many users are currenly connected to the app. 
+      class 
     </span>
   </li>
   <li>
@@ -191,8 +191,9 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
 <b>onDisconnect</b><span>()</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
-      When user disconnects, emit an event with the new connection count to all clients. 
+      class 
     </span>
   </li>
 </ul>
@@ -206,7 +207,7 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
       <br>
     </p>
     <div class='docstring'>
-  <p>Init the Sockets plugin.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -216,10 +217,11 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
       #
 (void)
 <b>setEvents</b><span>()</span>
+      <span class='bound note'>Bound</span>
       <br>
     </p>
     <div class='docstring'>
-  <p>Bind events.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -229,11 +231,11 @@ If you wish to disable it, set <code>Settings.sockets.enabled</code> to false.
       #
 (void)
 <b>bind</b><span>(server)</span>
+      <span class='bound note'>Bound</span>
       <br>
     </p>
     <div class='docstring'>
-  <p>Bind the Socket.IO object to the Express app. This will also set the counter
-to increase / decrease when users connects or disconnects from the app.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -246,7 +248,7 @@ to increase / decrease when users connects or disconnects from the app.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Sockets init options. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>
@@ -262,7 +264,7 @@ to increase / decrease when users connects or disconnects from the app.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The Express server object to bind to. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -275,7 +277,7 @@ to increase / decrease when users connects or disconnects from the app.</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Emit the specified key and data to clients.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -288,7 +290,7 @@ to increase / decrease when users connects or disconnects from the app.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The event key. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>data</span>
@@ -298,7 +300,7 @@ to increase / decrease when users connects or disconnects from the app.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The JSON data to be sent out to clients. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -311,8 +313,7 @@ to increase / decrease when users connects or disconnects from the app.</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Listen to a specific event. If <code>onlyNewClients</code> is true then it won&#39;t listen to that particular
-event from currently connected clients.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -325,7 +326,7 @@ event from currently connected clients.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The event key. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>callback</span>
@@ -335,7 +336,7 @@ event from currently connected clients.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The callback to be called when key is triggered. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>onlyNewClients</span>
@@ -345,7 +346,7 @@ event from currently connected clients.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>Optional, if true, listen to event only from new clients. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -358,7 +359,7 @@ event from currently connected clients.</p>
       <br>
     </p>
     <div class='docstring'>
-  <p>Stops listening to the specified event key.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -371,7 +372,7 @@ event from currently connected clients.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The event key. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>callback</span>
@@ -381,7 +382,7 @@ event from currently connected clients.</p>
         )
       </span>
       &mdash;
-      <span class='desc'>The callback to stop triggering. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -391,10 +392,11 @@ event from currently connected clients.</p>
       #
 (void)
 <b>compact</b><span>()</span>
+      <span class='bound note'>Bound</span>
       <br>
     </p>
     <div class='docstring'>
-  <p>Remove invalid and expired event listeners.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -404,10 +406,11 @@ event from currently connected clients.</p>
       #
 (void)
 <b>getConnectionCount</b><span>()</span>
+      <span class='bound note'>Bound</span>
       <br>
     </p>
     <div class='docstring'>
-  <p>Get how many users are currenly connected to the app.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -417,10 +420,11 @@ event from currently connected clients.</p>
       #
 (void)
 <b>onDisconnect</b><span>()</span>
+      <span class='bound note'>Bound</span>
       <br>
     </p>
     <div class='docstring'>
-  <p>When user disconnects, emit an event with the new connection count to all clients.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -432,7 +436,7 @@ event from currently connected clients.</p>
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>
-  2.1.2
+  2.1.4
   &#10034;
   Press H to see the keyboard shortcuts
   &#10034;

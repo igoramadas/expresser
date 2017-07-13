@@ -35,10 +35,7 @@
       </table>
       <h2>Overview</h2>
       <div class='docstring'>
-  <h2 id="expresser-metrics">EXPRESSER METRICS</h2><p>Gather application metrics and generate JSON output to be used by
-monitoring systems.
-<!--
---></p>
+  class 
 </div>
 <div class='tags'>
   <h3>See also:</h3>
@@ -70,7 +67,7 @@ monitoring systems.
       </a>
     </span>
     <span class='desc'>
-      Init metrics and set up cleanup timer. 
+      class 
     </span>
   </li>
   <li>
@@ -82,7 +79,7 @@ monitoring systems.
       </a>
     </span>
     <span class='desc'>
-      Starts the counter for a specific metric. 
+      class 
     </span>
   </li>
   <li>
@@ -94,7 +91,7 @@ monitoring systems.
       </a>
     </span>
     <span class='desc'>
-      Ends the counter for the specified metric, with an optional error to be passed along. 
+      class 
     </span>
   </li>
   <li>
@@ -106,7 +103,7 @@ monitoring systems.
       </a>
     </span>
     <span class='desc'>
-      Get collected data for the specified metric. 
+      class 
     </span>
   </li>
   <li>
@@ -118,7 +115,7 @@ monitoring systems.
       </a>
     </span>
     <span class='desc'>
-      Clean collected metrics by removing data older than X minutes (defined on settings). 
+      class 
     </span>
   </li>
   <li>
@@ -130,7 +127,7 @@ monitoring systems.
       </a>
     </span>
     <span class='desc'>
-      Generate the JSON output with all metrics. 
+      class 
     </span>
   </li>
 </ul>
@@ -144,7 +141,7 @@ monitoring systems.
       <br>
     </p>
     <div class='docstring'>
-  <p>Init metrics and set up cleanup timer.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -157,7 +154,7 @@ monitoring systems.
       <br>
     </p>
     <div class='docstring'>
-  <p>Starts the counter for a specific metric. The data is optional.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -170,7 +167,7 @@ monitoring systems.
         )
       </span>
       &mdash;
-      <span class='desc'>ID of the metric to be started. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>data</span>
@@ -180,7 +177,7 @@ monitoring systems.
         )
       </span>
       &mdash;
-      <span class='desc'>Additional info about the current metric (URL data, for example). </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>Returns:</h3>
@@ -191,7 +188,7 @@ monitoring systems.
         <tt>Object</tt>
       )
       &mdash;
-      <span class='desc'>Returns the metric object to be used later on <code>end</code>. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -204,7 +201,7 @@ monitoring systems.
       <br>
     </p>
     <div class='docstring'>
-  <p>Ends the counter for the specified metric, with an optional error to be passed along.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -217,7 +214,7 @@ monitoring systems.
         )
       </span>
       &mdash;
-      <span class='desc'>The metric object started previsouly on <code>start</code>. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>error</span>
@@ -227,7 +224,7 @@ monitoring systems.
         )
       </span>
       &mdash;
-      <span class='desc'>Optional error that ocurred while processing the metric. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -240,7 +237,7 @@ monitoring systems.
       <br>
     </p>
     <div class='docstring'>
-  <p>Get collected data for the specified metric.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -253,7 +250,7 @@ monitoring systems.
         )
       </span>
       &mdash;
-      <span class='desc'>ID of the metric. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -266,8 +263,7 @@ monitoring systems.
       <br>
     </p>
     <div class='docstring'>
-  <p>Clean collected metrics by removing data older than X minutes (defined on settings).
-Please note that this runs on s schedule so you shouldn&#39;t need to call it manually, in most cases.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -280,7 +276,7 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
       <br>
     </p>
     <div class='docstring'>
-  <p>Generate the JSON output with all metrics.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -293,7 +289,7 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
         )
       </span>
       &mdash;
-      <span class='desc'>Options to filter the output. Available options are same as settings.metrics. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>Returns:</h3>
@@ -304,7 +300,7 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
         <tt>Object</tt>
       )
       &mdash;
-      <span class='desc'>JSON output with relevant metrics. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -316,7 +312,7 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>
-  2.1.2
+  2.1.4
   &#10034;
   Press H to see the keyboard shortcuts
   &#10034;
