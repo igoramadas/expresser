@@ -15,8 +15,8 @@
     },
     "dependencies": {
         "coffeescript": "^2.0.0-beta3",
-        "@google-cloud/datastore": "^1.0.3",
-        "@google-cloud/storage": "^1.2.0"
+        "@google-cloud/datastore": "^1.0.7",
+        "@google-cloud/storage": "^1.2.1"
     },
     "repository": {
         "type": "git",

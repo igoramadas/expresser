@@ -52,7 +52,7 @@ class Datastore
         return await result
 
     # Create / update records on the Datastore.
-    upsert = (kind, id, data) ->
+    upsert = (kind, data, id) ->
         if id?
             key = @ds.key [kind, parseInt(id, 10)]
         else

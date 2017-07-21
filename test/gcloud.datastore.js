@@ -12,6 +12,8 @@ describe("^Google Cloud Datastore Tests", function() {
     var fs = require("fs");
     var moment = require("moment");
     var gcloud = null;
+    var hasKeys = false;
+    var uploadTimestamp = 0;
 
     before(function() {
         settings.loadFromJson("../plugins/gcloud/settings.default.json");
@@ -27,6 +29,26 @@ describe("^Google Cloud Datastore Tests", function() {
         gcloud.init();
     });
 
-    it.skip("Create an entity", function() {
+    it.skip("Create an entity on the datastore", async function(done) {
+        uploadTimestamp = moment().unix();
+
+        var data = {
+            timestamp: uploadTimestamp,
+            title: "This is a test entity"
+        };
+
+        try {
+            gcloud.datastore.upsert("test", data);
+        } catch (ex) {
+            done(ex)
+        }
+    });
+
+    it.skip("Get all test entities from the datastore", async function(done) {
+        try {
+            gcloud.datastore.get("test");
+        } catch (ex) {
+            done(ex)
+        }
     });
 });
