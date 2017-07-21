@@ -2,6 +2,7 @@
 
 3.0.0
 =====
+* New option "cleanupEmpty" to remove empty metrics from the collection.
 * Maintenance release for Expresser 3.0.0.
 
 1.1.3

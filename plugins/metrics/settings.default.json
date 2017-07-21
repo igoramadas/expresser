@@ -3,6 +3,8 @@
     "metrics": {
         // Enable the Metrics module?
         "enabled": true,
+        // Cleanup empty metrics (means calls history has expired so total calls is 0)?
+        "cleanupEmpty": true,
         // Cleanup interval, in minutes.
         "cleanupInterval": 60,
         // Expire metrics data after X minutes.

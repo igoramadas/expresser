@@ -99,11 +99,17 @@ class Metrics
         now = moment().valueOf()
         keyCounter = 0
 
+        # Hold empty metric IDs.
+        emptyIds = []
+
         # Iterate metrics collection.
         for key, obj of metrics
             i = obj.length - 1
             counter = 0
             keyCounter++
+
+            if obj.length < 1
+                emptyIds.push key
 
             # Iterate requests for the current metrics, last to first.
             while i >= 0
@@ -117,6 +123,11 @@ class Metrics
                     counter++
                 else
                     i = -1
+
+        # Delete empty metrics if enabled on settings.
+        if settings.metrics.cleanupEmpty and emptyIds.length > 0
+            for key in emptyids
+                delete metrics[key]
 
         if counter > 0 and keyCounter > 0
             logger.info "Metrics.cleanup", "Removed #{counter} records from #{keyCounter} keys."
