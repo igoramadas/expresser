@@ -39,7 +39,7 @@ class S3
         params = {Bucket: bucket, Key: key}
 
         # First make sure the file exists in the S3 bucket, then fetch it.
-        return new Promise (resolve, reject) ->
+        return await new Promise (resolve, reject) ->
             s3.headObject params, (err, meta) =>
                 if err?
                     if err.retryable and err.retryDelay < 60
@@ -79,8 +79,6 @@ class S3
                         callback? null, body
                         resolve body
 
-        return await
-
     # Upload a file to S3.
     # @param {String} bucket Name of the S3 bucket to upload to.
     # @param {String} key Key of the target S3 bucket resource (usually a filename).
@@ -113,7 +111,7 @@ class S3
         }
 
         # Send file to S3!
-        return new Promise (resolve, reject) ->
+        return await new Promise (resolve, reject) ->
             s3upload.send (err, result) ->
                 if err?
                     logger.error "AWS.S3.upload", bucket, key, err
@@ -123,8 +121,6 @@ class S3
                     logger.info "AWS.S3.upload", bucket, key
                     callback? null, result
                     resolve result
-
-        return await
 
     # Delete object(s) from S3. Keys can be a string or an array of strings.
     delete: (bucket, keys, callback) ->
@@ -142,7 +138,7 @@ class S3
         }
 
         # Delete files!
-        return new Promise (resolve, reject) ->
+        return await new Promise (resolve, reject) ->
             s3Bucket.deleteObjects params, (err, result) =>
                 if err?
                     logger.error "AWS.S3.delete", bucket, keys, err
@@ -152,8 +148,6 @@ class S3
                     logger.info "AWS.S3.delete", bucket, keys
                     callback? null, result
                     resolve result
-
-        return await
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

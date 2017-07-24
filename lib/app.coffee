@@ -194,6 +194,21 @@ class App
     # HELPER AND UTILS
     # --------------------------------------------------------------------------
 
+    # Return a collection with all routes registered on the server.
+    # @param {Boolean} simple If true, returns only an array the route strings.
+    # @return {Array} Collection with routes (as object or as string).
+    getRoutes: (simple = false) =>
+        result = []
+
+        for r in @server._router.stack
+            if r.route?.path? and r.route.path isnt ""
+                if simple
+                    result.push r.route.path
+                else
+                    result.push {route: r.route.path, methods: lodash.keys(r.route.methods)}
+
+        return result
+
     # Helper to log all requests when debug is true.
     requestLogger = (req, res, next) ->
         ip = utils.browser.getClientIP req
@@ -207,6 +222,8 @@ class App
             console.log "Request from #{ip}", method, url
 
         next() if next?
+
+        return url
 
     # Helper to render Pug views. The request, response and view are mandatory,
     # and the options argument is optional.
