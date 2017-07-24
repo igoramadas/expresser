@@ -347,7 +347,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">upsert</span> = <span class="hljs-params">(kind, id, data)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">upsert</span> = <span class="hljs-params">(kind, data, id)</span> -&gt;</span>
         <span class="hljs-keyword">if</span> id?
             key = @ds.key [kind, parseInt(id, <span class="hljs-number">10</span>)]
         <span class="hljs-keyword">else</span>
