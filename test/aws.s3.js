@@ -34,7 +34,7 @@ describe("AWS S3 Tests", function() {
     });
 
     if (hasKeys) {
-        it("Upload test file to S3", function(done) {
+        it("Upload test file to S3", async function(done) {
             uploadTimestamp = moment().unix();
 
             var contents = {
@@ -52,7 +52,7 @@ describe("AWS S3 Tests", function() {
             aws.s3.upload("expresser.devv.com", "test-s3.json", JSON.stringify(contents, null, 2), callback);
         });
 
-        it("Download uploaded file from S3", function(done) {
+        it("Download uploaded file from S3", async function(done) {
             var callback = function(err, result) {
                 if (err) {
                     done("Could not upload file to S3: " + err);
@@ -70,7 +70,7 @@ describe("AWS S3 Tests", function() {
             aws.s3.download("expresser.devv.com", "test-s3.json", callback);
         });
 
-        it("Delete file from S3", function(done) {
+        it("Delete file from S3", async function(done) {
             var callback = function(err, result) {
                 if (err) {
                     done("Could not delete file from S3: " + err);

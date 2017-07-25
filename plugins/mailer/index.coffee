@@ -131,6 +131,7 @@ class Mailer
 
         # Check if `doNotSend` flag is set, and if so, do not send anything.
         if settings.mailer.doNotSend
+            logger.warn "Mailer.smtpSend", "Abort! doNotSend = true", options.to, options.subject
             return callback null, "The 'doNotSend' setting is true, will not send anything!" if callback?
 
         # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.
@@ -151,7 +152,7 @@ class Mailer
     smtpSend = (transport, options, callback) ->
         try
             transport.sendMail options, (err, result) ->
-                logger.debug "Mailer.smtpSend", "OK", transport.host, options.subject, "to #{options.to}", "from #{options.from}."
+                logger.info "Mailer.smtpSend", transport.host, "to #{options.to}", "from #{options.from}", options.subject
                 callback err, result
         catch ex
             callback ex
@@ -182,10 +183,12 @@ class Mailer
 
         return result
 
-    # Use the specified options and create a new SMTP server.
+    # Use the specified options and create a new SMTP server. If no options are set, use default from settings.
     # @param {Object} options Options to be passed to SMTP creator.
     # @param {Boolean} secondary If false set as the main SMTP server, if true set as secondary.
     setSmtp: (options, secondary) ->
+        options = settings.mailer.smtp if not options?
+
         if not secondary or secondary < 1
             @smtp = @createSmtp options
         else
