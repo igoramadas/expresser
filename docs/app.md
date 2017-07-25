@@ -14,20 +14,19 @@ If you're planning to use cookies and/or sessions on your app, please update the
 ## Adding extra middleware
 
 You can bind your own middlewares to the Express server by using the `prependMiddlewares` and `appendMiddlewares`
-properties. For example to use the `passport` middleware, which must be registered before the main ones:
+collections. For example to use the `passport` middleware, which must be registered before the main ones:
 
-    var expresser = require("expresser");
-    var passport = require("passport");
-    
-    expresser.app.prependMiddlewares.push(passport.initialize());
-    expresser.app.prependMiddlewares.push(passport.session());
-    expresser.init();
+    var expresser = require("expresser")
+    var passport = require("passport")
+    expresser.app.prependMiddlewares.push(passport.initialize())
+    expresser.app.prependMiddlewares.push(passport.session())
+    expresser.init()
 
 And similarly, if you want to register a middleware after the main ones:
 
-    var myCustomMiddleware = require("some-middleware");
-    expresser.app.appendMiddlewares.push(myCustomMiddleware);
-    
+    var myCustomMiddleware = require("some-middleware")
+    expresser.app.appendMiddlewares.push(myCustomMiddleware)
+
 ## Rendering / sending the response to the client
 
 The App module has some helper methods to send the response to the browser using different formats.
@@ -37,51 +36,51 @@ The App module has some helper methods to send the response to the browser using
 Renders a Pug view with options. By default Pug views are stored on /views. For example
 to render the `testview.pug` containing the placeholders `pageTitle` and `pageUrl`:
 
-    var app = expresser.app;
-    var options = {pageTitle: "My Page", pageUrl: "/testview/some/url"};
+    var app = expresser.app
+    var options = {pageTitle: "My Page", pageUrl: "/testview/some/url"}
 
     app.server.get("/testview", function (req, res) {
-        app.renderView(req, res, "testview.pug", options);
-    });
+        app.renderView(req, res, "testview.pug", options)
+    })
 
 #### renderJson(req, res, data)
 
 Sends JSON data to the client. For example:
 
-    var app = expresser.app;
-    var data = {something: "Here", code: 123, somethingElse: true};
+    var app = expresser.app
+    var data = {something: "Here", code: 123, somethingElse: true}
 
     app.server.get("/testjson", function (req, res) {
-        app.renderJson(req, res, data);
-    });
+        app.renderJson(req, res, data)
+    })
 
 #### renderError(req, res, error, status = 500)
 
 Sends an error to the client as JSON. For example when a procedure fails (access denied or another error):
 
-    var app = expresser.app;
+    var app = expresser.app
 
     app.server.get("/dosomething", function (req, res) {
         try {
-            doSomething();
+            doSomething()
         } catch (ex) {
             if (ex.reason == "Not authorized") {
-                app.renderError(req, res, "You have no rights to access this resource.", 403);
+                app.renderError(req, res, "You have no rights to access this resource.", 403)
             } else {
-                app.renderError(req, res, ex);
-            }            
+                app.renderError(req, res, ex)
+            }
         }
-    });
+    })
 
 #### renderImage(req, res, filename, options)
 
 Renders an image (JPG, GIF, PNG etc...) to the client.
 
-    var app = expresser.app;
+    var app = expresser.app
 
     app.server.get("/myimage", function (req, res) {
-        app.renderImage(req, res, __dirname + "/myimage.jpg");
-    });
+        app.renderImage(req, res, __dirname + "/myimage.jpg")
+    })
 
 ---
 

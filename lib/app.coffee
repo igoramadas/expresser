@@ -215,11 +215,7 @@ class App
         method = req.method
         url = req.url
 
-        # Check if request flash is present before logging.
-        if req.flash? and lodash.isFunction req.flash
-            console.log "Request from #{ip}", method, url, req.flash()
-        else
-            console.log "Request from #{ip}", method, url
+        console.log "Request from #{ip}", method, url
 
         next() if next?
 
