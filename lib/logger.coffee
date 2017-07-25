@@ -286,6 +286,8 @@ class Logger
                     if lodash.isArray arg
                         for value in arg
                             stringified += JSON.stringify value, null, 1
+                    else if lodash.isError arg
+                        stringified = arg.message + " " + arg.stack.split(" ")
                     else if lodash.isObject arg
                         stringified = JSON.stringify arg, null, 1
                     else
