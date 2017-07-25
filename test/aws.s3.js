@@ -34,52 +34,31 @@ describe("AWS S3 Tests", function() {
     });
 
     if (hasKeys) {
-        it("Upload test file to S3", async function(done) {
+        it("Upload test file to S3", async function() {
             uploadTimestamp = moment().unix();
 
             var contents = {
                 timestamp: uploadTimestamp
             };
 
-            var callback = function(err, result) {
-                if (err) {
-                    done("Could not upload file to S3: " + err);
-                } else {
-                    done();
-                }
-            };
-
-            aws.s3.upload("expresser.devv.com", "test-s3.json", JSON.stringify(contents, null, 2), callback);
+            return await aws.s3.upload("expresser.devv.com", "test-s3.json", JSON.stringify(contents, null, 2));
         });
 
-        it("Download uploaded file from S3", async function(done) {
-            var callback = function(err, result) {
-                if (err) {
-                    done("Could not upload file to S3: " + err);
+        it("Download uploaded file from S3", async function() {
+            var result = await aws.s3.download("expresser.devv.com", "test-s3.json");
+            var contents = JSON.parse(result);
+
+            return new Promise((resolve, reject) => {
+                if (contents.timestamp != uploadTimestamp) {
+                    reject("Timestamp of uploaded file does not match: " + contents.timestamp + ", " + uploadTimestamp);
                 } else {
-                    var contents = JSON.parse(result);
-
-                    if (contents.timestamp != uploadTimestamp) {
-                        done("Timestamp of uploaded file does not match: " + contents.timestamp + ", " + uploadTimestamp);
-                    } else {
-                        done();
-                    }
+                    resolve();
                 }
-            };
-
-            aws.s3.download("expresser.devv.com", "test-s3.json", callback);
+            });
         });
 
-        it("Delete file from S3", async function(done) {
-            var callback = function(err, result) {
-                if (err) {
-                    done("Could not delete file from S3: " + err);
-                } else {
-                    done();
-                }
-            };
-
-            aws.s3.delete("expresser.devv.com", "test-s3.json", callback);
+        it("Delete file from S3", async function() {
+            return await aws.s3.delete("expresser.devv.com", "test-s3.json");
         });
     }
 });

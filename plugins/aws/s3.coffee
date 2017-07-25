@@ -29,12 +29,7 @@ class S3
     # @param {String} bucket Name of the S3 bucket to download from.
     # @param {String} key Key of the target S3 bucket resource (usually a filename).
     # @param {String} destination Optional, full path to the destination where file should be saved.
-    # @param {Method} callback Callback (err, body), with body being the contents as String.
-    download: (bucket, key, destination, callback) ->
-        if not callback? and lodash.isFunction destination
-            callback = destination
-            destination = null
-
+    download: (bucket, key, destination) ->
         s3 = new aws.S3 {region: settings.aws.s3.region}
         params = {Bucket: bucket, Key: key}
 
@@ -51,14 +46,12 @@ class S3
                     if err.statusCode is 401 or err.statusCode is 403
                         logger.warn "AWS.S3.download", "Invalid permissions or not authorized to read #{bucket} #{key}."
 
-                    callback? err
                     return reject err
 
                 # Get data from S3 and write it to local disk.
                 s3.getObject params, (err, data) ->
                     if err?
                         logger.error "AWS.S3.download", "getObject", bucket, key, err
-                        callback? err
                         return reject err
 
                     body = data.Body.toString()
@@ -68,15 +61,12 @@ class S3
                         fs.writeFile destination, body, {encoding: settings.general.encoding}, (err) ->
                             if err?
                                 logger.error "AWS.S3.download", "writeFile", bucket, key, destination, err
-                                callback? err
                                 reject err
                             else
-                                callback? null, body
                                 resolve body
 
                     # No destination? Simply return the file contents.
                     else
-                        callback? null, body
                         resolve body
 
     # Upload a file to S3.
@@ -86,12 +76,7 @@ class S3
     # @param {Object} options Upload options.
     # @option options {String} acl ACL to be used, default is "public-read".
     # @option options {String} contentType Content type of the file.
-    # @param {Method} callback Callback (err, result).
-    upload: (bucket, key, body, options, callback) ->
-        if not callback? and lodash.isFunction options
-            callback = options
-            options = {}
-
+    upload: (bucket, key, body, options) ->
         s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
         options = lodash.defaults options, {acl: "public-read"}
 
@@ -115,15 +100,13 @@ class S3
             s3upload.send (err, result) ->
                 if err?
                     logger.error "AWS.S3.upload", bucket, key, err
-                    callback? err
                     reject err
                 else
                     logger.info "AWS.S3.upload", bucket, key
-                    callback? null, result
                     resolve result
 
     # Delete object(s) from S3. Keys can be a string or an array of strings.
-    delete: (bucket, keys, callback) ->
+    delete: (bucket, keys) ->
         s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
         objects = []
 
@@ -142,11 +125,9 @@ class S3
             s3Bucket.deleteObjects params, (err, result) =>
                 if err?
                     logger.error "AWS.S3.delete", bucket, keys, err
-                    callback? err
                     reject err
                 else
                     logger.info "AWS.S3.delete", bucket, keys
-                    callback? null, result
                     resolve result
 
 # Singleton implementation

@@ -2,7 +2,7 @@
 
 3.0.0
 =====
-* NEW! Now using async / await whenever applicable.
+* NEW! Now using async / await whenever applicable. Callbacks are being phased out!
 * NEW! App has now a getRoutes helper to list all registered routes.
 * Lots of unecessary modules and code removed. More performance, less memory consumption.
 * Now using CoffeeScript v2.
