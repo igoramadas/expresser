@@ -1,11 +1,11 @@
 {
-    "name": "expresser-database-mongodb",
+    "name": "expresser-mongodb",
     "version": "3.0.0",
     "description": "MongoDB database plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache-2.0",
-    "subdomain": "expresser-database-mongo",
+    "subdomain": "expresser-mongodb",
     "main": "index",
     "domains": [
         "expresser.devv.com"
