@@ -317,6 +317,7 @@ class App
 
         # Set default status to 500 and stringify message if necessary.
         status = status or error?.statusCode or 500
+        error = error.message + " " + error.stack if lodash.isError error
         error = JSON.stringify error if not lodash.isString error
 
         # Send error JSON to client.
