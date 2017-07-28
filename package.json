@@ -23,7 +23,7 @@
         "body-parser": "^1.17.2",
         "chalk": "^2.0.1",
         "coffeescript": "^2.0.0-beta3",
-        "compressible": "^2.0.10",
+        "compressible": "^2.0.11",
         "compression": "^1.7.0",
         "cookie-parser": "^1.4.3",
         "cookie-session": "^2.0.0-beta.2",
@@ -46,7 +46,7 @@
     "devDependencies": {
         "@google-cloud/datastore": "^1.0.7",
         "@google-cloud/storage": "^1.2.1",
-        "aws-sdk": "^2.88.0",
+        "aws-sdk": "^2.92.0",
         "bettercodo": "^2.1.4",
         "betterdocco": "^0.7.6",
         "chai": "^4.1.0",

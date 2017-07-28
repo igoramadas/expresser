@@ -29,11 +29,6 @@
               </a>
             
               
-              <a class="source" href="lib.database.html">
-                lib/database.coffee
-              </a>
-            
-              
               <a class="source" href="lib.events.html">
                 lib/events.coffee
               </a>
@@ -71,11 +66,6 @@
               
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-mongodb.index.html">
-                plugins/database-mongodb/index.coffee
               </a>
             
               
@@ -136,6 +126,11 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mongodb.index.html">
+                plugins/mongodb/index.coffee
               </a>
             
               
@@ -582,6 +577,7 @@ folder / base file name you have set on the settings).
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mailer.doNotSend
+            logger.warn <span class="hljs-string">"Mailer.smtpSend"</span>, <span class="hljs-string">"Abort! doNotSend = true"</span>, options.to, options.subject
             <span class="hljs-keyword">return</span> callback <span class="hljs-literal">null</span>, <span class="hljs-string">"The 'doNotSend' setting is true, will not send anything!"</span> <span class="hljs-keyword">if</span> callback?</pre></div></div>
             
         </li>
@@ -648,7 +644,7 @@ This is NOT exposed to external modules.</p>
             <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">smtpSend</span> = <span class="hljs-params">(transport, options, callback)</span> -&gt;</span>
         <span class="hljs-keyword">try</span>
             transport.sendMail options, <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
-                logger.debug <span class="hljs-string">"Mailer.smtpSend"</span>, <span class="hljs-string">"OK"</span>, transport.host, options.subject, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>."</span>
+                logger.info <span class="hljs-string">"Mailer.smtpSend"</span>, transport.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, options.subject
                 callback err, result
         <span class="hljs-keyword">catch</span> ex
             callback ex</pre></div></div>
@@ -736,13 +732,15 @@ This is NOT exposed to external modules.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
-              <p>Use the specified options and create a new SMTP server.
+              <p>Use the specified options and create a new SMTP server. If no options are set, use default from settings.
 @param {Object} options Options to be passed to SMTP creator.
 @param {Boolean} secondary If false set as the main SMTP server, if true set as secondary.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    setSmtp: <span class="hljs-function"><span class="hljs-params">(options, secondary)</span> -&gt;</span>
+        options = settings.mailer.smtp <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
+
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> secondary <span class="hljs-keyword">or</span> secondary &lt; <span class="hljs-number">1</span>
             @smtp = @createSmtp options
         <span class="hljs-keyword">else</span>

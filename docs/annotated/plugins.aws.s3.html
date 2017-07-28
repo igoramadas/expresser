@@ -29,11 +29,6 @@
               </a>
             
               
-              <a class="source" href="lib.database.html">
-                lib/database.coffee
-              </a>
-            
-              
               <a class="source" href="lib.events.html">
                 lib/events.coffee
               </a>
@@ -71,11 +66,6 @@
               
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-mongodb.index.html">
-                plugins/database-mongodb/index.coffee
               </a>
             
               
@@ -136,6 +126,11 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mongodb.index.html">
+                plugins/mongodb/index.coffee
               </a>
             
               
@@ -272,16 +267,11 @@
               <p>Download a file from S3 and optionally save to the specified destination.
 @param {String} bucket Name of the S3 bucket to download from.
 @param {String} key Key of the target S3 bucket resource (usually a filename).
-@param {String} destination Optional, full path to the destination where file should be saved.
-@param {Method} callback Callback (err, body), with body being the contents as String.</p>
+@param {String} destination Optional, full path to the destination where file should be saved.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    download: <span class="hljs-function"><span class="hljs-params">(bucket, key, destination, callback)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction destination
-            callback = destination
-            destination = <span class="hljs-literal">null</span>
-
+            <div class="content"><div class='highlight'><pre>    download: <span class="hljs-function"><span class="hljs-params">(bucket, key, destination)</span> -&gt;</span>
         s3 = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region}
         params = {Bucket: bucket, Key: key}</pre></div></div>
             
@@ -322,7 +312,6 @@
             <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">401</span> <span class="hljs-keyword">or</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">403</span>
                         logger.warn <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"Invalid permissions or not authorized to read <span class="hljs-subst">#{bucket}</span> <span class="hljs-subst">#{key}</span>."</span>
 
-                    callback? err
                     <span class="hljs-keyword">return</span> reject err</pre></div></div>
             
         </li>
@@ -341,7 +330,6 @@
             <div class="content"><div class='highlight'><pre>                s3.getObject params, <span class="hljs-function"><span class="hljs-params">(err, data)</span> -&gt;</span>
                     <span class="hljs-keyword">if</span> err?
                         logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"getObject"</span>, bucket, key, err
-                        callback? err
                         <span class="hljs-keyword">return</span> reject err
 
                     body = data.Body.toString()</pre></div></div>
@@ -363,10 +351,8 @@
                         fs.writeFile destination, body, {encoding: settings.general.encoding}, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
                             <span class="hljs-keyword">if</span> err?
                                 logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"writeFile"</span>, bucket, key, destination, err
-                                callback? err
                                 reject err
                             <span class="hljs-keyword">else</span>
-                                callback? <span class="hljs-literal">null</span>, body
                                 resolve body</pre></div></div>
             
         </li>
@@ -383,10 +369,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">else</span>
-                        callback? <span class="hljs-literal">null</span>, body
-                        resolve body
-
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span></pre></div></div>
+                        resolve body</pre></div></div>
             
         </li>
         
@@ -403,16 +386,11 @@
 @param {Object} body Contents of the file to be uploaded.
 @param {Object} options Upload options.
 @option options {String} acl ACL to be used, default is “public-read”.
-@option options {String} contentType Content type of the file.
-@param {Method} callback Callback (err, result).</p>
+@option options {String} contentType Content type of the file.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    upload: <span class="hljs-function"><span class="hljs-params">(bucket, key, body, options, callback)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction options
-            callback = options
-            options = {}
-
+            <div class="content"><div class='highlight'><pre>    upload: <span class="hljs-function"><span class="hljs-params">(bucket, key, body, options)</span> -&gt;</span>
         s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
         options = lodash.defaults options, {acl: <span class="hljs-string">"public-read"</span>}</pre></div></div>
             
@@ -460,14 +438,10 @@
             s3upload.send (err, result) -&gt;
                 <span class="hljs-keyword">if</span> err?
                     logger.error <span class="hljs-string">"AWS.S3.upload"</span>, bucket, key, err
-                    callback? err
                     reject err
                 <span class="hljs-keyword">else</span>
                     logger.info <span class="hljs-string">"AWS.S3.upload"</span>, bucket, key
-                    callback? <span class="hljs-literal">null</span>, result
-                    resolve result
-
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span></pre></div></div>
+                    resolve result</pre></div></div>
             
         </li>
         
@@ -482,7 +456,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    delete: <span class="hljs-function"><span class="hljs-params">(bucket, keys, callback)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    delete: <span class="hljs-function"><span class="hljs-params">(bucket, keys)</span> -&gt;</span>
         s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
         objects = []</pre></div></div>
             
@@ -525,14 +499,10 @@
             s3Bucket.deleteObjects params, <span class="hljs-function"><span class="hljs-params">(err, result)</span> =&gt;</span>
                 <span class="hljs-keyword">if</span> err?
                     logger.error <span class="hljs-string">"AWS.S3.delete"</span>, bucket, keys, err
-                    callback? err
                     reject err
                 <span class="hljs-keyword">else</span>
                     logger.info <span class="hljs-string">"AWS.S3.delete"</span>, bucket, keys
-                    callback? <span class="hljs-literal">null</span>, result
-                    resolve result
-
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span></pre></div></div>
+                    resolve result</pre></div></div>
             
         </li>
         

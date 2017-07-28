@@ -5,34 +5,30 @@ var env = process.env;
 var chai = require("chai");
 chai.should();
 
-describe("Database MongoDB Tests", function () {
+describe("MongoDB Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var testTimestamp = require("moment")().valueOf();
     var settings = require("../lib/settings.coffee");
-    var database = null;
-    var databaseMongo = null;
+    var mongodb = null;
     var dbMongo = null;
     var recordId = null;
 
-    before(function () {
-        settings.loadFromJson("../plugins/database-mongodb/settings.default.json");
+    before(function() {
+        settings.loadFromJson("../plugins/mongodb/settings.default.json");
         settings.loadFromJson("settings.test.json");
 
         if (env["MONGODB"]) {
-            settings.database.mongodb.connString = env["MONGODB"];
+            settings.mongodb.connString = env["MONGODB"];
         }
 
-        database = require("../lib/database.coffee").newInstance();
-
-        databaseMongo = require("../plugins/database-mongodb/index.coffee");
-        databaseMongo.expresser = require("../index.coffee");
-        databaseMongo.expresser.events = require("../lib/events.coffee");
-        databaseMongo.expresser.logger = require("../lib/logger.coffee");
-        databaseMongo.expresser.database = database;
+        mongodb = require("../plugins/mongodb/index.coffee");
+        mongodb.expresser = require("../index.coffee");
+        mongodb.expresser.events = require("../lib/events.coffee");
+        mongodb.expresser.logger = require("../lib/logger.coffee");
     });
 
-    after(function () {
+    after(function() {
         var fs = require("fs");
 
         try {
@@ -42,23 +38,22 @@ describe("Database MongoDB Tests", function () {
         }
     });
 
-    it("Has settings defined", function () {
-        settings.database.should.have.property("mongodb");
+    it("Has settings defined", function() {
+        settings.should.have.property("mongodb");
     });
 
-    if (settings.database.mongodb && settings.database.mongodb.connString) {
-        it("Inits", function () {
-            database.init();
-            dbMongo = databaseMongo.init();
+    if (settings.mongodb && settings.mongodb.connString) {
+        it("Inits", function() {
+            dbMongo = mongodb.init();
         });
 
-        it("Add 300 records to the database", function (done) {
+        it("Add 300 records to the database", function(done) {
             this.timeout(12000);
 
             var counter = 300;
             var current = 1;
 
-            var callback = function (err, result) {
+            var callback = function(err, result) {
                 if (err) {
                     done(err);
                 } else if (current == counter) {
@@ -68,7 +63,7 @@ describe("Database MongoDB Tests", function () {
                 current++;
             };
 
-            var execution = function () {
+            var execution = function() {
                 for (var i = 0; i < counter; i++) {
                     dbMongo.insert("test", {
                         counter: i
@@ -79,10 +74,10 @@ describe("Database MongoDB Tests", function () {
             setTimeout(execution, 100);
         });
 
-        it("Add complex record to the database", function (done) {
+        it("Add complex record to the database", function(done) {
             this.timeout(10000);
 
-            var callback = function (err, result) {
+            var callback = function(err, result) {
                 recordId = result._id;
 
                 if (err) {
@@ -92,7 +87,7 @@ describe("Database MongoDB Tests", function () {
                 }
             };
 
-            var execution = function () {
+            var execution = function() {
                 var obj = {
                     testId: testTimestamp,
                     complex: true,
@@ -107,8 +102,8 @@ describe("Database MongoDB Tests", function () {
             setTimeout(execution, 2000);
         });
 
-        it("Get record added on the previous step, by filter", function (done) {
-            var callback = function (err, result) {
+        it("Get record added on the previous step, by filter", function(done) {
+            var callback = function(err, result) {
                 if (err) {
                     done(err);
                 } else if (result.length > 0 && result[0].testId == testTimestamp) {
@@ -125,8 +120,8 @@ describe("Database MongoDB Tests", function () {
             dbMongo.get("test", filter, callback);
         });
 
-        it("Get record added on the previous step, by ID", function (done) {
-            var callback = function (err, result) {
+        it("Get record added on the previous step, by ID", function(done) {
+            var callback = function(err, result) {
                 if (err) {
                     done(err);
                 } else if (!result) {
@@ -143,8 +138,8 @@ describe("Database MongoDB Tests", function () {
             dbMongo.get("test", filter, callback);
         });
 
-        it("Get all records from database", function (done) {
-            var callback = function (err, result) {
+        it("Get all records from database", function(done) {
+            var callback = function(err, result) {
                 if (err) {
                     done(err);
                 } else {
@@ -155,8 +150,8 @@ describe("Database MongoDB Tests", function () {
             dbMongo.get("test", callback);
         });
 
-        it("Get records from database, limit to 5", function (done) {
-            var callback = function (err, result) {
+        it("Get records from database, limit to 5", function(done) {
+            var callback = function(err, result) {
                 if (err) {
                     done(err);
                 } else {
@@ -164,11 +159,13 @@ describe("Database MongoDB Tests", function () {
                 }
             };
 
-            dbMongo.get("test", {limit: 5}, callback);
+            dbMongo.get("test", {
+                limit: 5
+            }, callback);
         });
 
-        it("Updates all previously created records on the database", function (done) {
-            var callback = function (err, result) {
+        it("Updates all previously created records on the database", function(done) {
+            var callback = function(err, result) {
                 if (err) {
                     done(err);
                 } else {
@@ -185,8 +182,8 @@ describe("Database MongoDB Tests", function () {
             dbMongo.update("test", obj, callback);
         });
 
-        it("Count records on database collection", function (done) {
-            var callback = function (err, count) {
+        it("Count records on database collection", function(done) {
+            var callback = function(err, count) {
                 if (err) {
                     done(err);
                 } else if (count < 1) {
@@ -199,8 +196,8 @@ describe("Database MongoDB Tests", function () {
             dbMongo.count("test", null, callback);
         });
 
-        it("Remove record from database, by ID", function (done) {
-            var callback = function (err, result) {
+        it("Remove record from database, by ID", function(done) {
+            var callback = function(err, result) {
                 if (err) {
                     done(err);
                 } else {
@@ -215,8 +212,8 @@ describe("Database MongoDB Tests", function () {
             dbMongo.remove("test", filter, callback);
         });
 
-        it("Remove record from database, by filter", function (done) {
-            var callback = function (err, result) {
+        it("Remove record from database, by filter", function(done) {
+            var callback = function(err, result) {
                 if (err) {
                     done(err);
                 } else {
@@ -231,10 +228,10 @@ describe("Database MongoDB Tests", function () {
             dbMongo.remove("test", filter, callback);
         });
 
-        it("Tries to insert, update, remove, count using invalid params and connection", function (done) {
+        it("Tries to insert, update, remove, count using invalid params and connection", function(done) {
             var err = false;
             var connection = dbMongo.connection;
-            var callback = function () {
+            var callback = function() {
                 return false;
             }
 
@@ -247,7 +244,9 @@ describe("Database MongoDB Tests", function () {
 
             if (!err) {
                 try {
-                    dbMongo.get("test", {something: true});
+                    dbMongo.get("test", {
+                        something: true
+                    });
                     err = "DatabaseMongoDb.get(invalid connection) should throw an error, but did not.";
                 } catch (ex) {}
             }

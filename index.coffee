@@ -17,7 +17,6 @@ class Expresser
     utils: require "./lib/utils.coffee"
     events: require "./lib/events.coffee"
     logger: require "./lib/logger.coffee"
-    database: require "./lib/database.coffee"
     app: require "./lib/app.coffee"
 
     # Expose 3rd party modules.
@@ -68,8 +67,7 @@ class Expresser
                         if fs.existsSync pluginSettingsPath
                             self.settings.loadFromJson pluginSettingsPath, true
 
-                        # Get options accordingly to plugin name. For example the expresser-database-mongodb
-                        # should have its options set under settings.database.mongodb.
+                        # Get options accordingly to plugin name.
                         pluginArr = pluginName.split "-"
                         optionsRef = self.settings
                         i = 0

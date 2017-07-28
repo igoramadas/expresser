@@ -35,7 +35,7 @@
       </table>
       <h2>Overview</h2>
       <div class='docstring'>
-  <h2 id="aws-s3">AWS S3</h2><p>Handles communication with AWS S3.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -50,7 +50,7 @@
       </a>
     </span>
     <span class='desc'>
-      Init the S3 module. 
+      class 
     </span>
   </li>
   <li>
@@ -58,11 +58,11 @@
       <a href='#download-dynamic'>
         #
 (void)
-<b>download</b><span>(bucket, key, destination, callback)</span>
+<b>download</b><span>(bucket, key, destination)</span>
       </a>
     </span>
     <span class='desc'>
-      Download a file from S3 and optionally save to the specified destination. 
+      class 
     </span>
   </li>
   <li>
@@ -70,11 +70,11 @@
       <a href='#upload-dynamic'>
         #
 (void)
-<b>upload</b><span>(bucket, key, body, options, callback)</span>
+<b>upload</b><span>(bucket, key, body, options)</span>
       </a>
     </span>
     <span class='desc'>
-      Upload a file to S3. 
+      class 
     </span>
   </li>
   <li>
@@ -82,11 +82,11 @@
       <a href='#delete-dynamic'>
         #
 (void)
-<b>delete</b><span>(bucket, keys, callback)</span>
+<b>delete</b><span>(bucket, keys)</span>
       </a>
     </span>
     <span class='desc'>
-      Delete object(s) from S3. 
+      class 
     </span>
   </li>
 </ul>
@@ -100,7 +100,7 @@
       <br>
     </p>
     <div class='docstring'>
-  <p>Init the S3 module.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -109,11 +109,11 @@
     <p class='signature' id='download-dynamic'>
       #
 (void)
-<b>download</b><span>(bucket, key, destination, callback)</span>
+<b>download</b><span>(bucket, key, destination)</span>
       <br>
     </p>
     <div class='docstring'>
-  <p>Download a file from S3 and optionally save to the specified destination.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -126,7 +126,7 @@
         )
       </span>
       &mdash;
-      <span class='desc'>Name of the S3 bucket to download from. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>key</span>
@@ -136,7 +136,7 @@
         )
       </span>
       &mdash;
-      <span class='desc'>Key of the target S3 bucket resource (usually a filename). </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>destination</span>
@@ -146,17 +146,7 @@
         )
       </span>
       &mdash;
-      <span class='desc'>Optional, full path to the destination where file should be saved. </span>
-    </li>
-    <li>
-      <span class='name'>callback</span>
-      <span class='type'>
-        (
-          <tt>Method</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>Callback (err, body), with body being the contents as String. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -165,11 +155,11 @@
     <p class='signature' id='upload-dynamic'>
       #
 (void)
-<b>upload</b><span>(bucket, key, body, options, callback)</span>
+<b>upload</b><span>(bucket, key, body, options)</span>
       <br>
     </p>
     <div class='docstring'>
-  <p>Upload a file to S3.</p>
+  class 
 </div>
 <div class='tags'>
   <h3>Parameters:</h3>
@@ -182,7 +172,7 @@
         )
       </span>
       &mdash;
-      <span class='desc'>Name of the S3 bucket to upload to. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>key</span>
@@ -192,7 +182,7 @@
         )
       </span>
       &mdash;
-      <span class='desc'>Key of the target S3 bucket resource (usually a filename). </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>body</span>
@@ -202,7 +192,7 @@
         )
       </span>
       &mdash;
-      <span class='desc'>Contents of the file to be uploaded. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>options</span>
@@ -212,17 +202,7 @@
         )
       </span>
       &mdash;
-      <span class='desc'>Upload options. </span>
-    </li>
-    <li>
-      <span class='name'>callback</span>
-      <span class='type'>
-        (
-          <tt>Method</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>Callback (err, result). </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
   <h3>
@@ -238,7 +218,7 @@
         )
       </span>
       &mdash;
-      <span class='desc'>ACL to be used, default is &quot;public-read&quot;. </span>
+      <span class='desc'>class </span>
     </li>
     <li>
       <span class='name'>contentType</span>
@@ -248,7 +228,7 @@
         )
       </span>
       &mdash;
-      <span class='desc'>Content type of the file. </span>
+      <span class='desc'>class </span>
     </li>
   </ul>
 </div>
@@ -257,11 +237,11 @@
     <p class='signature' id='delete-dynamic'>
       #
 (void)
-<b>delete</b><span>(bucket, keys, callback)</span>
+<b>delete</b><span>(bucket, keys)</span>
       <br>
     </p>
     <div class='docstring'>
-  <p>Delete object(s) from S3. Keys can be a string or an array of strings.</p>
+  class 
 </div>
 <div class='tags'>
 </div>
@@ -273,7 +253,7 @@
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>
-  2.1.2
+  2.1.4
   &#10034;
   Press H to see the keyboard shortcuts
   &#10034;

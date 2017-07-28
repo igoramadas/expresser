@@ -29,11 +29,6 @@
               </a>
             
               
-              <a class="source" href="lib.database.html">
-                lib/database.coffee
-              </a>
-            
-              
               <a class="source" href="lib.events.html">
                 lib/events.coffee
               </a>
@@ -71,11 +66,6 @@
               
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-mongodb.index.html">
-                plugins/database-mongodb/index.coffee
               </a>
             
               
@@ -136,6 +126,11 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mongodb.index.html">
+                plugins/mongodb/index.coffee
               </a>
             
               
@@ -899,6 +894,8 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
                     <span class="hljs-keyword">if</span> lodash.isArray arg
                         <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> arg
                             stringified += JSON.stringify value, <span class="hljs-literal">null</span>, <span class="hljs-number">1</span>
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isError arg
+                        stringified = arg.message + <span class="hljs-string">" "</span> + arg.stack.split(<span class="hljs-string">" "</span>)
                     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject arg
                         stringified = JSON.stringify arg, <span class="hljs-literal">null</span>, <span class="hljs-number">1</span>
                     <span class="hljs-keyword">else</span>

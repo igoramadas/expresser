@@ -29,11 +29,6 @@
               </a>
             
               
-              <a class="source" href="lib.database.html">
-                lib/database.coffee
-              </a>
-            
-              
               <a class="source" href="lib.events.html">
                 lib/events.coffee
               </a>
@@ -71,11 +66,6 @@
               
               <a class="source" href="plugins.cron.index.html">
                 plugins/cron/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.database-mongodb.index.html">
-                plugins/database-mongodb/index.coffee
               </a>
             
               
@@ -136,6 +126,11 @@
               
               <a class="source" href="plugins.metrics.percentile.html">
                 plugins/metrics/percentile.coffee
+              </a>
+            
+              
+              <a class="source" href="plugins.mongodb.index.html">
+                plugins/mongodb/index.coffee
               </a>
             
               
@@ -818,14 +813,23 @@ custom configuration, etc.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
-              <p>Helper to log all requests when debug is true.</p>
+              <p>Return a collection with all routes registered on the server.
+@param {Boolean} simple If true, returns only an array the route strings.
+@return {Array} Collection with routes (as object or as string).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">requestLogger</span> = <span class="hljs-params">(req, res, next)</span> -&gt;</span>
-        ip = utils.browser.getClientIP req
-        method = req.method
-        url = req.url</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    getRoutes: <span class="hljs-function"><span class="hljs-params">(simple = <span class="hljs-literal">false</span>)</span> =&gt;</span>
+        result = []
+
+        <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> @server._router.stack
+            <span class="hljs-keyword">if</span> r.route?.path? <span class="hljs-keyword">and</span> r.route.path <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                <span class="hljs-keyword">if</span> simple
+                    result.push r.route.path
+                <span class="hljs-keyword">else</span>
+                    result.push {route: r.route.path, methods: lodash.keys(r.route.methods)}
+
+        <span class="hljs-keyword">return</span> result</pre></div></div>
             
         </li>
         
@@ -836,16 +840,20 @@ custom configuration, etc.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
-              <p>Check if request flash is present before logging.</p>
+              <p>Helper to log all requests when debug is true.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> req.flash? <span class="hljs-keyword">and</span> lodash.isFunction req.flash
-            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Request from <span class="hljs-subst">#{ip}</span>"</span>, method, url, req.flash()
-        <span class="hljs-keyword">else</span>
-            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Request from <span class="hljs-subst">#{ip}</span>"</span>, method, url
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">requestLogger</span> = <span class="hljs-params">(req, res, next)</span> -&gt;</span>
+        ip = utils.browser.getClientIP req
+        method = req.method
+        url = req.url
 
-        next() <span class="hljs-keyword">if</span> next?</pre></div></div>
+        <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Request from <span class="hljs-subst">#{ip}</span>"</span>, method, url
+
+        next() <span class="hljs-keyword">if</span> next?
+
+        <span class="hljs-keyword">return</span> url</pre></div></div>
             
         </li>
         
@@ -1087,6 +1095,7 @@ send an error response with the specified status code and error output.
             </div>
             
             <div class="content"><div class='highlight'><pre>        status = status <span class="hljs-keyword">or</span> error?.statusCode <span class="hljs-keyword">or</span> <span class="hljs-number">500</span>
+        error = error.message + <span class="hljs-string">" "</span> + error.stack <span class="hljs-keyword">if</span> lodash.isError error
         error = JSON.stringify error <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString error</pre></div></div>
             
         </li>
