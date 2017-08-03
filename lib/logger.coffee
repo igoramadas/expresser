@@ -39,7 +39,7 @@ class Logger
     # Init the Logger module. Verify which services are set, and add the necessary transports.
     # IP address will be appended to logs depending on the settings.
     # @param {Object} options Logger init options.
-    init: ->
+    init: =>
         events.emit "Logger.before.init"
 
         if arguments.length > 0
@@ -228,6 +228,8 @@ class Logger
                         obj[key] = "..."
                     else if settings.logger.obfuscateFields?.indexOf(key) >=0
                         obj[key] = "***"
+                    else if settings.logger.maskFields?[key]?
+                        obj[key] = utils.data.maskString value, "*", settings.logger.maskFields[key]
                     else if settings.logger.removeFields?.indexOf(key) >=0
                         delete obj[key]
                     else if lodash.isArray value

@@ -68,7 +68,7 @@ class App
         midSession = require "cookie-session"
         midCompression = require "compression"
 
-        if nodeEnv is "development" or nodeEnv is "test"
+        if settings.general.debug or nodeEnv is "test"
             midErrorHandler = require "errorhandler"
 
         # Create express v4 app.
@@ -110,7 +110,7 @@ class App
             @server.use mw for mw in @appendMiddlewares
 
         # Configure development environment to dump exceptions and show stack.
-        if nodeEnv is "development" or nodeEnv is "test"
+        if settings.general.debug or nodeEnv is "test"
             @server.use midErrorHandler {dumpExceptions: true, showStack: true}
 
         # Use Express static routing.

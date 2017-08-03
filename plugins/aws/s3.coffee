@@ -35,7 +35,7 @@ class S3
 
         # First make sure the file exists in the S3 bucket, then fetch it.
         return new Promise (resolve, reject) ->
-            s3.headObject params, (err, meta) =>
+            s3.headObject params, (err, meta) ->
                 if err?
                     if err.retryable and err.retryDelay < 60
                         logger.error "AWS.S3.download", "headObject", "Retry in #{err.retryDelay}s", bucket, key, err

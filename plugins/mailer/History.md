@@ -2,7 +2,10 @@
 
 3.0.0
 =====
-* Maintenance release for Expresser 3.0.0.
+* NEW! Now using async methods.
+* DEPRECATED! No more secondary SMTP options (smtp2).
+* Default path for email templates is now /assets/email.
+* Compatible with Expresser 3.0.0.
 
 1.2.1
 =====

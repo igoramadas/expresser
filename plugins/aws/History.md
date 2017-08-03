@@ -2,7 +2,8 @@
 
 3.0.0
 =====
-* Maintenance release for Expresser 3.0.0.
+* Compatible with Expresser 3.0.0.
+* NEW! Now using async methods.
 
 1.0.5
 =====

@@ -30,21 +30,12 @@
             // The main SMTP auth user.
             "user": null
         },
-        // Secondary SMTP server. All settings same as the main one (smtp1).
-        "smtp2": {
-            "host": null,
-            "password": null,
-            "port": null,
-            "secure": false,
-            "service": null,
-            "user": null
-        },
         "templates": {
             // The name of the base template file when loading and parsing email templates.
             // The base path is defined under `settings.path.emailTemplatesDir`.
             "baseFile": "base.html",
             // Path to the templates folder.
-            "path": "./emailtemplates/"
+            "path": "./assets/email/"
         }
     }
 }

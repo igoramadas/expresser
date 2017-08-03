@@ -5,7 +5,7 @@ var env = process.env;
 var chai = require("chai");
 chai.should();
 
-describe("Mailer Tests", function () {
+describe("Mailer Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
     var hasEnv = env["SMTP_USER"] ? true : false;
 
@@ -13,7 +13,7 @@ describe("Mailer Tests", function () {
     var utils = null;
     var mailer = null;
 
-    before(function () {
+    before(function() {
         settings.loadFromJson("../plugins/mailer/settings.default.json");
         settings.loadFromJson("settings.test.json");
 
@@ -41,15 +41,15 @@ describe("Mailer Tests", function () {
         mailer.expresser.logger = require("../lib/logger.coffee");
     });
 
-    it("Has settings defined", function () {
+    it("Has settings defined", function() {
         settings.should.have.property("mailer");
     });
 
-    it("Inits", function () {
+    it("Inits", function() {
         mailer.init();
     });
 
-    it("Load and process an email template", function (done) {
+    it("Load and process an email template", function(done) {
         var template = mailer.templates.get("test");
         var keywords = {
             name: "Joe Lee",
@@ -65,12 +65,12 @@ describe("Mailer Tests", function () {
         }
     });
 
-    it("Clears the template cache", function () {
+    it("Clears the template cache", function() {
         mailer.templates.clearCache();
     });
 
     if (hasEnv) {
-        it("Sends a template test email using Mailgun (SMTP)", function (done) {
+        it("Sends a template test email using Mailgun (SMTP)", async function() {
             this.timeout(12000);
 
             var smtp = mailer.createSmtp(settings.mailer.smtp);
@@ -88,18 +88,10 @@ describe("Mailer Tests", function () {
                 }
             };
 
-            var callback = function (err) {
-                if (!err) {
-                    done();
-                } else {
-                    done(err);
-                }
-            };
-
-            mailer.send(msgOptions, callback);
+            return await mailer.send(msgOptions);
         });
 
-        it("Sends a test email using Debug Mail (SMTP2)", function (done) {
+        it("Sends a test email using Debug Mail (SMTP2)", async function() {
             this.timeout(12000);
 
             var smtp = mailer.createSmtp(settings.mailer.smtp2);
@@ -112,18 +104,10 @@ describe("Mailer Tests", function () {
                 from: "devv@devv.com"
             };
 
-            var callback = function (err) {
-                if (!err) {
-                    done();
-                } else {
-                    done(err);
-                }
-            };
-
-            mailer.send(msgOptions, callback);
+            return await mailer.send(msgOptions);
         });
 
-        it("Dummy send an email (doNotSend option is true)", function (done) {
+        it("Dummy send an email (doNotSend option is true)", async function() {
             settings.mailer.doNotSend = true;
 
             var smtp = mailer.createSmtp(settings.mailer.smtp2);
@@ -136,23 +120,13 @@ describe("Mailer Tests", function () {
                 from: "devv@devv.com"
             };
 
-            var callback = function (err, result) {
-                settings.mailer.doNotSend = false;
-
-                if (!err && result.indexOf("doNotSend") > 0) {
-                    done();
-                } else {
-                    done("Result of mailer.send should return a message having 'doNotSend'.");
-                }
-            };
-
-            mailer.send(msgOptions, callback);
+            return await mailer.send(msgOptions);
         });
     } else {
         it.skip("Sends a test email (skipped, no user or password set)");
     }
 
-    it("Try sending email without a valid to address", function (done) {
+    it("Try sending email without a valid to address", async function() {
         var msgOptions = {
             body: "This should faild.",
             subject: "Test mail to fail",
@@ -160,14 +134,14 @@ describe("Mailer Tests", function () {
         };
 
         try {
-            mailer.send(msgOptions);
-            done("Sending should throw and error and fail!");
+            var result = await mailer.send(msgOptions);
+            return new Error("Did not trigger error trying to send email with empty 'to'.");
         } catch (ex) {
-            done();
+            return true;
         }
     });
 
-    it("Try sending an email with no SMTP server defined", function (done) {
+    it("Try sending an email with no SMTP server defined", async function() {
         mailer.smtp = null;
         mailer.smtp2 = null;
 
@@ -179,10 +153,10 @@ describe("Mailer Tests", function () {
         };
 
         try {
-            mailer.send(msgOptions);
-            done("Sending should throw and error and fail!");
+            var result = await mailer.send(msgOptions);
+            return new Error("Did not trigger error trying to send email with invalid 'smtp'.");
         } catch (ex) {
-            done();
+            return true;
         }
     });
 });

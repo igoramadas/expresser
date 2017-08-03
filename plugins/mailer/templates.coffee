@@ -14,7 +14,7 @@ class Templates
     cache = {}
 
     # Init the Templates class.
-    init: (parent) ->
+    init: (parent) =>
         logger = parent.expresser.logger
         moment = parent.expresser.libs.moment
         settings = parent.expresser.settings
