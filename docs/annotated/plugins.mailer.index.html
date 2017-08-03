@@ -225,8 +225,7 @@ folder / base file name you have set on the settings).
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    smtp: <span class="hljs-literal">null</span>
-    smtp2: <span class="hljs-literal">null</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    smtp: <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -266,7 +265,7 @@ folder / base file name you have set on the settings).
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">-&gt;</span>
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -308,7 +307,12 @@ folder / base file name you have set on the settings).
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mailer.smtp.service? <span class="hljs-keyword">and</span> settings.mailer.smtp.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
             @setSmtp settings.mailer.smtp, <span class="hljs-literal">false</span>
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.mailer.smtp.host? <span class="hljs-keyword">and</span> settings.mailer.smtp.host <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> settings.mailer.smtp.port &gt; <span class="hljs-number">0</span>
-            @setSmtp settings.mailer.smtp, <span class="hljs-literal">false</span></pre></div></div>
+            @setSmtp settings.mailer.smtp, <span class="hljs-literal">false</span>
+
+        @setEvents()
+
+        events.emit <span class="hljs-string">"Mailer.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div></div>
             
         </li>
         
@@ -319,19 +323,12 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Define default secondary SMTP.</p>
+              <p>Bind event listeners.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mailer.smtp2.service? <span class="hljs-keyword">and</span> settings.mailer.smtp2.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
-            @setSmtp settings.mailer.smtp2, <span class="hljs-literal">true</span>
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.mailer.smtp2.host? <span class="hljs-keyword">and</span> settings.mailer.smtp2.host <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> settings.mailer.smtp2.port &gt; <span class="hljs-number">0</span>
-            @setSmtp settings.mailer.smtp2, <span class="hljs-literal">true</span>
-
-        @setEvents()
-
-        events.emit <span class="hljs-string">"Mailer.on.init"</span>
-        <span class="hljs-keyword">delete</span> @init</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">=&gt;</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"Mailer.send"</span>, @send</pre></div></div>
             
         </li>
         
@@ -342,12 +339,9 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Bind event listeners.</p>
+              <h2 id="outbound">OUTBOUND</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">-&gt;</span>
-        events.<span class="hljs-literal">on</span> <span class="hljs-string">"Mailer.send"</span>, @send</pre></div></div>
             
         </li>
         
@@ -358,8 +352,7 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <h2 id="outbound">OUTBOUND</h2>
-
+              
             </div>
             
         </li>
@@ -371,8 +364,24 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              
+              <p>Sends an email to the specified address.
+@param {String} options The email message options
+@option options {String} body The email body in text or HTML.
+@option options {String} subject The email subject.
+@option options {String} to The “to” address.
+@option options {String} from The “from” address, optional, if blank use default from settings.
+@option options {String} template The template file to be loaded, optional.</p>
+
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    send: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Mailer.send"</span>, options
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) =&gt;
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.mailer.enabled
+                <span class="hljs-keyword">return</span> reject logger.notEnabled(<span class="hljs-string">"Mailer"</span>, <span class="hljs-string">"send"</span>)
+
+            smtp = options.smtp <span class="hljs-keyword">or</span> @smtp</pre></div></div>
             
         </li>
         
@@ -383,20 +392,14 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>Sends an email to the specified address. A callback can be specified, having (err, result).
-@param {String} options The email message options
-@option options {String} body The email body in text or HTML.
-@option options {String} subject The email subject.
-@option options {String} to The “to” address.
-@option options {String} from The “from” address, optional, if blank use default from settings.
-@option options {String} template The template file to be loaded, optional.
-@param {Method} callback Callback (err, result) when message is sent or fails.</p>
+              <p>Check if SMTP server is set.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    send: <span class="hljs-function"><span class="hljs-params">(options, callback)</span> -&gt;</span>
-        logger.debug <span class="hljs-string">"Mailer.send"</span>, options
-        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Mailer"</span>, <span class="hljs-string">"send"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.mailer.enabled</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> smtp?
+                err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Default SMTP transports were not initiated and nothing was passed on options.smtp."</span>
+                logger.error <span class="hljs-string">"Mailer.send"</span>, err, options
+                reject err</pre></div></div>
             
         </li>
         
@@ -407,12 +410,14 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>Get passed SMTP servers or the default ones.</p>
+              <p>Make sure “to” address is valid.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        smtp = options.smtp <span class="hljs-keyword">or</span> @smtp
-        smtp2 = options.smtp2 <span class="hljs-keyword">or</span> @smtp2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.to? <span class="hljs-keyword">or</span> options.to <span class="hljs-keyword">is</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">or</span> options.to <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+                err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Option 'to' is mandatory and cannot be empty."</span>
+                logger.error <span class="hljs-string">"Mailer.send"</span>, err, options
+                reject err</pre></div></div>
             
         </li>
         
@@ -423,14 +428,11 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>Check if SMTP server is set.</p>
+              <p>Set from to default address if no <code>to</code> was set.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> smtp? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> smtp2?
-            err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Default SMTP transports were not initiated and nothing was passed on options.smtp."</span>
-            logger.error <span class="hljs-string">"Mailer.send"</span>, err, options
-            <span class="hljs-keyword">throw</span> err</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            options.<span class="hljs-keyword">from</span> = <span class="hljs-string">"<span class="hljs-subst">#{settings.app.title}</span> &lt;<span class="hljs-subst">#{settings.mailer.<span class="hljs-keyword">from</span>}</span>&gt;"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.<span class="hljs-keyword">from</span>?</pre></div></div>
             
         </li>
         
@@ -441,14 +443,11 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>Make sure “to” address is valid.</p>
+              <p>Set HTML to body, if passed.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.to? <span class="hljs-keyword">or</span> options.to <span class="hljs-keyword">is</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">or</span> options.to <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
-            err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Option 'to' is mandatory and cannot be empty."</span>
-            logger.error <span class="hljs-string">"Mailer.send"</span>, err, options
-            <span class="hljs-keyword">throw</span> err</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            html = <span class="hljs-keyword">if</span> options.body? <span class="hljs-keyword">then</span> options.body.toString() <span class="hljs-keyword">else</span> <span class="hljs-string">""</span></pre></div></div>
             
         </li>
         
@@ -459,11 +458,12 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>Set from to default address if no <code>to</code> was set.</p>
+              <p>If to is an array, make it a string separated by commas.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        options.<span class="hljs-keyword">from</span> = <span class="hljs-string">"<span class="hljs-subst">#{settings.app.title}</span> &lt;<span class="hljs-subst">#{settings.mailer.<span class="hljs-keyword">from</span>}</span>&gt;"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.<span class="hljs-keyword">from</span>?</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> lodash.isArray options.to
+                options.to = options.to.join <span class="hljs-string">", "</span></pre></div></div>
             
         </li>
         
@@ -474,11 +474,14 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>Set HTML to body, if passed.</p>
+              <p>Get the name of recipient based on the <code>to</code> option.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        html = <span class="hljs-keyword">if</span> options.body? <span class="hljs-keyword">then</span> options.body.toString() <span class="hljs-keyword">else</span> <span class="hljs-string">""</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.to.indexOf(<span class="hljs-string">"&lt;"</span>) &lt; <span class="hljs-number">3</span>
+                toName = options.to
+            <span class="hljs-keyword">else</span>
+                toName = options.to.substring <span class="hljs-number">0</span>, options.to.indexOf(<span class="hljs-string">"&lt;"</span>) - <span class="hljs-number">1</span></pre></div></div>
             
         </li>
         
@@ -489,12 +492,13 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>If to is an array, make it a string separated by commas.</p>
+              <p>Load template if a <code>template</code> was passed.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> lodash.isArray options.to
-            options.to = options.to.join <span class="hljs-string">", "</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.template? <span class="hljs-keyword">and</span> options.template <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                template = @templates.get options.template
+                html = @templates.parse template, {contents: html}</pre></div></div>
             
         </li>
         
@@ -505,14 +509,12 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>Get the name of recipient based on the <code>to</code> option.</p>
+              <p>Parse template keywords if a <code>keywords</code> was passed.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.to.indexOf(<span class="hljs-string">"&lt;"</span>) &lt; <span class="hljs-number">3</span>
-            toName = options.to
-        <span class="hljs-keyword">else</span>
-            toName = options.to.substring <span class="hljs-number">0</span>, options.to.indexOf(<span class="hljs-string">"&lt;"</span>) - <span class="hljs-number">1</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> lodash.isObject options.keywords
+                    html = @templates.parse html, options.keywords</pre></div></div>
             
         </li>
         
@@ -523,13 +525,12 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Load template if a <code>template</code> was passed.</p>
+              <p>Parse final template and set it on the <code>options</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.template? <span class="hljs-keyword">and</span> options.template <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
-            template = @templates.get options.template
-            html = @templates.parse template, {contents: html}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            html = @templates.parse html, {to: toName, appTitle: settings.app.title, appUrl: settings.app.url}
+            options.html = html</pre></div></div>
             
         </li>
         
@@ -540,12 +541,13 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>Parse template keywords if a <code>keywords</code> was passed.</p>
+              <p>Check if <code>doNotSend</code> flag is set, and if so, do not send anything.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> lodash.isObject options.keywords
-                html = @templates.parse html, options.keywords</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> settings.mailer.doNotSend
+                logger.warn <span class="hljs-string">"Mailer.smtpSend"</span>, <span class="hljs-string">"Abort! doNotSend = true"</span>, options.to, options.subject
+                <span class="hljs-keyword">return</span> resolve {doNotSend: <span class="hljs-literal">true</span>}</pre></div></div>
             
         </li>
         
@@ -556,12 +558,17 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <p>Parse final template and set it on the <code>options</code>.</p>
+              <p>Send using the main SMTP. If failed and a secondary is also set, try using the secondary.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        html = @templates.parse html, {to: toName, appTitle: settings.app.title, appUrl: settings.app.url}
-        options.html = html</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">try</span>
+                smtp.sendMail options, <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
+                    logger.info <span class="hljs-string">"Mailer.send"</span>, smtp.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, options.subject
+                    resolve result
+            <span class="hljs-keyword">catch</span> ex
+                logger.error <span class="hljs-string">"Mailer.send"</span>, smtp.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, err
+                reject err</pre></div></div>
             
         </li>
         
@@ -572,13 +579,9 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <p>Check if <code>doNotSend</code> flag is set, and if so, do not send anything.</p>
+              <h2 id="smtp-helper-methods">SMTP HELPER METHODS</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mailer.doNotSend
-            logger.warn <span class="hljs-string">"Mailer.smtpSend"</span>, <span class="hljs-string">"Abort! doNotSend = true"</span>, options.to, options.subject
-            <span class="hljs-keyword">return</span> callback <span class="hljs-literal">null</span>, <span class="hljs-string">"The 'doNotSend' setting is true, will not send anything!"</span> <span class="hljs-keyword">if</span> callback?</pre></div></div>
             
         </li>
         
@@ -589,18 +592,8 @@ folder / base file name you have set on the settings).
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p>Send using the main SMTP. If failed and a secondary is also set, try using the secondary.</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>        smtpSend smtp, options, <span class="hljs-function"><span class="hljs-params">(err, result)</span> =&gt;</span>
-            <span class="hljs-keyword">if</span> err?
-                <span class="hljs-keyword">if</span> smtp2?
-                    smtpSend smtp2, options, <span class="hljs-function"><span class="hljs-params">(err2, result2)</span> -&gt;</span> callback err2, result2
-                <span class="hljs-keyword">else</span>
-                    callback err, result <span class="hljs-keyword">if</span> callback?
-            <span class="hljs-keyword">else</span>
-                callback err, result <span class="hljs-keyword">if</span> callback?</pre></div></div>
             
         </li>
         
@@ -610,53 +603,6 @@ folder / base file name you have set on the settings).
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              <h2 id="smtp-helper-methods">SMTP HELPER METHODS</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
-              </div>
-              <p>Helper to send emails using the specified transport and options.
-This is NOT exposed to external modules.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">smtpSend</span> = <span class="hljs-params">(transport, options, callback)</span> -&gt;</span>
-        <span class="hljs-keyword">try</span>
-            transport.sendMail options, <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
-                logger.info <span class="hljs-string">"Mailer.smtpSend"</span>, transport.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, options.subject
-                callback err, result
-        <span class="hljs-keyword">catch</span> ex
-            callback ex</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Helper to create a SMTP object.
 @param {Object} options Options like service, host and port, username, password etc.
@@ -675,11 +621,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-31">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Make sure auth is properly set.</p>
 
@@ -693,11 +639,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-32">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Set the correct SMTP details based on the options.</p>
 
@@ -708,11 +654,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-33">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Sign using DKIM?</p>
 
@@ -726,34 +672,29 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-34">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Use the specified options and create a new SMTP server. If no options are set, use default from settings.
-@param {Object} options Options to be passed to SMTP creator.
-@param {Boolean} secondary If false set as the main SMTP server, if true set as secondary.</p>
+@param {Object} options Options to be passed to SMTP creator.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    setSmtp: <span class="hljs-function"><span class="hljs-params">(options, secondary)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    setSmtp: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
         options = settings.mailer.smtp <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> secondary <span class="hljs-keyword">or</span> secondary &lt; <span class="hljs-number">1</span>
-            @smtp = @createSmtp options
-        <span class="hljs-keyword">else</span>
-            @smtp2 = @createSmtp options</pre></div></div>
+        @smtp = @createSmtp options</pre></div></div>
             
         </li>
         
         
-        <li id="section-35">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
@@ -762,11 +703,11 @@ This is NOT exposed to external modules.</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               
             </div>

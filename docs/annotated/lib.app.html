@@ -394,7 +394,7 @@ custom configuration, etc.</p>
         midSession = <span class="hljs-built_in">require</span> <span class="hljs-string">"cookie-session"</span>
         midCompression = <span class="hljs-built_in">require</span> <span class="hljs-string">"compression"</span>
 
-        <span class="hljs-keyword">if</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"development"</span> <span class="hljs-keyword">or</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
+        <span class="hljs-keyword">if</span> settings.general.debug <span class="hljs-keyword">or</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
             midErrorHandler = <span class="hljs-built_in">require</span> <span class="hljs-string">"errorhandler"</span></pre></div></div>
             
         </li>
@@ -544,7 +544,7 @@ custom configuration, etc.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"development"</span> <span class="hljs-keyword">or</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.general.debug <span class="hljs-keyword">or</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
             @server.use midErrorHandler {dumpExceptions: <span class="hljs-literal">true</span>, showStack: <span class="hljs-literal">true</span>}</pre></div></div>
             
         </li>

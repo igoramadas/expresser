@@ -317,7 +317,7 @@ IP address will be appended to logs depending on the settings.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">-&gt;</span>
+            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
         events.emit <span class="hljs-string">"Logger.before.init"</span>
 
         <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">0</span>
@@ -800,6 +800,8 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
                         obj[key] = <span class="hljs-string">"..."</span>
                     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.obfuscateFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
                         obj[key] = <span class="hljs-string">"***"</span>
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.maskFields?[key]?
+                        obj[key] = utils.data.maskString value, <span class="hljs-string">"*"</span>, settings.logger.maskFields[key]
                     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.removeFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
                         <span class="hljs-keyword">delete</span> obj[key]
                     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isArray value
