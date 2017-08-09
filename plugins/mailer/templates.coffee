@@ -40,15 +40,22 @@ class Templates
             logger.debug "Mailer.templates.get", name, "Loaded from cache."
             return cache[name].template
         else
-            logger.debug "Mailer.expresser.", name
+            logger.debug "Mailer.templates.get", name
 
         # Set file system reading options.
         readOptions = {encoding: settings.general.encoding}
         baseFile = utils.io.getFilePath path.join(settings.mailer.templates.path, settings.mailer.templates.baseFile)
         templateFile = utils.io.getFilePath path.join(settings.mailer.templates.path, "#{name}.html")
 
+        logger.debug "Mailer.templates.get", "Templates from", baseFile, templateFile
+
         # Read base and `name` template and merge them together.
-        base = fs.readFileSync baseFile, readOptions
+        try
+            base = fs.readFileSync baseFile, readOptions
+        catch ex
+            logger.warn "Mailer.templates.get", ex, "Could not read base.html file, will use template content as body."
+            base = "{contents}"
+
         template = fs.readFileSync templateFile, readOptions
         result = @parse base, {contents: template}
 
@@ -66,7 +73,7 @@ class Templates
     # @param {Object} keywords Object with keys to be replaced with its values.
     # @return {String} The parsed template, keywords replaced with values.
     parse: (template, keywords) ->
-        logger.debug "Mailer.templates.parse", template, keywords
+        logger.debug "Mailer.templates.parse", template.replace(/(\r\n|\n|\r)/gm,""), keywords
 
         template = template.toString()
 
