@@ -27,7 +27,10 @@ class DataUtils
     # @param {Number} leaveLast Optional, leave last X positiongs of the string unmasked.
     # @return {String} Masked string.
     maskString: (value, maskChar, leaveLast) ->
-        return value if not value? or value is ""
+        return value if not value? or not value or value is ""
+
+        # Make sure value is a string!
+        value = value.toString() if not lodash.isString value
 
         separators = [" ", "-", "_", "+", "=", "/"]
         maskChar = "*" if not maskChar? or maskChar is ""
