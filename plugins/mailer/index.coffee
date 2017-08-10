@@ -130,10 +130,14 @@ class Mailer
             # Send using the main SMTP. If failed and a secondary is also set, try using the secondary.
             try
                 smtp.sendMail options, (err, result) ->
-                    logger.info "Mailer.send", smtp.host, "to #{options.to}", "from #{options.from}", options.subject
-                    resolve result
+                    if err?
+                        logger.error "Mailer.send", smtp.host, "to #{options.to}", "from #{options.from}", err
+                        reject err
+                    else
+                        logger.info "Mailer.send", smtp.host, "to #{options.to}", "from #{options.from}", options.subject
+                        resolve result
             catch ex
-                logger.error "Mailer.send", smtp.host, "to #{options.to}", "from #{options.from}", err
+                logger.error "Mailer.send", smtp.host, "to #{options.to}", "from #{options.from}", ex
                 reject err
 
     # SMTP HELPER METHODS

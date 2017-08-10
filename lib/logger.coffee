@@ -245,18 +245,20 @@ class Logger
         for argKey, arg of arguments
             try
                 if lodash.isArray arg
-                    for v in arg
-                        cloned = lodash.cloneDeep v
-                        cleaner cloned, 0
-                        result.push cloned
-                else if lodash.isObject
-                    cloned = lodash.cloneDeep arg
-                    cleaner cloned, 0
-                    result.push cloned
-                else if lodash.isFunction arg
-                    result.push funcText
+                    for a in arg
+                        if lodash.isError a
+                            result.push a
+                        else if lodash.isObject a
+                            cloned = lodash.cloneDeep a
+                            cleaner cloned, 0
+                            result.push cloned
+                        else if lodash.isFunction a
+                            result.push funcText
+                        else
+                            result.push a
                 else
                     result.push a
+
             catch ex
                 console.warn "Logger.argsCleaner", argKey, ex
 
@@ -289,7 +291,7 @@ class Logger
                         for value in arg
                             stringified += JSON.stringify value, null, 1
                     else if lodash.isError arg
-                        stringified = arg.message + " " + arg.stack.split(" ")
+                        stringified = arg.message + " " + arg.stack
                     else if lodash.isObject arg
                         stringified = JSON.stringify arg, null, 1
                     else
