@@ -229,7 +229,11 @@ class Logger
                     else if settings.logger.obfuscateFields?.indexOf(key) >=0
                         obj[key] = "***"
                     else if settings.logger.maskFields?[key]?
-                        obj[key] = utils.data.maskString value, "*", settings.logger.maskFields[key]
+                        if lodash.isObject value
+                            maskedValue = value.value or value.text or value.contents or value.data or ""
+                        else
+                            maskedValue = value.toString()
+                        obj[key] = utils.data.maskString maskedValue, "*", settings.logger.maskFields[key]
                     else if settings.logger.removeFields?.indexOf(key) >=0
                         delete obj[key]
                     else if lodash.isArray value
