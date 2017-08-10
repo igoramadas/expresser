@@ -5,31 +5,31 @@ var env = process.env;
 var chai = require("chai");
 chai.should();
 
-describe("Logger Tests", function () {
+describe("Logger Tests", function() {
     if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
 
     var settings = require("../lib/settings.coffee");
     var logger = null;
 
-    before(function () {
+    before(function() {
         settings.loadFromJson("settings.test.json");
 
         logger = require("../lib/logger.coffee").newInstance();
     });
 
-    it("Has settings defined", function () {
+    it("Has settings defined", function() {
         settings.should.have.property("logger");
     });
 
-    it("Inits", function () {
+    it("Inits", function() {
         logger.init();
     });
 
-    it("Logs tests to console", function () {
+    it("Logs tests to console", function() {
         logger.console("test", "This is a test console log");
     });
 
-    it("Logs on diffent levels (debug, info, warn, error, critical)", function () {
+    it("Logs on diffent levels (debug, info, warn, error, critical)", function() {
         logger.debug("THIS IS DEBUG");
         logger.info("THIS IS INFO");
         logger.warn("THIS IS WARN");
@@ -37,9 +37,9 @@ describe("Logger Tests", function () {
         logger.critical("THIS IS CRITICAL");
     });
 
-    it("Clean arguments before logging", function (done) {
+    it("Clean arguments before logging", function(done) {
         var testObj = {
-            someFunction: function () {
+            someFunction: function() {
                 return true
             },
             password: "this should be obfuscated.",
@@ -65,7 +65,7 @@ describe("Logger Tests", function () {
         };
 
         var simpleObj = "This is a string";
-        var cleanArgs = logger.argsCleaner(testObj, simpleObj);
+        var cleanArgs = logger.argsCleaner([testObj, simpleObj]);
 
         if (cleanArgs[0].password == testObj.password) {
             done("Password on test object was not obfuscated.");
@@ -76,7 +76,7 @@ describe("Logger Tests", function () {
         }
     });
 
-    it("Get a stringfied message out of the arguments", function (done) {
+    it("Get a stringfied message out of the arguments", function(done) {
         var time = new Date().getTime();
         var message = logger.getMessage(1, "A", time).toString();
 
@@ -87,7 +87,7 @@ describe("Logger Tests", function () {
         }
     });
 
-    it("Check if removed fields are hidden from log", function (done) {
+    it("Check if removed fields are hidden from log", function(done) {
         var privateObj = {
             password: "Welcome123",
             username: "jondoe",
@@ -110,12 +110,12 @@ describe("Logger Tests", function () {
         }
     });
 
-    it("Registers a dummy log driver", function () {
+    it("Registers a dummy log driver", function() {
         var driver = {
-            getTransport: function () {
+            getTransport: function() {
                 return {};
             },
-            log: function (data) {
+            log: function(data) {
                 console.log("DUMMY DRIVER", data);
             }
         };
@@ -125,7 +125,7 @@ describe("Logger Tests", function () {
         logger.unregister("testlogger");
     });
 
-    it("Try to register invalid log driver", function (done) {
+    it("Try to register invalid log driver", function(done) {
         if (!logger.register("invalid", "invalid")) {
             done();
         } else {
