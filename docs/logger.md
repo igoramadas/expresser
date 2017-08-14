@@ -3,28 +3,28 @@
 #### Filename: logger.coffee
 
 The Logger module provides integrated logging functionality to your app. By default it supports only console logging
-but you can add additional transports via plugins (for example logger-file, logger-logentries and logger-loddly).
+but you can add additional transports via plugins (for example logger-file, logger-logentries and logger-loggly).
 
 ### Basic usage
 
-    var myModule = require("my-custom-module");
-    var expresser = require("expresser");
-    var logger = expresser.logger;
+    var myModule = require("my-custom-module")
+    var expresser = require("expresser")
+    var logger = expresser.logger
 
-    logger.debug("ExampleModule", myModule.stats());
-    logger.info("Log Title", "Some info here...", someVariable, "More info...");
+    logger.debug("ExampleModule", myModule.stats())
+    logger.info("Log Title", "Some info here...", someVariable, "More info...")
 
     if (somethingNotSecure) {
-        logger.warn("Oops", "Something is not secure...");
+        logger.warn("Oops", "Something is not secure...")
     }
 
     try {
-        myModule.doSomethingWrong();
+        myModule.doSomethingWrong()
     } catch (ex) {
-        logger.error("MyModule", ex);
+        logger.error("MyModule", ex)
     }
 
-    var logLine = logger.info("All logger methods always return the full parsed string / log line");
+    var logLine = logger.info("All logger methods always return the full parsed string / log line")
 
 ### Log types
 
@@ -53,24 +53,24 @@ The Logger module exposes a `logSuccess` and `logError` events, triggered for ev
 useful in case you want to do a post-operation on logs (for example increment a counter) or to have a fallback
 solution in case your log transport is down.
 
-    var expresser = require("expresser");
-    var counter = 0;
+    var expresser = require("expresser")
+    var counter = 0
 
     var mySuccessFunction = function (transport, data) {
-        counter++;
+        counter++
     }
 
     var myErrorFunction = function (transport, error) {
-        console.warn "Not logged!", transport, data;
+        console.warn("Not logged!", transport, data)
     }
 
-    expresser.logger.on("logSuccess", mySuccessFunction);
-    expresser.logger.on("logError", myErrorFunction);
+    expresser.logger.on("logSuccess", mySuccessFunction)
+    expresser.logger.on("logError", myErrorFunction)
 
 Use `expresser.logger.off` to stop listeting to these logging events. For example:
 
-    expresser.logger.off("logSuccess", mySuccessFunction);
-    expresser.logger.off("logError", myErrorFunction);
+    expresser.logger.off("logSuccess", mySuccessFunction)
+    expresser.logger.off("logError", myErrorFunction)
 
 ---
 

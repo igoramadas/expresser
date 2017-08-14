@@ -23,19 +23,19 @@ this manually.
 Alternativelly you might want to load settings on demand, by calling the `loadFromJson` method manually.
 For example to load from the `mysettings.json` file:
 
-    var expresser = require("expresser");
-    expresser.settings.loadFromJson("mysettings.json");
+    var expresser = require("expresser")
+    expresser.settings.loadFromJson("mysettings.json")
 
 #### Programmatically on your app code by doing `expresser.settings.some.else = mystuff`.
 
 Defining your settings programatically is quite simple:
 
-    var expresser = require("expresser");
-    expresser.settings.app.title = "New Title";
+    var expresser = require("expresser")
+    expresser.settings.app.title = "New Title"
     expresser.settings.someNewStuff = {
         somevalue: true,
         timestamp: new Date()
-    };
+    }
 
 ## Per-environment settings
 
@@ -50,15 +50,15 @@ If you wish to have settings that apply only to your development machine, we sug
 `.gitignore` (or equivalent) to avoid having it pushed to the source control, docker and other machines.
 For example your `index.js` could have something like:
 
-    var expresser = require("expresser");
-    
-    // Load local settings and start the Expresser app.
-    expresser.settings.loadFromJson("settings.local.json");
-    expresser.init(settings);
+    var expresser = require("expresser")
 
-    myApp.init();
-    myApp.doSomething();
-    
+    // Load local settings and start the Expresser app.
+    expresser.settings.loadFromJson("settings.local.json")
+    expresser.init(settings)
+
+    myApp.init()
+    myApp.doSomething()
+
     // Some more app init code here...
 
 ## Encrypting the settings files
@@ -70,20 +70,20 @@ programatically or using the EXPRESSER_SETTINGS_CRYPTOKEY environment variable.
 
 Using the defaults and the key set on the EXPRESSER_SETTINGS_CRYPTOKEY environment variable:
 
-    var expresser = require("expresser");
-    expresser.settings.encrypt("settings.json");
+    var expresser = require("expresser")
+    expresser.settings.encrypt("settings.json")
 
 Encrypt the production settings using a custom cipher and key:
 
-    var expresser = require("expresser");
-    expresser.settings.encrypt("settings.production.json", {cipher: "aes512", key: "My Key"});
+    var expresser = require("expresser")
+    expresser.settings.encrypt("settings.production.json", {cipher: "aes512", key: "My Key"})
 
 ### To decrypt
 
 Same procedure of encryption, but using the `decrypt` method:
 
-    var expresser = require("expresser");
-    expresser.settings.decrypt("settings.json");
+    var expresser = require("expresser")
+    expresser.settings.decrypt("settings.json")
 
 ## Resetting to default settings
 

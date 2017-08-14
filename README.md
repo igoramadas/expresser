@@ -1,6 +1,6 @@
 # Expresser
 
-A Node.js platform with web, database, email, logging and other special features, built on top of Express.
+A Node.js framework with built-in web server, logging and other common utilities, built on top of Express.
 
 [![Build Status](https://travis-ci.org/igoramadas/expresser.png?branch=master)](https://travis-ci.org/igoramadas/expresser)
 [![Coverage Status](https://coveralls.io/repos/github/igoramadas/expresser/badge.svg?branch=master)](https://coveralls.io/github/igoramadas/expresser?branch=master)
@@ -9,7 +9,9 @@ A Node.js platform with web, database, email, logging and other special features
 
 Even if Express itself does a good job as a web application framework, it can still be considered quite "low level"
 by some. So the idea of Expresser is to aggregate common modules and utilities into a single package, to make it
-even easier to start and streamline your Node.js application. Developed with Coffee-Script.
+even easier to start and streamline your Node.js application.
+
+Developed with CoffeeScript v2, it has full support for all the new features of ES6, including async / await.
 
 ### Settings
 
@@ -36,7 +38,7 @@ and values. For more info please head to https://github.com/igoramadas/expresser
     app.server.get "/metrics", (req, res) -> app.renderJson req, res, metrics.output()
 
 It seems pretty simple, right? Most configuration is done on the `settings.json` file. Paths, default views,
-server port, etc etc...
+server port, etc...
 
 # Main modules
 
@@ -49,10 +51,6 @@ Now to the main modules...
 ### Events
 *   Central events dispatcher.
 *   https://github.com/igoramadas/expresser/blob/master/docs/events.md
-
-### Database
-*   Supports reading, updating and deleting documents on databases.
-*   https://github.com/igoramadas/expresser/blob/master/docs/database.md
 
 ### Logger
 *   Simple info, warn and error logging methods.
@@ -83,10 +81,6 @@ And the official plugins...
 ### Database: MongoDB
 *   MongoDB driver for the Database module.
 *   https://github.com/igoramadas/expresser/tree/master/plugins/database-mongodb
-
-### Database: TingoDB
-*   TingoDB driver for the Database module.
-*   https://github.com/igoramadas/expresser/tree/master/plugins/database-tingodb
 
 ### Downloader
 *   Configurable download manager supporting standard web protocols.

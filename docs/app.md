@@ -2,14 +2,23 @@
 
 #### Filename: app.coffee
 
-This is the core of Expresser framework. It holds the HTTP(s) server along session and cookie secrets, asset
+This is the core of any Expresser app. It holds the HTTP(s) server along session and cookie secrets, asset
 bindings, middlewares etc. By default it will bind to all local addresses on port 8080 (when running
 on your local environment). The Express server is exposed via the `server` property on the App module.
+
+## Assets
+
+By default Expresser will use Pug for HTML templates, Stylus or vanilla CSS for styling, and Javacsript
+or CoffeeScript for scripting, on the following paths:
+
+- /views - the .pug views
+- /assets/css - the .styl or .css styles
+- /assets/js - the .coffee or .js scripts
 
 ## Cookies and sessions
 
 If you're planning to use cookies and/or sessions on your app, please update the `settings.app.cookieSecret` and
-`settings.app.sessionSecret` with a strong encryption key.
+`settings.app.sessionSecret` with a strong encryption key of your choice.
 
 ## Adding extra middleware
 
