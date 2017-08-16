@@ -262,7 +262,7 @@ The contents will be inserted on the {contents} tag.
             logger.debug <span class="hljs-string">"Mailer.templates.get"</span>, name, <span class="hljs-string">"Loaded from cache."</span>
             <span class="hljs-keyword">return</span> cache[name].template
         <span class="hljs-keyword">else</span>
-            logger.debug <span class="hljs-string">"Mailer.expresser."</span>, name</pre></div></div>
+            logger.debug <span class="hljs-string">"Mailer.templates.get"</span>, name</pre></div></div>
             
         </li>
         
@@ -279,7 +279,9 @@ The contents will be inserted on the {contents} tag.
             
             <div class="content"><div class='highlight'><pre>        readOptions = {encoding: settings.general.encoding}
         baseFile = utils.io.getFilePath path.join(settings.mailer.templates.path, settings.mailer.templates.baseFile)
-        templateFile = utils.io.getFilePath path.join(settings.mailer.templates.path, <span class="hljs-string">"<span class="hljs-subst">#{name}</span>.html"</span>)</pre></div></div>
+        templateFile = utils.io.getFilePath path.join(settings.mailer.templates.path, <span class="hljs-string">"<span class="hljs-subst">#{name}</span>.html"</span>)
+
+        logger.debug <span class="hljs-string">"Mailer.templates.get"</span>, <span class="hljs-string">"Templates from"</span>, baseFile, templateFile</pre></div></div>
             
         </li>
         
@@ -294,7 +296,12 @@ The contents will be inserted on the {contents} tag.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        base = fs.readFileSync baseFile, readOptions
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">try</span>
+            base = fs.readFileSync baseFile, readOptions
+        <span class="hljs-keyword">catch</span> ex
+            logger.warn <span class="hljs-string">"Mailer.templates.get"</span>, ex, <span class="hljs-string">"Could not read base.html file, will use template content as body."</span>
+            base = <span class="hljs-string">"{contents}"</span>
+
         template = fs.readFileSync templateFile, readOptions
         result = @parse base, {contents: template}</pre></div></div>
             
@@ -336,7 +343,7 @@ to be replaced. For example if keywords is <code>{id: 1, friendlyUrl: &quot;abc&
             </div>
             
             <div class="content"><div class='highlight'><pre>    parse: <span class="hljs-function"><span class="hljs-params">(template, keywords)</span> -&gt;</span>
-        logger.debug <span class="hljs-string">"Mailer.templates.parse"</span>, template, keywords
+        logger.debug <span class="hljs-string">"Mailer.templates.parse"</span>, template.replace(<span class="hljs-regexp">/(\r\n|\n|\r)/gm</span>,<span class="hljs-string">""</span>), keywords
 
         template = template.toString()
 

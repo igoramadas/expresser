@@ -564,10 +564,14 @@ folder / base file name you have set on the settings).
             
             <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">try</span>
                 smtp.sendMail options, <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
-                    logger.info <span class="hljs-string">"Mailer.send"</span>, smtp.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, options.subject
-                    resolve result
+                    <span class="hljs-keyword">if</span> err?
+                        logger.error <span class="hljs-string">"Mailer.send"</span>, smtp.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, err
+                        reject err
+                    <span class="hljs-keyword">else</span>
+                        logger.info <span class="hljs-string">"Mailer.send"</span>, smtp.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, options.subject
+                        resolve result
             <span class="hljs-keyword">catch</span> ex
-                logger.error <span class="hljs-string">"Mailer.send"</span>, smtp.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, err
+                logger.error <span class="hljs-string">"Mailer.send"</span>, smtp.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, ex
                 reject err</pre></div></div>
             
         </li>
