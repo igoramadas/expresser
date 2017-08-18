@@ -1,6 +1,6 @@
 # EXPRESSER GOOGLE CLOUD
 # -----------------------------------------------------------------------------
-# Use Google Cloud features on your Expresser app.
+# Integrate your app with Google Cloud services.
 # <!--
 # @see settings.gcloud
 # -->

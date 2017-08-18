@@ -30,23 +30,29 @@ class SNS
     # @param {String} options The SNS message options.
     # @option options {String} PhoneNumber The target phone number.
     # @option options {String} Message The SMS message to be sent.
-    publish: (options, callback) ->
+    publish: (options) ->
         logger.debug "AWS.SNS.publish", options
 
-        if not options.PhoneNumber? or options.PhoneNumber is ""
-            return callback "A PhoneNumber is required."
+        return new Promise (resolve, reject) ->
+            if not settings.aws.enabled
+                return reject logger.notEnabled("AWS", "SNS.publish")
 
-        # Get last 4 digits oh phone to be logged.
-        digits = "XXX" + options.PhoneNumber.substr(options.PhoneNumber.length - 4)
+            if not options.PhoneNumber? or options.PhoneNumber is ""
+                ex = new Error "A PhoneNumber is required."
+                logger.error "AWS.SNS.publish", ex
+                return reject ex
 
-        # Dispatch the message.
-        sns.publish options, (err, data) =>
-            if err?
-                logger.error "AWS.SNS.publish", "Error sending to #{digits}", err, err.stack
-                return callback err
-            else
-                logger.info "AWS.SNS.publish", "Message published to #{digits}"
-                return callback null, data
+            # Get last 4 digits oh phone to be logged.
+            digits = "XXX" + options.PhoneNumber.substr(options.PhoneNumber.length - 4)
+
+            # Dispatch the message.
+            sns.publish options, (err, data) =>
+                if err?
+                    logger.error "AWS.SNS.publish", "Error sending to #{digits}", err, err.stack
+                    reject err
+                else
+                    logger.info "AWS.SNS.publish", "Message published to #{digits}"
+                    resolve data
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

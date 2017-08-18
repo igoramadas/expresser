@@ -30,15 +30,16 @@ class S3
     # @param {String} key Key of the target S3 bucket resource (usually a filename).
     # @param {String} destination Optional, full path to the destination where file should be saved.
     download: (bucket, key, destination) ->
-        params = {Bucket: bucket, Key: key}
+        logger.debug "AWS.S3.download", bucket, key, destination
 
-        # First make sure the file exists in the S3 bucket, then fetch it.
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "download")
+                return reject logger.notEnabled("AWS", "S3.download")
 
             s3 = new aws.S3 {region: settings.aws.s3.region}
+            params = {Bucket: bucket, Key: key}
 
+            # First make sure the file exists in the S3 bucket, then fetch it.
             s3.headObject params, (err, meta) ->
                 if err?
                     if err.retryable and err.retryDelay < 60
@@ -81,26 +82,31 @@ class S3
     # @option options {String} acl ACL to be used, default is "public-read".
     # @option options {String} contentType Content type of the file.
     upload: (bucket, key, body, options) ->
-        s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
-        options = lodash.defaults options, {acl: "public-read"}
+        logger.debug "AWS.S3.upload", bucket, key, body, options
 
-        # Automagically discover the content type, if not set.
-        if not options.contentType?
-            ext = path.extname key
-            options.contentType = "image/jpeg" if ext is ".jpg"
-            options.contentType = "image/gif" if ext is ".gif"
-            options.contentType = "image/png" if ext is ".png"
-            options.contentType = "image/bmp" if ext is ".bmp"
-
-        s3upload = s3Bucket.upload {
-            ACL: options.acl,
-            Body: body,
-            Key: key,
-            ContentType: options.contentType
-        }
-
-        # Send file to S3!
         return new Promise (resolve, reject) ->
+            if not settings.aws.enabled
+                return reject logger.notEnabled("AWS", "S3.upload")
+
+            s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
+            options = lodash.defaults options, {acl: "public-read"}
+
+            # Automagically discover the content type, if not set.
+            if not options.contentType?
+                ext = path.extname key
+                options.contentType = "image/jpeg" if ext is ".jpg"
+                options.contentType = "image/gif" if ext is ".gif"
+                options.contentType = "image/png" if ext is ".png"
+                options.contentType = "image/bmp" if ext is ".bmp"
+
+            s3upload = s3Bucket.upload {
+                ACL: options.acl,
+                Body: body,
+                Key: key,
+                ContentType: options.contentType
+            }
+
+            # Upload the specified files!
             s3upload.send (err, result) ->
                 if err?
                     logger.error "AWS.S3.upload", bucket, key, err
@@ -111,21 +117,25 @@ class S3
 
     # Delete object(s) from S3. Keys can be a string or an array of strings.
     delete: (bucket, keys) ->
-        s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
-        objects = []
+        logger.debug "AWS.S3.delete", bucket, keys
 
-        # Make sure keys is an array and set the delete parameters.
-        keys = [keys] if lodash.isString keys
-        objects.push {Key: value} for value in keys
-
-        params = {
-            Delete: {
-                Objects: objects
-            }
-        }
-
-        # Delete files!
         return new Promise (resolve, reject) ->
+            if not settings.aws.enabled
+                return reject logger.notEnabled("AWS", "S3.delete")
+
+            s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
+
+            objects = []
+            keys = [keys] if lodash.isString keys
+            objects.push {Key: value} for value in keys
+
+            params = {
+                Delete: {
+                    Objects: objects
+                }
+            }
+
+            # Delete the specified files!
             s3Bucket.deleteObjects params, (err, result) =>
                 if err?
                     logger.error "AWS.S3.delete", bucket, keys, err
