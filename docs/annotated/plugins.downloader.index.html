@@ -330,9 +330,11 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    download: <span class="hljs-function"><span class="hljs-params">(remoteUrl, saveTo, options, callback)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    download: <span class="hljs-function"><span class="hljs-params">(remoteUrl, saveTo, options)</span> -&gt;</span>
         logger.debug <span class="hljs-string">"Downloader.download"</span>, remoteUrl, saveTo, options
-        <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Downloader"</span>, <span class="hljs-string">"download"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.downloader.enabled
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.downloader.enabled
+            <span class="hljs-keyword">return</span> logger.notEnabled(<span class="hljs-string">"Downloader"</span>, <span class="hljs-string">"download"</span>)
 
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> remoteUrl? <span class="hljs-keyword">or</span> remoteUrl <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
             err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"First parameter 'remoteUrl' is mandatory!"</span>
@@ -371,7 +373,7 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback, stopFlag: <span class="hljs-literal">false</span>}</pre></div></div>
             
         </li>
         
@@ -405,8 +407,8 @@ you can get the downloaded contents via the <code>options.downloadedData</code>.
             <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> existing?.saveTo <span class="hljs-keyword">is</span> saveTo
                 logger.error <span class="hljs-string">"Downloader.download"</span>, <span class="hljs-string">"Aborted, already downloading."</span>, remoteUrl, saveTo
                 err = {message: <span class="hljs-string">"Download aborted: same file is already downloading."</span>, duplicate: <span class="hljs-literal">true</span>}
-                callback(err, downloadObj) <span class="hljs-keyword">if</span> callback?
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
+                callback? err, downloadObj
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -422,7 +424,7 @@ Accepts a <code>keep</code> boolean, if true the already downloaded data will be
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">stopHelper</span> = <span class="hljs-params">(keep)</span> -&gt;</span> @stopFlag = (<span class="hljs-keyword">if</span> keep <span class="hljs-keyword">then</span> <span class="hljs-number">1</span> <span class="hljs-keyword">else</span> <span class="hljs-number">2</span>)</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">stopHelper</span> = <span class="hljs-params">(keep)</span> -&gt;</span> @stopFlag = <span class="hljs-literal">true</span></pre></div></div>
             
         </li>
         
@@ -473,7 +475,7 @@ Accepts a <code>keep</code> boolean, if true the already downloaded data will be
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    stop: <span class="hljs-function"><span class="hljs-params">(remoteUrl, saveTo)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    stop: <span class="hljs-function"><span class="hljs-params">(remoteUrl, saveTo, keep)</span> -&gt;</span>
         existing = lodash.find downloading, {remoteUrl: remoteUrl, saveTo: saveTo}</pre></div></div>
             
         </li>
@@ -490,7 +492,7 @@ Accepts a <code>keep</code> boolean, if true the already downloaded data will be
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> existing?
-            existing.stop()
+            existing.stopFlag = <span class="hljs-literal">true</span>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
         <span class="hljs-keyword">else</span>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
@@ -800,15 +802,14 @@ appended to <code>options.data</code> property.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
-              <p>If temp download file can’t be found, set error message.
-If <code>stopFlag</code> is 2 means download was stopped and should not keep partial data.</p>
+              <p>Do not keep temporaty files!</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> tempExists
                             err = {message:<span class="hljs-string">"Can't find downloaded file: <span class="hljs-subst">#{saveToTemp}</span>"</span>}
-                        <span class="hljs-keyword">else</span>
-                            fs.unlinkSync saveToTemp <span class="hljs-keyword">if</span> obj.stopFlag <span class="hljs-keyword">is</span> <span class="hljs-number">2</span></pre></div></div>
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> obj.stopFlag
+                            fs.unlinkSync saveToTemp</pre></div></div>
             
         </li>
         
@@ -838,7 +839,7 @@ If <code>stopFlag</code> is 2 means download was stopped and should not keep par
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj.stopFlag? <span class="hljs-keyword">or</span> obj.stopFlag &lt; <span class="hljs-number">1</span>
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj.stopFlag
                             fs.unlinkSync obj.saveTo <span class="hljs-keyword">if</span> fileExists
                             fs.renameSync saveToTemp, obj.saveTo <span class="hljs-keyword">if</span> tempExists</pre></div></div>
             
@@ -994,7 +995,7 @@ If <code>stopFlag</code> is 2 means download was stopped and should not keep par
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> obj.stopFlag? <span class="hljs-keyword">and</span> obj.stopFlag &gt; <span class="hljs-number">0</span>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> obj.stopFlag
             logger.debug <span class="hljs-string">"Downloader.next"</span>, <span class="hljs-string">"Skip, 'stopFlag' is <span class="hljs-subst">#{obj.stopFlag}</span>."</span>, obj
             removeDownloading obj
             next()

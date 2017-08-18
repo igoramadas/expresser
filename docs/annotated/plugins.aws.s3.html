@@ -272,8 +272,14 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>    download: <span class="hljs-function"><span class="hljs-params">(bucket, key, destination)</span> -&gt;</span>
-        s3 = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region}
-        params = {Bucket: bucket, Key: key}</pre></div></div>
+        logger.debug <span class="hljs-string">"AWS.S3.download"</span>, bucket, key, destination
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
+                <span class="hljs-keyword">return</span> reject logger.notEnabled(<span class="hljs-string">"AWS"</span>, <span class="hljs-string">"S3.download"</span>)
+
+            s3 = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region}
+            params = {Bucket: bucket, Key: key}</pre></div></div>
             
         </li>
         
@@ -288,8 +294,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
-            s3.headObject params, <span class="hljs-function"><span class="hljs-params">(err, meta)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>            s3.headObject params, <span class="hljs-function"><span class="hljs-params">(err, meta)</span> -&gt;</span>
                 <span class="hljs-keyword">if</span> err?
                     <span class="hljs-keyword">if</span> err.retryable <span class="hljs-keyword">and</span> err.retryDelay &lt; <span class="hljs-number">60</span>
                         logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, <span class="hljs-string">"Retry in <span class="hljs-subst">#{err.retryDelay}</span>s"</span>, bucket, key, err
@@ -391,8 +396,14 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>    upload: <span class="hljs-function"><span class="hljs-params">(bucket, key, body, options)</span> -&gt;</span>
-        s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
-        options = lodash.defaults options, {acl: <span class="hljs-string">"public-read"</span>}</pre></div></div>
+        logger.debug <span class="hljs-string">"AWS.S3.upload"</span>, bucket, key, body, options
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
+                <span class="hljs-keyword">return</span> reject logger.notEnabled(<span class="hljs-string">"AWS"</span>, <span class="hljs-string">"S3.upload"</span>)
+
+            s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
+            options = lodash.defaults options, {acl: <span class="hljs-string">"public-read"</span>}</pre></div></div>
             
         </li>
         
@@ -407,19 +418,19 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.contentType?
-            ext = path.extname key
-            options.contentType = <span class="hljs-string">"image/jpeg"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".jpg"</span>
-            options.contentType = <span class="hljs-string">"image/gif"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".gif"</span>
-            options.contentType = <span class="hljs-string">"image/png"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".png"</span>
-            options.contentType = <span class="hljs-string">"image/bmp"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".bmp"</span>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.contentType?
+                ext = path.extname key
+                options.contentType = <span class="hljs-string">"image/jpeg"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".jpg"</span>
+                options.contentType = <span class="hljs-string">"image/gif"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".gif"</span>
+                options.contentType = <span class="hljs-string">"image/png"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".png"</span>
+                options.contentType = <span class="hljs-string">"image/bmp"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".bmp"</span>
 
-        s3upload = s3Bucket.upload {
-            ACL: options.acl,
-            Body: body,
-            Key: key,
-            ContentType: options.contentType
-        }</pre></div></div>
+            s3upload = s3Bucket.upload {
+                ACL: options.acl,
+                Body: body,
+                Key: key,
+                ContentType: options.contentType
+            }</pre></div></div>
             
         </li>
         
@@ -430,12 +441,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>Send file to S3!</p>
+              <p>Upload the specified files!</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
-            s3upload.send (err, result) -&gt;
+            <div class="content"><div class='highlight'><pre>            s3upload.send (err, result) -&gt;
                 <span class="hljs-keyword">if</span> err?
                     logger.error <span class="hljs-string">"AWS.S3.upload"</span>, bucket, key, err
                     reject err
@@ -457,8 +467,23 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>    delete: <span class="hljs-function"><span class="hljs-params">(bucket, keys)</span> -&gt;</span>
-        s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
-        objects = []</pre></div></div>
+        logger.debug <span class="hljs-string">"AWS.S3.delete"</span>, bucket, keys
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
+                <span class="hljs-keyword">return</span> reject logger.notEnabled(<span class="hljs-string">"AWS"</span>, <span class="hljs-string">"S3.delete"</span>)
+
+            s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
+
+            objects = []
+            keys = [keys] <span class="hljs-keyword">if</span> lodash.isString keys
+            objects.push {Key: value} <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> keys
+
+            params = {
+                Delete: {
+                    Objects: objects
+                }
+            }</pre></div></div>
             
         </li>
         
@@ -469,34 +494,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>Make sure keys is an array and set the delete parameters.</p>
+              <p>Delete the specified files!</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        keys = [keys] <span class="hljs-keyword">if</span> lodash.isString keys
-        objects.push {Key: value} <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> keys
-
-        params = {
-            Delete: {
-                Objects: objects
-            }
-        }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>Delete files!</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
-            s3Bucket.deleteObjects params, <span class="hljs-function"><span class="hljs-params">(err, result)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>            s3Bucket.deleteObjects params, <span class="hljs-function"><span class="hljs-params">(err, result)</span> =&gt;</span>
                 <span class="hljs-keyword">if</span> err?
                     logger.error <span class="hljs-string">"AWS.S3.delete"</span>, bucket, keys, err
                     reject err
@@ -507,11 +509,11 @@
         </li>
         
         
-        <li id="section-20">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
@@ -520,11 +522,11 @@
         </li>
         
         
-        <li id="section-21">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               
             </div>

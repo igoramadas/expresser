@@ -34,10 +34,10 @@
         </p>
       </nav>
       <div id='filecontents'>
-        <h1 id="expresser">Expresser</h1><p>A Node.js platform with web, database, email, logging and other special features, built on top of Express.</p><p><a href="https://travis-ci.org/igoramadas/expresser"><img src="https://travis-ci.org/igoramadas/expresser.png?branch=master" alt="Build Status"></a>
+        <h1 id="expresser">Expresser</h1><p>A Node.js framework with built-in web server, logging and other common utilities, built on top of Express.</p><p><a href="https://travis-ci.org/igoramadas/expresser"><img src="https://travis-ci.org/igoramadas/expresser.png?branch=master" alt="Build Status"></a>
 <a href="https://coveralls.io/github/igoramadas/expresser?branch=master"><img src="https://coveralls.io/repos/github/igoramadas/expresser/badge.svg?branch=master" alt="Coverage Status"></a></p><h3 id="why-expresser-">Why Expresser?</h3><p>Even if Express itself does a good job as a web application framework, it can still be considered quite &quot;low level&quot;
 by some. So the idea of Expresser is to aggregate common modules and utilities into a single package, to make it
-even easier to start and streamline your Node.js application. Developed with Coffee-Script.</p><h3 id="settings">Settings</h3><p>Settings for the app and all modules are loaded by the <code>settings.coffee</code> module. If you wish to customize any of
+even easier to start and streamline your Node.js application.</p><p>Developed with CoffeeScript v2, it has full support for all the new features of ES6, including async / await.</p><h3 id="settings">Settings</h3><p>Settings for the app and all modules are loaded by the <code>settings.coffee</code> module. If you wish to customize any of
 these settings, please create a <code>settings.json</code> file on the root of your app folder with the specific keys
 and values. For more info please head to <a href="https://github.com/igoramadas/expresser/blob/master/docs/settings.md">https://github.com/igoramadas/expresser/blob/master/docs/settings.md</a>.</p><h3 id="example-app">Example app</h3>
 <pre><code>expresser = require &quot;expresser&quot;
@@ -56,7 +56,7 @@ app.server.get &quot;/&quot;, (req, res) -&gt; app.renderView req, res, &quot;in
 # Renders output from the Metrics plugin.
 app.server.get &quot;/metrics&quot;, (req, res) -&gt; app.renderJson req, res, metrics.output()
 </code></pre><p>It seems pretty simple, right? Most configuration is done on the <code>settings.json</code> file. Paths, default views,
-server port, etc etc...</p><h1 id="main-modules">Main modules</h1><p>Now to the main modules...</p><h3 id="app">App</h3>
+server port, etc...</p><h1 id="main-modules">Main modules</h1><p>Now to the main modules...</p><h3 id="app">App</h3>
 <ul>
 <li>Pre-configured Express web server.</li>
 <li><a href="https://github.com/igoramadas/expresser/blob/master/docs/app.md">https://github.com/igoramadas/expresser/blob/master/docs/app.md</a></li>
@@ -65,11 +65,6 @@ server port, etc etc...</p><h1 id="main-modules">Main modules</h1><p>Now to the 
 <ul>
 <li>Central events dispatcher.</li>
 <li><a href="https://github.com/igoramadas/expresser/blob/master/docs/events.md">https://github.com/igoramadas/expresser/blob/master/docs/events.md</a></li>
-</ul>
-<h3 id="database">Database</h3>
-<ul>
-<li>Supports reading, updating and deleting documents on databases.</li>
-<li><a href="https://github.com/igoramadas/expresser/blob/master/docs/database.md">https://github.com/igoramadas/expresser/blob/master/docs/database.md</a></li>
 </ul>
 <h3 id="logger">Logger</h3>
 <ul>
@@ -102,11 +97,6 @@ server port, etc etc...</p><h1 id="main-modules">Main modules</h1><p>Now to the 
 <ul>
 <li>MongoDB driver for the Database module.</li>
 <li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/database-mongodb">https://github.com/igoramadas/expresser/tree/master/plugins/database-mongodb</a></li>
-</ul>
-<h3 id="database-tingodb">Database: TingoDB</h3>
-<ul>
-<li>TingoDB driver for the Database module.</li>
-<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/database-tingodb">https://github.com/igoramadas/expresser/tree/master/plugins/database-tingodb</a></li>
 </ul>
 <h3 id="downloader">Downloader</h3>
 <ul>

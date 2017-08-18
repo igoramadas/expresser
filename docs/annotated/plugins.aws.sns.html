@@ -284,11 +284,17 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    publish: <span class="hljs-function"><span class="hljs-params">(options, callback)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    publish: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
         logger.debug <span class="hljs-string">"AWS.SNS.publish"</span>, options
 
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.PhoneNumber? <span class="hljs-keyword">or</span> options.PhoneNumber <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
-            <span class="hljs-keyword">return</span> callback <span class="hljs-string">"A PhoneNumber is required."</span></pre></div></div>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
+                <span class="hljs-keyword">return</span> reject logger.notEnabled(<span class="hljs-string">"AWS"</span>, <span class="hljs-string">"SNS.publish"</span>)
+
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.PhoneNumber? <span class="hljs-keyword">or</span> options.PhoneNumber <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+                ex = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"A PhoneNumber is required."</span>
+                logger.error <span class="hljs-string">"AWS.SNS.publish"</span>, ex
+                <span class="hljs-keyword">return</span> reject ex</pre></div></div>
             
         </li>
         
@@ -303,7 +309,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        digits = <span class="hljs-string">"XXX"</span> + options.PhoneNumber.substr(options.PhoneNumber.length - <span class="hljs-number">4</span>)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            digits = <span class="hljs-string">"XXX"</span> + options.PhoneNumber.substr(options.PhoneNumber.length - <span class="hljs-number">4</span>)</pre></div></div>
             
         </li>
         
@@ -318,13 +324,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        sns.publish options, <span class="hljs-function"><span class="hljs-params">(err, data)</span> =&gt;</span>
-            <span class="hljs-keyword">if</span> err?
-                logger.error <span class="hljs-string">"AWS.SNS.publish"</span>, <span class="hljs-string">"Error sending to <span class="hljs-subst">#{digits}</span>"</span>, err, err.stack
-                <span class="hljs-keyword">return</span> callback err
-            <span class="hljs-keyword">else</span>
-                logger.info <span class="hljs-string">"AWS.SNS.publish"</span>, <span class="hljs-string">"Message published to <span class="hljs-subst">#{digits}</span>"</span>
-                <span class="hljs-keyword">return</span> callback <span class="hljs-literal">null</span>, data</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            sns.publish options, <span class="hljs-function"><span class="hljs-params">(err, data)</span> =&gt;</span>
+                <span class="hljs-keyword">if</span> err?
+                    logger.error <span class="hljs-string">"AWS.SNS.publish"</span>, <span class="hljs-string">"Error sending to <span class="hljs-subst">#{digits}</span>"</span>, err, err.stack
+                    reject err
+                <span class="hljs-keyword">else</span>
+                    logger.info <span class="hljs-string">"AWS.SNS.publish"</span>, <span class="hljs-string">"Message published to <span class="hljs-subst">#{digits}</span>"</span>
+                    resolve data</pre></div></div>
             
         </li>
         

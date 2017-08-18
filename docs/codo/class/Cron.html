@@ -44,7 +44,7 @@
     <pre><code class='coffeescript'>var myJob = {
   id: &quot;alertJob&quot;,
   schedule: 60,
-  callback: function(job) { alertUser(mydata); }
+  callback: function(job) { alertUser(mydata) }
 }</code></pre>
     <h4>
       Sample job object, sends email every day at 10AM and 5PM.
@@ -52,7 +52,7 @@
     <pre><code class='coffeescript'>var otherJob = {
   id: &quot;my mail job&quot;,
   schedule: [&quot;10:00:00&quot;, &quot;17:00:00&quot;],
-  callback: function(job) { mail.send(something); }
+  callback: function(job) { mail.send(something) }
 }</code></pre>
   </div>
 </div>
