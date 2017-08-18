@@ -1,6 +1,6 @@
 # EXPRESSER AWS
 # -----------------------------------------------------------------------------
-# Module to use Amazon Web Services features on your app.
+# Module to integrate your app with Amazon Web Services.
 # <!--
 # @see settings.aws
 # -->

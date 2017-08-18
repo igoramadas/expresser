@@ -64,9 +64,11 @@ class Downloader
     # @param {Object} options Optional, object with request options, for example auth.
     # @param {Method} callback Optional, a function (err, result) to be called when download has finished.
     # @return {Object} Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
-    download: (remoteUrl, saveTo, options, callback) ->
+    download: (remoteUrl, saveTo, options) ->
         logger.debug "Downloader.download", remoteUrl, saveTo, options
-        return logger.notEnabled "Downloader", "download" if not settings.downloader.enabled
+
+        if not settings.downloader.enabled
+            return logger.notEnabled("Downloader", "download")
 
         if not remoteUrl? or remoteUrl is ""
             err = new Error "First parameter 'remoteUrl' is mandatory!"
@@ -81,7 +83,7 @@ class Downloader
         now = new Date().getTime()
 
         # Create the download object.
-        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback}
+        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback, stopFlag: false}
 
         # Prevent duplicates?
         if settings.downloader.preventDuplicates
@@ -91,12 +93,12 @@ class Downloader
             if existing?.saveTo is saveTo
                 logger.error "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
                 err = {message: "Download aborted: same file is already downloading.", duplicate: true}
-                callback(err, downloadObj) if callback?
-                return false
+                callback? err, downloadObj
+                return null
 
         # Create a `stop` method to force stop the download by setting the `stopFlag`.
         # Accepts a `keep` boolean, if true the already downloaded data will be kept on forced stop.
-        stopHelper = (keep) -> @stopFlag = (if keep then 1 else 2)
+        stopHelper = (keep) -> @stopFlag = true
 
         # Update download object with stop helper and add to queue.
         downloadObj.stop = stopHelper
@@ -111,12 +113,12 @@ class Downloader
     # @param {String} remoteUrl The URL of the download to stop.
     # @param {String} saveTo The full local path of the download to stop.
     # @return {Boolean} Returns true if a match was found, or false if no matching download to stop.
-    stop: (remoteUrl, saveTo) ->
+    stop: (remoteUrl, saveTo, keep) ->
         existing = lodash.find downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
 
         # Download exists? If so set its stop flag and return true, otherwise false.
         if existing?
-            existing.stop()
+            existing.stopFlag = true
             return true
         else
             return false
@@ -214,18 +216,17 @@ class Downloader
                         # Check if temp file exists.
                         tempExists = fs.existsSync saveToTemp
 
-                        # If temp download file can't be found, set error message.
-                        # If `stopFlag` is 2 means download was stopped and should not keep partial data.
+                        # Do not keep temporaty files!
                         if not tempExists
                             err = {message:"Can't find downloaded file: #{saveToTemp}"}
-                        else
-                            fs.unlinkSync saveToTemp if obj.stopFlag is 2
+                        else if obj.stopFlag
+                            fs.unlinkSync saveToTemp
 
                         # Check if destination file already exists.
                         fileExists = fs.existsSync obj.saveTo
 
                         # Only proceed with renaming if `stopFlag` wasn't set and destionation is valid.
-                        if not obj.stopFlag? or obj.stopFlag < 1
+                        if not obj.stopFlag
                             fs.unlinkSync obj.saveTo if fileExists
                             fs.renameSync saveToTemp, obj.saveTo if tempExists
 
@@ -273,7 +274,7 @@ class Downloader
         options = lodash.assign {headers: headers, rejectUnauthorized: settings.downloader.rejectUnauthorized}, obj.options, parseUrlOptions(obj)
 
         # Start download
-        if obj.stopFlag? and obj.stopFlag > 0
+        if obj.stopFlag
             logger.debug "Downloader.next", "Skip, 'stopFlag' is #{obj.stopFlag}.", obj
             removeDownloading obj
             next()

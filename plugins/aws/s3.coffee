@@ -30,11 +30,15 @@ class S3
     # @param {String} key Key of the target S3 bucket resource (usually a filename).
     # @param {String} destination Optional, full path to the destination where file should be saved.
     download: (bucket, key, destination) ->
-        s3 = new aws.S3 {region: settings.aws.s3.region}
         params = {Bucket: bucket, Key: key}
 
         # First make sure the file exists in the S3 bucket, then fetch it.
         return new Promise (resolve, reject) ->
+            if not settings.aws.enabled
+                return reject logger.notEnabled("AWS", "download")
+
+            s3 = new aws.S3 {region: settings.aws.s3.region}
+
             s3.headObject params, (err, meta) ->
                 if err?
                     if err.retryable and err.retryDelay < 60

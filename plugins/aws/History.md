@@ -2,8 +2,8 @@
 
 3.0.0
 =====
+* NEW! Now using Promises and compatible with async / await.
 * Compatible with Expresser 3.0.0.
-* NEW! Now using async methods.
 
 1.0.5
 =====

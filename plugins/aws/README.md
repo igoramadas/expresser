@@ -16,20 +16,22 @@ http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credent
 
 Downloading a file from a S3 bucket:
 
-    aws = require "expresser-aws"
+    expresser = require("expresser")
+    aws = require("expresser-aws")
 
-    aws.s3.download "my-bucket-id", "my-filenametxt", "/var/myfiles/my-filename.txt", (err, result) =>
-        if err?
-            console.error err
-        else
-            console.log "Downloaded complete!"
+    try
+        var result = aws.s3.download("my-bucket-id", "my-filenametxt", "/var/myfiles/my-filename.txt")
+        console.log(result)
+    catch ex
+        expresser.logger.error(ex)
 
 Uploading a file to S3:
 
-    aws = require "expresser-aws"
+    expresser = require("expresser")
+    aws = require("expresser-aws")
 
-    aws.s3.upload "my-bucket-id", "my-upload.txt", "this is my file text", (err, result) =>
-        if err?
-            console.error err
-        else
-            console.log "Upload complete!"
+    try
+        result = aws.s3.upload("my-bucket-id", "my-upload.txt", "this is my file text")
+        console.log(result)
+    catch ex
+        expresser.logger.error(ex)

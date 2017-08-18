@@ -9,13 +9,13 @@
 #   var myJob = {
 #     id: "alertJob",
 #     schedule: 60,
-#     callback: function(job) { alertUser(mydata); }
+#     callback: function(job) { alertUser(mydata) }
 #   }
 # @example Sample job object, sends email every day at 10AM and 5PM.
 #   var otherJob = {
 #     id: "my mail job",
 #     schedule: ["10:00:00", "17:00:00"],
-#     callback: function(job) { mail.send(something); }
+#     callback: function(job) { mail.send(something) }
 #   }
 #
 # This module will load scheduled tasks from the "cron.json" file if the
@@ -127,7 +127,7 @@ class Cron
                 else
                     logger.info "Cron.load", filename, "Module has 'cronDisabled' set. Skip!"
 
-            # Start all jobs automatically if `autoStart` is true.
+            # Auto starting jobs is optional.
             if options.autoStart
                 if filename
                     @start {filename: filename}
