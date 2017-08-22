@@ -1,11 +1,12 @@
 # Changelog for expresser
 
-3.0.0
+3.0.1
 =====
 * NEW! Now using async / await whenever applicable. Callbacks are being phased out!
 * NEW! App has now a getRoutes helper to list all registered routes.
 * NEW! Logger has now a `maskFields` option in addition to the `obfuscateFields`.
 * NEW! Now using CoffeeScript v2.
+* DEPRECATED! Database plugins are now standalone and the old `database.coffee` wrapper is not deprecated.
 * Lots of unecessary modules and code removed, plus the usual bug fixing :-)
 
 2.4.2

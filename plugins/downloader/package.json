@@ -1,6 +1,6 @@
 {
     "name": "expresser-downloader",
-    "version": "3.0.0",
+    "version": "3.0.0-beta1",
     "description": "Download manager for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
