@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+3.0.2
+=====
+* Fixed bugs when bundling and compressing assets (mincer).
+* Support for sourceMaps on bundled JS temporarily disabled.
+
 3.0.1
 =====
 * NEW! Now using async / await whenever applicable. Callbacks are being phased out!
