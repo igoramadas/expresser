@@ -123,7 +123,7 @@ class Mailer
             options.html = html
 
             # Check if `doNotSend` flag is set, and if so, do not send anything.
-            if settings.mailer.doNotSend
+            if options.doNotSend or settings.mailer.doNotSend
                 logger.warn "Mailer.smtpSend", "Abort! doNotSend = true", options.to, options.subject
                 return resolve {doNotSend: true}
 

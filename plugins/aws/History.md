@@ -1,5 +1,9 @@
 # Changelog for expresser-aws
 
+3.0.1
+=====
+* Updated dependencies.
+
 3.0.0
 =====
 * NEW! Now using Promises and compatible with async / await.

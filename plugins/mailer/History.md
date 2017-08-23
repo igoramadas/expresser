@@ -1,5 +1,9 @@
 # Changelog for expresser-mailer
 
+3.0.1
+=====
+* The doNotSend can now be set directly on send options.
+
 3.0.0
 =====
 * NEW! Now using async methods.
