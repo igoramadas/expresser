@@ -2,7 +2,7 @@
 
 3.0.1
 =====
-* Updated dependencies.
+* Updated AWS dependency.
 
 3.0.0
 =====
