@@ -1,5 +1,9 @@
 # Changelog for expresser-metrics
 
+3.0.1
+=====
+* Fixed average values on metrics output.
+
 3.0.0
 =====
 * New option "cleanupEmpty" to remove empty metrics from the collection.

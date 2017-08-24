@@ -216,7 +216,7 @@ class Metrics
         summary.errors = errorCount
         summary.min = lodash.min(durations) or 0
         summary.max = lodash.max(durations) or 0
-        summary.avg = avg? or 0
+        summary.avg = avg or 0
         summary.avg = Math.round summary.avg
 
         # Get percentiles based on settings.
