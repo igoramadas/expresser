@@ -72,6 +72,7 @@ class Mailer
     # @option options {String} to The "to" address.
     # @option options {String} from The "from" address, optional, if blank use default from settings.
     # @option options {String} template The template file to be loaded, optional.
+    # @option options {Boolean} doNotSend If true, the actual email will not be sent out. Used for testing.
     send: (options) =>
         logger.debug "Mailer.send", options
 
