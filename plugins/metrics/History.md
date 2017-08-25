@@ -1,5 +1,9 @@
 # Changelog for expresser-metrics
 
+3.0.2
+=====
+* Fixed percentile values on metrics output (sometimes came as null).
+
 3.0.1
 =====
 * Fixed average values on metrics output.

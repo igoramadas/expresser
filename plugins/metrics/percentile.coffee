@@ -4,7 +4,9 @@
 class Percentile
 
     calculate: (durations, perc) ->
-        return findK durations.concat(), 0, durations.length, Math.ceil(durations.length * perc / 100) - 1
+        result = findK durations.concat(), 0, durations.length, Math.ceil(durations.length * perc / 100) - 1
+        result = 0 if not result? or result < 0
+        return resul
 
     swap = (data, i, j) ->
         return if i is j
