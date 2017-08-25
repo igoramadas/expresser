@@ -46,7 +46,7 @@
     "devDependencies": {
         "@google-cloud/datastore": "^1.1.0",
         "@google-cloud/storage": "^1.2.1",
-        "aws-sdk": "^2.102.0",
+        "aws-sdk": "^2.103.0",
         "bettercodo": "^2.1.4",
         "betterdocco": "^0.7.6",
         "chai": "^4.1.1",

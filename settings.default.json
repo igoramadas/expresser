@@ -124,7 +124,7 @@
         "maxDeepLevel": 8,
         // List of properties to be obfuscated with the static value "***". This is useful to hide passwords, secret keys, etc.
         // Values separated by comma, case insensitive.
-        "obfuscateFields": "password,passwordhash,passwordencrypted,accesstoken,access_token,refreshtoken,refresh_token,auth",
+        "obfuscateFields": "password,passwordhash,passwordencrypted,accesstoken,access_token,refreshtoken,refresh_token,auth,recaptcha",
         // List of user defined properties to be masked. Difference from obfuscate setting above is that the length will be
         // the same and last characters of the value will not be masked out (for example, leave last 4 digits of phone numbers).
         "maskFields": {
