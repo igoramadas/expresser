@@ -178,7 +178,9 @@
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Percentile</span></span>
 
     calculate: <span class="hljs-function"><span class="hljs-params">(durations, perc)</span> -&gt;</span>
-        <span class="hljs-keyword">return</span> findK durations.concat(), <span class="hljs-number">0</span>, durations.length, Math.ceil(durations.length * perc / <span class="hljs-number">100</span>) - <span class="hljs-number">1</span>
+        result = findK durations.concat(), <span class="hljs-number">0</span>, durations.length, Math.ceil(durations.length * perc / <span class="hljs-number">100</span>) - <span class="hljs-number">1</span>
+        result = <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> result? <span class="hljs-keyword">or</span> result &lt; <span class="hljs-number">0</span>
+        <span class="hljs-keyword">return</span> result
 <span class="hljs-function">
     <span class="hljs-title">swap</span> = <span class="hljs-params">(data, i, j)</span> -&gt;</span>
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> i <span class="hljs-keyword">is</span> j

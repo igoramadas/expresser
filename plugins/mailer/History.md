@@ -1,5 +1,9 @@
 # Changelog for expresser-mailer
 
+3.0.2
+=====
+* Updated nodemailer.
+
 3.0.1
 =====
 * The doNotSend can now be set directly on send options.
