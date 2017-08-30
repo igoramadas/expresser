@@ -1,5 +1,10 @@
 # Changelog for expresser-aws
 
+3.0.2
+=====
+* Improved handling of S3 downloads and uploads.
+* Updated AWS dependency.
+
 3.0.1
 =====
 * Updated AWS dependency.

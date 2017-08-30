@@ -40,39 +40,45 @@ class S3
             params = {Bucket: bucket, Key: key}
 
             # First make sure the file exists in the S3 bucket, then fetch it.
-            s3.headObject params, (err, meta) ->
-                if err?
-                    if err.retryable and err.retryDelay < 60
-                        logger.error "AWS.S3.download", "headObject", "Retry in #{err.retryDelay}s", bucket, key, err
-                    else
+            try
+                s3.headObject params, (err, meta) ->
+                    if err?
                         logger.error "AWS.S3.download", "headObject", bucket, key, err
 
-                    # Hint for the user to login with the "mai" command.
-                    if err.statusCode is 401 or err.statusCode is 403
-                        logger.warn "AWS.S3.download", "Invalid permissions or not authorized to read #{bucket} #{key}."
+                        # Hint for the user to login with the "mai" command.
+                        if err.statusCode is 401 or err.statusCode is 403
+                            logger.warn "AWS.S3.download", "Invalid permissions or not authorized to read #{bucket} #{key}."
 
-                    return reject err
-
-                # Get data from S3 and write it to local disk.
-                s3.getObject params, (err, data) ->
-                    if err?
-                        logger.error "AWS.S3.download", "getObject", bucket, key, err
                         return reject err
 
-                    body = data.Body.toString()
+                    # Get data from S3 and write it to local disk.
+                    s3.getObject params, (err, data) ->
+                        if err?
+                            logger.error "AWS.S3.download", "getObject", bucket, key, err
+                            return reject err
 
-                    # Destination set? If so, write to disk.
-                    if destination?
-                        fs.writeFile destination, body, {encoding: settings.general.encoding}, (err) ->
-                            if err?
-                                logger.error "AWS.S3.download", "writeFile", bucket, key, destination, err
-                                reject err
-                            else
-                                resolve body
+                        try
+                            body = data.Body.toString()
+                        catch ex
+                            logger.error "AWS.S3.download", "Body.toString", bucket, key, ex
+                            return reject err
 
-                    # No destination? Simply return the file contents.
-                    else
-                        resolve body
+                        # Destination set? If so, write to disk.
+                        if destination?
+                            fs.writeFile destination, body, {encoding: settings.general.encoding}, (err) ->
+                                if err?
+                                    logger.error "AWS.S3.download", "writeFile", bucket, key, destination, err
+                                    return reject err
+                                else
+                                    logger.debug "AWS.S3.download", bucket, key, "Saved #{body.length} bytes to #{destination}."
+                                    return resolve body
+
+                        # No destination? Simply return the file contents.
+                        else
+                            return resolve body
+            catch ex
+                logger.error "AWS.S3.download", "headObject", bucket, key, ex
+                reject ex
 
     # Upload a file to S3.
     # @param {String} bucket Name of the S3 bucket to upload to.

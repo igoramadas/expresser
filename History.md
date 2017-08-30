@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.0.3
+=====
+* Updated dependencies.
+
 3.0.2
 =====
 * Fixed bugs when bundling and compressing assets (mincer).
