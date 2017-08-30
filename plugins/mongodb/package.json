@@ -1,6 +1,6 @@
 {
     "name": "expresser-mongodb",
-    "version": "3.0.0-beta1",
+    "version": "3.0.0",
     "description": "MongoDB database plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "coffeescript": "^2.0.0-beta4",
-        "mongodb": "~2.2.30"
+        "mongodb": "~2.2.31"
     },
     "repository": {
         "type": "git",
