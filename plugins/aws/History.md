@@ -1,5 +1,9 @@
 # Changelog for expresser-aws
 
+3.1.0
+=====
+* NEW! DynamoDB is now implemented on the module.
+
 3.0.2
 =====
 * Improved handling of S3 downloads and uploads.

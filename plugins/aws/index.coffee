@@ -16,6 +16,7 @@ class AWS
     logger = null
     settings = null
 
+    dynamodb: require "./dynamodb.coffee"
     s3: require "./s3.coffee"
     sns: require "./sns.coffee"
 
@@ -32,6 +33,7 @@ class AWS
         events.emit "AWS.before.init"
 
         # Init the implemented AWS modules.
+        @dynamodb.init this
         @s3.init this
         @sns.init this
 
