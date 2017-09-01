@@ -3,6 +3,7 @@
 3.1.0
 =====
 * NEW! DynamoDB is now implemented on the module.
+* NEW! You can now access the actuall SDK: require("expresser-aws").sdk.
 
 3.0.2
 =====

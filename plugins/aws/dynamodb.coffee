@@ -1,6 +1,6 @@
 # AWS DYNAMODB
 # -----------------------------------------------------------------------------
-# Wrapper for Amazon's DynamoDB.
+# Reads and modify data on DynamoDB databases.
 class DynamoDB
 
     aws = require "aws-sdk"
@@ -27,7 +27,11 @@ class DynamoDB
     # -------------------------------------------------------------------------
 
     # Creates a new table on DynamoDB.
-    # @param {Object} params The table parameters.
+    # @param {Object} params The table creation parameters.
+    # @option params {String} TableName The table name.
+    # @option params {Object} KeySchema The table key schema.
+    # @option params {Object} AttributeDefinitions The attributes and types.
+    # @option params {Object} ProvisionedThroughput The provision throughput units.
     createTable: (params) =>
         logger.debug "AWS.DynamoDB.createTable", params
 

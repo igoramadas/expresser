@@ -8,14 +8,11 @@ class AWS
 
     priority: 2
 
-    aws = require "aws-sdk"
-    fs = require "fs"
-    path = require "path"
-
     events = null
     logger = null
     settings = null
 
+    sdk: require "aws-sdk"
     dynamodb: require "./dynamodb.coffee"
     s3: require "./s3.coffee"
     sns: require "./sns.coffee"

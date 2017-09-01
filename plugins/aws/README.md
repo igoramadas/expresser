@@ -1,6 +1,10 @@
 # Expresser AWS
 
-This is a wrapper around the AWS SDK for Node.js apps. Currently implements S3 and SNS features.
+This is a wrapper around the AWS SDK for Node.js apps:
+
+https://www.npmjs.com/package/aws-sdk
+
+Currently implements some restricted features of DynamoDB, S3 and SNS.
 
 ### Basic requirements
 
