@@ -19,7 +19,7 @@ class DynamoDB
 
         # Create the DynamoDB handler.
         db = new aws.DynamoDB {region: settings.aws.sns.region}
-        docClient = new aws.DocumentClient {region: settings.aws.sns.region}
+        docClient = new aws.DynamoDB.DocumentClient()
 
         delete @init
 
