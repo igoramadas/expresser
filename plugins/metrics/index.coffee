@@ -59,8 +59,9 @@ class Metrics
     # Starts the counter for a specific metric. The data is optional.
     # @param {String} id ID of the metric to be started.
     # @param {Object} data Additional info about the current metric (URL data, for example).
+    # @param {Number} expiresIn Optional, metric should expire in these amount of seconds if not ended.
     # @return {Object} Returns the metric object to be used later on `end`.
-    start: (id, data) ->
+    start: (id, data, expiresIn) ->
         logger.debug "Metrics.start", obj, data
         return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
 
@@ -68,6 +69,13 @@ class Metrics
         obj.id = id
         obj.data = data
         obj.startTime = moment().valueOf()
+
+        # Should the metric expire after some seconds?
+        if expiresIn? and expiresIn > 0
+            expiryTimeout = =>
+                @end obj, "expired"
+                obj.expired = true
+            obj.timeout = setTimeout expiryTimeout, expiresIn * 1000
 
         # Create array of counters for the selected ID. Add metric to the beggining of the array.
         metrics[id] = [] if not metrics[id]?
@@ -83,12 +91,20 @@ class Metrics
         obj.duration = obj.endTime - obj.startTime
         obj.error = error
 
+        # Clear the expiry timeout only if there's one.
+        if obj.timeout?
+            clearTimeout obj.timeout
+            delet obj.timeout
+
         logger.debug "Metrics.end", obj
 
     # Get collected data for the specified metric.
     # @param {String} id ID of the metric.
     get: (id) ->
         return metrics[id]
+
+    # CLEANUP
+    # -------------------------------------------------------------------------
 
     # Clean collected metrics by removing data older than X minutes (defined on settings).
     # Please note that this runs on s schedule so you shouldn't need to call it manually, in most cases.
@@ -191,6 +207,7 @@ class Metrics
         now = moment().valueOf()
         values = []
         errorCount = 0
+        expiredCount = 0
         i = 0
 
         # Iterate logged metrics, and get only if corresponding to the specified interval.
@@ -201,6 +218,7 @@ class Metrics
             if minutes <= interval
                 values.push obj[i]
                 errorCount++ if obj.error
+                expiredCount++ if obj.expired
                 i++
             else
                 i = obj.length
@@ -214,6 +232,7 @@ class Metrics
         summary = {}
         summary.calls = values.length
         summary.errors = errorCount
+        summary.expired = expiredCount
         summary.min = lodash.min(durations) or 0
         summary.max = lodash.max(durations) or 0
         summary.avg = avg or 0

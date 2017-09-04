@@ -1,5 +1,9 @@
 # Changelog for expresser-metrics
 
+3.1.0
+=====
+* NEW! You can now set an expiry time (in seconds) for metrics.
+
 3.0.2
 =====
 * Fixed percentile values on metrics output (sometimes came as null).

@@ -1,6 +1,6 @@
 {
     "name": "expresser-metrics",
-    "version": "3.0.2",
+    "version": "3.1.0",
     "description": "Metrics for Expresser apps.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
