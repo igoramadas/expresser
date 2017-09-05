@@ -49,6 +49,11 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.dynamodb.html">
+                plugins/aws/dynamodb.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.aws.index.html">
                 plugins/aws/index.coffee
               </a>
@@ -294,11 +299,9 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            s3.headObject params, <span class="hljs-function"><span class="hljs-params">(err, meta)</span> -&gt;</span>
-                <span class="hljs-keyword">if</span> err?
-                    <span class="hljs-keyword">if</span> err.retryable <span class="hljs-keyword">and</span> err.retryDelay &lt; <span class="hljs-number">60</span>
-                        logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, <span class="hljs-string">"Retry in <span class="hljs-subst">#{err.retryDelay}</span>s"</span>, bucket, key, err
-                    <span class="hljs-keyword">else</span>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">try</span>
+                s3.headObject params, <span class="hljs-function"><span class="hljs-params">(err, meta)</span> -&gt;</span>
+                    <span class="hljs-keyword">if</span> err?
                         logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, bucket, key, err</pre></div></div>
             
         </li>
@@ -314,10 +317,10 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">401</span> <span class="hljs-keyword">or</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">403</span>
-                        logger.warn <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"Invalid permissions or not authorized to read <span class="hljs-subst">#{bucket}</span> <span class="hljs-subst">#{key}</span>."</span>
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">401</span> <span class="hljs-keyword">or</span> err.statusCode <span class="hljs-keyword">is</span> <span class="hljs-number">403</span>
+                            logger.warn <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"Invalid permissions or not authorized to read <span class="hljs-subst">#{bucket}</span> <span class="hljs-subst">#{key}</span>."</span>
 
-                    <span class="hljs-keyword">return</span> reject err</pre></div></div>
+                        <span class="hljs-keyword">return</span> reject err</pre></div></div>
             
         </li>
         
@@ -332,12 +335,16 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                s3.getObject params, <span class="hljs-function"><span class="hljs-params">(err, data)</span> -&gt;</span>
-                    <span class="hljs-keyword">if</span> err?
-                        logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"getObject"</span>, bucket, key, err
-                        <span class="hljs-keyword">return</span> reject err
+            <div class="content"><div class='highlight'><pre>                    s3.getObject params, <span class="hljs-function"><span class="hljs-params">(err, data)</span> -&gt;</span>
+                        <span class="hljs-keyword">if</span> err?
+                            logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"getObject"</span>, bucket, key, err
+                            <span class="hljs-keyword">return</span> reject err
 
-                    body = data.Body.toString()</pre></div></div>
+                        <span class="hljs-keyword">try</span>
+                            body = data.Body.toString()
+                        <span class="hljs-keyword">catch</span> ex
+                            logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"Body.toString"</span>, bucket, key, ex
+                            <span class="hljs-keyword">return</span> reject err</pre></div></div>
             
         </li>
         
@@ -352,13 +359,14 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> destination?
-                        fs.writeFile destination, body, {encoding: settings.general.encoding}, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
-                            <span class="hljs-keyword">if</span> err?
-                                logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"writeFile"</span>, bucket, key, destination, err
-                                reject err
-                            <span class="hljs-keyword">else</span>
-                                resolve body</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> destination?
+                            fs.writeFile destination, body, {encoding: settings.general.encoding}, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+                                <span class="hljs-keyword">if</span> err?
+                                    logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"writeFile"</span>, bucket, key, destination, err
+                                    <span class="hljs-keyword">return</span> reject err
+                                <span class="hljs-keyword">else</span>
+                                    logger.debug <span class="hljs-string">"AWS.S3.download"</span>, bucket, key, <span class="hljs-string">"Saved <span class="hljs-subst">#{body.length}</span> bytes to <span class="hljs-subst">#{destination}</span>."</span>
+                                    <span class="hljs-keyword">return</span> resolve body</pre></div></div>
             
         </li>
         
@@ -373,8 +381,11 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">else</span>
-                        resolve body</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">else</span>
+                            <span class="hljs-keyword">return</span> resolve body
+            <span class="hljs-keyword">catch</span> ex
+                logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, bucket, key, ex
+                reject ex</pre></div></div>
             
         </li>
         

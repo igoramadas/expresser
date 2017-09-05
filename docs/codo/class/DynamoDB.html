@@ -19,18 +19,18 @@
       Index
     </a>
     &raquo;
-    <span class='title'>Metrics</span>
+    <span class='title'>DynamoDB</span>
   </div>
 </div>
     <div id='content'>
       <h1>
         Class:
-        Metrics
+        DynamoDB
       </h1>
       <table class='box'>
         <tr>
           <td>Defined in:</td>
-          <td>plugins&#47;metrics&#47;index.coffee</td>
+          <td>plugins&#47;aws&#47;dynamodb.coffee</td>
         </tr>
       </table>
       <h2>Overview</h2>
@@ -38,24 +38,7 @@
   class 
 </div>
 <div class='tags'>
-  <h3>See also:</h3>
-  <ul class='see'>
-    <li>
-      <a href='settings.metrics'>settings.metrics</a>
-    </li>
-  </ul>
 </div>
-      <h2>Variables Summary</h2>
-      <dl class='constants'>
-  <dt id='priority-variable'>
-    priority
-    =
-  </dt>
-  <dd>
-    <pre><code class='coffeescript'>2</code></pre>
-    
-  </dd>
-</dl>
       <h2>Instance Method Summary</h2>
       <ul class='summary'>
   <li>
@@ -63,7 +46,7 @@
       <a href='#init-dynamic'>
         #
 (void)
-<b>init</b><span>()</span>
+<b>init</b><span>(parent)</span>
       </a>
     </span>
     <span class='desc'>
@@ -72,24 +55,26 @@
   </li>
   <li>
     <span class='signature'>
-      <a href='#start-dynamic'>
-        #
-(Object)
-<b>start</b><span>(id, data, expiresIn)</span>
-      </a>
-    </span>
-    <span class='desc'>
-      class 
-    </span>
-  </li>
-  <li>
-    <span class='signature'>
-      <a href='#end-dynamic'>
+      <a href='#createTable-dynamic'>
         #
 (void)
-<b>end</b><span>(obj, error)</span>
+<b>createTable</b><span>(params)</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
+    <span class='desc'>
+      class 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#query-dynamic'>
+        #
+(void)
+<b>query</b><span>(table, attributes, values, expression)</span>
+      </a>
+    </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
       class 
     </span>
@@ -99,33 +84,49 @@
       <a href='#get-dynamic'>
         #
 (void)
-<b>get</b><span>(id)</span>
+<b>get</b><span>(table, key)</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
       class 
     </span>
   </li>
   <li>
     <span class='signature'>
-      <a href='#cleanup-dynamic'>
+      <a href='#put-dynamic'>
         #
 (void)
-<b>cleanup</b><span>()</span>
+<b>put</b><span>(table, item)</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
       class 
     </span>
   </li>
   <li>
     <span class='signature'>
-      <a href='#output-dynamic'>
+      <a href='#update-dynamic'>
         #
-(Object)
-<b>output</b><span>(options)</span>
+(void)
+<b>update</b><span>(table, key, values, expression, condition)</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
+    <span class='desc'>
+      class 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#delete-dynamic'>
+        #
+(void)
+<b>delete</b><span>(table, key, values, condition)</span>
+      </a>
+    </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
       class 
     </span>
@@ -137,7 +138,7 @@
     <p class='signature' id='init-dynamic'>
       #
 (void)
-<b>init</b><span>()</span>
+<b>init</b><span>(parent)</span>
       <br>
     </p>
     <div class='docstring'>
@@ -147,10 +148,11 @@
 </div>
   </div>
   <div class='method_details'>
-    <p class='signature' id='start-dynamic'>
+    <p class='signature' id='createTable-dynamic'>
       #
-(Object)
-<b>start</b><span>(id, data, expiresIn)</span>
+(void)
+<b>createTable</b><span>(params)</span>
+      <span class='bound note'>Bound</span>
       <br>
     </p>
     <div class='docstring'>
@@ -160,7 +162,34 @@
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>id</span>
+      <span class='name'>params</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='query-dynamic'>
+      #
+(void)
+<b>query</b><span>(table, attributes, values, expression)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>table</span>
       <span class='type'>
         (
           <tt>String</tt>
@@ -170,7 +199,7 @@
       <span class='desc'>class </span>
     </li>
     <li>
-      <span class='name'>data</span>
+      <span class='name'>attributes</span>
       <span class='type'>
         (
           <tt>Object</tt>
@@ -180,44 +209,7 @@
       <span class='desc'>class </span>
     </li>
     <li>
-      <span class='name'>expiresIn</span>
-      <span class='type'>
-        (
-          <tt>Number</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-  </ul>
-  <h3>Returns:</h3>
-  <ul class='return'>
-    <li>
-      <span class='type'></span>
-      (
-        <tt>Object</tt>
-      )
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-  </ul>
-</div>
-  </div>
-  <div class='method_details'>
-    <p class='signature' id='end-dynamic'>
-      #
-(void)
-<b>end</b><span>(obj, error)</span>
-      <br>
-    </p>
-    <div class='docstring'>
-  class 
-</div>
-<div class='tags'>
-  <h3>Parameters:</h3>
-  <ul class='param'>
-    <li>
-      <span class='name'>obj</span>
+      <span class='name'>values</span>
       <span class='type'>
         (
           <tt>Object</tt>
@@ -227,10 +219,10 @@
       <span class='desc'>class </span>
     </li>
     <li>
-      <span class='name'>error</span>
+      <span class='name'>expression</span>
       <span class='type'>
         (
-          <tt>Object</tt>
+          <tt>String</tt>
         )
       </span>
       &mdash;
@@ -243,7 +235,8 @@
     <p class='signature' id='get-dynamic'>
       #
 (void)
-<b>get</b><span>(id)</span>
+<b>get</b><span>(table, key)</span>
+      <span class='bound note'>Bound</span>
       <br>
     </p>
     <div class='docstring'>
@@ -253,7 +246,121 @@
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>id</span>
+      <span class='name'>table</span>
+      <span class='type'>
+        (
+          <tt>String</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+    <li>
+      <span class='name'>key</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='put-dynamic'>
+      #
+(void)
+<b>put</b><span>(table, item)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>table</span>
+      <span class='type'>
+        (
+          <tt>String</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+    <li>
+      <span class='name'>item</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='update-dynamic'>
+      #
+(void)
+<b>update</b><span>(table, key, values, expression, condition)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>table</span>
+      <span class='type'>
+        (
+          <tt>String</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+    <li>
+      <span class='name'>key</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+    <li>
+      <span class='name'>values</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+    <li>
+      <span class='name'>expression</span>
+      <span class='type'>
+        (
+          <tt>String</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+    <li>
+      <span class='name'>optional</span>
       <span class='type'>
         (
           <tt>String</tt>
@@ -266,23 +373,11 @@
 </div>
   </div>
   <div class='method_details'>
-    <p class='signature' id='cleanup-dynamic'>
+    <p class='signature' id='delete-dynamic'>
       #
 (void)
-<b>cleanup</b><span>()</span>
-      <br>
-    </p>
-    <div class='docstring'>
-  class 
-</div>
-<div class='tags'>
-</div>
-  </div>
-  <div class='method_details'>
-    <p class='signature' id='output-dynamic'>
-      #
-(Object)
-<b>output</b><span>(options)</span>
+<b>delete</b><span>(table, key, values, condition)</span>
+      <span class='bound note'>Bound</span>
       <br>
     </p>
     <div class='docstring'>
@@ -292,7 +387,17 @@
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>options</span>
+      <span class='name'>table</span>
+      <span class='type'>
+        (
+          <tt>String</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+    <li>
+      <span class='name'>key</span>
       <span class='type'>
         (
           <tt>Object</tt>
@@ -301,14 +406,23 @@
       &mdash;
       <span class='desc'>class </span>
     </li>
-  </ul>
-  <h3>Returns:</h3>
-  <ul class='return'>
     <li>
-      <span class='type'></span>
-      (
-        <tt>Object</tt>
-      )
+      <span class='name'>optional</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+    <li>
+      <span class='name'>optional</span>
+      <span class='type'>
+        (
+          <tt>String</tt>
+        )
+      </span>
       &mdash;
       <span class='desc'>class </span>
     </li>

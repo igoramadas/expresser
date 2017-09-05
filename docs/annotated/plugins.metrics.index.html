@@ -49,6 +49,11 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.dynamodb.html">
+                plugins/aws/dynamodb.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.aws.index.html">
                 plugins/aws/index.coffee
               </a>
@@ -348,11 +353,12 @@ monitoring systems.
               <p>Starts the counter for a specific metric. The data is optional.
 @param {String} id ID of the metric to be started.
 @param {Object} data Additional info about the current metric (URL data, for example).
+@param {Number} expiresIn Optional, metric should expire in these amount of seconds if not ended.
 @return {Object} Returns the metric object to be used later on <code>end</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(id, data)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(id, data, expiresIn)</span> -&gt;</span>
         logger.debug <span class="hljs-string">"Metrics.start"</span>, obj, data
         <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>, <span class="hljs-string">"start"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
 
@@ -370,6 +376,25 @@ monitoring systems.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
+              <p>Should the metric expire after some seconds?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> expiresIn? <span class="hljs-keyword">and</span> expiresIn &gt; <span class="hljs-number">0</span>
+<span class="hljs-function">            <span class="hljs-title">expiryTimeout</span> = =&gt;</span>
+                @end obj, <span class="hljs-string">"expired"</span>
+                obj.expired = <span class="hljs-literal">true</span>
+            obj.timeout = setTimeout expiryTimeout, expiresIn * <span class="hljs-number">1000</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
               <p>Create array of counters for the selected ID. Add metric to the beggining of the array.</p>
 
             </div>
@@ -382,11 +407,11 @@ monitoring systems.
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Ends the counter for the specified metric, with an optional error to be passed along.
 @param {Object} obj The metric object started previsouly on <code>start</code>.
@@ -397,18 +422,35 @@ monitoring systems.
             <div class="content"><div class='highlight'><pre>    end: <span class="hljs-function"><span class="hljs-params">(obj, error)</span> -&gt;</span>
         obj.endTime = moment().valueOf()
         obj.duration = obj.endTime - obj.startTime
-        obj.error = error
+        obj.error = error</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Clear the expiry timeout only if there’s one.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> obj.timeout?
+            clearTimeout obj.timeout
+            <span class="hljs-keyword">delete</span> obj.timeout
 
         logger.debug <span class="hljs-string">"Metrics.end"</span>, obj</pre></div></div>
             
         </li>
         
         
-        <li id="section-15">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Get collected data for the specified metric.
 @param {String} id ID of the metric.</p>
@@ -421,11 +463,36 @@ monitoring systems.
         </li>
         
         
-        <li id="section-16">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h2 id="cleanup">CLEANUP</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Clean collected metrics by removing data older than X minutes (defined on settings).
 Please note that this runs on s schedule so you shouldn’t need to call it manually, in most cases.</p>
@@ -442,11 +509,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-17">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Hold empty metric IDs.</p>
 
@@ -457,11 +524,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-18">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Iterate metrics collection.</p>
 
@@ -478,11 +545,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-19">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Iterate requests for the current metrics, last to first.</p>
 
@@ -495,11 +562,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-20">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Remove if verified as old. Otherwise, force finish the iteration.</p>
 
@@ -515,11 +582,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-21">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Delete empty metrics if enabled on settings.</p>
 
@@ -535,11 +602,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-22">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <h2 id="output">OUTPUT</h2>
 
@@ -548,11 +615,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-23">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               
             </div>
@@ -560,11 +627,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-24">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Generate the JSON output with all metrics.
 @param {Object} options Options to filter the output. Available options are same as settings.metrics.
@@ -581,11 +648,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-25">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Get all metrics keys.</p>
 
@@ -596,11 +663,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-26">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Set default options.</p>
 
@@ -615,11 +682,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-27">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Add server info to the output?</p>
 
@@ -636,11 +703,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-28">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>For each different metric…</p>
 
@@ -655,11 +722,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-29">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>Iterate intervals (for example 1m, 5m and 15m) to get specific stats.</p>
 
@@ -671,11 +738,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-30">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Stats for last 3 calls.</p>
 
@@ -695,11 +762,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-31">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Helper to generate summary for the specified interval.</p>
 
@@ -709,16 +776,17 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         now = moment().valueOf()
         values = []
         errorCount = <span class="hljs-number">0</span>
+        expiredCount = <span class="hljs-number">0</span>
         i = <span class="hljs-number">0</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-32">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Iterate logged metrics, and get only if corresponding to the specified interval.</p>
 
@@ -731,6 +799,7 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
             <span class="hljs-keyword">if</span> minutes &lt;= interval
                 values.push obj[i]
                 errorCount++ <span class="hljs-keyword">if</span> obj.error
+                expiredCount++ <span class="hljs-keyword">if</span> obj.expired
                 i++
             <span class="hljs-keyword">else</span>
                 i = obj.length</pre></div></div>
@@ -738,11 +807,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-33">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>All we care about is the duration for the relevant requests.</p>
 
@@ -755,11 +824,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-34">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Create a summary with the important stats for each metric.</p>
 
@@ -768,6 +837,7 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
             <div class="content"><div class='highlight'><pre>        summary = {}
         summary.calls = values.length
         summary.errors = errorCount
+        summary.expired = expiredCount
         summary.min = lodash.min(durations) <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>
         summary.max = lodash.max(durations) <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>
         summary.avg = avg <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>
@@ -776,11 +846,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-35">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>Get percentiles based on settings.</p>
 
@@ -794,11 +864,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-36">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>Helper to get summary for last calls.</p>
 
@@ -814,11 +884,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-37">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
@@ -827,11 +897,11 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         </li>
         
         
-        <li id="section-38">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               
             </div>
