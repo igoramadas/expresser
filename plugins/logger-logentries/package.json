@@ -14,7 +14,7 @@
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.0.0-beta4",
+        "coffeescript": "^2.0.0-beta5",
         "node-logentries": "~0.1.4"
     },
     "repository": {

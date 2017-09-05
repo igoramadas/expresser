@@ -94,7 +94,7 @@ class Metrics
         # Clear the expiry timeout only if there's one.
         if obj.timeout?
             clearTimeout obj.timeout
-            delet obj.timeout
+            delete obj.timeout
 
         logger.debug "Metrics.end", obj
 

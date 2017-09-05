@@ -3,6 +3,7 @@
 3.1.0
 =====
 * NEW! You can now set an expiry time (in seconds) for metrics.
+* NEW! Expired metrics count shown on output as "expired".
 
 3.0.2
 =====
