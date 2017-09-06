@@ -45,21 +45,41 @@ describe("AWS DynamoDB Tests", function() {
             return await aws.dynamodb.createTable(params)
         })
 
-        it("Create a new item on DynamoDB", async function() {
+        it("Create 5 new items on DynamoDB", async function() {
             this.timeout(30000)
+            await utils.io.sleep(10000)
 
-            await utils.io.sleep(12000)
+            var i, params
 
+            for (i = 1; i < 6; i++) {
+                params = {
+                    TableName: tableName,
+                    Item: {
+                        title: "item-" + i,
+                        random: Math.round(Math.random() * 100),
+                        details: "This is a test item " + i
+                    }
+                }
+
+                result = await aws.dynamodb.put(params)
+            }
+
+            return result
+        })
+
+        it("Query items from DynamoDB", async function() {
             var params = {
                 TableName: tableName,
-                Item: {
-                    title: "My test item",
-                    year: moment().year(),
-                    details: "This is a test item"
+                KeyConditionExpression: "#t = :title",
+                ExpressionAttributeNames: {
+                    "#t": "title"
+                },
+                ExpressionAttributeValues: {
+                    ":title": "item-1"
                 }
             }
 
-            return await aws.dynamodb.put(params)
+            return await aws.dynamodb.query(params)
         })
 
         it("Deletes the created test table on DynamoDB", async function() {
