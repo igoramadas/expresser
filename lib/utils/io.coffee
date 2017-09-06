@@ -8,6 +8,9 @@ class IoUtils
     lodash = require "lodash"
     path = require "path"
 
+    # FILE SYSTEM
+    # --------------------------------------------------------------------------
+
     # Helper to get the correct filename for general files. For example
     # the settings.json file or cron.json for cron jobs. This will look into the current
     # directory, the running directory and the root directory of the app.
@@ -78,6 +81,14 @@ class IoUtils
             return made
 
         return callback target
+
+    # EXECUTION
+    # --------------------------------------------------------------------------
+
+    # Helper to delay async code execution.
+    # @param {Number} milliseconds How long to stall the execution for.
+    sleep: (milliseconds) =>
+        return new Promise (resolve, reject) -> setTimeout(resolve, milliseconds)
 
 # Singleton implementation
 # --------------------------------------------------------------------------

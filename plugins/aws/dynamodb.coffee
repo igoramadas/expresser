@@ -48,6 +48,26 @@ class DynamoDB
 
                 return resolve data
 
+    # Deletes a table on DynamoDB.
+    # @param {Object} params The table parameters.
+    deleteTable: (params) =>
+        logger.debug "AWS.DynamoDB.deleteTable", params
+
+        return new Promise (resolve, reject) ->
+            if not settings.aws.enabled
+                return reject logger.notEnabled("AWS", "DynamoDB.createTable")
+
+            # Do some basic validation against the parameters.
+            if not params?.TableName?
+                return reject "A 'TableName' is mandatory."
+
+            db.deleteTable params, (err, data) ->
+                if err?
+                    logger.error "AWS.DynamoDB.deleteTable", params, err
+                    return reject err
+
+                return resolve data
+
     # ITEMS
     # -------------------------------------------------------------------------
 
@@ -112,25 +132,19 @@ class DynamoDB
                 return resolve data
 
     # Creates a new item on the specified table.
-    # @param {String} table The table name.
-    # @param {Object} item The item data.
-    put: (table, item) =>
-        logger.debug "AWS.DynamoDB.put", table, item
+    # @param {Object} params The item creation parameters.
+    put: (params) =>
+        logger.debug "AWS.DynamoDB.put", params
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
                 return reject logger.notEnabled("AWS", "DynamoDB.put")
 
             # Do some basic validation against the parameters.
-            if not table? or table is ""
-                return reject "Please specify a valid table name."
-            if not item?
-                return reject "The item must be a valid object."
-
-            params = {
-                TableName: table
-                Item: item
-            }
+            if not params.TableName? or params.TableName is ""
+                return reject "Please specify a valid TableName."
+            if not params.Item?
+                return reject "The Item must be a valid object."
 
             docClient.put params, (err, data) ->
                 if err?
@@ -145,7 +159,7 @@ class DynamoDB
     # @param {Object} values Key/values equivalent to the ExpressionAttributeValues.
     # @param {String} expression Expression equivalent to the UpdateExpression.
     # @param optional {String} condition Optional condition expression.
-    update: (table, key, values, expression, condition) =>
+    update: (params) =>
         logger.debug "AWS.DynamoDB.update", table, key, data
 
         return new Promise (resolve, reject) ->

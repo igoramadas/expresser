@@ -37,7 +37,7 @@
         "mimoza": "^1.0.0",
         "moment": "^2.18.1",
         "pako": "^1.0.5",
-        "postcss": "^6.0.10",
+        "postcss": "^6.0.11",
         "pug": "^2.0.0-rc.3",
         "source-map": "^0.5.7",
         "stylus": "^0.54.5",
@@ -46,7 +46,7 @@
     "devDependencies": {
         "@google-cloud/datastore": "^1.1.0",
         "@google-cloud/storage": "^1.2.1",
-        "aws-sdk": "^2.108.0",
+        "aws-sdk": "^2.109.0",
         "bettercodo": "^2.1.4",
         "betterdocco": "^0.7.6",
         "chai": "^4.1.2",

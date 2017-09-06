@@ -1,20 +1,20 @@
 // TEST: MAIN
 
-require("coffeescript/register");
-var env = process.env;
-var chai = require("chai");
-chai.should();
+require("coffeescript/register")
+var env = process.env
+var chai = require("chai")
+chai.should()
 
-describe("Expresser (Main) Tests", function () {
-    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
+describe("Expresser (Main) Tests", function() {
+    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test"
 
-    var expresser = require("../index.coffee").newInstance();
+    var expresser = require("../index.coffee").newInstance()
 
-    before(function () {
-        expresser.settings.loadFromJson("settings.test.json");
-    });
+    before(function() {
+        expresser.settings.loadFromJson("settings.test.json")
+    })
 
-    it("Inits", function () {
-        expresser.init();
-    });
-});
+    it("Inits", function() {
+        expresser.init()
+    })
+})
