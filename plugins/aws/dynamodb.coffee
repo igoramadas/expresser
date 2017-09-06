@@ -7,7 +7,10 @@ class DynamoDB
 
     logger = null
     settings = null
+
+    # Database and document clients are created on init.
     db = null
+    docClient = null
 
     # INIT
     # -------------------------------------------------------------------------
@@ -18,12 +21,12 @@ class DynamoDB
         settings = parent.expresser.settings
 
         # Create the DynamoDB handler.
-        db = new aws.DynamoDB {region: settings.aws.sns.region}
-        docClient = new aws.DynamoDB.DocumentClient()
+        db = new aws.DynamoDB {region: settings.aws.dynamodb.region}
+        docClient = new aws.DynamoDB.DocumentClient {region: settings.aws.dynamodb.region}
 
         delete @init
 
-    # TABLES
+    # TABLES AND MANAGEMENT
     # -------------------------------------------------------------------------
 
     # Creates a new table on DynamoDB.
@@ -55,7 +58,7 @@ class DynamoDB
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "DynamoDB.createTable")
+                return reject logger.notEnabled("AWS", "DynamoDB.deleteTable")
 
             # Do some basic validation against the parameters.
             if not params?.TableName?
@@ -64,6 +67,24 @@ class DynamoDB
             db.deleteTable params, (err, data) ->
                 if err?
                     logger.error "AWS.DynamoDB.deleteTable", params, err
+                    return reject err
+
+                return resolve data
+
+    # Waits for the specified event to be triggered.
+    # @param {String} evt The event name.
+    # @param {Object} params The table parameters.
+    waitFor: (evt, params) =>
+        logger.debug "AWS.DynamoDB.waitFor", evt, params
+
+        # Do some basic validation against the parameters.
+        if not evt?
+            return reject "The event name is mandatory."
+
+        return new Promise (resolve, reject) ->
+            db.waitFor evt, params, (err, data) ->
+                if err?
+                    logger.error "AWS.DynamoDB.waitFor", evt, params, err
                     return reject err
 
                 return resolve data
@@ -148,7 +169,7 @@ class DynamoDB
 
             docClient.put params, (err, data) ->
                 if err?
-                    logger.error "AWS.DynamoDB.put", table, err
+                    logger.error "AWS.DynamoDB.put", err
                     return reject err
 
                 return resolve data
@@ -160,7 +181,7 @@ class DynamoDB
     # @param {String} expression Expression equivalent to the UpdateExpression.
     # @param optional {String} condition Optional condition expression.
     update: (params) =>
-        logger.debug "AWS.DynamoDB.update", table, key, data
+        logger.debug "AWS.DynamoDB.update", params
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
@@ -190,12 +211,9 @@ class DynamoDB
                 return resolve data
 
     # Deletes an item from the specified table.
-    # @param {String} table The table name.
-    # @param {Object} key The item data.
-    # @param optional {Object} values Optional key/values equivalent to the ExpressionAttributeValues.
-    # @param optional {String} condition Optional condition expression.
-    delete: (table, key, values, condition) =>
-        logger.debug "AWS.DynamoDB.delete", table, item
+    # @param {Object} params The item deletion parameters.
+    delete: (params) =>
+        logger.debug "AWS.DynamoDB.delete", params
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled

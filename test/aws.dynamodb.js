@@ -46,9 +46,9 @@ describe("AWS DynamoDB Tests", function() {
         })
 
         it("Create a new item on DynamoDB", async function() {
-            this.timeout(20000)
+            this.timeout(30000)
 
-            await utils.io.sleep(10000)
+            await utils.io.sleep(12000)
 
             var params = {
                 TableName: tableName,
@@ -63,8 +63,6 @@ describe("AWS DynamoDB Tests", function() {
         })
 
         it("Deletes the created test table on DynamoDB", async function() {
-            await utils.io.sleep(1000)
-
             var params = {
                 TableName: tableName
             }
