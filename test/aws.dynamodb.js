@@ -14,6 +14,9 @@ describe("AWS DynamoDB Tests", function() {
     var aws = null
     var hasKeys = false
     var tableName = "Test-" + moment().unix()
+    var emptyTitle = "empty"
+    var emptyYear = 1999
+    var itemsCount = 5
 
     if (env["AWS_ACCESS_KEY_ID"] || env["AWS_SECRET_ACCESS_KEY"] || env["AWS_CONFIGURED"]) {
         hasKeys = true
@@ -35,29 +38,61 @@ describe("AWS DynamoDB Tests", function() {
 
     if (hasKeys) {
         it("Create a table on DynamoDB", async function() {
+            this.timeout(30000)
+
             var params = {
                 TableName: tableName,
-                KeySchema: [{ AttributeName: "title", KeyType: "HASH" }],
-                AttributeDefinitions: [{ AttributeName: "title", AttributeType: "S" }],
-                ProvisionedThroughput: { ReadCapacityUnits: 1, WriteCapacityUnits: 1 }
+                ProvisionedThroughput: { ReadCapacityUnits: 1, WriteCapacityUnits: 1 },
+                KeySchema: [
+                    {
+                        AttributeName: "year",
+                        KeyType: "HASH"
+                    },
+                    {
+                        AttributeName: "title",
+                        KeyType: "RANGE"
+                    }
+                ],
+                AttributeDefinitions: [
+                    {
+                        AttributeName: "year",
+                        AttributeType: "N"
+                    },
+                    {
+                        AttributeName: "title",
+                        AttributeType: "S"
+                    }
+                ]
             }
 
-            return await aws.dynamodb.createTable(params)
+            var result = await aws.dynamodb.createTable(params)
+            await utils.io.sleep(10000)
+
+            return result
+        })
+
+        it("Create a new single item with empty details", async function() {
+            var params = {
+                TableName: tableName,
+                Item: {
+                    year: emptyYear,
+                    title: emptyTitle
+                }
+            }
+
+            return await aws.dynamodb.put(params)
         })
 
         it("Create 5 new items on DynamoDB", async function() {
-            this.timeout(30000)
-            await utils.io.sleep(10000)
-
             var i, params
 
-            for (i = 1; i < 6; i++) {
+            for (i = 1; i <= itemsCount; i++) {
                 params = {
                     TableName: tableName,
                     Item: {
+                        year: Math.round(Math.random() * 18) + 2000,
                         title: "item-" + i,
-                        random: Math.round(Math.random() * 100),
-                        details: "This is a test item " + i
+                        details: "This is item " + i + " out of " + itemsCount
                     }
                 }
 
@@ -67,19 +102,78 @@ describe("AWS DynamoDB Tests", function() {
             return result
         })
 
-        it("Query items from DynamoDB", async function() {
+        it("Scan non empty items from DynamoDB, must return 5 items", async function() {
             var params = {
                 TableName: tableName,
-                KeyConditionExpression: "#t = :title",
+                FilterExpression: "#yr > :num",
                 ExpressionAttributeNames: {
-                    "#t": "title"
+                    "#yr": "year"
                 },
                 ExpressionAttributeValues: {
-                    ":title": "item-1"
+                    ":num": emptyYear
                 }
             }
 
-            return await aws.dynamodb.query(params)
+            var result = await aws.dynamodb.scan(params)
+            var count = result.Items ? result.Items.length : 0
+
+            if (count == itemsCount) {
+                return result
+            } else {
+                throw "Should return " + itemsCount + " items, but got " + count
+            }
+        })
+
+        it("Query empty items from DynamoDB, must return 1 item", async function() {
+            var params = {
+                TableName: tableName,
+                KeyConditionExpression: "#y = :num",
+                ExpressionAttributeNames: {
+                    "#y": "year"
+                },
+                ExpressionAttributeValues: {
+                    ":num": emptyYear
+                }
+            }
+
+            var result = await aws.dynamodb.query(params)
+            var count = result.Items ? result.Items.length : 0
+
+            if (count == 1) {
+                return result
+            } else {
+                throw "Should return " + itemsCount + " items, but got " + count
+            }
+        })
+
+        it("Get the empty item created on previous test", async function() {
+            var params = {
+                TableName: tableName,
+                Key: {
+                    year: emptyYear,
+                    title: emptyTitle
+                }
+            }
+
+            var result = await aws.dynamodb.get(params)
+
+            if (result.Item) {
+                return result
+            } else {
+                throw "Did not return the '" + emptyTitle + "' item created on the previous test."
+            }
+        })
+
+        it("Deletes the empty item created on previous test", async function() {
+            var params = {
+                TableName: tableName,
+                Key: {
+                    year: emptyYear,
+                    title: emptyTitle
+                }
+            }
+
+            return await aws.dynamodb.delete(params)
         })
 
         it("Deletes the created test table on DynamoDB", async function() {

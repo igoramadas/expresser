@@ -26,137 +26,61 @@ class DynamoDB
 
         delete @init
 
+    # SDK HELPER
+    # -------------------------------------------------------------------------
+
+    # Helper to call the SDK method with the specified parameters.
+    sdkCall = (obj, method, params) ->
+        logger.debug "AWS.DynamoDB.#{method}", params
+
+        return new Promise (resolve, reject) ->
+            if not settings.aws.enabled
+                return reject logger.notEnabled("AWS", "DynamoDB.#{method}")
+
+            obj[method] params, (err, data) ->
+                if err?
+                    logger.error "AWS.DynamoDB.#{method}", params, err
+                    return reject err
+
+                return resolve data
+
     # TABLES AND MANAGEMENT
     # -------------------------------------------------------------------------
 
     # Creates a new table on DynamoDB.
     # @param {Object} params The table parameters.
-    createTable: (params) =>
-        logger.debug "AWS.DynamoDB.createTable", params
-
-        return new Promise (resolve, reject) ->
-            if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "DynamoDB.createTable")
-
-            db.createTable params, (err, data) ->
-                if err?
-                    logger.error "AWS.DynamoDB.createTable", params, err
-                    return reject err
-
-                return resolve data
+    createTable: (params) => return sdkCall db, "createTable", params
 
     # Deletes a table on DynamoDB.
     # @param {Object} params The table parameters.
-    deleteTable: (params) =>
-        logger.debug "AWS.DynamoDB.deleteTable", params
-
-        return new Promise (resolve, reject) ->
-            if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "DynamoDB.deleteTable")
-
-            db.deleteTable params, (err, data) ->
-                if err?
-                    logger.error "AWS.DynamoDB.deleteTable", params, err
-                    return reject err
-
-                return resolve data
-
-    # Waits for the specified event to be triggered.
-    # @param {String} evt The event name.
-    # @param {Object} params The event trigger parameters.
-    waitFor: (evt, params) =>
-        logger.debug "AWS.DynamoDB.waitFor", evt, params
-
-        return new Promise (resolve, reject) ->
-            db.waitFor evt, params, (err, data) ->
-                if err?
-                    logger.error "AWS.DynamoDB.waitFor", evt, params, err
-                    return reject err
-
-                return resolve data
+    deleteTable: (params) => return sdkCall db, "deleteTable", params
 
     # ITEMS
     # -------------------------------------------------------------------------
 
-    # Read an item from the specified table.
+    # Gets all items (with optional filter) from the specified table.
     # @param {Object} params The query parameters.
-    query: (params) =>
-        logger.debug "AWS.DynamoDB.query", params
+    scan: (params) => return sdkCall docClient, "scan", params
 
-        return new Promise (resolve, reject) ->
-            if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "DynamoDB.query")
-
-            docClient.query params, (err, data) ->
-                if err?
-                    logger.error "AWS.DynamoDB.query", params, err
-                    return reject err
-
-                return resolve data
+    # Query item(s) from the specified table.
+    # @param {Object} params The query parameters.
+    query: (params) => return sdkCall docClient, "query", params
 
     # Read an item from the specified table.
     # @param {Object} params The item parameters.
-    get: (params) =>
-        logger.debug "AWS.DynamoDB.get", params
-
-        return new Promise (resolve, reject) ->
-            if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "DynamoDB.get")
-
-            docClient.get params, (err, data) ->
-                if err?
-                    logger.error "AWS.DynamoDB.get", params, err
-                    return reject err
-
-                return resolve data
+    get: (params) => return sdkCall docClient, "get", params
 
     # Creates a new item on the specified table.
     # @param {Object} params The item creation parameters.
-    put: (params) =>
-        logger.debug "AWS.DynamoDB.put", params
+    put: (params) => return sdkCall docClient, "put", params
 
-        return new Promise (resolve, reject) ->
-            if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "DynamoDB.put")
-
-            docClient.put params, (err, data) ->
-                if err?
-                    logger.error "AWS.DynamoDB.put", params, err
-                    return reject err
-
-                return resolve data
-
-    # Update an item on the specified table.
+    # Update item(s) on the specified table.
     # @param {Object} params The item update parameters.
-    update: (params) =>
-        logger.debug "AWS.DynamoDB.update", params
+    update: (params) => return sdkCall docClient, "update", params
 
-        return new Promise (resolve, reject) ->
-            if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "DynamoDB.update")
-
-            docClient.update params, (err, data) ->
-                if err?
-                    logger.error "AWS.DynamoDB.update", params, err
-                    return reject err
-
-                return resolve data
-
-    # Deletes an item from the specified table.
+    # Deletes item(s) from the specified table.
     # @param {Object} params The item deletion parameters.
-    delete: (params) =>
-        logger.debug "AWS.DynamoDB.delete", params
-
-        return new Promise (resolve, reject) ->
-            if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "DynamoDB.delete")
-
-            docClient.delete params, (err, data) ->
-                if err?
-                    logger.error "AWS.DynamoDB.delete", params, err
-                    return reject err
-
-                return resolve data
+    delete: (params) => return sdkCall docClient, "delete", params
 
 # Singleton implementation
 # -----------------------------------------------------------------------------
