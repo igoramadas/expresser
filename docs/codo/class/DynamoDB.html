@@ -68,10 +68,36 @@
   </li>
   <li>
     <span class='signature'>
+      <a href='#deleteTable-dynamic'>
+        #
+(void)
+<b>deleteTable</b><span>(params)</span>
+      </a>
+    </span>
+    <span class='bound note title'>Bound</span>
+    <span class='desc'>
+      class 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#scan-dynamic'>
+        #
+(void)
+<b>scan</b><span>(params)</span>
+      </a>
+    </span>
+    <span class='bound note title'>Bound</span>
+    <span class='desc'>
+      class 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
       <a href='#query-dynamic'>
         #
 (void)
-<b>query</b><span>(table, attributes, values, expression)</span>
+<b>query</b><span>(params)</span>
       </a>
     </span>
     <span class='bound note title'>Bound</span>
@@ -84,7 +110,7 @@
       <a href='#get-dynamic'>
         #
 (void)
-<b>get</b><span>(table, key)</span>
+<b>get</b><span>(params)</span>
       </a>
     </span>
     <span class='bound note title'>Bound</span>
@@ -97,7 +123,7 @@
       <a href='#put-dynamic'>
         #
 (void)
-<b>put</b><span>(table, item)</span>
+<b>put</b><span>(params)</span>
       </a>
     </span>
     <span class='bound note title'>Bound</span>
@@ -110,7 +136,7 @@
       <a href='#update-dynamic'>
         #
 (void)
-<b>update</b><span>(table, key, values, expression, condition)</span>
+<b>update</b><span>(params)</span>
       </a>
     </span>
     <span class='bound note title'>Bound</span>
@@ -123,7 +149,7 @@
       <a href='#delete-dynamic'>
         #
 (void)
-<b>delete</b><span>(table, key, values, condition)</span>
+<b>delete</b><span>(params)</span>
       </a>
     </span>
     <span class='bound note title'>Bound</span>
@@ -175,10 +201,10 @@
 </div>
   </div>
   <div class='method_details'>
-    <p class='signature' id='query-dynamic'>
+    <p class='signature' id='deleteTable-dynamic'>
       #
 (void)
-<b>query</b><span>(table, attributes, values, expression)</span>
+<b>deleteTable</b><span>(params)</span>
       <span class='bound note'>Bound</span>
       <br>
     </p>
@@ -189,17 +215,7 @@
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>table</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>attributes</span>
+      <span class='name'>params</span>
       <span class='type'>
         (
           <tt>Object</tt>
@@ -208,8 +224,25 @@
       &mdash;
       <span class='desc'>class </span>
     </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='scan-dynamic'>
+      #
+(void)
+<b>scan</b><span>(params)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
     <li>
-      <span class='name'>values</span>
+      <span class='name'>params</span>
       <span class='type'>
         (
           <tt>Object</tt>
@@ -218,11 +251,28 @@
       &mdash;
       <span class='desc'>class </span>
     </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='query-dynamic'>
+      #
+(void)
+<b>query</b><span>(params)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
     <li>
-      <span class='name'>expression</span>
+      <span class='name'>params</span>
       <span class='type'>
         (
-          <tt>String</tt>
+          <tt>Object</tt>
         )
       </span>
       &mdash;
@@ -235,7 +285,7 @@
     <p class='signature' id='get-dynamic'>
       #
 (void)
-<b>get</b><span>(table, key)</span>
+<b>get</b><span>(params)</span>
       <span class='bound note'>Bound</span>
       <br>
     </p>
@@ -246,17 +296,7 @@
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>table</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>key</span>
+      <span class='name'>params</span>
       <span class='type'>
         (
           <tt>Object</tt>
@@ -272,7 +312,7 @@
     <p class='signature' id='put-dynamic'>
       #
 (void)
-<b>put</b><span>(table, item)</span>
+<b>put</b><span>(params)</span>
       <span class='bound note'>Bound</span>
       <br>
     </p>
@@ -283,17 +323,7 @@
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>table</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>item</span>
+      <span class='name'>params</span>
       <span class='type'>
         (
           <tt>Object</tt>
@@ -309,7 +339,7 @@
     <p class='signature' id='update-dynamic'>
       #
 (void)
-<b>update</b><span>(table, key, values, expression, condition)</span>
+<b>update</b><span>(params)</span>
       <span class='bound note'>Bound</span>
       <br>
     </p>
@@ -320,50 +350,10 @@
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>table</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>key</span>
+      <span class='name'>params</span>
       <span class='type'>
         (
           <tt>Object</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>values</span>
-      <span class='type'>
-        (
-          <tt>Object</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>expression</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>optional</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
         )
       </span>
       &mdash;
@@ -376,7 +366,7 @@
     <p class='signature' id='delete-dynamic'>
       #
 (void)
-<b>delete</b><span>(table, key, values, condition)</span>
+<b>delete</b><span>(params)</span>
       <span class='bound note'>Bound</span>
       <br>
     </p>
@@ -387,40 +377,10 @@
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>table</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>key</span>
+      <span class='name'>params</span>
       <span class='type'>
         (
           <tt>Object</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>optional</span>
-      <span class='type'>
-        (
-          <tt>Object</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>optional</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
         )
       </span>
       &mdash;
