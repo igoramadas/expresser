@@ -24,6 +24,7 @@
     "keywords": [
         "amazon web services",
         "aws",
+        "dynamodb",
         "expresser",
         "s3",
         "sns"
