@@ -4,6 +4,7 @@
 =====
 * NEW! You can now set an expiry time (in seconds) for metrics.
 * NEW! Expired metrics count shown on output as "expired".
+* Changed default intervals and percentiles on output.
 
 3.0.2
 =====
