@@ -142,7 +142,7 @@ class Metrics
 
         # Delete empty metrics if enabled on settings.
         if settings.metrics.cleanupEmpty and emptyIds.length > 0
-            for key in emptyids
+            for key in emptyIds
                 delete metrics[key]
 
         if counter > 0 and keyCounter > 0
