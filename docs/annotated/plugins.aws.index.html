@@ -280,7 +280,15 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">-&gt;</span>
+            <div class="content"><div class='highlight'><pre>    setEvents: <span class="hljs-function">=&gt;</span>
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.DynamoDB.createTable"</span>, @dynamodb.createTable
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.DynamoDB.deleteTable"</span>, @dynamodb.deleteTable
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.DynamoDB.scan"</span>, @dynamodb.scan
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.DynamoDB.query"</span>, @dynamodb.query
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.DynamoDB.get"</span>, @dynamodb.get
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.DynamoDB.put"</span>, @dynamodb.put
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.DynamoDB.update"</span>, @dynamodb.update
+        events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.DynamoDB.delete"</span>, @dynamodb.<span class="hljs-keyword">delete</span>
         events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.S3.download"</span>, @s3.download
         events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.S3.upload"</span>, @s3.upload
         events.<span class="hljs-literal">on</span> <span class="hljs-string">"AWS.SNS.publish"</span>, @sns.publish</pre></div></div>
