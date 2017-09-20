@@ -1,5 +1,10 @@
 # Changelog for expresser-metrics
 
+3.1.1
+=====
+* BREAKING! Metrics expiration is now passed as milliseconds instead of seconds.
+* Fixed metrics "expired" and "error" counters.
+
 3.1.0
 =====
 * NEW! You can now set an expiry time (in seconds) for metrics.

@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.0.5
+=====
+* Updated dependencies.
+
 3.0.4
 =====
 * NEW! Helper function "sleep" on IO utils to delay async code execution.

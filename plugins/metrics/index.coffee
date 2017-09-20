@@ -59,23 +59,27 @@ class Metrics
     # Starts the counter for a specific metric. The data is optional.
     # @param {String} id ID of the metric to be started.
     # @param {Object} data Additional info about the current metric (URL data, for example).
-    # @param {Number} expiresIn Optional, metric should expire in these amount of seconds if not ended.
+    # @param {Number} expiresIn Optional, metric should expire in these amount of milliseconds if not ended.
     # @return {Object} Returns the metric object to be used later on `end`.
     start: (id, data, expiresIn) ->
-        logger.debug "Metrics.start", obj, data
+        logger.debug "Metrics.start", obj, data, expiresIn
         return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
+
+        expiresIn = 0 if not expiresIn?
 
         obj = {}
         obj.id = id
         obj.data = data
         obj.startTime = moment().valueOf()
 
-        # Should the metric expire after some seconds?
-        if expiresIn? and expiresIn > 0
+        # Should the metric expire (value in milliseconds)?
+        if expiresIn > 0
             expiryTimeout = =>
-                @end obj, "expired"
+                logger.debug "Metrics.start", "Expired!", obj
                 obj.expired = true
-            obj.timeout = setTimeout expiryTimeout, expiresIn * 1000
+                @end obj
+
+            obj.timeout = setTimeout expiryTimeout, expiresIn
 
         # Create array of counters for the selected ID. Add metric to the beggining of the array.
         metrics[id] = [] if not metrics[id]?
@@ -217,8 +221,8 @@ class Metrics
 
             if minutes <= interval
                 values.push obj[i]
-                errorCount++ if obj.error
-                expiredCount++ if obj.expired
+                errorCount++ if obj[i].error
+                expiredCount++ if obj[i].expired
                 i++
             else
                 i = obj.length

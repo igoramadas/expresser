@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "3.0.4",
+    "version": "3.0.5",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -46,7 +46,7 @@
     "devDependencies": {
         "@google-cloud/datastore": "^1.1.0",
         "@google-cloud/storage": "^1.2.1",
-        "aws-sdk": "^2.118.0",
+        "aws-sdk": "^2.119.0",
         "bettercodo": "^2.1.4",
         "betterdocco": "^0.7.6",
         "chai": "^4.1.2",

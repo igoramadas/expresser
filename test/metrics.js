@@ -63,9 +63,27 @@ describe("Metrics Tests", function() {
         done()
     })
 
+    it("Expire metrics", function(done) {
+        this.timeout(5000)
+
+        var mt = metrics.start("expiredCall", 0, 100)
+
+        var callback = function() {
+            var output = metrics.output()
+            var expired = output.expiredCall.last_1min.expired
+
+            if (expired > 0) {
+                done()
+            } else {
+                done("Output should have 1 expired metric for expiredCall, but has " + expired + ".")
+            }
+        }
+
+        setTimeout(callback, 800)
+    })
+
     it("Output has system metrics", function(done) {
-        metrics.output()
-        output = metrics.output()
+        var output = metrics.output()
 
         if (!output.system || !output.system.loadAvg || !output.system.memoryUsage) {
             done("Metrics output expects server's loadAvg and memoryUsage.")
