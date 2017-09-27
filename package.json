@@ -24,7 +24,7 @@
         "chalk": "^2.1.0",
         "coffeescript": "^2.0.1",
         "compressible": "^2.0.11",
-        "compression": "^1.7.0",
+        "compression": "^1.7.1",
         "cookie-parser": "^1.4.3",
         "cookie-session": "^1.3.2",
         "csswring": "^6.0.1",
@@ -46,7 +46,7 @@
     "devDependencies": {
         "@google-cloud/datastore": "^1.1.0",
         "@google-cloud/storage": "^1.3.0",
-        "aws-sdk": "^2.122.0",
+        "aws-sdk": "^2.123.0",
         "bettercodo": "^2.1.4",
         "betterdocco": "^0.7.6",
         "chai": "^4.1.2",
