@@ -1,120 +1,134 @@
 // TEST: APP HTTP
 
-require("coffeescript/register");
-var env = process.env;
-var chai = require("chai");
-chai.should();
+require("coffeescript/register")
+var env = process.env
+var chai = require("chai")
+chai.should()
 
 describe("App HTTP Tests", function() {
-    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test";
+    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test"
 
-    var settings = require("../lib/settings.coffee");
-    var app = null;
-    var supertest = require("supertest");
+    var settings = require("../lib/settings.coffee")
+    var app = null
+    var supertest = require("supertest")
 
     before(function() {
-        settings.loadFromJson("settings.test.json");
-        settings.app.port = 18001;
-        settings.app.ssl.enabled = false;
+        settings.loadFromJson("settings.test.json")
+        settings.app.port = 18001
+        settings.app.ssl.enabled = false
 
-        app = require("../lib/app.coffee").newInstance();
-    });
+        app = require("../lib/app.coffee").newInstance()
+    })
 
     after(function() {
-        app.kill();
-    });
+        app.kill()
+    })
 
     it("Has app settings defined", function() {
-        settings.should.have.property("app");
-    });
+        settings.should.have.property("app")
+    })
 
     it("Init HTTP server with custom middleware, port 18001", function() {
-        this.timeout(10000);
+        this.timeout(10000)
 
         var middleware = function(req, res, next) {
             if (req.path == "/middleware") {
                 res.json({
                     ok: true
-                });
+                })
             }
 
-            next();
-        };
+            next()
+        }
 
-        app.appendMiddlewares.push(middleware);
-        app.init();
-    });
+        app.appendMiddlewares.push(middleware)
+        app.init()
+    })
 
     it("Renders a test view", function(done) {
-        this.timeout(5000);
+        this.timeout(5000)
 
         app.server.get("/testview", function(req, res) {
-            app.renderView(req, res, "testview.pug");
-        });
+            app.renderView(req, res, "testview.pug")
+        })
 
-        supertest(app.server).get("/testview").expect(200, done);
-    });
+        supertest(app.server)
+            .get("/testview")
+            .expect(200, done)
+    })
 
     it("Renders a JSON object", function(done) {
-        this.timeout(5000);
+        this.timeout(5000)
 
         app.server.get("/testjson", function(req, res) {
             var j = {
-                "string": "some value",
-                "boolean": true,
-                "int": 123,
-                "date": new Date()
+                string: "some value",
+                boolean: true,
+                int: 123,
+                date: new Date()
             }
 
-            app.renderJson(req, res, j);
-        });
+            app.renderJson(req, res, j)
+        })
 
-        supertest(app.server).get("/testjson").expect("Content-Type", /json/).expect(200, done);
-    });
+        supertest(app.server)
+            .get("/testjson")
+            .expect("Content-Type", /json/)
+            .expect(200, done)
+    })
 
     it("Renders an error with status 500", function(done) {
-        this.timeout(5000);
+        this.timeout(5000)
 
         app.server.get("/testerror", function(req, res) {
             var e = {
-                "somerror": new Error("Access was denied"),
-                "timestamp": new Date().getTime()
+                somerror: new Error("Access was denied"),
+                timestamp: new Date().getTime()
             }
 
-            app.renderError(req, res, e, 500);
-        });
+            app.renderError(req, res, e, 500)
+        })
 
-        supertest(app.server).get("/testerror").expect("Content-Type", /json/).expect(500, done);
-    });
+        supertest(app.server)
+            .get("/testerror")
+            .expect("Content-Type", /json/)
+            .expect(500, done)
+    })
 
     it("Renders a JPG image", function(done) {
-        this.timeout(5000);
+        this.timeout(5000)
 
         app.server.get("/testjpg", function(req, res) {
-            app.renderImage(req, res, __dirname + "/testimage.jpg");
-        });
+            app.renderImage(req, res, __dirname + "/testimage.jpg")
+        })
 
-        supertest(app.server).get("/testjpg").expect("Content-Type", /image/).expect(200, done);
-    });
+        supertest(app.server)
+            .get("/testjpg")
+            .expect("Content-Type", /image/)
+            .expect(200, done)
+    })
 
     it("Test custom middleware on route /middleware", function(done) {
-        this.timeout(5000);
+        this.timeout(5000)
 
-        supertest(app.server).get("/middleware").expect("Content-Type", /json/).expect(200, done);
-    });
+        supertest(app.server)
+            .get("/middleware")
+            .expect("Content-Type", /json/)
+            .expect(200, done)
+    })
 
     it("Lists all registered routes on the server", function(done) {
-        var routes = app.getRoutes();
-        var simpleRoutes = app.getRoutes(true);
+        var routes = app.getRoutes()
+        var simpleRoutes = app.getRoutes(true)
 
         if (simpleRoutes.length == routes.length) {
-            done();
+            done()
         } else {
-            done("The getRoutes should return same length for when `simple` is true or false.");
+            done("The getRoutes should return same length for when `simple` is true or false.")
         }
-    });
+    })
 
     it("Kills the server", function() {
-        app.kill();
-    });
-});
+        app.kill()
+    })
+})

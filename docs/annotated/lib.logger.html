@@ -49,6 +49,11 @@
               </a>
             
               
+              <a class="source" href="plugins.aws.dynamodb.html">
+                plugins/aws/dynamodb.coffee
+              </a>
+            
+              
               <a class="source" href="plugins.aws.index.html">
                 plugins/aws/index.coffee
               </a>
@@ -745,7 +750,7 @@ All arguments are transformed to readable strings.</p>
             
             <div class="content"><div class='highlight'><pre>    notEnabled: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-built_in">module</span>, func)</span> -&gt;</span>
         @console <span class="hljs-string">"debug"</span>, <span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-built_in">module</span>}</span>.<span class="hljs-subst">#{func}</span> abort! <span class="hljs-subst">#{<span class="hljs-built_in">module</span>}</span> is not enabled."</span>
-        <span class="hljs-keyword">return</span> {notEnabled: <span class="hljs-literal">true</span>}</pre></div></div>
+        <span class="hljs-keyword">return</span> {error: <span class="hljs-string">"Module <span class="hljs-subst">#{<span class="hljs-built_in">module</span>}</span> is not enabled."</span>, notEnabled: <span class="hljs-literal">true</span>}</pre></div></div>
             
         </li>
         

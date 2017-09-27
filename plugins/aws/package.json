@@ -1,6 +1,6 @@
 {
     "name": "expresser-aws",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "description": "Wrapper for the AWS SDK on Expresser apps.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -14,8 +14,8 @@
         "node": "*"
     },
     "dependencies": {
-        "aws-sdk": "^2.105.0",
-        "coffeescript": "^2.0.0-beta4"
+        "aws-sdk": "^2.123.0",
+        "coffeescript": "^2.0.1"
     },
     "repository": {
         "type": "git",
@@ -24,6 +24,7 @@
     "keywords": [
         "amazon web services",
         "aws",
+        "dynamodb",
         "expresser",
         "s3",
         "sns"

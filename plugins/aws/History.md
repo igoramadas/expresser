@@ -1,18 +1,22 @@
 # Changelog for expresser-aws
 
+3.1.1
+=====
+* Updated AWS SDK.
+
 3.1.0
 =====
 * NEW! DynamoDB is now implemented on the module.
-* NEW! You can now access the actuall SDK: require("expresser-aws").sdk.
+* Updated AWS SDK.
 
 3.0.2
 =====
 * Improved handling of S3 downloads and uploads.
-* Updated AWS dependency.
+* Updated AWS SDK.
 
 3.0.1
 =====
-* Updated AWS dependency.
+* Updated AWS SDK.
 
 3.0.0
 =====
@@ -25,11 +29,11 @@
 
 1.0.4
 =====
-* Updated AWS module to 2.73.x.
+* Updated AWS SDK.
 
 1.0.3
 =====
-* Updated AWS module to 2.55.x.
+* Updated AWS SDK.
 
 1.0.2
 =====

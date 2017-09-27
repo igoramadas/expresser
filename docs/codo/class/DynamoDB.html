@@ -19,18 +19,18 @@
       Index
     </a>
     &raquo;
-    <span class='title'>IoUtils</span>
+    <span class='title'>DynamoDB</span>
   </div>
 </div>
     <div id='content'>
       <h1>
         Class:
-        IoUtils
+        DynamoDB
       </h1>
       <table class='box'>
         <tr>
           <td>Defined in:</td>
-          <td>lib&#47;utils&#47;io.coffee</td>
+          <td>plugins&#47;aws&#47;dynamodb.coffee</td>
         </tr>
       </table>
       <h2>Overview</h2>
@@ -43,21 +43,10 @@
       <ul class='summary'>
   <li>
     <span class='signature'>
-      <a href='#newInstance-dynamic'>
+      <a href='#init-dynamic'>
         #
 (void)
-<b>newInstance</b><span>()</span>
-      </a>
-    </span>
-    <span class='desc'>
-    </span>
-  </li>
-  <li>
-    <span class='signature'>
-      <a href='#getFilePath-dynamic'>
-        #
-(String)
-<b>getFilePath</b><span>(filename)</span>
+<b>init</b><span>(parent)</span>
       </a>
     </span>
     <span class='desc'>
@@ -66,34 +55,101 @@
   </li>
   <li>
     <span class='signature'>
-      <a href='#copyFileSync-dynamic'>
+      <a href='#createTable-dynamic'>
         #
 (void)
-<b>copyFileSync</b><span>(src, target)</span>
+<b>createTable</b><span>(params)</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
       class 
     </span>
   </li>
   <li>
     <span class='signature'>
-      <a href='#mkdirRecursive-dynamic'>
+      <a href='#deleteTable-dynamic'>
         #
 (void)
-<b>mkdirRecursive</b><span>(target)</span>
+<b>deleteTable</b><span>(params)</span>
       </a>
     </span>
+    <span class='bound note title'>Bound</span>
     <span class='desc'>
       class 
     </span>
   </li>
   <li>
     <span class='signature'>
-      <a href='#sleep-dynamic'>
+      <a href='#scan-dynamic'>
         #
 (void)
-<b>sleep</b><span>(milliseconds)</span>
+<b>scan</b><span>(params)</span>
+      </a>
+    </span>
+    <span class='bound note title'>Bound</span>
+    <span class='desc'>
+      class 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#query-dynamic'>
+        #
+(void)
+<b>query</b><span>(params)</span>
+      </a>
+    </span>
+    <span class='bound note title'>Bound</span>
+    <span class='desc'>
+      class 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#get-dynamic'>
+        #
+(void)
+<b>get</b><span>(params)</span>
+      </a>
+    </span>
+    <span class='bound note title'>Bound</span>
+    <span class='desc'>
+      class 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#put-dynamic'>
+        #
+(void)
+<b>put</b><span>(params)</span>
+      </a>
+    </span>
+    <span class='bound note title'>Bound</span>
+    <span class='desc'>
+      class 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#update-dynamic'>
+        #
+(void)
+<b>update</b><span>(params)</span>
+      </a>
+    </span>
+    <span class='bound note title'>Bound</span>
+    <span class='desc'>
+      class 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#delete-dynamic'>
+        #
+(void)
+<b>delete</b><span>(params)</span>
       </a>
     </span>
     <span class='bound note title'>Bound</span>
@@ -105,118 +161,23 @@
       <h2>Instance Method Details</h2>
       <div class='methods'>
   <div class='method_details'>
-    <p class='signature' id='newInstance-dynamic'>
+    <p class='signature' id='init-dynamic'>
       #
 (void)
-<b>newInstance</b><span>()</span>
-      <br>
-    </p>
-    
-  </div>
-  <div class='method_details'>
-    <p class='signature' id='getFilePath-dynamic'>
-      #
-(String)
-<b>getFilePath</b><span>(filename)</span>
+<b>init</b><span>(parent)</span>
       <br>
     </p>
     <div class='docstring'>
   class 
 </div>
 <div class='tags'>
-  <h3>Parameters:</h3>
-  <ul class='param'>
-    <li>
-      <span class='name'>filename</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-  </ul>
-  <h3>Returns:</h3>
-  <ul class='return'>
-    <li>
-      <span class='type'></span>
-      (
-        <tt>String</tt>
-      )
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-  </ul>
 </div>
   </div>
   <div class='method_details'>
-    <p class='signature' id='copyFileSync-dynamic'>
+    <p class='signature' id='createTable-dynamic'>
       #
 (void)
-<b>copyFileSync</b><span>(src, target)</span>
-      <br>
-    </p>
-    <div class='docstring'>
-  class 
-</div>
-<div class='tags'>
-  <h3>Parameters:</h3>
-  <ul class='param'>
-    <li>
-      <span class='name'>src</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-    <li>
-      <span class='name'>target</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-  </ul>
-</div>
-  </div>
-  <div class='method_details'>
-    <p class='signature' id='mkdirRecursive-dynamic'>
-      #
-(void)
-<b>mkdirRecursive</b><span>(target)</span>
-      <br>
-    </p>
-    <div class='docstring'>
-  class 
-</div>
-<div class='tags'>
-  <h3>Parameters:</h3>
-  <ul class='param'>
-    <li>
-      <span class='name'>target</span>
-      <span class='type'>
-        (
-          <tt>String</tt>
-        )
-      </span>
-      &mdash;
-      <span class='desc'>class </span>
-    </li>
-  </ul>
-</div>
-  </div>
-  <div class='method_details'>
-    <p class='signature' id='sleep-dynamic'>
-      #
-(void)
-<b>sleep</b><span>(milliseconds)</span>
+<b>createTable</b><span>(params)</span>
       <span class='bound note'>Bound</span>
       <br>
     </p>
@@ -227,10 +188,199 @@
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>milliseconds</span>
+      <span class='name'>params</span>
       <span class='type'>
         (
-          <tt>Number</tt>
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='deleteTable-dynamic'>
+      #
+(void)
+<b>deleteTable</b><span>(params)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>params</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='scan-dynamic'>
+      #
+(void)
+<b>scan</b><span>(params)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>params</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='query-dynamic'>
+      #
+(void)
+<b>query</b><span>(params)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>params</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='get-dynamic'>
+      #
+(void)
+<b>get</b><span>(params)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>params</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='put-dynamic'>
+      #
+(void)
+<b>put</b><span>(params)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>params</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='update-dynamic'>
+      #
+(void)
+<b>update</b><span>(params)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>params</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>class </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='delete-dynamic'>
+      #
+(void)
+<b>delete</b><span>(params)</span>
+      <span class='bound note'>Bound</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  class 
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>params</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
         )
       </span>
       &mdash;

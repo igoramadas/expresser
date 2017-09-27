@@ -1,5 +1,17 @@
 # Changelog for expresser-metrics
 
+3.1.2
+=====
+* BREAKING! Metrics expiration is now passed as milliseconds instead of seconds.
+* Fixed metrics "expired" and "error" counters.
+* Updated dependencies.
+
+3.1.0
+=====
+* NEW! You can now set an expiry time (in seconds) for metrics.
+* NEW! Expired metrics count shown on output as "expired".
+* Changed default intervals and percentiles on output.
+
 3.0.2
 =====
 * Fixed percentile values on metrics output (sometimes came as null).

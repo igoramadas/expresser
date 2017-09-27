@@ -14,8 +14,8 @@
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.0.0-beta4",
-        "nodemailer": "~4.1.0"
+        "coffeescript": "^2.0.1",
+        "nodemailer": "~4.1.1"
     },
     "repository": {
         "type": "git",

@@ -1,6 +1,6 @@
 {
     "name": "expresser-metrics",
-    "version": "3.0.2",
+    "version": "3.1.2",
     "description": "Metrics for Expresser apps.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
@@ -14,7 +14,7 @@
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.0.0-beta4"
+        "coffeescript": "^2.0.1"
     },
     "repository": {
         "type": "git",

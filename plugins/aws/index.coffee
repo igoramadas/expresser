@@ -40,7 +40,15 @@ class AWS
         delete @init
 
     # Bind events.
-    setEvents: ->
+    setEvents: =>
+        events.on "AWS.DynamoDB.createTable", @dynamodb.createTable
+        events.on "AWS.DynamoDB.deleteTable", @dynamodb.deleteTable
+        events.on "AWS.DynamoDB.scan", @dynamodb.scan
+        events.on "AWS.DynamoDB.query", @dynamodb.query
+        events.on "AWS.DynamoDB.get", @dynamodb.get
+        events.on "AWS.DynamoDB.put", @dynamodb.put
+        events.on "AWS.DynamoDB.update", @dynamodb.update
+        events.on "AWS.DynamoDB.delete", @dynamodb.delete
         events.on "AWS.S3.download", @s3.download
         events.on "AWS.S3.upload", @s3.upload
         events.on "AWS.SNS.publish", @sns.publish

@@ -3,6 +3,10 @@
     "aws": {
         // Enable the AWS plugin?
         "enabled": true,
+        "dynamodb": {
+            // Default DynamoDB region is EU Frankfurt.
+            "region": "eu-central-1"
+        },
         "s3": {
             // Default S3 region is EU Frankfurt.
             "region": "eu-central-1"
