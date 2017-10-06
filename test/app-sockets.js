@@ -12,7 +12,6 @@ describe("App Sockets Tests", function() {
     var app = null
     var sockets = null
     var socketClient = require("socket.io-client")
-    var supertest = require("supertest")
 
     var socketClientOptions = {
         autoConnect: true,
