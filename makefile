@@ -15,7 +15,7 @@ else
 endif
 
 test:
-	$(MOCHA) -u tdd -R spec
+	$(MOCHA) --exit -u tdd -R spec
 cover:
 	$(ISTANBUL) cover $(MOCHAEXEC) -- -R spec $(TESTPATH)
 docs:

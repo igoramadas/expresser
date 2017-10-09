@@ -353,14 +353,16 @@ monitoring systems.
               <p>Starts the counter for a specific metric. The data is optional.
 @param {String} id ID of the metric to be started.
 @param {Object} data Additional info about the current metric (URL data, for example).
-@param {Number} expiresIn Optional, metric should expire in these amount of seconds if not ended.
+@param {Number} expiresIn Optional, metric should expire in these amount of milliseconds if not ended.
 @return {Object} Returns the metric object to be used later on <code>end</code>.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(id, data, expiresIn)</span> -&gt;</span>
-        logger.debug <span class="hljs-string">"Metrics.start"</span>, obj, data
+        logger.debug <span class="hljs-string">"Metrics.start"</span>, obj, data, expiresIn
         <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>, <span class="hljs-string">"start"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
+
+        expiresIn = <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> expiresIn?
 
         obj = {}
         obj.id = id
@@ -376,15 +378,17 @@ monitoring systems.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Should the metric expire after some seconds?</p>
+              <p>Should the metric expire (value in milliseconds)?</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> expiresIn? <span class="hljs-keyword">and</span> expiresIn &gt; <span class="hljs-number">0</span>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> expiresIn &gt; <span class="hljs-number">0</span>
 <span class="hljs-function">            <span class="hljs-title">expiryTimeout</span> = =&gt;</span>
-                @end obj, <span class="hljs-string">"expired"</span>
+                logger.debug <span class="hljs-string">"Metrics.start"</span>, <span class="hljs-string">"Expired!"</span>, obj
                 obj.expired = <span class="hljs-literal">true</span>
-            obj.timeout = setTimeout expiryTimeout, expiresIn * <span class="hljs-number">1000</span></pre></div></div>
+                @end obj
+
+            obj.timeout = setTimeout expiryTimeout, expiresIn</pre></div></div>
             
         </li>
         
@@ -798,8 +802,8 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
 
             <span class="hljs-keyword">if</span> minutes &lt;= interval
                 values.push obj[i]
-                errorCount++ <span class="hljs-keyword">if</span> obj.error
-                expiredCount++ <span class="hljs-keyword">if</span> obj.expired
+                errorCount++ <span class="hljs-keyword">if</span> obj[i].error
+                expiredCount++ <span class="hljs-keyword">if</span> obj[i].expired
                 i++
             <span class="hljs-keyword">else</span>
                 i = obj.length</pre></div></div>
