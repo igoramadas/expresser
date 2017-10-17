@@ -31,7 +31,7 @@
         "errorhandler": "^1.5.0",
         "express": "^4.16.2",
         "hike": "^1.0.2",
-        "ipaddr.js": "^1.5.3",
+        "ipaddr.js": "^1.5.4",
         "lodash": "^4.17.4",
         "mime": "^2.0.3",
         "mimoza": "^1.0.0",
@@ -46,7 +46,7 @@
     "devDependencies": {
         "@google-cloud/datastore": "^1.1.0",
         "@google-cloud/storage": "^1.4.0",
-        "aws-sdk": "^2.133.0",
+        "aws-sdk": "^2.134.0",
         "bettercodo": "^2.1.4",
         "betterdocco": "^0.7.6",
         "chai": "^4.1.2",
