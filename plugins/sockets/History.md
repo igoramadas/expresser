@@ -1,5 +1,9 @@
 # Changelog for expresser-sockets
 
+3.0.1
+=====
+* Updated Socket.IO dependency.
+
 3.0.0
 =====
 * Maintenance release for Expresser 3.0.0.
