@@ -1,5 +1,9 @@
 # Changelog for expresser-aws
 
+3.1.2
+=====
+* Updated AWS SDK.
+
 3.1.1
 =====
 * Updated AWS SDK.
