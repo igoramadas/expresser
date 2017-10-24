@@ -3,6 +3,7 @@
 .openshift/
 .vscode/
 coverage/
+docs/
 database/
 logs/
 plugins/

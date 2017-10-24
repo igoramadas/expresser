@@ -1,6 +1,11 @@
 # Changelog for expresser
 
-3.0.5
+3.0.7
+=====
+* Updated dependencies.
+* Bits of code refactoring.
+
+3.0.6
 =====
 * Updated dependencies.
 

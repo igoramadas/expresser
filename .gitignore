@@ -1,11 +1,12 @@
-.coveralls.yml
 .history/
 .idea/
 .openshift/
 .vscode/
+.coveralls.yml
 coverage/
 database/
 logs/
 node_modules/
 test/database/
 package-lock.json
+settings.local.json
