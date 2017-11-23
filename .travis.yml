@@ -13,7 +13,7 @@ before_script:
   - npm install nodemailer
   - npm install socket.io
 after_script:
-  - NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --report --exit lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+  - NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --report --no-deprecation --exit lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
 env:
   - CXX=g++-4.8
 addons:

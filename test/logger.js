@@ -70,7 +70,7 @@ describe("Logger Tests", function() {
         if (cleanArgs[0].password == testObj.password) {
             done("Password on test object was not obfuscated.")
         } else if (cleanArgs[0].level0.level1.level2.level3.level4.level5.level6.level7.level8.level9) {
-            done("Maximum deep level should be 8, but test object has a property with 9 levels down.")
+            done("Maximum deep index should be 8, but test object has a property with 9.")
         } else {
             done()
         }
@@ -108,6 +108,44 @@ describe("Logger Tests", function() {
         } else {
             done()
         }
+    })
+
+    it("Check if compacted message is smaller", function(done) {
+        var privateObj = {
+            field1: "Welcome123",
+            deep: {
+                something: "lalala"
+            }
+        }
+        var someMessage = "Some more stuff here."
+
+        var compactMessage = logger.getMessage([privateObj, someMessage])
+        settings.logger.compact = false
+        var originalMessage = logger.getMessage([privateObj, someMessage])
+        settings.logger.compact = true
+
+        if (compactMessage.length >= originalMessage) {
+            done("The 'compact' option is not working.")
+        } else {
+            done()
+        }
+    })
+
+    it("Tests the onLog callback", function(done) {
+        logger.onLog = function(logType, args) {
+            logger.onLog = null
+            clearTimeout(timer)
+            done()
+        }
+
+        var failedCallback = function() {
+            logger.onLog = null
+            done("Logger 'onLog' was not called.")
+        }
+
+        var timer = setTimeout(failedCallback, 1200)
+
+        logger.info("123")
     })
 
     it("Registers a dummy log driver", function() {

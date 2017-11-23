@@ -32,7 +32,9 @@ describe("MongoDB Tests", function() {
         var fs = require("fs")
 
         try {
-            dbMongo.connection.close()
+            if (dbMongo.connection) {
+                dbMongo.connection.close()
+            }
         } catch (ex) {
             console.error("Could not close MongoDB connection.", ex)
         }
