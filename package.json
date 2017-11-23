@@ -1,15 +1,13 @@
 {
     "name": "expresser",
-    "version": "3.0.7",
+    "version": "3.1.0",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache-2.0",
     "subdomain": "expresser",
     "main": "index",
-    "domains": [
-        "expresser.devv.com"
-    ],
+    "domains": ["expresser.devv.com"],
     "engines": {
         "node": "*"
     },
@@ -67,12 +65,5 @@
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": [
-        "expresser",
-        "express",
-        "app",
-        "framework",
-        "node",
-        "webapp"
-    ]
+    "keywords": ["expresser", "express", "app", "framework", "node", "webapp"]
 }

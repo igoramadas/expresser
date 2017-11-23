@@ -27,11 +27,8 @@ class Logger
     # @property {Object} List of registered transports.
     transports: {}
 
-    # @property {Method} Custom (result) method to call when logs are sent to logging server or flushed to disk.
-    onLogSuccess: null
-
-    # @property {Method} Custom (err) method to call when errors are triggered by the logging transport.
-    onLogError: null
+    # @property {Method} Custom method to call on every log request.
+    onLog: null
 
     # INIT
     # --------------------------------------------------------------------------
@@ -147,6 +144,9 @@ class Logger
         # Log to the console depending on `console` setting.
         if settings.logger.console
             @console logType, msg, true
+
+        # Custom onLog callback?
+        @onLog? logType, args
 
         return msg
 
