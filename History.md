@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+3.1.0
+=====
+* NEW! Logger has a new "compact" option to compact log output to single line, enabled by default.
+* Updated dependencies.
+
 3.0.7
 =====
 * Updated dependencies.

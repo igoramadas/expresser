@@ -300,10 +300,14 @@ class Logger
                         stringified = JSON.stringify arg, null, 1
                     else
                         stringified = arg.toString()
-
-                    separated.push stringified
                 catch ex
-                    separated.push arg.toString()
+                    stringified = arg.toString()
+
+                # Compact log lines?
+                if settings.logger.compact
+                    stringified = stringified.replace(/(\r\n|\n|\r)/gm, "").replace(/  +/g, " ");
+
+                separated.push stringified
 
         # Append IP address, if `serverIP` is set.
         try

@@ -108,23 +108,17 @@
     // LOGGER
     // -------------------------------------------------------------------------
     "logger": {
+        // Compact log ouputs so they fit in a single line per log call?
+        "compact": true,
         // Output logs to the console? True or false.
         "console": true,
         // Unless you have very specific reasons, leave enabled always true otherwise nothing will be logged.
         "enabled": true,
         // Define which log levels should be enabled. For example if you only want to log warnings and errors,
         // set this value to ["warn", "error"].
-        "levels": [
-            "info",
-            "warn",
-            "error",
-            "critical"
-        ],
+        "levels": ["info", "warn", "error", "critical"],
         // Maximum levels to parse deep down an object (for performance reasons, default is 8.
         "maxDeepLevel": 8,
-        // List of properties to be obfuscated with the static value "***". This is useful to hide passwords, secret keys, etc.
-        // Values separated by comma, case insensitive.
-        "obfuscateFields": "password,passwordhash,passwordencrypted,accesstoken,access_token,refreshtoken,refresh_token,auth,recaptcha",
         // List of user defined properties to be masked. Difference from obfuscate setting above is that the length will be
         // the same and last characters of the value will not be masked out (for example, leave last 4 digits of phone numbers).
         "maskFields": {
@@ -132,6 +126,9 @@
             "mobile": 4,
             "phone": 4
         },
+        // List of properties to be obfuscated with the static value "***". This is useful to hide passwords, secret keys, etc.
+        // Values separated by comma, case insensitive.
+        "obfuscateFields": "password,passwordhash,passwordencrypted,accesstoken,access_token,refreshtoken,refresh_token,auth,recaptcha",
         // List of properties to be removed. This is used to take out specific data from logs (functions for example).
         // Values separated by comma.
         "removeFields": null,
