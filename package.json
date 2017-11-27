@@ -22,7 +22,7 @@
         "async": "^2.6.0",
         "body-parser": "^1.18.2",
         "chalk": "^2.3.0",
-        "coffeescript": "^2.0.2",
+        "coffeescript": "^2.0.3",
         "compressible": "^2.0.12",
         "compression": "^1.7.1",
         "cookie-parser": "^1.4.3",
@@ -33,7 +33,7 @@
         "hike": "^1.0.2",
         "ipaddr.js": "^1.5.4",
         "lodash": "^4.17.4",
-        "mime": "^2.0.3",
+        "mime": "^2.0.4",
         "mimoza": "^1.0.0",
         "moment": "^2.19.2",
         "pako": "^1.0.6",
@@ -41,12 +41,12 @@
         "pug": "^2.0.0-rc.4",
         "source-map": "^0.6.1",
         "stylus": "^0.54.5",
-        "uglify-es": "^3.1.10"
+        "uglify-es": "^3.2.0"
     },
     "devDependencies": {
         "@google-cloud/datastore": "^1.1.0",
         "@google-cloud/storage": "^1.4.0",
-        "aws-sdk": "^2.153.0",
+        "aws-sdk": "^2.157.0",
         "bettercodo": "^2.1.4",
         "betterdocco": "^0.7.6",
         "chai": "^4.1.2",
