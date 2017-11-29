@@ -117,6 +117,7 @@ describe("Logger Tests", function() {
                 something: "lalala"
             }
         }
+
         var someMessage = "Some more stuff here."
 
         var compactMessage = logger.getMessage([privateObj, someMessage])

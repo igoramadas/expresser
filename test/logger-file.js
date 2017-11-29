@@ -84,8 +84,7 @@ describe("Logger File Tests", function() {
         transport.onLogError = helperLogOnError(done)
 
         transport.info(
-            "Expresser local disk log test.",
-            {
+            "Expresser local disk log test.", {
                 password: "obfuscated",
                 something: "hello!"
             },

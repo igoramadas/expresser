@@ -49,15 +49,19 @@ describe("Settings Tests", function() {
         settings.watch(true, callback)
         newJson.testingFileWatcher = true
 
-        try {
-            fs.writeFileSync(filename, JSON.stringify(newJson, null, 4))
-        } catch (ex) {
-            if (doneCalled) return
-            doneCalled = true
+        var writer = function() {
+            try {
+                fs.writeFileSync(filename, JSON.stringify(newJson, null, 4))
+            } catch (ex) {
+                if (doneCalled) return
+                doneCalled = true
 
-            unwatch()
-            done(ex)
+                unwatch()
+                done(ex)
+            }
         }
+
+        setTimeout(writer, 500)
     })
 
     it("Encrypt and decrypt settings data", function(done) {

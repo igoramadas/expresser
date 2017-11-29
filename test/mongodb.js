@@ -68,8 +68,7 @@ describe("MongoDB Tests", function() {
             var execution = function() {
                 for (var i = 0; i < counter; i++) {
                     dbMongo.insert(
-                        "test",
-                        {
+                        "test", {
                             counter: i
                         },
                         callback
@@ -172,8 +171,7 @@ describe("MongoDB Tests", function() {
             }
 
             dbMongo.get(
-                "test",
-                {
+                "test", {
                     limit: 5
                 },
                 callback

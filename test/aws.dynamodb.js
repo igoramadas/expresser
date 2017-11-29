@@ -38,13 +38,15 @@ describe("AWS DynamoDB Tests", function() {
 
     if (hasKeys) {
         it("Create a table on DynamoDB", async function() {
-            this.timeout(30000)
+            this.timeout(40000)
 
             var params = {
                 TableName: tableName,
-                ProvisionedThroughput: { ReadCapacityUnits: 1, WriteCapacityUnits: 1 },
-                KeySchema: [
-                    {
+                ProvisionedThroughput: {
+                    ReadCapacityUnits: 1,
+                    WriteCapacityUnits: 1
+                },
+                KeySchema: [{
                         AttributeName: "year",
                         KeyType: "HASH"
                     },
@@ -53,8 +55,7 @@ describe("AWS DynamoDB Tests", function() {
                         KeyType: "RANGE"
                     }
                 ],
-                AttributeDefinitions: [
-                    {
+                AttributeDefinitions: [{
                         AttributeName: "year",
                         AttributeType: "N"
                     },
@@ -66,7 +67,7 @@ describe("AWS DynamoDB Tests", function() {
             }
 
             var result = await aws.dynamodb.createTable(params)
-            await utils.io.sleep(10000)
+            await utils.io.sleep(11000)
 
             return result
         })
