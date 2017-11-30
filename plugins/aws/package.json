@@ -7,26 +7,17 @@
     "license": "Apache-2.0",
     "subdomain": "expresser-aws",
     "main": "index",
-    "domains": [
-        "expresser.devv.com"
-    ],
+    "domains": ["expresser.devv.com"],
     "engines": {
         "node": "*"
     },
     "dependencies": {
-        "aws-sdk": "^2.159.0",
+        "aws-sdk": "^2.160.0",
         "coffeescript": "^2.0.3"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": [
-        "amazon web services",
-        "aws",
-        "dynamodb",
-        "expresser",
-        "s3",
-        "sns"
-    ]
+    "keywords": ["amazon web services", "aws", "dynamodb", "expresser", "s3", "sns"]
 }
