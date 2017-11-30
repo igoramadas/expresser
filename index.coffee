@@ -99,6 +99,10 @@ class Expresser
     init: (forceTest = false) ->
         isTest = false if forceTest
 
+        # Accept invalid certificates?
+        if not @settings.app.ssl.rejectUnauthorized
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+
         initDefaultModules this
         loadPlugins this
 

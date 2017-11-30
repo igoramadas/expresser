@@ -61,7 +61,10 @@
             // Create a redirector server to redirect requests from HTTP to HTTPS.
             // This is the port number of the HTTP redirector server. Leave 0, blank
             // or null to disable this feature.
-            "redirectorPort": 0
+            "redirectorPort": 0,
+            // Set to false to ignore SSL / TLS certificate warnings and accept expired
+            // and self-signed certificates (not recommended on production).
+            "rejectUnauthorized": true
         },
         // Path to the public folder used by Express.
         "publicPath": "./public/",

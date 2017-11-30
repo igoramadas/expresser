@@ -205,6 +205,7 @@ class Logger
     # @private
     argsCleaner: ->
         funcText = "[Function]"
+        unreadableText = "[Unreadable]"
         max = settings.logger.maxDeepLevel - 1
         result = []
 
@@ -224,26 +225,30 @@ class Logger
 
             else if lodash.isObject obj
                 for key, value of obj
-                    if index > max
-                        obj[key] = "..."
-                    else if settings.logger.obfuscateFields?.indexOf(key) >=0
-                        obj[key] = "***"
-                    else if settings.logger.maskFields?[key]?
-                        if lodash.isObject value
-                            maskedValue = value.value or value.text or value.contents or value.data or ""
-                        else
-                            maskedValue = value.toString()
-                        obj[key] = utils.data.maskString maskedValue, "*", settings.logger.maskFields[key]
-                    else if settings.logger.removeFields?.indexOf(key) >=0
+                    try
+                        if index > max
+                            obj[key] = "..."
+                        else if settings.logger.obfuscateFields?.indexOf(key) >=0
+                            obj[key] = "***"
+                        else if settings.logger.maskFields?[key]?
+                            if lodash.isObject value
+                                maskedValue = value.value or value.text or value.contents or value.data or ""
+                            else
+                                maskedValue = value.toString()
+                            obj[key] = utils.data.maskString maskedValue, "*", settings.logger.maskFields[key]
+                        else if settings.logger.removeFields?.indexOf(key) >=0
+                            delete obj[key]
+                        else if lodash.isArray value
+                            while i < value.length
+                                cleaner value[i], index + 1
+                                i++
+                        else if lodash.isFunction value
+                            obj[key] = funcText
+                        else if lodash.isObject value
+                            cleaner value, index + 1
+                    catch ex
                         delete obj[key]
-                    else if lodash.isArray value
-                        while i < value.length
-                            cleaner value[i], index + 1
-                            i++
-                    else if lodash.isFunction value
-                        obj[key] = funcText
-                    else if lodash.isObject value
-                        cleaner value, index + 1
+                        obj[key] = unreadableText
 
         # Iterate arguments and execute cleaner on objects.
         for argKey, arg of arguments

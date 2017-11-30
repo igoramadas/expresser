@@ -4,6 +4,7 @@
 =====
 * NEW! Logger has a new "compact" option to compact log output to single line, enabled by default.
 * NEW! Logger "onLog" callback (so you can add custom post-log routines).
+* NEW! Accept invalid certificates by using "settings.app.sll.rejectUnauthorized = false".
 * Updated dependencies.
 
 3.0.7
