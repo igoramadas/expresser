@@ -52,6 +52,12 @@ class App
 
         nodeEnv = process.env.NODE_ENV
 
+        # Get version from main app's package.json (NOT Expresser, but the actual app using it!)
+        try
+            @version = require(@expresser.rootPath + "/package.json")?.version
+        catch ex
+            logger.error "App.init", "Could not fetch version from package.json.", ex
+
         # Configure the Express server.
         @configure()
 
