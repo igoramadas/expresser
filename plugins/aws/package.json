@@ -12,7 +12,7 @@
         "node": "*"
     },
     "dependencies": {
-        "aws-sdk": "^2.160.0",
+        "aws-sdk": "^2.162.0",
         "coffeescript": "^2.0.3"
     },
     "repository": {
