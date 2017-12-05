@@ -35,12 +35,8 @@ class Logger
 
     # Init the Logger module. Verify which services are set, and add the necessary transports.
     # IP address will be appended to logs depending on the settings.
-    # @param {Object} options Logger init options.
     init: =>
         events.emit "Logger.before.init"
-
-        if arguments.length > 0
-            @deprecated "Logger.init(options)", "No options param anymore. Logger will be configured based on what's defiend on the settings module."
 
         if settings.logger.uncaughtException
             @debug "Logger.init", "Catching unhandled exceptions."
@@ -70,6 +66,7 @@ class Logger
     # -------------------------------------------------------------------------
 
     # Register a Logger transport. This is called by Logger plugins.
+    # @param {String} id Unique ID of the transport to be registered.
     register: (id, driver, options) ->
         if not @drivers[driver]?
             console.error "Logger.register", "The transport #{driver} is not installed! Please check if plugin expresser-logger-#{driver} is available on the current environment."

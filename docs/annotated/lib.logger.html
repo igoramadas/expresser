@@ -261,11 +261,11 @@ Multiple services can be enabled at the same time.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>@property {Method} Custom (result) method to call when logs are sent to logging server or flushed to disk.</p>
+              <p>@property {Method} Custom method to call on every log request.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    onLogSuccess: <span class="hljs-literal">null</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    onLog: <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -276,11 +276,9 @@ Multiple services can be enabled at the same time.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>@property {Method} Custom (err) method to call when errors are triggered by the logging transport.</p>
+              <h2 id="init">INIT</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    onLogError: <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -291,8 +289,7 @@ Multiple services can be enabled at the same time.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <h2 id="init">INIT</h2>
-
+              
             </div>
             
         </li>
@@ -304,29 +301,13 @@ Multiple services can be enabled at the same time.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
               <p>Init the Logger module. Verify which services are set, and add the necessary transports.
-IP address will be appended to logs depending on the settings.
-@param {Object} options Logger init options.</p>
+IP address will be appended to logs depending on the settings.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
         events.emit <span class="hljs-string">"Logger.before.init"</span>
-
-        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">0</span>
-            @deprecated <span class="hljs-string">"Logger.init(options)"</span>, <span class="hljs-string">"No options param anymore. Logger will be configured based on what's defiend on the settings module."</span>
 
         <span class="hljs-keyword">if</span> settings.logger.uncaughtException
             @debug <span class="hljs-string">"Logger.init"</span>, <span class="hljs-string">"Catching unhandled exceptions."</span>
@@ -345,11 +326,11 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
-        <li id="section-12">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Bind events.</p>
 
@@ -367,14 +348,26 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h2 id="implementation">IMPLEMENTATION</h2>
+
+            </div>
+            
+        </li>
+        
+        
         <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <h2 id="implementation">IMPLEMENTATION</h2>
-
+              
             </div>
             
         </li>
@@ -386,19 +379,8 @@ IP address will be appended to logs depending on the settings.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>Register a Logger transport. This is called by Logger plugins.</p>
+              <p>Register a Logger transport. This is called by Logger plugins.
+@param {String} id Unique ID of the transport to be registered.</p>
 
             </div>
             
@@ -423,11 +405,11 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
-        <li id="section-16">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Unregister a Logger transport.
 @param {String} id Unique ID of the transport to be unregistered.</p>
@@ -440,14 +422,26 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h2 id="log-methods">LOG METHODS</h2>
+
+            </div>
+            
+        </li>
+        
+        
         <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <h2 id="log-methods">LOG METHODS</h2>
-
+              
             </div>
             
         </li>
@@ -458,18 +452,6 @@ IP address will be appended to logs depending on the settings.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Log to the console.
 @param {String} logType The log type (for example: warning, error, info, security, etc).
@@ -487,11 +469,11 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
-        <li id="section-20">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Only parse message if doNotClean is false or unset.</p>
 
@@ -507,11 +489,11 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
-        <li id="section-21">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Get styles (text colour, bold, italic etc…) for the correlated log type.</p>
 
@@ -532,11 +514,11 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
-        <li id="section-22">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Internal generic log method.
 @param {String} logType The log type (for example: warning, error, info, security, etc).
@@ -551,11 +533,11 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
-        <li id="section-23">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Get message out of the arguments.</p>
 
@@ -566,11 +548,11 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
-        <li id="section-24">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Dispatch to all registered transports.</p>
 
@@ -582,18 +564,33 @@ IP address will be appended to logs depending on the settings.
         </li>
         
         
-        <li id="section-25">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Log to the console depending on <code>console</code> setting.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.logger.<span class="hljs-built_in">console</span>
-            @console logType, msg, <span class="hljs-literal">true</span>
+            @console logType, msg, <span class="hljs-literal">true</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Custom onLog callback?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @onLog? logType, args
 
         <span class="hljs-keyword">return</span> msg</pre></div></div>
             
@@ -770,6 +767,7 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
             
             <div class="content"><div class='highlight'><pre>    argsCleaner: <span class="hljs-function">-&gt;</span>
         funcText = <span class="hljs-string">"[Function]"</span>
+        unreadableText = <span class="hljs-string">"[Unreadable]"</span>
         max = settings.logger.maxDeepLevel - <span class="hljs-number">1</span>
         result = []</pre></div></div>
             
@@ -801,26 +799,30 @@ The maximum level deep down the object is defined by the <code>maxDeepLevel</cod
 
             <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject obj
                 <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">of</span> obj
-                    <span class="hljs-keyword">if</span> index &gt; max
-                        obj[key] = <span class="hljs-string">"..."</span>
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.obfuscateFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
-                        obj[key] = <span class="hljs-string">"***"</span>
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.maskFields?[key]?
-                        <span class="hljs-keyword">if</span> lodash.isObject value
-                            maskedValue = value.value <span class="hljs-keyword">or</span> value.text <span class="hljs-keyword">or</span> value.contents <span class="hljs-keyword">or</span> value.data <span class="hljs-keyword">or</span> <span class="hljs-string">""</span>
-                        <span class="hljs-keyword">else</span>
-                            maskedValue = value.toString()
-                        obj[key] = utils.data.maskString maskedValue, <span class="hljs-string">"*"</span>, settings.logger.maskFields[key]
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.removeFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
+                    <span class="hljs-keyword">try</span>
+                        <span class="hljs-keyword">if</span> index &gt; max
+                            obj[key] = <span class="hljs-string">"..."</span>
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.obfuscateFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
+                            obj[key] = <span class="hljs-string">"***"</span>
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.maskFields?[key]?
+                            <span class="hljs-keyword">if</span> lodash.isObject value
+                                maskedValue = value.value <span class="hljs-keyword">or</span> value.text <span class="hljs-keyword">or</span> value.contents <span class="hljs-keyword">or</span> value.data <span class="hljs-keyword">or</span> <span class="hljs-string">""</span>
+                            <span class="hljs-keyword">else</span>
+                                maskedValue = value.toString()
+                            obj[key] = utils.data.maskString maskedValue, <span class="hljs-string">"*"</span>, settings.logger.maskFields[key]
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.removeFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
+                            <span class="hljs-keyword">delete</span> obj[key]
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isArray value
+                            <span class="hljs-keyword">while</span> i &lt; value.length
+                                cleaner value[i], index + <span class="hljs-number">1</span>
+                                i++
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction value
+                            obj[key] = funcText
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject value
+                            cleaner value, index + <span class="hljs-number">1</span>
+                    <span class="hljs-keyword">catch</span> ex
                         <span class="hljs-keyword">delete</span> obj[key]
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isArray value
-                        <span class="hljs-keyword">while</span> i &lt; value.length
-                            cleaner value[i], index + <span class="hljs-number">1</span>
-                            i++
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction value
-                        obj[key] = funcText
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject value
-                        cleaner value, index + <span class="hljs-number">1</span></pre></div></div>
+                        obj[key] = unreadableText</pre></div></div>
             
         </li>
         
@@ -913,10 +915,8 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
                         stringified = JSON.stringify arg, <span class="hljs-literal">null</span>, <span class="hljs-number">1</span>
                     <span class="hljs-keyword">else</span>
                         stringified = arg.toString()
-
-                    separated.push stringified
                 <span class="hljs-keyword">catch</span> ex
-                    separated.push arg.toString()</pre></div></div>
+                    stringified = arg.toString()</pre></div></div>
             
         </li>
         
@@ -926,6 +926,24 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>Compact log lines?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> settings.logger.compact
+                    stringified = stringified.replace(<span class="hljs-regexp">/(\r\n|\n|\r)/gm</span>, <span class="hljs-string">""</span>).replace(/  +/g, <span class="hljs-string">" "</span>);
+
+                separated.push stringified</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Append IP address, if <code>serverIP</code> is set.</p>
 
@@ -944,11 +962,11 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Return single string log message.</p>
 
@@ -959,11 +977,11 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
@@ -972,11 +990,11 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               
             </div>

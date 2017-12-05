@@ -444,10 +444,7 @@ modules, and finally the App.
             </div>
             
             <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(forceTest = <span class="hljs-literal">false</span>)</span> -&gt;</span>
-        isTest = <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> forceTest
-
-        initDefaultModules <span class="hljs-keyword">this</span>
-        loadPlugins <span class="hljs-keyword">this</span></pre></div></div>
+        isTest = <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> forceTest</pre></div></div>
             
         </li>
         
@@ -457,6 +454,25 @@ modules, and finally the App.
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Accept invalid certificates?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @settings.app.ssl.rejectUnauthorized
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = <span class="hljs-string">"0"</span>
+
+        initDefaultModules <span class="hljs-keyword">this</span>
+        loadPlugins <span class="hljs-keyword">this</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>App must be the last thing to be started!</p>
 
@@ -468,11 +484,11 @@ modules, and finally the App.
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <h2 id="singleton-implementation">Singleton implementation</h2>
 
@@ -481,11 +497,11 @@ modules, and finally the App.
         </li>
         
         
-        <li id="section-19">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               
             </div>
