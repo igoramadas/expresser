@@ -64,9 +64,9 @@ describe("Logger Tests", function() {
         if (cleanArgs[0].password == testObj.password) {
             done("Password on test object was not obfuscated.")
         } else if (cleanArgs[0].level0.level1.level2.level3.level4.level5.level6) {
-            done("Maximum deep index should be 8, but test object has a property with 9.")
-        } else {
             done()
+        } else {
+            done("Could not get property on depth 6.")
         }
     })
 
