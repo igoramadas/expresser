@@ -44,6 +44,11 @@ class Logger
                 catch ex
                     console.error "Unhandled exception!", err.message, err.stack, ex
 
+        # Deprecated settings.logger.maxDeepLevel in favour of maxDepth.
+        if settings.logger.maxDeepLevel?
+            @deprecated "settings.logger.maxDeepLevel", "Please use settings.logger.maxDepth."
+            settings.logger.maxDepth = settings.logger.maxDeepLevel
+
         @setEvents()
 
         events.emit "Logger.on.init"
@@ -186,7 +191,7 @@ class Logger
     deprecated: (func, message) ->
         message = "#{func} is deprecated. #{message}"
         @console "deprecated", message
-        return {error: "Method deprecated", message: message}
+        return {error: "Deprecated", message: message}
 
     # Helper to log to console that module is not enabled on settings.
     notEnabled: (module, func) ->
@@ -200,7 +205,7 @@ class Logger
     argsCleaner: ->
         funcText = "[Function]"
         unreadableText = "[Unreadable]"
-        max = settings.logger.maxDeepLevel - 1
+        max = settings.logger.maxDepth - 1
         result = []
 
         # Recursive cleaning function.
@@ -292,11 +297,11 @@ class Logger
                 try
                     if lodash.isArray arg
                         for value in arg
-                            stringified += JSON.stringify value, null, 1
+                            stringified += util.inspect value, {depth: settings.logger.maxDepth}
                     else if lodash.isError arg
                         stringified = arg.message + " " + arg.stack
                     else if lodash.isObject arg
-                        stringified = JSON.stringify arg, null, 1
+                        stringified = util.inspect arg, {depth: settings.logger.maxDepth}
                     else
                         stringified = arg.toString()
                 catch ex

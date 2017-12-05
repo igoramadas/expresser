@@ -14,6 +14,7 @@ class App
     logger = require "./logger.coffee"
     path = require "path"
     settings = require "./settings.coffee"
+    util = require "util"
     utils = require "./utils.coffee"
 
     # Current node environment and HTTP server handler are set on init.
@@ -321,7 +322,7 @@ class App
         # Set default status to 500 and stringify message if necessary.
         status = status or error?.statusCode or 500
         error = error.message + " " + error.stack if lodash.isError error
-        error = JSON.stringify error if not lodash.isString error
+        error = util.inspect(error) if not lodash.isString error
 
         # Send error JSON to client.
         res.status(status).json {error: error, url: req.originalUrl}

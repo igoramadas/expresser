@@ -7,9 +7,7 @@
     "license": "Apache-2.0",
     "subdomain": "expresser-logger-loggly",
     "main": "index",
-    "domains": [
-        "expresser.devv.com"
-    ],
+    "domains": ["expresser.devv.com"],
     "engines": {
         "node": "*"
     },
@@ -21,10 +19,5 @@
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": [
-        "expresser",
-        "logging",
-        "logger",
-        "loggly"
-    ]
+    "keywords": ["expresser", "logging", "logger", "loggly"]
 }

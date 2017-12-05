@@ -5,6 +5,7 @@ class DataUtils
     newInstance: -> return new DataUtils()
 
     lodash = require "lodash"
+    util = require "util"
 
     # Removes all the specified characters from a string. For example you can cleanup
     # phone numbers by using removeFromString(phone, [" ", "-", "(", ")"]).
@@ -62,7 +63,7 @@ class DataUtils
     # @param {Boolean} asString If true, return as string instead of JSON object.
     # @return {String} The minified JSON, or an empty string if there's an error.
     minifyJson: (source, asString) ->
-        source = JSON.stringify source if typeof source is "object"
+        source = util.inspect(source) if typeof source is "object"
         index = 0
         length = source.length
         result = ""

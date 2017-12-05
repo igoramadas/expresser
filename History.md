@@ -6,6 +6,8 @@
 * NEW! Logger "onLog" callback (so you can add custom post-log routines).
 * NEW! App has now a "version" attribute taken directly from package.json.
 * NEW! Accept invalid certificates by using "settings.app.sll.rejectUnauthorized = false".
+* RENAMED! Logger "maxDeepLevel" setting renamed to "maxDepth".
+* Code cleanup and some bits of refactoring.
 * Updated dependencies.
 
 3.0.7
