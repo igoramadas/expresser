@@ -96,4 +96,4 @@ IoUtils.getInstance = ->
     @instance = new IoUtils() if not @instance?
     return @instance
 
-module.exports = exports = IoUtils.getInstance()
+module.exports = IoUtils.getInstance()

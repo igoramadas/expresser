@@ -7,7 +7,9 @@
     "license": "Apache-2.0",
     "subdomain": "expresser",
     "main": "index",
-    "domains": ["expresser.devv.com"],
+    "domains": [
+        "expresser.devv.com"
+    ],
     "engines": {
         "node": "*"
     },
@@ -49,6 +51,8 @@
         "chai": "^4.1.2",
         "coffee-coverage": "^2.0.1",
         "coveralls": "^3.0.0",
+        "esdoc": "^1.0.4",
+        "esdoc-standard-plugin": "^1.0.0",
         "istanbul": "^0.4.5",
         "loggly": "^1.1.1",
         "mocha": "^4.0.1",
@@ -64,5 +68,12 @@
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": ["expresser", "express", "app", "framework", "node", "webapp"]
+    "keywords": [
+        "expresser",
+        "express",
+        "app",
+        "framework",
+        "node",
+        "webapp"
+    ]
 }

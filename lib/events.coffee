@@ -2,9 +2,6 @@
 # -----------------------------------------------------------------------------
 # Central event manager to dispatch events to all Expresser modules.
 # This module acts as a wrapper to Node's EventEmitter class.
-# <!--
-# @see settings.events
-# -->
 class Events
     newInstance: -> return new Events()
 
@@ -71,4 +68,4 @@ Events.getInstance = ->
     @instance = new Events() if not @instance?
     return @instance
 
-module.exports = exports = Events.getInstance()
+module.exports = Events.getInstance()

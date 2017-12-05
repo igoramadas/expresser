@@ -25,4 +25,4 @@ Utils.getInstance = ->
     @instance = new Utils() if not @instance?
     return @instance
 
-module.exports = exports = Utils.getInstance()
+module.exports = Utils.getInstance()

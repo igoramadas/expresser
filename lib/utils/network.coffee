@@ -43,4 +43,4 @@ NetworkUtils.getInstance = ->
     @instance = new NetworkUtils() if not @instance?
     return @instance
 
-module.exports = exports = NetworkUtils.getInstance()
+module.exports = NetworkUtils.getInstance()

@@ -3,9 +3,6 @@
 # Handles server logging using local files, Logentries, Loggly and other
 # transports available as plugins.
 # Multiple services can be enabled at the same time.
-# <!--
-# @see settings.logger
-# -->
 class Logger
     newInstance: -> return new Logger()
 
@@ -331,4 +328,4 @@ Logger.getInstance = ->
     @instance = new Logger() if not @instance?
     return @instance
 
-module.exports = exports = Logger.getInstance()
+module.exports = Logger.getInstance()

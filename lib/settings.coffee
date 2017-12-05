@@ -255,4 +255,4 @@ Settings.getInstance = ->
 
     return @instance
 
-module.exports = exports = Settings.getInstance()
+module.exports = Settings.getInstance()

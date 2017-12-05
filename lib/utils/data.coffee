@@ -152,4 +152,4 @@ DataUtils.getInstance = ->
     @instance = new DataUtils() if not @instance?
     return @instance
 
-module.exports = exports = DataUtils.getInstance()
+module.exports = DataUtils.getInstance()

@@ -85,4 +85,4 @@ SystemUtils.getInstance = ->
     @instance = new SystemUtils() if not @instance?
     return @instance
 
-module.exports = exports = SystemUtils.getInstance()
+module.exports = SystemUtils.getInstance()

@@ -69,4 +69,4 @@ BrowserUtils.getInstance = ->
     @instance = new BrowserUtils() if not @instance?
     return @instance
 
-module.exports = exports = BrowserUtils.getInstance()
+module.exports = BrowserUtils.getInstance()

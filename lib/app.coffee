@@ -2,9 +2,6 @@
 # -----------------------------------------------------------------------------
 # This is the "core" of an Expresser based application. The App contains
 # an Express server, running on HTTP or HTTPs (or both!).
-# <!--
-# @see settings.app
-# -->
 class App
     newInstance: -> return new App()
 
@@ -337,4 +334,4 @@ App.getInstance = ->
     @instance = new App() if not @instance?
     return @instance
 
-module.exports = exports = App.getInstance()
+module.exports = App.getInstance()
