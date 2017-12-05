@@ -42,9 +42,10 @@ describe("Utils Data Tests", function() {
             third: 0
         }
 
-        var minified = utils.data.minifyJson(original, true)
+        var minified = utils.data.minifyJson(JSON.stringify(original), true)
+        var minifiedCompare = '{"first":true,"second":false,"third":0}'
 
-        if (minified == '{"first":true,"second":false,"third":0}') {
+        if (minified == minifiedCompare || minified == minifiedCompare.replace(/['"]+/g, "")) {
             done()
         } else {
             done("JSON object was not minified properly: " + minified)
