@@ -49,10 +49,10 @@ describe("MongoDB Tests", function() {
             dbMongo = mongodb.init()
         })
 
-        it("Add 300 records to the database", function(done) {
+        it("Add 100 records to the database", function(done) {
             this.timeout(12000)
 
-            var counter = 300
+            var counter = 100
             var current = 1
 
             var callback = function(err, result) {
@@ -68,7 +68,8 @@ describe("MongoDB Tests", function() {
             var execution = function() {
                 for (var i = 0; i < counter; i++) {
                     dbMongo.insert(
-                        "test", {
+                        "test",
+                        {
                             counter: i
                         },
                         callback
@@ -171,7 +172,8 @@ describe("MongoDB Tests", function() {
             }
 
             dbMongo.get(
-                "test", {
+                "test",
+                {
                     limit: 5
                 },
                 callback

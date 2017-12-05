@@ -46,7 +46,8 @@ describe("AWS DynamoDB Tests", function() {
                     ReadCapacityUnits: 1,
                     WriteCapacityUnits: 1
                 },
-                KeySchema: [{
+                KeySchema: [
+                    {
                         AttributeName: "year",
                         KeyType: "HASH"
                     },
@@ -55,7 +56,8 @@ describe("AWS DynamoDB Tests", function() {
                         KeyType: "RANGE"
                     }
                 ],
-                AttributeDefinitions: [{
+                AttributeDefinitions: [
+                    {
                         AttributeName: "year",
                         AttributeType: "N"
                     },
@@ -86,7 +88,7 @@ describe("AWS DynamoDB Tests", function() {
             return await aws.dynamodb.put(params)
         })
 
-        it("Create 5 new items on DynamoDB", async function() {
+        it("Create 2 new items on DynamoDB", async function() {
             this.timeout(10000)
 
             var i, params
@@ -107,7 +109,7 @@ describe("AWS DynamoDB Tests", function() {
             return result
         })
 
-        it("Scan non empty items from DynamoDB, must return 5 items", async function() {
+        it("Scan non empty items from DynamoDB", async function() {
             this.timeout(5000)
 
             var params = {
@@ -131,7 +133,7 @@ describe("AWS DynamoDB Tests", function() {
             }
         })
 
-        it("Query empty items from DynamoDB, must return 1 item", async function() {
+        it("Query empty items from DynamoDB", async function() {
             this.timeout(5000)
 
             var params = {
