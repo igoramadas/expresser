@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>utils.coffee - Docs</title>
+  <title>events.coffee - Docs</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -151,7 +151,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>utils.coffee</h1>
+                  <h1>events.coffee</h1>
               </div>
           </li>
         
@@ -163,7 +163,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h2 id="expresser-utils">EXPRESSER UTILS</h2>
+              <h2 id="expresser-events">EXPRESSER EVENTS</h2>
 
             </div>
             
@@ -176,12 +176,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>General utilities.</p>
+              <p>Central event manager to dispatch events to all Expresser modules.
+This module acts as a wrapper to Node’s EventEmitter class.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Utils</span></span>
-    newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Utils()</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Events</span></span>
+    newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Events()
+
+    evt = <span class="hljs-built_in">require</span> <span class="hljs-string">"events"</span>
+    emitter = <span class="hljs-keyword">new</span> evt.EventEmitter()</pre></div></div>
             
         </li>
         
@@ -192,11 +196,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>@property {Object} Browser utils.</p>
+              <p>Set event emitter defaults.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    browser: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils/browser.coffee"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    constructor: <span class="hljs-function">-&gt;</span>
+        emitter.setMaxListeners <span class="hljs-number">20</span></pre></div></div>
             
         </li>
         
@@ -207,11 +212,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>@property {Object} Data utils.</p>
+              <h2 id="methods">METHODS</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    data: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils/data.coffee"</span></pre></div></div>
             
         </li>
         
@@ -222,11 +225,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>@property {Object} IO utils.</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    io: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils/io.coffee"</span></pre></div></div>
             
         </li>
         
@@ -237,11 +237,17 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>@property {Object} Network utils.</p>
+              <p>Emit a new event. The first argument is the event ID, all others are
+passed to the event emitter. Only if <code>settings.events.enabled</code> is true!
+@param {String} id The event ID.
+@param {Arguments} args Arguments to be passed to the emitter.
+@return {Object} Returns itself.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    network: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils/network.coffee"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    emit: <span class="hljs-function"><span class="hljs-params">(id, args)</span> -&gt;</span>
+        emitter.emit.apply emitter, arguments
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div></div>
             
         </li>
         
@@ -252,11 +258,20 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>@property {Object} System utils.</p>
+              <p>Bind a specific callback to an event ID.
+@param {String} id The event ID.
+@param {Method} callback The callback to be triggered.
+@param {Boolean} prepend If true, prepend the callback to the list, default is false.
+@return {Object} Returns itself.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    system: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils/system.coffee"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    on: <span class="hljs-function"><span class="hljs-params">(id, callback, prepend = <span class="hljs-literal">false</span>)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> prepend <span class="hljs-keyword">is</span> <span class="hljs-literal">true</span>
+            emitter.prependListener id, callback
+        <span class="hljs-keyword">else</span>
+            emitter.addListener id, callback
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div></div>
             
         </li>
         
@@ -267,9 +282,20 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <h2 id="singleton-implementation">Singleton implementation</h2>
+              <p>Bind a specific one time callback to an event ID.
+@param {String} id The event ID.
+@param {Method} callback The callback to be triggered only once.
+@param {Boolean} prepend If true, prepend the callback to the list, default is false.
+@return {Object} Returns itself.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    once: <span class="hljs-function"><span class="hljs-params">(id, callback, prepend = <span class="hljs-literal">false</span>)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> prepend <span class="hljs-keyword">is</span> <span class="hljs-literal">true</span>
+            emitter.prependOnceListener id, callback
+        <span class="hljs-keyword">else</span>
+            emitter.once id, callback
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div></div>
             
         </li>
         
@@ -280,14 +306,65 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
+              <p>Remove a specific callback from the listeners related to an event ID.
+@param {String} id The event ID.
+@param {Method} callback The callback to be removed.
+@return {Object} Returns itself.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    off: <span class="hljs-function"><span class="hljs-params">(id, callback)</span> -&gt;</span>
+        emitter.removeListener id, callback
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Returns an array with all listeners attached to the specified event ID.
+@param {String} id The event ID.
+@return {Object} Returns an array with listeners.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    listeners: <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> emitter.listeners id</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h2 id="singleton-implementation">Singleton implementation</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>Utils.getInstance = <span class="hljs-function">-&gt;</span>
-    @instance = <span class="hljs-keyword">new</span> Utils() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+            <div class="content"><div class='highlight'><pre>Events.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> Events() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
     <span class="hljs-keyword">return</span> @instance
 
-<span class="hljs-built_in">module</span>.exports = exports = Utils.getInstance()</pre></div></div>
+<span class="hljs-built_in">module</span>.exports = Events.getInstance()</pre></div></div>
             
         </li>
         
