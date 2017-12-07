@@ -7,11 +7,9 @@ A Node.js framework with built-in web server, logging and other common utilities
 
 ### Why Expresser?
 
-Even if Express itself does a good job as a web application framework, it can still be considered quite "low level"
-by some. So the idea of Expresser is to aggregate common modules and utilities into a single package, to make it
-even easier to start and streamline your Node.js application.
-
-Developed with CoffeeScript v2, it has full support for all the new features of ES6, including async / await.
+The idea of Expresser is to aggregate common modules and utilities into a single package, making it damn easy
+to start and streamline your Node.js application. Developed with CoffeeScript v2, it has full support for all
+the new features of ES6, including async / await.
 
 ### Settings
 
@@ -46,23 +44,23 @@ Now to the main modules...
 
 ### App
 *   Pre-configured Express web server.
-*   https://github.com/igoramadas/expresser/blob/master/docs/app.md
+*   https://github.com/igoramadas/expresser/wiki/App
 
 ### Events
 *   Central events dispatcher.
-*   https://github.com/igoramadas/expresser/blob/master/docs/events.md
+*   https://github.com/igoramadas/expresser/wiki/Events
 
 ### Logger
-*   Simple info, warn and error logging methods.
-*   https://github.com/igoramadas/expresser/blob/master/docs/logger.md
+*   Application logging.
+*   https://github.com/igoramadas/expresser/wiki/Logger
 
 ### Settings
 *   Settings wrapper.
-*   https://github.com/igoramadas/expresser/blob/master/docs/settings.md
+*   https://github.com/igoramadas/expresser/wiki/Settings
 
 ### Utils
 *   General utilities and helper methods.
-*   https://github.com/igoramadas/expresser/blob/master/docs/utils.md
+*   https://github.com/igoramadas/expresser/wiki/Utils
 
 # Plugins
 
