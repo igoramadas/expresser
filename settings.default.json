@@ -31,7 +31,9 @@
             "buildDir": "assets/build",
             // Minify JS and CSS builds? True or false.
             "compress": true,
-            "gzip": true
+            "gzip": true,
+            // Default paths for assets, in order of preference. Relative to the app root!
+            "paths": ["assets/js", "assets/css"]
         },
         // Cookie options.
         "cookie": {
