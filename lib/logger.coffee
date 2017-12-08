@@ -297,11 +297,11 @@ class Logger
                 try
                     if lodash.isArray arg
                         for value in arg
-                            stringified += util.inspect value, {depth: settings.logger.maxDepth}
+                            stringified += JSON.stringify value, null, 2
                     else if lodash.isError arg
                         stringified = arg.message + " " + arg.stack
                     else if lodash.isObject arg
-                        stringified = util.inspect arg, {depth: settings.logger.maxDepth}
+                        stringified = JSON.stringify arg, null, 2
                     else
                         stringified = arg.toString()
                 catch ex

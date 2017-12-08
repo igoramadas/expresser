@@ -63,7 +63,7 @@ class DataUtils
     # @param {Boolean} asString If true, return as string instead of JSON object.
     # @return {String} The minified JSON, or an empty string if there's an error.
     minifyJson: (source, asString) ->
-        source = util.inspect(source) if typeof source is "object"
+        source = JSON.stringify(source, null, 0) if typeof source is "object"
         index = 0
         length = source.length
         result = ""
