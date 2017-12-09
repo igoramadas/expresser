@@ -193,6 +193,7 @@ an Express server, running on HTTP or HTTPs (or both!).</p>
     logger = <span class="hljs-built_in">require</span> <span class="hljs-string">"./logger.coffee"</span>
     path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
     settings = <span class="hljs-built_in">require</span> <span class="hljs-string">"./settings.coffee"</span>
+    util = <span class="hljs-built_in">require</span> <span class="hljs-string">"util"</span>
     utils = <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils.coffee"</span></pre></div></div>
             
         </li>
@@ -1116,7 +1117,7 @@ send an error response with the specified status code and error output.
             
             <div class="content"><div class='highlight'><pre>        status = status <span class="hljs-keyword">or</span> error?.statusCode <span class="hljs-keyword">or</span> <span class="hljs-number">500</span>
         error = error.message + <span class="hljs-string">" "</span> + error.stack <span class="hljs-keyword">if</span> lodash.isError error
-        error = JSON.stringify error <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString error</pre></div></div>
+        error = util.inspect(error) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString error</pre></div></div>
             
         </li>
         
