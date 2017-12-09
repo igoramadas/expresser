@@ -1,5 +1,0 @@
-{
-    "source": "./docs/js",
-    "destination": "./docs/api",
-    "plugins": [{ "name": "esdoc-standard-plugin" }]
-}

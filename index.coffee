@@ -116,4 +116,4 @@ Expresser.getInstance = ->
     @instance = new Expresser() if not @instance?
     return @instance
 
-module.exports = exports = Expresser.getInstance()
+module.exports = Expresser.getInstance()
