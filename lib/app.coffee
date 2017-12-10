@@ -1,49 +1,67 @@
 # EXPRESSER APP
 # -----------------------------------------------------------------------------
-# This is the "core" of an Expresser based application. The App contains
-# an Express server, running on HTTP or HTTPs (or both!).
+express = require "express"
+events = require "./events.coffee"
+fs = require "fs"
+http = require "http"
+https = require "https"
+lodash = require "lodash"
+logger = require "./logger.coffee"
+path = require "path"
+settings = require "./settings.coffee"
+util = require "util"
+utils = require "./utils.coffee"
+
+# Current node environment and HTTP server handler are set on init.
+nodeEnv = null
+
+###
+# This is the "core" of an Expresser based application. The App wraps the
+# Express server and its middlewares / routes, along with a few extra helpers.
+###
 class App
     newInstance: -> return new App()
 
-    express = require "express"
-    events = require "./events.coffee"
-    fs = require "fs"
-    http = require "http"
-    https = require "https"
-    lodash = require "lodash"
-    logger = require "./logger.coffee"
-    path = require "path"
-    settings = require "./settings.coffee"
-    util = require "util"
-    utils = require "./utils.coffee"
+    ##
+    # Exposes the Express app object to the outside.
+    # @property
+    # @type express-Application
+    expressApp: null
 
-    # Current node environment and HTTP server handler are set on init.
-    nodeEnv = null
-
-    # EXPOSED OBJECTS
-    # --------------------------------------------------------------------------
-
-    # @property {Object} Exposes the Express app.
-    server: null
-
-    # @property {Object} Exposes the underlying HTTP(s) server(s).
+    ##
+    # The underlying HTTP(s) server.
+    # @property
+    # @type http-Server
     webServer: null
+
+    ##
+    # The HTTP to HTTPS redirector server (only if settings.app.ssl.redirectorPort is set).
+    # @property
+    # @type http-Server
     redirectorServer: null
 
-    # @property [Array] Additional middlewares to be used by the Express server.
+    ##
+    # Additional middlewares to be used by the Express server.
     # These will be called before the default middlewares.
+    # @property
+    # @type Array
     prependMiddlewares: []
 
-    # @property [Array] Additional middlewares to be used by the Express server.
+    ##
+    # Additional middlewares to be used by the Express server.
     # These will be called after the default middlewares.
+    # @property
+    # @type Array
     appendMiddlewares: []
 
     # INIT
     # --------------------------------------------------------------------------
 
+    ###
     # Create, configure and run the Express server. In most cases this should be
     # the last step of you app loading, after loading custom modules, setting
     # custom configuration, etc.
+    ###
     init: ->
         logger.debug "App.init"
         events.emit "App.before.init"
@@ -65,7 +83,9 @@ class App
         events.emit "App.on.init"
         delete @init
 
+    ###
     # Configure the server. Set views, options, use Express modules, etc.
+    ###
     configure: ->
         midBodyParser = require "body-parser"
         midCookieParser = require "cookie-parser"
@@ -76,53 +96,56 @@ class App
             midErrorHandler = require "errorhandler"
 
         # Create express v4 app.
-        @server = express()
+        @expressApp = express()
+
+        # DEPRECATED! The "server" was renamed to "expressApp".
+        @server = @expressApp()
 
         # Set view options, use Pug for HTML templates.
-        @server.set "views", settings.app.viewPath
-        @server.set "view engine", settings.app.viewEngine
-        @server.set "view options", { layout: false }
+        @expressApp.set "views", settings.app.viewPath
+        @expressApp.set "view engine", settings.app.viewEngine
+        @expressApp.set "view options", { layout: false }
 
         # Prepend middlewares, if any was specified.
         if @prependMiddlewares.length > 0
-            @server.use mw for mw in @prependMiddlewares
+            @expressApp.use mw for mw in @prependMiddlewares
 
         # Use Express basic handlers.
-        @server.use midBodyParser.json {limit: settings.app.bodyParser.limit}
-        @server.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
+        @expressApp.use midBodyParser.json {limit: settings.app.bodyParser.limit}
+        @expressApp.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
 
         if settings.app.cookie.enabled
-            @server.use midCookieParser settings.app.cookie.secret
+            @expressApp.use midCookieParser settings.app.cookie.secret
 
         if settings.app.session.enabled
-            @server.use midSession {secret: settings.app.session.secret, cookie: {maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))}}
+            @expressApp.use midSession {secret: settings.app.session.secret, cookie: {maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))}}
 
         # Use HTTP compression only if enabled on settings.
         if settings.app.compressionEnabled
-            @server.use midCompression
+            @expressApp.use midCompression
 
         # Fix connect assets helper context.
         connectAssetsOptions = lodash.cloneDeep settings.app.connectAssets
-        connectAssetsOptions.helperContext = @server.locals
+        connectAssetsOptions.helperContext = @expressApp.locals
 
         # Connect assets and dynamic compiling.
         ConnectAssets = (require "./app/connect-assets.js") connectAssetsOptions
-        @server.use ConnectAssets
+        @expressApp.use ConnectAssets
 
         # Append extra middlewares, if any was specified.
         if @appendMiddlewares.length > 0
-            @server.use mw for mw in @appendMiddlewares
+            @expressApp.use mw for mw in @appendMiddlewares
 
         # Configure development environment to dump exceptions and show stack.
         if settings.general.debug or nodeEnv is "test"
-            @server.use midErrorHandler {dumpExceptions: true, showStack: true}
+            @expressApp.use midErrorHandler {dumpExceptions: true, showStack: true}
 
         # Use Express static routing.
-        @server.use express.static settings.app.publicPath
+        @expressApp.use express.static settings.app.publicPath
 
         # Log all requests if debug is true.
         if settings.general.debug
-            @server.use requestLogger
+            @expressApp.use @requestLogger
 
         # Delete!
         delete @configure
@@ -147,13 +170,13 @@ class App
                     sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
                     sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
                     sslOptions = {key: sslKey, cert: sslCert}
-                    serverRef = https.createServer sslOptions, @server
+                    serverRef = https.createServer sslOptions, @expressApp
                 else
                     throw new Error "The certificate files could not be found. Please check the 'settings.app.ssl' settings."
             else
                 throw new Error "SSL is enabled but no key and certificate files were defined. Please check the 'settings.app.ssl' settings."
         else
-            serverRef = http.createServer @server
+            serverRef = http.createServer @expressApp
 
         # Expose the web server.
         @webServer = serverRef
@@ -175,7 +198,7 @@ class App
 
             # Log all redirector requests if debug is true.
             if settings.general.debug
-                redirServer.use requestLogger
+                redirServer.use @requestLogger
 
             @redirectorServer = http.createServer redirServer
             @redirectorServer.listen settings.app.ssl.redirectorPort
@@ -198,13 +221,15 @@ class App
     # HELPER AND UTILS
     # --------------------------------------------------------------------------
 
+    ###
     # Return a collection with all routes registered on the server.
     # @param {Boolean} simple If true, returns only an array the route strings.
     # @return {Array} Collection with routes (as object or as string).
+    ###
     getRoutes: (simple = false) =>
         result = []
 
-        for r in @server._router.stack
+        for r in @expressApp._router.stack
             if r.route?.path? and r.route.path isnt ""
                 if simple
                     result.push r.route.path
@@ -214,7 +239,7 @@ class App
         return result
 
     # Helper to log all requests when debug is true.
-    requestLogger = (req, res, next) ->
+    requestLogger: (req, res, next) ->
         ip = utils.browser.getClientIP req
         method = req.method
         url = req.url
@@ -321,8 +346,14 @@ class App
 
         # Set default status to 500 and stringify message if necessary.
         status = status or error?.statusCode or 500
-        error = error.message + " " + error.stack if lodash.isError error
-        error = util.inspect(error) if not lodash.isString error
+
+        try
+            if lodash.isError error
+                error = error.message + " " + error.stack
+            else if not lodash.isString error
+                error = JSON.stringify error, null, 0
+        catch ex
+            error = error.toString()
 
         # Send error JSON to client.
         res.status(status).json {error: error, url: req.originalUrl}
@@ -330,9 +361,10 @@ class App
         events.emit "App.on.renderError", req, res, error, status
 
 # Singleton implementation
-# --------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 App.getInstance = ->
     @instance = new App() if not @instance?
     return @instance
 
+# Exports
 module.exports = App.getInstance()

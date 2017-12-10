@@ -1,520 +1,126 @@
-<!DOCTYPE html>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Expresser - README</title><script>if (location.protocol.match(/^http/) && location.pathname.match('\.html') === null && location.pathname.slice(-1) !== '/') {
+  location.href = location.href + '/';
+}</script><link href="./bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"><!--[if lt IE 9]><script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script><script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]--><link href="./google-code-prettify/prettify.css" rel="stylesheet" type="text/css"><link href="./style.css" rel="stylesheet" type="text/css"><link href="./tocify/jquery.tocify.css" rel="stylesheet" type="text/css"></head><body data-spy="scroll" data-target=".sidebar"><nav class="navbar navbar-default navbar-fixed-top" role="navigation"><div class="navbar-header"><button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#top-navigation-collapse"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><div class="collapse navbar-collapse" id="top-navigation-collapse"><ul class="nav navbar-nav"><li class="active"><a href="./index.html">Home</a></li><li><a href="./classes/index.html">Classes</a></li><li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Files <span class="caret"></span></a><ul class="dropdown-menu"><li><a href="./files/app.coffee.html">app.coffee</a></li><li><a href="./files/events.coffee.html">events.coffee</a></li><li><a href="./files/logger.coffee.html">logger.coffee</a></li><li><a href="./files/settings.coffee.html">settings.coffee</a></li><li><a href="./files/utils.coffee.html">utils.coffee</a></li><li><a href="./files/aws.dynamodb.coffee.html">aws/dynamodb.coffee</a></li><li><a href="./files/aws.index.coffee.html">aws/index.coffee</a></li><li><a href="./files/aws.s3.coffee.html">aws/s3.coffee</a></li><li><a href="./files/aws.sns.coffee.html">aws/sns.coffee</a></li><li><a href="./files/cron.index.coffee.html">cron/index.coffee</a></li><li><a href="./files/downloader.index.coffee.html">downloader/index.coffee</a></li><li><a href="./files/gcloud.datastore.coffee.html">gcloud/datastore.coffee</a></li><li><a href="./files/gcloud.index.coffee.html">gcloud/index.coffee</a></li><li><a href="./files/gcloud.storage.coffee.html">gcloud/storage.coffee</a></li><li><a href="./files/logger-file.index.coffee.html">logger-file/index.coffee</a></li><li><a href="./files/logger-logentries.index.coffee.html">logger-logentries/index.coffee</a></li><li><a href="./files/logger-loggly.index.coffee.html">logger-loggly/index.coffee</a></li><li><a href="./files/mailer.index.coffee.html">mailer/index.coffee</a></li><li><a href="./files/mailer.templates.coffee.html">mailer/templates.coffee</a></li><li><a href="./files/metrics.httpserver.coffee.html">metrics/httpserver.coffee</a></li><li><a href="./files/metrics.index.coffee.html">metrics/index.coffee</a></li><li><a href="./files/metrics.percentile.coffee.html">metrics/percentile.coffee</a></li><li><a href="./files/mongodb.index.coffee.html">mongodb/index.coffee</a></li><li><a href="./files/sockets.index.coffee.html">sockets/index.coffee</a></li><li><a href="./files/utils.browser.coffee.html">utils/browser.coffee</a></li><li><a href="./files/utils.data.coffee.html">utils/data.coffee</a></li><li><a href="./files/utils.io.coffee.html">utils/io.coffee</a></li><li><a href="./files/utils.network.coffee.html">utils/network.coffee</a></li><li><a href="./files/utils.system.coffee.html">utils/system.coffee</a></li></ul></li></ul><div class="options"><label class="checkbox"><input id="options-private" type="checkbox"> Private</label></div></div></div></nav><div class="container-fluid content"><div class="row"><div class="hidden-xs col-sm-3"><div id="toc"></div></div><div class="col-sm-9"><div><h1 id="expresser">Expresser</h1>
+<p>A Node.js framework with built-in web server, logging and other common utilities, built on top of Express.</p>
+<p><a href="https://travis-ci.org/igoramadas/expresser"><img src="https://travis-ci.org/igoramadas/expresser.png?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/github/igoramadas/expresser?branch=master"><img src="https://coveralls.io/repos/github/igoramadas/expresser/badge.svg?branch=master" alt="Coverage Status"></a></p>
+<h3 id="why-expresser-">Why Expresser?</h3>
+<p>The idea of Expresser is to aggregate common modules and utilities into a single package, making it damn easy
+to start and streamline your Node.js application. Developed with CoffeeScript v2, it has full support for all
+the new features of ES6, including async / await.</p>
+<h3 id="settings">Settings</h3>
+<p>Settings for the app and all modules are loaded by the <code>settings.coffee</code> module. If you wish to customize any of
+these settings, please create a <code>settings.json</code> file on the root of your app folder with the specific keys
+and values. For more info please head to <a href="https://github.com/igoramadas/expresser/blob/master/docs/settings.md">https://github.com/igoramadas/expresser/blob/master/docs/settings.md</a>.</p>
+<h3 id="example-app">Example app</h3>
+<pre><code>expresser = require &quot;expresser&quot;
+logger = expresser.logger
+metrics = require &quot;expresser-metrics&quot;
+settings = expresser.settings
+app = expresser.app
 
-<html>
-<head>
-  <title>index.coffee - Docs</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <link rel="stylesheet" media="all" href="docco.css" />
-</head>
-<body>
-  <div id="container">
-    <div id="background"></div>
-    
-      <ul id="jump_to">
-        <li>
-          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
-          <a class="small" href="javascript:void(0);">+</a>
-          <div id="jump_wrapper">
-          <div id="jump_page">
-            
-              
-              <a class="source" href="index.html">
-                index.coffee
-              </a>
-            
-              
-              <a class="source" href="lib.app.html">
-                lib/app.coffee
-              </a>
-            
-              
-              <a class="source" href="lib.events.html">
-                lib/events.coffee
-              </a>
-            
-              
-              <a class="source" href="lib.logger.html">
-                lib/logger.coffee
-              </a>
-            
-              
-              <a class="source" href="lib.settings.html">
-                lib/settings.coffee
-              </a>
-            
-              
-              <a class="source" href="lib.utils.html">
-                lib/utils.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.aws.dynamodb.html">
-                plugins/aws/dynamodb.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.aws.index.html">
-                plugins/aws/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.aws.s3.html">
-                plugins/aws/s3.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.aws.sns.html">
-                plugins/aws/sns.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.cron.index.html">
-                plugins/cron/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.downloader.index.html">
-                plugins/downloader/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.gcloud.datastore.html">
-                plugins/gcloud/datastore.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.gcloud.index.html">
-                plugins/gcloud/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.gcloud.storage.html">
-                plugins/gcloud/storage.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.logger-file.index.html">
-                plugins/logger-file/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.logger-logentries.index.html">
-                plugins/logger-logentries/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.logger-loggly.index.html">
-                plugins/logger-loggly/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.mailer.index.html">
-                plugins/mailer/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.mailer.templates.html">
-                plugins/mailer/templates.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.metrics.httpserver.html">
-                plugins/metrics/httpserver.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.metrics.index.html">
-                plugins/metrics/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.metrics.percentile.html">
-                plugins/metrics/percentile.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.mongodb.index.html">
-                plugins/mongodb/index.coffee
-              </a>
-            
-              
-              <a class="source" href="plugins.sockets.index.html">
-                plugins/sockets/index.coffee
-              </a>
-            
-          </div>
-        </li>
-      </ul>
-    
-    <ul class="sections">
-        
-          <li id="title">
-              <div class="annotation">
-                  <h1>index.coffee</h1>
-              </div>
-          </li>
-        
-        
-        
-        <li id="section-1">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-1">&#182;</a>
-              </div>
-              <h2 id="expresser">EXPRESSER</h2>
+# Init the app!
+expresser.init()
+logger.info &quot;Server started!&quot;
 
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>A platform for Node.js web apps, built on top of Express.
-If you need help check the project page at <a href="http://github.com/igoramadas/expresser">http://github.com/igoramadas/expresser</a>.</p>
+# Renders the index.pug view from /views folder
+app.server.get &quot;/&quot;, (req, res) -&gt; app.renderView req, res, &quot;index&quot;
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Expresser</span></span>
-    newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Expresser()
-    isTest = process.env.NODE_ENV <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
-
-    fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
-    path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>Set application root path.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    rootPath: path.dirname <span class="hljs-built_in">require</span>.main.filename</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>Preload the main modules. App must be the last module to be set.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    settings: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/settings.coffee"</span>
-    utils: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/utils.coffee"</span>
-    events: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/events.coffee"</span>
-    logger: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/logger.coffee"</span>
-    app: <span class="hljs-built_in">require</span> <span class="hljs-string">"./lib/app.coffee"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>Expose 3rd party modules.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    libs:
-        async: <span class="hljs-built_in">require</span> <span class="hljs-string">"async"</span>
-        express: <span class="hljs-built_in">require</span> <span class="hljs-string">"express"</span>
-        lodash: <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
-        moment: <span class="hljs-built_in">require</span> <span class="hljs-string">"moment"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>Holds all loaded plugins.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    plugins: {}</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>Helper to load default modules. Basically everything inside the lib folder.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">initDefaultModules</span> = <span class="hljs-params">(self)</span> -&gt;</span>
-        <span class="hljs-keyword">for</span> id, m <span class="hljs-keyword">of</span> self
-            <span class="hljs-keyword">if</span> id <span class="hljs-keyword">isnt</span> <span class="hljs-string">"app"</span> <span class="hljs-keyword">and</span> m?.init?
-                self[id].init?()</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>Helper to load plugins. This will look first inside a /plugins
-folder for local development setups, or directly under /node_modules
-for plugins installed via NPM (most production scenarios).</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">loadPlugins</span> = <span class="hljs-params">(self)</span> -&gt;</span>
-        initializers = []
-
-        <span class="hljs-keyword">if</span> fs.existsSync <span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/plugins"</span>
-            pluginsFolder = <span class="hljs-literal">true</span>
-            plugins = fs.readdirSync <span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/plugins"</span>
-        <span class="hljs-keyword">else</span>
-            pluginsFolder = <span class="hljs-literal">false</span>
-            plugins = fs.readdirSync <span class="hljs-string">"<span class="hljs-subst">#{self.rootPath}</span>/node_modules"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>Iterate plugins and get it’s ID by removing the “expresser-“ prefix.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> plugins
-            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> isTest
-                pluginId = p.substring(p.lastIndexOf(<span class="hljs-string">"/"</span>) + <span class="hljs-number">1</span>)
-
-                <span class="hljs-keyword">if</span> pluginsFolder <span class="hljs-keyword">or</span> pluginId.substring(<span class="hljs-number">0</span>, <span class="hljs-number">10</span>) <span class="hljs-keyword">is</span> <span class="hljs-string">"expresser-"</span>
-                    pluginName = pluginId.replace <span class="hljs-string">"expresser-"</span>, <span class="hljs-string">""</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <p>Check if plugin was already attached.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> self.plugins[pluginName]?
-                        <span class="hljs-keyword">if</span> pluginsFolder
-                            pluginSettingsPath = <span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/plugins/<span class="hljs-subst">#{p}</span>/settings.default.json"</span>
-                        <span class="hljs-keyword">else</span>
-                            pluginSettingsPath = <span class="hljs-string">"<span class="hljs-subst">#{self.rootPath}</span>/node_modules/<span class="hljs-subst">#{pluginId}</span>/settings.default.json"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>Check if there are default settings to be loaded for the plugin.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> fs.existsSync pluginSettingsPath
-                            self.settings.loadFromJson pluginSettingsPath, <span class="hljs-literal">true</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <p>Get options accordingly to plugin name.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        pluginArr = pluginName.split <span class="hljs-string">"-"</span>
-                        optionsRef = self.settings
-                        i = <span class="hljs-number">0</span>
-
-                        <span class="hljs-keyword">while</span> i &lt; pluginArr.length
-                            optionsRef = optionsRef?[pluginArr[i]]
-                            i++</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>Only load if plugin is enabled.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> optionsRef?.enabled
-                            <span class="hljs-keyword">if</span> pluginsFolder
-                                self.plugins[pluginName] = <span class="hljs-built_in">require</span> <span class="hljs-string">"./plugins/<span class="hljs-subst">#{pluginId}</span>"</span>
-                            <span class="hljs-keyword">else</span>
-                                self.plugins[pluginName] = <span class="hljs-built_in">require</span> pluginId</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <p>Attach itself to the plugin.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                            self.plugins[pluginName].expresser = self
-                            initializers.push {priority: self.plugins[pluginName].priority, plugin: self.plugins[pluginName]}
-
-        sortedInit = self.libs.lodash.sortBy initializers, [<span class="hljs-string">"priority"</span>]</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>Init all loaded plugins on the correct order, by checking their ‘priority’ value.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> sortedInit
-            i.plugin.init?()</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
-              </div>
-              <p>Helper to init all modules. Load settings first, then Logger, then general
-modules, and finally the App.
-@param {Boolean} forceTest Used for testing the module init.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(forceTest = <span class="hljs-literal">false</span>)</span> -&gt;</span>
-        isTest = <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> forceTest</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-17">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
-              <p>Accept invalid certificates?</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @settings.app.ssl.rejectUnauthorized
-            process.env.NODE_TLS_REJECT_UNAUTHORIZED = <span class="hljs-string">"0"</span>
-
-        initDefaultModules <span class="hljs-keyword">this</span>
-        loadPlugins <span class="hljs-keyword">this</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-18">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              <p>App must be the last thing to be started!</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        @app.expresser = <span class="hljs-keyword">this</span>
-        @app.init() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> isTest <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> forceTest</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <h2 id="singleton-implementation">Singleton implementation</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-20">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>Expresser.getInstance = <span class="hljs-function">-&gt;</span>
-    @instance = <span class="hljs-keyword">new</span> Expresser() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
-    <span class="hljs-keyword">return</span> @instance
-
-<span class="hljs-built_in">module</span>.exports = exports = Expresser.getInstance()</pre></div></div>
-            
-        </li>
-        
-    </ul>
-  </div>
-</body>
-</html>
+# Renders output from the Metrics plugin.
+app.server.get &quot;/metrics&quot;, (req, res) -&gt; app.renderJson req, res, metrics.output()
+</code></pre><p>It seems pretty simple, right? Most configuration is done on the <code>settings.json</code> file. Paths, default views,
+server port, etc...</p>
+<h1 id="main-modules">Main modules</h1>
+<p>Now to the main modules...</p>
+<h3 id="app">App</h3>
+<ul>
+<li>Pre-configured Express web server.</li>
+<li><a href="https://github.com/igoramadas/expresser/wiki/App">https://github.com/igoramadas/expresser/wiki/App</a></li>
+</ul>
+<h3 id="events">Events</h3>
+<ul>
+<li>Central events dispatcher.</li>
+<li><a href="https://github.com/igoramadas/expresser/wiki/Events">https://github.com/igoramadas/expresser/wiki/Events</a></li>
+</ul>
+<h3 id="logger">Logger</h3>
+<ul>
+<li>Application logging.</li>
+<li><a href="https://github.com/igoramadas/expresser/wiki/Logger">https://github.com/igoramadas/expresser/wiki/Logger</a></li>
+</ul>
+<h3 id="settings">Settings</h3>
+<ul>
+<li>Settings wrapper.</li>
+<li><a href="https://github.com/igoramadas/expresser/wiki/Settings">https://github.com/igoramadas/expresser/wiki/Settings</a></li>
+</ul>
+<h3 id="utils">Utils</h3>
+<ul>
+<li>General utilities and helper methods.</li>
+<li><a href="https://github.com/igoramadas/expresser/wiki/Utils">https://github.com/igoramadas/expresser/wiki/Utils</a></li>
+</ul>
+<h1 id="plugins">Plugins</h1>
+<p>And the official plugins...</p>
+<h3 id="aws">AWS</h3>
+<ul>
+<li>Wrapper around some of the AWS SDK features.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/aws">https://github.com/igoramadas/expresser/tree/master/plugins/aws</a></li>
+</ul>
+<h3 id="cron">Cron</h3>
+<ul>
+<li>Configurable cron for scheduled tasks using JSON files.</li>
+<li>Supports multiple files and multiple modules.</li>
+<li>Supports managing scheduled tasks programatically.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/cron">https://github.com/igoramadas/expresser/tree/master/plugins/cron</a></li>
+</ul>
+<h3 id="database-mongodb">Database: MongoDB</h3>
+<ul>
+<li>MongoDB driver for the Database module.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/database-mongodb">https://github.com/igoramadas/expresser/tree/master/plugins/database-mongodb</a></li>
+</ul>
+<h3 id="downloader">Downloader</h3>
+<ul>
+<li>Configurable download manager supporting standard web protocols.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/downloader">https://github.com/igoramadas/expresser/tree/master/plugins/downloader</a></li>
+</ul>
+<h3 id="google-cloud">Google Cloud</h3>
+<ul>
+<li>Wrapper around some of the Google Cloud SDK features.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/gcloud">https://github.com/igoramadas/expresser/tree/master/plugins/gcloud</a></li>
+</ul>
+<h3 id="logger-file">Logger: File</h3>
+<ul>
+<li>Local file driver for the Logger module.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/logger-file">https://github.com/igoramadas/expresser/tree/master/plugins/logger-file</a></li>
+</ul>
+<h3 id="logger-logentries">Logger: Logentries</h3>
+<ul>
+<li>Logentries (<a href="http://logentries.com">http://logentries.com</a>) driver for the Logger module.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/logger-logentries">https://github.com/igoramadas/expresser/tree/master/plugins/logger-logentries</a></li>
+</ul>
+<h3 id="logger-loggly">Logger: Loggly</h3>
+<ul>
+<li>Loggly (<a href="http://loggly.com">http://loggly.com</a>) for the Logger module.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/logger-loggly">https://github.com/igoramadas/expresser/tree/master/plugins/logger-loggly</a></li>
+</ul>
+<h3 id="mailer">Mailer</h3>
+<ul>
+<li>Supports sending emails via SMTP using optional authentication and SSL/TLS.</li>
+<li>Supports email templates and keywords.</li>
+<li>Automatic switching to a failover SMTP server in case the main one fails to send.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/mailer">https://github.com/igoramadas/expresser/tree/master/plugins/mailer</a></li>
+</ul>
+<h3 id="metrics">Metrics</h3>
+<ul>
+<li>Generate and report metrics for your application.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/metrics">https://github.com/igoramadas/expresser/tree/master/plugins/metrics</a></li>
+</ul>
+<h3 id="sockets">Sockets</h3>
+<ul>
+<li>Wrapper for the Socket.IO module.</li>
+<li>Works even if your server does not support websockets.</li>
+<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/sockets">https://github.com/igoramadas/expresser/tree/master/plugins/sockets</a></li>
+</ul>
+<h1 id="need-help-">Need help?</h1>
+<p>Can&#39;t find what you&#39;re looking for? Need help? Then post on the Issue Tracker: <a href="https://github.com/igoramadas/expresser/issues">https://github.com/igoramadas/expresser/issues</a></p>
+</div></div></div></div><script src="http://code.jquery.com/jquery-1.11.0.min.js"></script><script src="./bootstrap-3.2.0-dist/js/bootstrap.min.js"></script><script src="./google-code-prettify/prettify.js"></script><script src="./script.js"></script><script src="./group-examples.js"></script><script src="http://code.jquery.com/ui/1.9.0/jquery-ui.min.js"></script><script src="./tocify/jquery.tocify.js"></script><script>$(function() {
+  $('#toc').tocify({extendPage:false, scrollTo:60});
+});</script><a href="#{self.github.repository}"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>

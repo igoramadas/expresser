@@ -7,7 +7,9 @@
     "license": "Apache-2.0",
     "subdomain": "expresser",
     "main": "index",
-    "domains": ["expresser.devv.com"],
+    "domains": [
+        "expresser.devv.com"
+    ],
     "engines": {
         "node": "*"
     },
@@ -27,6 +29,8 @@
         "cookie-session": "^2.0.0-beta.3",
         "csswring": "^6.0.2",
         "errorhandler": "^1.5.0",
+        "esdoc": "^1.0.4",
+        "esdoc-standard-plugin": "^1.0.0",
         "express": "^4.16.2",
         "hike": "^1.0.2",
         "ipaddr.js": "^1.5.4",
@@ -46,6 +50,7 @@
         "@google-cloud/storage": "^1.5.1",
         "aws-sdk": "^2.165.0",
         "betterdocco": "^0.7.7",
+        "coffeejsdoc": "^1.0.0",
         "chai": "^4.1.2",
         "coffee-coverage": "^2.0.1",
         "coveralls": "^3.0.0",
@@ -64,5 +69,12 @@
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": ["expresser", "express", "app", "framework", "node", "webapp"]
+    "keywords": [
+        "expresser",
+        "express",
+        "app",
+        "framework",
+        "node",
+        "webapp"
+    ]
 }

@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Expresser - logger-file/index.coffee</title><script>if (location.protocol.match(/^http/) && location.pathname.match('\.html') === null && location.pathname.slice(-1) !== '/') {
+  location.href = location.href + '/';
+}</script><link href="../bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"><!--[if lt IE 9]><script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script><script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]--><link href="../google-code-prettify/prettify.css" rel="stylesheet" type="text/css"><link href="../style.css" rel="stylesheet" type="text/css"></head><body data-spy="scroll" data-target=".sidebar"><nav class="navbar navbar-default navbar-fixed-top" role="navigation"><div class="navbar-header"><button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#top-navigation-collapse"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><div class="collapse navbar-collapse" id="top-navigation-collapse"><ul class="nav navbar-nav"><li><a href="../index.html">Home</a></li><li><a href="../classes/index.html">Classes</a></li><li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Files - logger-file/index.coffee <span class="caret"></span></a><ul class="dropdown-menu"><li><a href="../files/app.coffee.html">app.coffee</a></li><li><a href="../files/events.coffee.html">events.coffee</a></li><li><a href="../files/logger.coffee.html">logger.coffee</a></li><li><a href="../files/settings.coffee.html">settings.coffee</a></li><li><a href="../files/utils.coffee.html">utils.coffee</a></li><li><a href="../files/aws.dynamodb.coffee.html">aws/dynamodb.coffee</a></li><li><a href="../files/aws.index.coffee.html">aws/index.coffee</a></li><li><a href="../files/aws.s3.coffee.html">aws/s3.coffee</a></li><li><a href="../files/aws.sns.coffee.html">aws/sns.coffee</a></li><li><a href="../files/cron.index.coffee.html">cron/index.coffee</a></li><li><a href="../files/downloader.index.coffee.html">downloader/index.coffee</a></li><li><a href="../files/gcloud.datastore.coffee.html">gcloud/datastore.coffee</a></li><li><a href="../files/gcloud.index.coffee.html">gcloud/index.coffee</a></li><li><a href="../files/gcloud.storage.coffee.html">gcloud/storage.coffee</a></li><li><a href="../files/logger-file.index.coffee.html">logger-file/index.coffee</a></li><li><a href="../files/logger-logentries.index.coffee.html">logger-logentries/index.coffee</a></li><li><a href="../files/logger-loggly.index.coffee.html">logger-loggly/index.coffee</a></li><li><a href="../files/mailer.index.coffee.html">mailer/index.coffee</a></li><li><a href="../files/mailer.templates.coffee.html">mailer/templates.coffee</a></li><li><a href="../files/metrics.httpserver.coffee.html">metrics/httpserver.coffee</a></li><li><a href="../files/metrics.index.coffee.html">metrics/index.coffee</a></li><li><a href="../files/metrics.percentile.coffee.html">metrics/percentile.coffee</a></li><li><a href="../files/mongodb.index.coffee.html">mongodb/index.coffee</a></li><li><a href="../files/sockets.index.coffee.html">sockets/index.coffee</a></li><li><a href="../files/utils.browser.coffee.html">utils/browser.coffee</a></li><li><a href="../files/utils.data.coffee.html">utils/data.coffee</a></li><li><a href="../files/utils.io.coffee.html">utils/io.coffee</a></li><li><a href="../files/utils.network.coffee.html">utils/network.coffee</a></li><li><a href="../files/utils.system.coffee.html">utils/system.coffee</a></li></ul></li></ul><div class="options"><label class="checkbox"><input id="options-private" type="checkbox"> Private</label></div></div></div></nav><div class="container-fluid content"><div class="row"><div class="hidden-xs sidebar col-sm-3" data-spy="affix"><div class="cormo-sidenav"><div class="panel panel-default"><div class="panel-collapse collapse in" id="undefined_body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/app.coffee.html">app.coffee</a></li><li><a href="../files/events.coffee.html">events.coffee</a></li><li><a href="../files/logger.coffee.html">logger.coffee</a></li><li><a href="../files/settings.coffee.html">settings.coffee</a></li><li><a href="../files/utils.coffee.html">utils.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#aws__body">aws/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="aws__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/aws.dynamodb.coffee.html">dynamodb.coffee</a></li><li><a href="../files/aws.index.coffee.html">index.coffee</a></li><li><a href="../files/aws.s3.coffee.html">s3.coffee</a></li><li><a href="../files/aws.sns.coffee.html">sns.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#cron__body">cron/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="cron__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/cron.index.coffee.html">index.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#downloader__body">downloader/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="downloader__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/downloader.index.coffee.html">index.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#gcloud__body">gcloud/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="gcloud__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/gcloud.datastore.coffee.html">datastore.coffee</a></li><li><a href="../files/gcloud.index.coffee.html">index.coffee</a></li><li><a href="../files/gcloud.storage.coffee.html">storage.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#logger-file__body">logger-file/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="logger-file__body"><ul class="nav nav-pills nav-stacked"><li class="active"><a href="../files/logger-file.index.coffee.html">index.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#logger-logentries__body">logger-logentries/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="logger-logentries__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/logger-logentries.index.coffee.html">index.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#logger-loggly__body">logger-loggly/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="logger-loggly__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/logger-loggly.index.coffee.html">index.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#mailer__body">mailer/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="mailer__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/mailer.index.coffee.html">index.coffee</a></li><li><a href="../files/mailer.templates.coffee.html">templates.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#metrics__body">metrics/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="metrics__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/metrics.httpserver.coffee.html">httpserver.coffee</a></li><li><a href="../files/metrics.index.coffee.html">index.coffee</a></li><li><a href="../files/metrics.percentile.coffee.html">percentile.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#mongodb__body">mongodb/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="mongodb__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/mongodb.index.coffee.html">index.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#sockets__body">sockets/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="sockets__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/sockets.index.coffee.html">index.coffee</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#utils__body">utils/<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="utils__body"><ul class="nav nav-pills nav-stacked"><li><a href="../files/utils.browser.coffee.html">browser.coffee</a></li><li><a href="../files/utils.data.coffee.html">data.coffee</a></li><li><a href="../files/utils.io.coffee.html">io.coffee</a></li><li><a href="../files/utils.network.coffee.html">network.coffee</a></li><li><a href="../files/utils.system.coffee.html">system.coffee</a></li></ul></div></div></div></div><div class="col-sm-9 col-sm-offset-3"><section><h1>logger-file/index.coffee</h1></section><pre class="prettyprint"># EXPRESSER LOGGER - FILE
+# --------------------------------------------------------------------------
+# File logging plugin for Expresser. Supports saving directly to the disk
+# using one file per log type per day, and includes auto cleaning features.
+# &lt;!--
+# @see settings.logger.file
+# --&gt;
+class LoggerFile
+
+    priority: 1
+
+    events = null
+    fs = require &quot;fs&quot;
+    lodash = null
+    logger = null
+    moment = null
+    path = require &quot;path&quot;
+    settings = null
+
+    # INIT
+    # --------------------------------------------------------------------------
+
+    # Init the File module. Verify which services are set, and add the necessary transports.
+    # IP address and timestamp will be appended to logs depending on the settings.
+    # @return {Object} Returns the File transport created (only if default settings are set).
+    init: -&gt;
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        moment = @expresser.libs.moment
+        settings = @expresser.settings
+
+        logger.drivers.file = this
+
+        logger.debug &quot;LoggerFile.init&quot;
+        events.emit &quot;LoggerFile.before.init&quot;
+
+        # Auto register as &quot;file&quot; if a default path is defined on the settings.
+        if settings.logger.file.enabled and settings.logger.file.path?
+            result = logger.register &quot;file&quot;, &quot;file&quot;, settings.logger.file
+
+        events.emit &quot;LoggerFile.on.init&quot;
+        delete @init
+
+        return result
+
+    # Get the file transport object.
+    # @param {Object} options File logging options.
+    getTransport: (options) -&gt;
+        logger.debug &quot;LoggerFile.getTransport&quot;, options
+        return logger.notEnabled &quot;LoggerFile&quot;, &quot;getTransport&quot; if not settings.logger.file.enabled
+
+        if not options?.path? or options.path is &quot;&quot;
+            err = new Error &quot;The options.path is mandatory! Please specify a valid path to the logs folder.&quot;
+            logger.error &quot;LoggerFile.getTransport&quot;, err, options
+            throw err
+
+        options = lodash.defaultsDeep options, settings.logger.file
+        options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
+        options.onLogError = logger.onLogError if not options.onLogError?
+
+        # Create logs folder if it doesn't exist.
+        folderExists = fs.existsSync options.path
+
+        # Make sure the log folder exists.
+        if not folderExists
+            fs.mkdirSync options.path
+            if settings.general.debug
+                console.log &quot;LoggerFile.getTransport&quot;, &quot;Created #{options.path} folder.&quot;
+
+        # Set local buffer.
+        transport = {flushing: false, buffer: {}, flush: @flush, clean: @clean}
+        transport.onLogSuccess = options.onLogSuccess
+        transport.onLogError = options.onLogError
+        transport.bufferDispatcher = setInterval transport.flush, options.bufferInterval
+
+        # Check the maxAge of local logs and set up auto clean.
+        if options.maxAge? and options.maxAge &gt; 0
+            transport.timerCleanLocal = setInterval transport.clean, options.bufferInterval * 20
+
+        return transport
+
+    # LOG METHODS
+    # --------------------------------------------------------------------------
+
+    # Log locally. The path is defined on `settings.logger.file.path`.
+    # @param {String} logType The log type (info, warn, error, debug, etc).
+    # @param {Array} args Array or string to be logged.
+    # @param {Boolean} avoidConsole If true it will NOT log to the console.
+    log: (logType, args, avoidConsole) -&gt;
+        return if settings.logger.levels.indexOf(logType) &lt; 0
+
+        # Get message out of the arguments if not a string.
+        if lodash.isString args
+            message = args
+        else
+            message = logger.getMessage args
+
+        # Set log props and send to buffer.
+        now = moment()
+        message = now.format(&quot;HH:mm:ss.SSS&quot;) + &quot; - &quot; + message
+
+        @buffer[logType] = [] if not @buffer[logType]?
+        @buffer[logType].push message
+
+        # Log to the console depending on `console` setting.
+        if settings.logger.console and not avoidConsole
+            logger.console logType, args
+
+    # Flush all local buffered log messages to disk. This is usually called by the `bufferDispatcher` timer.
+    flush: -&gt;
+        return if @flushing
+
+        # Set flushing and get current date.
+        @flushing = true
+        now = moment()
+        date = now.format settings.logger.file.dateFormat
+
+        # Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
+        # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
+        # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
+        for key, logs of @buffer
+            if logs.length &gt; 0
+                writeData = logs.join &quot;\n&quot;
+                filePath = path.join settings.logger.file.path, &quot;#{date}.#{key}.log&quot;
+                successMsg = &quot;#{logs.length} records logged to disk.&quot;
+
+                # Reset this local buffer.
+                @buffer[key] = []
+
+                # Only use `appendFile` on new versions of Node.
+                if fs.appendFile?
+                    fs.appendFile filePath, &quot;\n&quot; + writeData, (err) =&gt;
+                        @flushing = false
+
+                        if err?
+                            console.error &quot;LoggerFile.flush&quot;, err
+                            @onLogError? err
+                        else
+                            @onLogSuccess? successMsg
+
+                        events.emit &quot;LoggerFile.on.flush&quot;, this
+
+    # Delete old log files from disk. The maximum date is taken from the settings
+    # if not passed.
+    # @param {Integer} maxAge Max age of logs, in days.
+    clean: (maxAge) -&gt;
+        maxAge = settings.logger.file.maxAge if not maxAge?
+        maxDate = moment().subtract maxAge, &quot;d&quot;
+
+        fs.readdir settings.logger.file.path, (err, files) =&gt;
+            if err?
+                console.error &quot;LoggerFile.clean&quot;, err
+            else
+                for f in files
+                    date = moment f.split(&quot;.&quot;)[0], settings.logger.file.dateFormat
+                    if date.isSameOrBefore maxDate
+                        fs.unlinkSync path.join(settings.logger.file.path, f)
+
+                events.emit &quot;LoggerFile.on.clean&quot;, this, maxAge
+
+# Singleton implementation
+# --------------------------------------------------------------------------
+LoggerFile.getInstance = -&gt;
+    @instance = new LoggerFile() if not @instance?
+    return @instance
+
+module.exports = exports = LoggerFile.getInstance()</pre></div></div></div><script src="http://code.jquery.com/jquery-1.11.0.min.js"></script><script src="../bootstrap-3.2.0-dist/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="#{self.github.repository}"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>

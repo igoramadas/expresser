@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+3.2.0
+=====
+* RENAMED! App.server is now App.expressApp.
+* Massive code refactoring!
+
 3.1.0
 =====
 * NEW! Logger has a new "compact" option to compact log output to single line, enabled by default.

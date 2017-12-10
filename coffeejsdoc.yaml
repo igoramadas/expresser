@@ -1,0 +1,21 @@
+output: docs
+title: Expresser
+files: true
+quiet: true
+sources:
+  - lib
+  - plugins
+exclude:
+  - .js
+  - .json
+external-types:
+  express-Application: https://expressjs.com/en/4x/api.html#app
+  http-Server: https://nodejs.org/api/http.html#http_class_http_server
+github:
+  repository: https://github.com/igoramadas/expresser
+  ribbon: true
+  sourcelink: true
+reverse_see_also: true
+plugins:
+  - crojsdoc-plugin-underscore-private
+  - crojsdoc-plugin-auto-namespace
