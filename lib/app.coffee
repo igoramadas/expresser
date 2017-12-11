@@ -1,6 +1,7 @@
 # EXPRESSER APP
 # -----------------------------------------------------------------------------
 express = require "express"
+errors = require "./errors.coffee"
 events = require "./events.coffee"
 fs = require "fs"
 http = require "http"
@@ -17,14 +18,6 @@ nodeEnv = null
 ###
 # This is the "core" of an Expresser based application. The App wraps the
 # Express server and its middlewares / routes, along with a few extra helpers.
-#
-# @example
-# expresser = require("expresser")
-# expresser.init()
-#
-# expresser.app.get("/myapp"), (req, res) -> res.send("Hello world!")
-#
-#
 ###
 class App
     newInstance: -> return new App()
@@ -65,9 +58,10 @@ class App
     # --------------------------------------------------------------------------
 
     ###
-    # Create, configure and run the Express server. In most cases this should be
-    # the last step of you app loading, after loading custom modules, setting
-    # custom configuration, etc.
+    # Create, configure and run the Express application. In most cases this should be
+    # the last step of you app loading, after loading custom modules, setting custom
+    # configuration, etc. Please note that this will be called automatically if
+    # you call the main `expresser.init()`.
     ###
     init: ->
         logger.debug "App.init"
@@ -92,6 +86,9 @@ class App
 
     ###
     # Configure the server. Set views, options, use Express modules, etc.
+    # Called automatically on `init()`, so normally you should never need
+    # to call `configure()` on your own.
+    # @private
     ###
     configure: ->
         midBodyParser = require "body-parser"
@@ -169,7 +166,9 @@ class App
     # START AND KILL
     # --------------------------------------------------------------------------
 
+    ###
     # Start the server using HTTP or HTTPS, depending on the settings.
+    ###
     start: ->
         if @webServer?
             throw new Error "Server is already running on port #{settings.app.port}."
@@ -222,7 +221,9 @@ class App
         # Pass the HTTP(s) server created to external modules.
         events.emit "App.on.start", serverRef
 
+    ###
     # Kill the underlying HTTP(S) server(s).
+    ###
     kill: ->
         events.emit "App.before.kill"
 
@@ -239,7 +240,9 @@ class App
 
     ##
     # Helper to call the Express App .all().
-    all: => @expressApp.all.apply @expressApp, arguments
+    all: =>
+        errors.throw "expressNotInit" if not @expressApp?
+        @expressApp.all.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .get().
