@@ -12,12 +12,19 @@ settings = require "./settings.coffee"
 util = require "util"
 utils = require "./utils.coffee"
 
-# Current node environment and HTTP server handler are set on init.
 nodeEnv = null
 
 ###
 # This is the "core" of an Expresser based application. The App wraps the
 # Express server and its middlewares / routes, along with a few extra helpers.
+#
+# @example
+# expresser = require("expresser")
+# expresser.init()
+#
+# expresser.app.get("/myapp"), (req, res) -> res.send("Hello world!")
+#
+#
 ###
 class App
     newInstance: -> return new App()
@@ -29,7 +36,7 @@ class App
     expressApp: null
 
     ##
-    # The underlying HTTP(s) server.
+    # The underlying HTTP(S) server.
     # @property
     # @type http-Server
     webServer: null
@@ -230,14 +237,40 @@ class App
     # BRIDGED EXPRESS METHODS
     # --------------------------------------------------------------------------
 
+    ##
+    # Helper to call the Express App .all().
     all: => @expressApp.all.apply @expressApp, arguments
+
+    ##
+    # Helper to call the Express App .get().
     get: => @expressApp.get.apply @expressApp, arguments
+
+    ##
+    # Helper to call the Express App .post().
     post: => @expressApp.post.apply @expressApp, arguments
+
+    ##
+    # Helper to call the Express App .put().
     put: => @expressApp.put.apply @expressApp, arguments
+
+    ##
+    # Helper to call the Express App .patch().
     patch: => @expressApp.patch.apply @expressApp, arguments
+
+    ##
+    # Helper to call the Express App .delete().
     delete: => @expressApp.delete.apply @expressApp, arguments
+
+    ##
+    # Helper to call the Express App .listen().
     listen: => @expressApp.listen.apply @expressApp, arguments
+
+    ##
+    # Helper to call the Express App .route().
     route: => @expressApp.route.apply @expressApp, arguments
+
+    ##
+    # Helper to call the Express App .use().
     use: => @expressApp.use.apply @expressApp, arguments
 
     # HELPER AND UTILS

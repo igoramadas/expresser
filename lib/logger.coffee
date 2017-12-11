@@ -1,30 +1,35 @@
 # EXPRESSER LOGGER
 # --------------------------------------------------------------------------
+chalk = require "chalk"
+events = require "./events.coffee"
+fs = require "fs"
+lodash = require "lodash"
+moment = require "moment"
+path = require "path"
+settings = require "./settings.coffee"
+utils = require "./utils.coffee"
+
+###
 # Handles server logging using local files, Logentries, Loggly and other
-# transports available as plugins.
-# Multiple services can be enabled at the same time.
+# transports available as plugins. Multiple transports can be enabled at
+# the same time.
+###
 class Logger
     newInstance: -> return new Logger()
 
-    chalk = require "chalk"
-    events = require "./events.coffee"
-    fs = require "fs"
-    lodash = require "lodash"
-    moment = require "moment"
-    path = require "path"
-    settings = require "./settings.coffee"
-    utils = require "./utils.coffee"
-
-    # PUBLIC PROPERTIES
-    # --------------------------------------------------------------------------
-
-    # @property {Object} Holds a list of available logging drivers.
+    ##
+    # List of available logging drivers.
+    # @property {Object}
     drivers: {}
 
-    # @property {Object} List of registered transports.
+    ##
+    # List of registered transports.
+    # @property {Object}
     transports: {}
 
-    # @property {Method} Custom method to call on every log request.
+    ##
+    # Method to call on every log request.
+    # @property {Method}
     onLog: null
 
     # INIT

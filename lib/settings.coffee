@@ -1,5 +1,13 @@
 # EXPRESSER SETTINGS
 # -----------------------------------------------------------------------------
+crypto = require "crypto"
+events = require "./events.coffee"
+fs = require "fs"
+lodash = require "lodash"
+path = require "path"
+utils = require "./utils.coffee"
+
+###
 # All main settings for the Expresser platform are set and described on the
 # settings.default.json file. Do not edit it!!! To change settings please
 # create a settings.json file and put your values there.
@@ -10,7 +18,7 @@
 # AFTER the main `settings.json` file.
 #
 # Please note that the `settings.json` must ne located on the root of your app!
-# <!--
+#
 # @example Sample settings.json file
 #   {
 #     "general": {
@@ -20,19 +28,12 @@
 #       "title": "My Super App"
 #     }
 #   }
-# -->
+###
 class Settings
     newInstance: ->
         obj = new Settings()
         obj.load()
         return obj
-
-    crypto = require "crypto"
-    events = require "./events.coffee"
-    fs = require "fs"
-    lodash = require "lodash"
-    path = require "path"
-    utils = require "./utils.coffee"
 
     currentEnv: process.env.NODE_ENV
 
