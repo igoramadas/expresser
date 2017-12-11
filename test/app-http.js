@@ -118,13 +118,13 @@ describe("App HTTP Tests", function() {
     })
 
     it("Lists all registered routes on the server", function(done) {
-        var routes = app.getRoutes()
-        var simpleRoutes = app.getRoutes(true)
+        var routes = app.listRoutes()
+        var simpleRoutes = app.listRoutes(true)
 
         if (simpleRoutes.length == routes.length) {
             done()
         } else {
-            done("The getRoutes should return same length for when `simple` is true or false.")
+            done("The getRoutes should return same length for when `asString` is true or false.")
         }
     })
 

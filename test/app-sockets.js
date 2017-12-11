@@ -32,7 +32,7 @@ describe("App Sockets Tests", function() {
         app = require("../lib/app.coffee").newInstance()
 
         sockets = require("../plugins/sockets/index.coffee")
-        sockets.expresser = require("../index.coffee")
+        sockets.expresser = require("../lib/index.coffee")
         sockets.expresser.events = require("../lib/events.coffee")
         sockets.expresser.logger = require("../lib/logger.coffee")
     })

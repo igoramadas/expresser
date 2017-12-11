@@ -1,8 +1,9 @@
-# EXPRESSER ERROR
+# EXPRESSER ERRORS
 # -----------------------------------------------------------------------------
 
 ###
-# Contains error / exception helpers.
+# This is a helper class to make it easier to keep error management and
+# exception handling consistent across the app.
 ###
 class Errors
 
@@ -15,10 +16,14 @@ class Errors
 
     ###
     # Throws an error.
+    # @param {String} keyMsg Key of the message in `@messages`. If not found, use the string itself as the message. Mandatory.
+    # @param {Object} details Object or exception containing more details about the error.
     ###
-    @throw: (key, details) ->
-        message = @messages[key] or key
+    @throw: (keyMsg, details) ->
+        message = @messages[keyMsg] or keyMsg
+        error = {error: message}
+        error.details = details if details?
+        throw error
 
-        throw {error: message, details: details}
-
+# Exports
 module.exports = Errors

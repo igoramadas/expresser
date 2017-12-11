@@ -23,7 +23,7 @@ describe("MongoDB Tests", function() {
         }
 
         mongodb = require("../plugins/mongodb/index.coffee")
-        mongodb.expresser = require("../index.coffee")
+        mongodb.expresser = require("../lib/index.coffee")
         mongodb.expresser.events = require("../lib/events.coffee")
         mongodb.expresser.logger = require("../lib/logger.coffee")
     })

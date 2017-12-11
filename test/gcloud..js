@@ -20,7 +20,7 @@ describe("^Google Cloud Tests", function() {
         utils = require("../lib/utils.coffee")
 
         gcloud = require("../plugins/gcloud/index.coffee")
-        gcloud.expresser = require("../index.coffee")
+        gcloud.expresser = require("../lib/index.coffee")
         gcloud.expresser.events = require("../lib/events.coffee")
         gcloud.expresser.logger = require("../lib/logger.coffee")
     })

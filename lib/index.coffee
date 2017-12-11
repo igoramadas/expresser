@@ -13,11 +13,11 @@ class Expresser
     rootPath: path.dirname require.main.filename
 
     # Preload the main modules. App must be the last module to be set.
-    settings: require "./lib/settings.coffee"
-    utils: require "./lib/utils.coffee"
-    events: require "./lib/events.coffee"
-    logger: require "./lib/logger.coffee"
-    app: require "./lib/app.coffee"
+    settings: require "./settings.coffee"
+    utils: require "./utils.coffee"
+    events: require "./events.coffee"
+    logger: require "./logger.coffee"
+    app: require "./app.coffee"
 
     # Expose 3rd party modules.
     libs:
@@ -41,9 +41,9 @@ class Expresser
     loadPlugins = (self) ->
         initializers = []
 
-        if fs.existsSync "#{__dirname}/plugins"
+        if fs.existsSync "#{__dirname}/../plugins"
             pluginsFolder = true
-            plugins = fs.readdirSync "#{__dirname}/plugins"
+            plugins = fs.readdirSync "#{__dirname}/../plugins"
         else
             pluginsFolder = false
             plugins = fs.readdirSync "#{self.rootPath}/node_modules"
@@ -59,7 +59,7 @@ class Expresser
                     # Check if plugin was already attached.
                     if not self.plugins[pluginName]?
                         if pluginsFolder
-                            pluginSettingsPath = "#{__dirname}/plugins/#{p}/settings.default.json"
+                            pluginSettingsPath = "#{__dirname}/../plugins/#{p}/settings.default.json"
                         else
                             pluginSettingsPath = "#{self.rootPath}/node_modules/#{pluginId}/settings.default.json"
 
@@ -79,7 +79,7 @@ class Expresser
                         # Only load if plugin is enabled.
                         if optionsRef?.enabled
                             if pluginsFolder
-                                self.plugins[pluginName] = require "./plugins/#{pluginId}"
+                                self.plugins[pluginName] = require "../plugins/#{pluginId}"
                             else
                                 self.plugins[pluginName] = require pluginId
 

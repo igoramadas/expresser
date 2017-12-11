@@ -10,33 +10,37 @@ settings = require "./settings.coffee"
 utils = require "./utils.coffee"
 
 ###
-# Handles server logging using local files, Logentries, Loggly and other
-# transports available as plugins. Multiple transports can be enabled at
+# Handles server logging using the console, local files, Logentries, Loggly and
+# other transports available as plugins. Multiple transports can be enabled at
 # the same time.
 ###
 class Logger
     newInstance: -> return new Logger()
 
     ##
-    # List of available logging drivers.
-    # @property {Object}
+    # List of available logging drivers. This list will be populated automatically by installed plugins.
+    # @property
+    # @type Object
     drivers: {}
 
     ##
     # List of registered transports.
-    # @property {Object}
+    # @property
+    # @type Object
     transports: {}
 
     ##
     # Method to call on every log request.
-    # @property {Method}
+    # @property
+    # @type Function
     onLog: null
 
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Logger module. Verify which services are set, and add the necessary transports.
-    # IP address will be appended to logs depending on the settings.
+    ###
+    # Init the Logger module. Verify which drivers are available and add the necessary transports.
+    ###
     init: =>
         events.emit "Logger.before.init"
 
@@ -59,7 +63,10 @@ class Logger
         events.emit "Logger.on.init"
         delete @init
 
-    # Bind events.
+    ###
+    # Listen to Logger events.
+    # @private
+    ###
     setEvents: ->
         events.on "Logger.register", @register.bind(this)
         events.on "Logger.console", @console
@@ -72,11 +79,15 @@ class Logger
     # IMPLEMENTATION
     # -------------------------------------------------------------------------
 
-    # Register a Logger transport. This is called by Logger plugins.
-    # @param {String} id Unique ID of the transport to be registered.
+    ###
+    # Register a Logger transport.
+    # @param {String} id Unique ID of the transport to be registered, mandatory.
+    # @param {String} driver The transport driver ID (logger, loggly, etc), mandatory.
+    # @param {Object} options Registration options to be passed to the transport handler.
+    ###
     register: (id, driver, options) ->
         if not @drivers[driver]?
-            console.error "Logger.register", "The transport #{driver} is not installed! Please check if plugin expresser-logger-#{driver} is available on the current environment."
+            console.error "Logger.register", "#{driver} is not installed! Please check if plugin expresser-logger-#{driver} is available on the current environment."
             return false
         else
             if settings.general.debug
@@ -92,20 +103,28 @@ class Logger
 
             return @transports[id]
 
+    ###
     # Unregister a Logger transport.
     # @param {String} id Unique ID of the transport to be unregistered.
-    unregister: (id) ->
+    ###
+    unregister: (id) =>
+        @transports[id]?.unregister?()
         delete @transports[id]
+
+        if settings.general.debug
+            console.log "Logger.unregister", id
 
     # LOG METHODS
     # --------------------------------------------------------------------------
 
+    ###
     # Log to the console.
-    # @param {String} logType The log type (for example: warning, error, info, security, etc).
-    # @param {Array} args Array of arguments to be stringified and logged.
-    # @param {Boolean} doNotParse If true, message won't be parsed and cleaned using the argsCleaner helper.
+    # @param {String} logType The log type (ex: warning, error, info, etc).
+    # @param {String} msg The message to be logged, mandatory.
+    # @param {Boolean} doNotParse If true, message won't be cleaned using the `argsCleaner` helper.
     # @return {String} The human readable log sent to the console.
-    console: (logType, msg, doNotParse) ->
+    ###
+    console: (logType, msg, doNotParse = false) ->
         return if process.env.NODE_ENV is "test" and logType isnt "test"
 
         timestamp = moment().format "HH:mm:ss.SS"
@@ -131,10 +150,13 @@ class Logger
 
         return msg
 
-    # Internal generic log method.
-    # @param {String} logType The log type (for example: warning, error, info, security, etc).
-    # @param {Array} args Array to be stringified and logged.
-    # @return {String} The human readable log line.
+    ###
+    # Generic log method. You can use this if you want to have your own customized log types
+    # instead of the more traditional debug / info / warning / error ...
+    # @param {String} logType The log type (for example: info, error, myCustomType etc).
+    # @param {Array} args Array to be stringified and logged, mandatory.
+    # @return {String} The parsed, stringified log message.
+    ###
     log: (logType, args) ->
         return if settings.logger.levels?.indexOf(logType) < 0 and not settings.general.debug
 
@@ -154,36 +176,46 @@ class Logger
 
         return msg
 
-    # Log to the active transports as `debug`, only if the debug flag is enabled.
-    # All arguments are transformed to readable strings.
+    ###
+    # Log to the active transports as `debug`, only if `settings.general.debug` is true.
+    # @param {Arguments} args Any number of arguments to be parsed and stringified.
+    ###
     debug: ->
         args = Array.prototype.slice.call arguments
         args.unshift "DEBUG"
         @log "debug", args
 
+    ###
     # Log to the active transports as `info`.
-    # All arguments are transformed to readable strings.
+    # @param {Arguments} args Any number of arguments to be parsed and stringified.
+    ###
     info: ->
         args = Array.prototype.slice.call arguments
         args.unshift "INFO"
         @log "info", args
 
+    ###
     # Log to the active transports as `warn`.
-    # All arguments are transformed to readable strings.
+    # @param {Arguments} args Any number of arguments to be parsed and stringified.
+    ###
     warn: ->
         args = Array.prototype.slice.call arguments
         args.unshift "WARN"
         @log "warn", args
 
+    ###
     # Log to the active transports as `error`.
-    # All arguments are transformed to readable strings.
+    # @param {Arguments} args Any number of arguments to be parsed and stringified.
+    ###
     error: ->
         args = Array.prototype.slice.call arguments
         args.unshift "ERROR"
         @log "error", args
 
+    ###
     # Log to the active transports as `critical`.
-    # All arguments are transformed to readable strings.
+    # @param {Arguments} args Any number of arguments to be parsed and stringified.
+    ###
     critical: ->
         args = Array.prototype.slice.call arguments
         args.unshift "CRITICAL"
@@ -192,21 +224,32 @@ class Logger
     # HELPER METHODS
     # --------------------------------------------------------------------------
 
-    # Helper to log to console about methods / features deprecation.
-    deprecated: (func, message) ->
-        message = "#{func} is deprecated. #{message}"
-        @console "deprecated", message
-        return {error: "Deprecated", message: message}
+    ###
+    # Helper to log to console about deprecated features.
+    # @param {String} feature Feature, function or property name that is deprecated, mandatory.
+    # @param {String} message Optional message to add to the console.
+    # @return {Object} Object on the format {error: 'Deprecated feature', message: '...'}
+    ###
+    deprecated: (feature, message) ->
+        line = "#{feature} is deprecated. #{message}"
+        @console "deprecated", line
+        result = {error: "Deprecated: #{feature}"}
+        result.message = message if message? and message isnt ""
+        return result
 
+    ###
     # Helper to log to console that module is not enabled on settings.
+    ###
     notEnabled: (module, func) ->
         @console "debug", "#{module}.#{func} abort! #{module} is not enabled."
         return {error: "Module #{module} is not enabled.", notEnabled: true}
 
+    ###
     # Cleans the arguments passed according to the `removeFields` setting.
     # The maximum level deep down the object is defined by the `maxDeepLevel`.
     # @return {Arguments} Arguments with private fields obfuscated.
     # @private
+    ###
     argsCleaner: ->
         funcText = "[Function]"
         unreadableText = "[Unreadable]"
@@ -277,9 +320,11 @@ class Logger
 
         return result
 
+    ###
     # Returns a human readable message out of the arguments.
     # @return {String} The human readable, parsed JSON message.
     # @private
+    ###
     getMessage: (params) ->
         separated = []
         args = []

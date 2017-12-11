@@ -29,7 +29,7 @@ describe("AWS DynamoDB Tests", function() {
         utils = require("../lib/utils.coffee")
 
         aws = require("../plugins/aws/index.coffee")
-        aws.expresser = require("../index.coffee")
+        aws.expresser = require("../lib/index.coffee")
         aws.expresser.events = require("../lib/events.coffee")
         aws.expresser.logger = require("../lib/logger.coffee")
 

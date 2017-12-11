@@ -45,7 +45,7 @@ describe("Logger Loggly Tests", function() {
         logger = require("../lib/logger.coffee").newInstance()
 
         loggerLoggly = require("../plugins/logger-loggly/index.coffee")
-        loggerLoggly.expresser = require("../index.coffee")
+        loggerLoggly.expresser = require("../lib/index.coffee")
         loggerLoggly.expresser.events = require("../lib/events.coffee")
         loggerLoggly.expresser.logger = logger
     })

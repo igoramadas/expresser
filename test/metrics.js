@@ -18,7 +18,7 @@ describe("Metrics Tests", function() {
         settings.loadFromJson("settings.test.json")
 
         metrics = require("../plugins/metrics/index.coffee")
-        metrics.expresser = require("../index.coffee")
+        metrics.expresser = require("../lib/index.coffee")
         metrics.expresser.events = require("../lib/events.coffee")
         metrics.expresser.logger = require("../lib/logger.coffee")
     })

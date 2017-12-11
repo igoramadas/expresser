@@ -41,7 +41,7 @@ describe("Logger Logentries Tests", function() {
         logger = require("../lib/logger.coffee").newInstance()
 
         loggerLogentries = require("../plugins/logger-logentries/index.coffee")
-        loggerLogentries.expresser = require("../index.coffee")
+        loggerLogentries.expresser = require("../lib/index.coffee")
         loggerLogentries.expresser.events = require("../lib/events.coffee")
         loggerLogentries.expresser.logger = logger
     })

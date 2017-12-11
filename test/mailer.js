@@ -36,7 +36,7 @@ describe("Mailer Tests", function() {
         utils = require("../lib/utils.coffee")
 
         mailer = require("../plugins/mailer/index.coffee")
-        mailer.expresser = require("../index.coffee")
+        mailer.expresser = require("../lib/index.coffee")
         mailer.expresser.events = require("../lib/events.coffee")
         mailer.expresser.logger = require("../lib/logger.coffee")
     })

@@ -20,7 +20,7 @@ describe("Cron Tests", function() {
         utils = require("../lib/utils.coffee")
 
         cron = require("../plugins/cron/index.coffee")
-        cron.expresser = require("../index.coffee")
+        cron.expresser = require("../lib/index.coffee")
         cron.expresser.events = require("../lib/events.coffee")
         cron.expresser.logger = require("../lib/logger.coffee")
     })

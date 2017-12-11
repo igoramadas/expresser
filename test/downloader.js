@@ -20,7 +20,7 @@ describe("Downloader Tests", function() {
         utils = require("../lib/utils.coffee")
 
         downloader = require("../plugins/downloader/index.coffee")
-        downloader.expresser = require("../index.coffee")
+        downloader.expresser = require("../lib/index.coffee")
         downloader.expresser.events = require("../lib/events.coffee")
         downloader.expresser.logger = require("../lib/logger.coffee")
     })

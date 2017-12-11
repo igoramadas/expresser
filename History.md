@@ -2,7 +2,9 @@
 
 3.2.0
 =====
+* NEW! Events emitter is now exposed to external code.
 * RENAMED! App.server is now App.expressApp.
+* RENAMED! App.getRoutes is now App.listRoutes.
 * Massive code refactoring!
 
 3.1.0

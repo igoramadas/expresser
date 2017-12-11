@@ -49,7 +49,7 @@ describe("Logger File Tests", function() {
         logger = require("../lib/logger.coffee").newInstance()
 
         loggerFile = require("../plugins/logger-file/index.coffee")
-        loggerFile.expresser = require("../index.coffee")
+        loggerFile.expresser = require("../lib/index.coffee")
         loggerFile.expresser.events = require("../lib/events.coffee")
         loggerFile.expresser.logger = logger
 

@@ -160,7 +160,7 @@ class App
 
                 return url
 
-        # Delete!
+        # We should not call configure more than once!
         delete @configure
 
     # START AND KILL
@@ -241,67 +241,84 @@ class App
     ##
     # Helper to call the Express App .all().
     all: =>
-        errors.throw "expressNotInit" if not @expressApp?
+        return errors.throw "expressNotInit" if not @expressApp?
         @expressApp.all.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .get().
-    get: => @expressApp.get.apply @expressApp, arguments
+    get: =>
+        return errors.throw "expressNotInit" if not @expressApp?
+        @expressApp.get.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .post().
-    post: => @expressApp.post.apply @expressApp, arguments
+    post: =>
+        return errors.throw "expressNotInit" if not @expressApp?
+        @expressApp.post.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .put().
-    put: => @expressApp.put.apply @expressApp, arguments
+    put: =>
+        return errors.throw "expressNotInit" if not @expressApp?
+        @expressApp.put.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .patch().
-    patch: => @expressApp.patch.apply @expressApp, arguments
+    patch: =>
+        return errors.throw "expressNotInit" if not @expressApp?
+        @expressApp.patch.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .delete().
-    delete: => @expressApp.delete.apply @expressApp, arguments
+    delete: =>
+        return errors.throw "expressNotInit" if not @expressApp?
+        @expressApp.delete.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .listen().
-    listen: => @expressApp.listen.apply @expressApp, arguments
+    listen: =>
+        return errors.throw "expressNotInit" if not @expressApp?
+        @expressApp.listen.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .route().
-    route: => @expressApp.route.apply @expressApp, arguments
+    route: =>
+        return errors.throw "expressNotInit" if not @expressApp?
+        @expressApp.route.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .use().
-    use: => @expressApp.use.apply @expressApp, arguments
+    use: =>
+        return errors.throw "expressNotInit" if not @expressApp?
+        @expressApp.use.apply @expressApp, arguments
 
     # HELPER AND UTILS
     # --------------------------------------------------------------------------
 
     ###
-    # Return a collection with all routes registered on the server.
-    # @param {Boolean} simple If true, returns only an array the route strings.
-    # @return {Array} Collection with routes (as object or as string).
+    # Return an array with all routes registered on the Express application.
+    # @param {Boolean} asString If true, returns the route strings only, otherwise returns full objects.
+    # @return {Array} Array with the routes (as object or as string if asString = true).
     ###
-    getRoutes: (simple = false) =>
+    listRoutes: (asString = false) =>
         result = []
 
         for r in @expressApp._router.stack
             if r.route?.path? and r.route.path isnt ""
-                if simple
+                if asString
                     result.push r.route.path
                 else
                     result.push {route: r.route.path, methods: lodash.keys(r.route.methods)}
 
         return result
 
-    # Helper to render Pug views. The request, response and view are mandatory,
-    # and the options argument is optional.
-    # @param {Object} req The request object.
-    # @param {Object} res The response object.
-    # @param {String} view The Pug filename.
+    ###
+    # Render a Pug view and send to the client.
+    # @param {Object} req The Express request object, mandatory.
+    # @param {Object} res The Express response object, mandatory.
+    # @param {String} view The Pug view filename, mandatory.
     # @param {Object} options Options passed to the view, optional.
+    ###
     renderView: (req, res, view, options) ->
         logger.debug "App.renderView", req.originalUrl, view, options
 
@@ -322,10 +339,12 @@ class App
 
         events.emit "App.on.renderView", req, res, view, options
 
-    # Render response as human readable JSON data.
-    # @param {Object} req The request object.
-    # @param {Object} res The response object.
-    # @param {Object} data The JSON data to be sent.
+    ###
+    # Render response as JSON data and send to the client.
+    # @param {Object} req The Express request object, mandatory.
+    # @param {Object} res The Express response object, mandatory.
+    # @param {Object} data The JSON data to be sent, mandatory.
+    ###
     renderJson: (req, res, data) ->
         logger.debug "App.renderJson", req.originalUrl, data
 
@@ -357,11 +376,13 @@ class App
 
         events.emit "App.on.renderJson", req, res, data
 
-    # Render response as image.
-    # @param {Object} req The request object.
-    # @param {Object} res The response object.
-    # @param {String} filename The full path to the image file.
+    ###
+    # Render an image from the speficied file, and send to the client.
+    # @param {Object} req The Express request object, mandatory.
+    # @param {Object} res The Express response object, mandatory.
+    # @param {String} filename The full path to the image file, mandatory.
     # @param {Object} options Options passed to the image renderer, for example the "mimetype".
+    ###
     renderImage: (req, res, filename, options) ->
         logger.debug "App.renderImage", req.originalUrl, filename, options
 
@@ -379,19 +400,19 @@ class App
 
         events.emit "App.on.renderImage", req, res, filename, options
 
-    # Send error response as JSON. When the server can't return a valid result,
-    # send an error response with the specified status code and error output.
-    # @param {Object} req The request object.
-    # @param {Object} res The response object.
-    # @param {Object} error The error object or message to be sent to the client.
-    # @param {Integer} status The response status code, optional, default is 500.
+    ###
+    # Sends error response as JSON.
+    # @param {Object} req The Express request object, mandatory.
+    # @param {Object} res The Express response object, mandatory.
+    # @param {Object} error The error object or message to be sent to the client, mandatory.
+    # @param {Number} status The response status code, optional, default is 500.
+    ###
     renderError: (req, res, error, status) ->
         logger.error "App.renderError", req.originalUrl, status, error
 
+        # Status defaults to 500.
+        status = error?.statusCode or 500 if not status?
         status = 408 if status is "ETIMEDOUT"
-
-        # Set default status to 500 and stringify message if necessary.
-        status = status or error?.statusCode or 500
 
         try
             if lodash.isError error

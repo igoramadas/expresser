@@ -24,6 +24,25 @@ describe("App HTTP(s) Error Tests", function() {
         app.kill()
     })
 
+    it("Fail to call Express application methods before App init", function(done) {
+        var methods = ["all", "get", "post", "put", "patch", "delete", "listen", "route", "use"]
+        var failed = false
+        var m
+
+        for (m = 0; m < methods.length; m++) {
+            try {
+                app[methods[m]]()
+                done("Method " + methods[m] + " should throw exception before app has initiated.")
+                failed = true
+                m = methods.length
+            } catch (ex) {}
+        }
+
+        if (!failed) {
+            done()
+        }
+    })
+
     it("Init HTTP server to test errors, port 18004", function() {
         this.timeout(10000)
 
