@@ -1,6 +1,6 @@
 {
     "name": "expresser-sockets",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "description": "Web sockets plugin (using Socket.IO) for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
