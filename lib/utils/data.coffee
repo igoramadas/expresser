@@ -1,6 +1,9 @@
 # EXPRESSER UTILS: DATA
 # -----------------------------------------------------------------------------
+
+###
 # General data utilities.
+###
 class DataUtils
     newInstance: -> return new DataUtils()
 

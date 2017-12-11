@@ -1,6 +1,9 @@
 # EXPRESSER UTILS: BROWSER
 # -----------------------------------------------------------------------------
+
+###
 # Browser and client utilities.
+###
 class BrowserUtils
     newInstance: -> return new BrowserUtils()
 

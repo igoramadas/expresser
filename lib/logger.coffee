@@ -39,7 +39,7 @@ class Logger
     # --------------------------------------------------------------------------
 
     ###
-    # Init the Logger module. Verify which drivers are available and add the necessary transports.
+    # Init the Logger module and set default settings.
     ###
     init: =>
         events.emit "Logger.before.init"
@@ -53,9 +53,9 @@ class Logger
                 catch ex
                     console.error "Unhandled exception!", err.message, err.stack, ex
 
-        # Deprecated settings.logger.maxDeepLevel in favour of maxDepth.
+        # DEPRECATED! Use settings.logger.maxDepth instead of maxDeepLevel.
         if settings.logger.maxDeepLevel?
-            @deprecated "settings.logger.maxDeepLevel", "Please use settings.logger.maxDepth."
+            @deprecated "settings.logger.maxDeepLevel", "Please use settings.logger.maxDepth instead."
             settings.logger.maxDepth = settings.logger.maxDeepLevel
 
         @setEvents()
@@ -68,13 +68,14 @@ class Logger
     # @private
     ###
     setEvents: ->
-        events.on "Logger.register", @register.bind(this)
-        events.on "Logger.console", @console
-        events.on "Logger.debug", @debug
-        events.on "Logger.info", @info
-        events.on "Logger.warn", @warn
-        events.on "Logger.error", @error
-        events.on "Logger.critical", @critical
+        events.on "Logger.register", @register
+        events.on "Logger.unregister", @unregister
+        events.on "Logger.console", @console.bind this
+        events.on "Logger.debug", @debug.bind this
+        events.on "Logger.info", @info.bind this
+        events.on "Logger.warn", @warn.bind this
+        events.on "Logger.error", @error.bind this
+        events.on "Logger.critical", @critical.bind this
 
     # IMPLEMENTATION
     # -------------------------------------------------------------------------
@@ -226,28 +227,35 @@ class Logger
 
     ###
     # Helper to log to console about deprecated features.
-    # @param {String} feature Feature, function or property name that is deprecated, mandatory.
+    # @param {String} feature Module, function or feature that is deprecated, mandatory.
     # @param {String} message Optional message to add to the console.
-    # @return {Object} Object on the format {error: 'Deprecated feature', message: '...'}
+    # @return {Object} Object on the format {error: 'Feature is deprecated', deprecated: true, message: '...'}
     ###
     deprecated: (feature, message) ->
         line = "#{feature} is deprecated. #{message}"
         @console "deprecated", line
-        result = {error: "Deprecated: #{feature}"}
+        result = {error: "#{feature} is deprecated.", deprecated: true}
         result.message = message if message? and message isnt ""
         return result
 
     ###
-    # Helper to log to console that module is not enabled on settings.
+    # Helper to log to console about features not enabled.
+    # @param {String} feature Module, function or feature that is deprecated, mandatory.
+    # @param {String} message Optional message to add to the console.
+    # @return {Object} Object on the format {error: 'Feature not enabled', notEnabled: true, message: '...'}
     ###
-    notEnabled: (module, func) ->
-        @console "debug", "#{module}.#{func} abort! #{module} is not enabled."
-        return {error: "Module #{module} is not enabled.", notEnabled: true}
+    notEnabled: (feature, message) ->
+        line = "#{feature} is not enabled. #{message}"
+        @console "warn", line
+        result = {error: "#{feature} is not enabled.", notEnabled: true}
+        result.message = message if message? and message isnt ""
+        return result
 
     ###
-    # Cleans the arguments passed according to the `removeFields` setting.
-    # The maximum level deep down the object is defined by the `maxDeepLevel`.
-    # @return {Arguments} Arguments with private fields obfuscated.
+    # Process and clean arguments according to the `removeFields`, `maskFields`
+    # and `obfuscateFields` settings. The maximum level deep down the object
+    # is defined by the `maxDepth` setting.
+    # @return {Arguments} Arguments with masked, hidden and obfuscated fields processed.
     # @private
     ###
     argsCleaner: ->
@@ -321,7 +329,8 @@ class Logger
         return result
 
     ###
-    # Returns a human readable message out of the arguments.
+    # Parses arguments and returns a human readable message to be used for logging.
+    # @param {Array} params Arguments or array of parameters to be parsed.
     # @return {String} The human readable, parsed JSON message.
     # @private
     ###
@@ -371,7 +380,6 @@ class Logger
             serverIP = null
 
         separated.push "IP #{serverIP}" if serverIP?
-
         separator = settings.logger.separator
 
         # Return single string log message.

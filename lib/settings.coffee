@@ -1,6 +1,7 @@
 # EXPRESSER SETTINGS
 # -----------------------------------------------------------------------------
 crypto = require "crypto"
+errors = require "./errors.coffee"
 events = require "./events.coffee"
 fs = require "fs"
 lodash = require "lodash"
@@ -8,16 +9,15 @@ path = require "path"
 utils = require "./utils.coffee"
 
 ###
-# All main settings for the Expresser platform are set and described on the
+# All main settings for an Expresser apps are set and described on the
 # settings.default.json file. Do not edit it!!! To change settings please
-# create a settings.json file and put your values there.
+# create a settings.json on the root of your application and put your
+# own values there.
 #
 # You can also create specific settings for different runtime environments.
 # For example to set settings on development, create `settings.development.json`
-# and for production a `settings.production.json` file. These will be parsed
-# AFTER the main `settings.json` file.
-#
-# Please note that the `settings.json` must ne located on the root of your app!
+# and for production a `settings.production.json` file. These will be loaded
+# after the main `settings.json` file.
 #
 # @example Sample settings.json file
 #   {
@@ -35,27 +35,35 @@ class Settings
         obj.load()
         return obj
 
-    currentEnv: process.env.NODE_ENV
+    ##
+    # List of loaded settings files.
+    # @property
+    # @type Array
+    files: []
 
     # MAIN METHODS
     # --------------------------------------------------------------------------
 
-    # Load settings from settings.default.json, then settings.json, then environment specific settings.
-    load: ->
-        @currentEnv = process.env.NODE_ENV or "development"
+    ###
+    # Load settings from `settings.default.json`, then `settings.json`, then
+    # environment specific settings.
+    ###
+    load: =>
+        env = process.env.NODE_ENV or "development"
 
         @loadFromJson "settings.default.json"
         @loadFromJson "settings.json"
-        @loadFromJson "settings.#{@currentEnv.toString().toLowerCase()}.json"
+        @loadFromJson "settings.#{env.toString().toLowerCase()}.json"
 
         events.emit "Settings.on.load"
 
-    # Helper to load values from the specified settings file.
-    # @param {String} filename The filename or path to the settings file.
-    # @param {Boolean} extend If true it won't update settings that are already existing.
-    # @return {Object} Returns the JSON representation of the loaded file.
-    loadFromJson: (filename, extend) ->
-        extend = false if not extend?
+    ###
+    # Load settings from the specified JSON file.
+    # @param {String} filename The filename or full path to the settings file, mandatory.
+    # @param {Boolean} extend If true it won't update settings that are already existing, default is false.
+    # @return {Object} Returns the JSON representation of the loaded file, or null if error / empty.
+    ###
+    loadFromJson: (filename, extend = false) =>
         filename = utils.io.getFilePath filename
         settingsJson = null
 
@@ -83,14 +91,23 @@ class Settings
 
             xtend settingsJson, this
 
+        # Add file to the `files` list.
+        files.push {filename: filename, watching: false} if settingsJson?
+
         if @general.debug and @logger.console
             console.log "Settings.loadFromJson", filename
+
+        events.emit "Settings.on.loadFromJson", filename
 
         # Return the JSON representation of the file (or null if not found / empty).
         return settingsJson
 
-    # Reset to default settings.
-    reset: ->
+    ###
+    # Reset to default settings by clearing values and listeners, and re-calling `load`.
+    ###
+    reset: =>
+        @unwatch()
+        @files = []
         @instance = new Settings()
         @instance.load()
 
@@ -212,40 +229,47 @@ class Settings
     # FILE WATCHER
     # --------------------------------------------------------------------------
 
-    # Enable or disable the settings files watcher to auto reload settings when file changes.
+    ###
+    # Watch loaded settings files for changes by using a file watcher.
     # The `callback` is optional in case you want to notify another module about settings updates.
-    # @param {Boolean} enable If enabled is true activate the fs watcher, otherwise deactivate.
-    # @param {Method} callback A function (event, filename) triggered when a settings file changes.
-    watch: (enable, callback) ->
+    # @param {Function} callback Optional function (event, filename) triggered when a settings file gets updated.
+    ###
+    watch: (callback) =>
         if callback? and not lodash.isFunction callback
             throw new TypeError "The callback must be a valid function, or null/undefined."
 
         logToConsole = @general.debug and @logger.console
 
-        # Add / remove watcher for the @json file if it exists.
-        filename = utils.io.getFilePath "settings.json"
-        if filename?
-            if enable
+        # Iterate loaded files to create the file system watchers.
+        for f in @files
+            filename = utils.io.getFilePath f.filename
+
+            if filename? and not f.watching
                 fs.watchFile filename, {persistent: true}, (evt, filename) =>
                     @loadFromJson filename
-                    console.log "Settings.watch", filename, "Reloaded!" if logToConsole
-                    callback(evt, filename) if callback?
-            else
-                fs.unwatchFile filename, callback
+                    console.log "Settings.watch", filename, "Reloaded!"
+                    callback? evt, filename
 
-        # Add / remove watcher for the settings.NODE_ENV.json file if it exists.
-        filename = utils.io.getFilePath "settings.#{@currentEnv.toString().toLowerCase()}.json"
-        if filename?
-            if enable
-                fs.watchFile filename, {persistent: true}, (evt, filename) =>
-                    @loadFromJson filename
-                    console.log "Settings.watch", filename, "Reloaded!" if logToConsole
-                    callback(evt, filename) if callback?
-            else
-                fs.unwatchFile filename, callback
+        if @general.debug
+            console.log "Settings.watch", (if callback? then "With callback" else "No callback")
 
-        if logToConsole
-            console.log "Settings.watch", enable, (if callback? then "With callback" else "No callback")
+    ###
+    # Unwatch changes on loaded settings files.
+    # The `callback` is optional in case you want to stop notifying only for that function.
+    # @param {Method} callback Optional function to be removed from the file watchers.
+    ###
+    unwatch: (callback) =>
+        for f in @files
+            filename = utils.io.getFilePath f.filename
+
+            if filename?
+                if callback?
+                    fs.unwatchFile filename, callback
+                else
+                    fs.unwatchFile filename
+
+        if @general.debug
+            console.log "Settings.unwatch", (if callback? then "With callback" else "No callback")
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

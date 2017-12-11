@@ -7,19 +7,29 @@
 class Utils
     newInstance: -> return new Utils()
 
-    # @property {Object} Browser utils.
+    ##
+    # Browser utilities.
+    # @property
     browser: require "./utils/browser.coffee"
 
-    # @property {Object} Data utils.
+    ##
+    # Data parsing and processing utilities.
+    # @property
     data: require "./utils/data.coffee"
 
-    # @property {Object} IO utils.
+    ##
+    # IO utilities.
+    # @property
     io: require "./utils/io.coffee"
 
-    # @property {Object} Network utils.
+    ##
+    # Network utilities.
+    # @property
     network: require "./utils/network.coffee"
 
-    # @property {Object} System utils.
+    ##
+    # System and server utilities.
+    # @property
     system: require "./utils/system.coffee"
 
 # Singleton implementation
