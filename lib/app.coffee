@@ -99,7 +99,7 @@ class App
         @expressApp = express()
 
         # DEPRECATED! The "server" was renamed to "expressApp".
-        @server = @expressApp()
+        @server = @expressApp
 
         # Set view options, use Pug for HTML templates.
         @expressApp.set "views", settings.app.viewPath
@@ -145,7 +145,16 @@ class App
 
         # Log all requests if debug is true.
         if settings.general.debug
-            @expressApp.use @requestLogger
+            @expressApp.use (req, res, next) ->
+                ip = utils.browser.getClientIP req
+                method = req.method
+                url = req.url
+
+                console.log "Request from #{ip}", method, url
+
+                next() if next?
+
+                return url
 
         # Delete!
         delete @configure
@@ -218,6 +227,19 @@ class App
 
         events.emit "App.on.kill"
 
+    # BRIDGED EXPRESS METHODS
+    # --------------------------------------------------------------------------
+
+    all: => @expressApp.all.apply @expressApp, arguments
+    get: => @expressApp.get.apply @expressApp, arguments
+    post: => @expressApp.post.apply @expressApp, arguments
+    put: => @expressApp.put.apply @expressApp, arguments
+    patch: => @expressApp.patch.apply @expressApp, arguments
+    delete: => @expressApp.delete.apply @expressApp, arguments
+    listen: => @expressApp.listen.apply @expressApp, arguments
+    route: => @expressApp.route.apply @expressApp, arguments
+    use: => @expressApp.use.apply @expressApp, arguments
+
     # HELPER AND UTILS
     # --------------------------------------------------------------------------
 
@@ -237,18 +259,6 @@ class App
                     result.push {route: r.route.path, methods: lodash.keys(r.route.methods)}
 
         return result
-
-    # Helper to log all requests when debug is true.
-    requestLogger: (req, res, next) ->
-        ip = utils.browser.getClientIP req
-        method = req.method
-        url = req.url
-
-        console.log "Request from #{ip}", method, url
-
-        next() if next?
-
-        return url
 
     # Helper to render Pug views. The request, response and view are mandatory,
     # and the options argument is optional.

@@ -57,7 +57,7 @@ describe("App HTTPS Tests", function() {
     it("Renders test middleware 1", function(done) {
         this.timeout(5000)
 
-        supertest(app.server)
+        supertest(app.expressApp)
             .get("/middleware1")
             .expect("Content-Type", /json/)
             .expect(200, done)
@@ -66,7 +66,7 @@ describe("App HTTPS Tests", function() {
     it("Renders test middleware 2", function(done) {
         this.timeout(5000)
 
-        supertest(app.server)
+        supertest(app.expressApp)
             .get("/middleware2")
             .expect("Content-Type", /json/)
             .expect(200, done)

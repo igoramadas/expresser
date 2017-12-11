@@ -48,11 +48,11 @@ describe("App HTTP Tests", function() {
     it("Renders a test view", function(done) {
         this.timeout(5000)
 
-        app.server.get("/testview", function(req, res) {
+        app.get("/testview", function(req, res) {
             app.renderView(req, res, "testview.pug")
         })
 
-        supertest(app.server)
+        supertest(app.expressApp)
             .get("/testview")
             .expect(200, done)
     })
@@ -60,7 +60,7 @@ describe("App HTTP Tests", function() {
     it("Renders a JSON object", function(done) {
         this.timeout(5000)
 
-        app.server.get("/testjson", function(req, res) {
+        app.get("/testjson", function(req, res) {
             var j = {
                 string: "some value",
                 boolean: true,
@@ -71,7 +71,7 @@ describe("App HTTP Tests", function() {
             app.renderJson(req, res, j)
         })
 
-        supertest(app.server)
+        supertest(app.expressApp)
             .get("/testjson")
             .expect("Content-Type", /json/)
             .expect(200, done)
@@ -80,7 +80,7 @@ describe("App HTTP Tests", function() {
     it("Renders an error with status 500", function(done) {
         this.timeout(5000)
 
-        app.server.get("/testerror", function(req, res) {
+        app.get("/testerror", function(req, res) {
             var e = {
                 somerror: new Error("Access was denied"),
                 timestamp: new Date().getTime()
@@ -89,7 +89,7 @@ describe("App HTTP Tests", function() {
             app.renderError(req, res, e, 500)
         })
 
-        supertest(app.server)
+        supertest(app.expressApp)
             .get("/testerror")
             .expect("Content-Type", /json/)
             .expect(500, done)
@@ -98,11 +98,11 @@ describe("App HTTP Tests", function() {
     it("Renders a JPG image", function(done) {
         this.timeout(5000)
 
-        app.server.get("/testjpg", function(req, res) {
+        app.get("/testjpg", function(req, res) {
             app.renderImage(req, res, __dirname + "/testimage.jpg")
         })
 
-        supertest(app.server)
+        supertest(app.expressApp)
             .get("/testjpg")
             .expect("Content-Type", /image/)
             .expect(200, done)
@@ -111,7 +111,7 @@ describe("App HTTP Tests", function() {
     it("Test custom middleware on route /middleware", function(done) {
         this.timeout(5000)
 
-        supertest(app.server)
+        supertest(app.expressApp)
             .get("/middleware")
             .expect("Content-Type", /json/)
             .expect(200, done)

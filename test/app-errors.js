@@ -33,13 +33,13 @@ describe("App HTTP(s) Error Tests", function() {
     it("Try rendering an invalid JSON", function(done) {
         this.timeout(5000)
 
-        app.server.get("/invalidjson", function(req, res) {
+        app.get("/invalidjson", function(req, res) {
             var invalidJson = "invalid JSON / lalala"
 
             app.renderJson(req, res, invalidJson)
         })
 
-        supertest(app.server)
+        supertest(app.expressApp)
             .get("/invalidjson")
             .expect("Content-Type", /json/)
             .expect(500, done)
