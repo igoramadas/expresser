@@ -25,9 +25,9 @@ and values. For more info please head to https://github.com/igoramadas/expresser
     settings = expresser.settings
     app = expresser.app
 
-    # Init the app!
+    # Init the Expresser framework
     expresser.init()
-    logger.info "Server started!"
+    logger.info "App started!"
 
     # Renders the index.pug view from /views folder
     app.server.get "/", (req, res) -> app.renderView req, res, "index"
