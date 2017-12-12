@@ -171,7 +171,7 @@ class App
     ###
     start: ->
         if @webServer?
-            throw new Error "Server is already running on port #{settings.app.port}."
+            return logger.warn "App.start", "Application has already started (webServer is not null). Abort!"
 
         events.emit "App.before.start"
 
@@ -187,9 +187,9 @@ class App
                     sslOptions = {key: sslKey, cert: sslCert}
                     serverRef = https.createServer sslOptions, @expressApp
                 else
-                    throw new Error "The certificate files could not be found. Please check the 'settings.app.ssl' settings."
+                    return errors.throw "certificatesNotFound", "Please check paths defined on settings.app.ssl."
             else
-                throw new Error "SSL is enabled but no key and certificate files were defined. Please check the 'settings.app.ssl' settings."
+                return errors.throw "certificatesNotFound", "Please check paths defined on settings.app.ssl."
         else
             serverRef = http.createServer @expressApp
 

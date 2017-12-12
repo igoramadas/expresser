@@ -236,7 +236,7 @@ class Settings
     ###
     watch: (callback) =>
         if callback? and not lodash.isFunction callback
-            throw new TypeError "The callback must be a valid function, or null/undefined."
+            return errors.throw "callbackMustBeFunction", "Pass callback=null if you don't need a callback for the file watchers."
 
         logToConsole = @general.debug and @logger.console
 

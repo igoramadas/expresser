@@ -5,20 +5,18 @@ lodash = require "lodash"
 path = require "path"
 
 ###
-# IO (path and file) utilities.
+# IO utilities.
 ###
 class IoUtils
     newInstance: -> return new IoUtils()
 
-    # FILE SYSTEM
-    # --------------------------------------------------------------------------
-
-    # Helper to get the correct filename for general files. For example
-    # the settings.json file or cron.json for cron jobs. This will look into the current
+    ###
+    # Helper to get the correct file path for the specified filename. This will look into the current
     # directory, the running directory and the root directory of the app.
     # Returns null if no file is found.
-    # @param {String} filename The base filename (with extension) of the config file.
-    # @return {String} The full path to the config file if one was found, or null.
+    # @param {String} filename The base filename (with extension) of the file.
+    # @return {String} The full path to the file if one was found, or null if not found.
+    ###
     getFilePath: (filename) ->
         originalFilename = "./" + filename.toString()
 
@@ -48,16 +46,20 @@ class IoUtils
         # Nothing found, so return null.
         return null
 
+    ###
     # Copy the `src` file to the `target`, both must be the full file path.
     # @param {String} src The full source file path.
     # @param {String} target The full target file path.
+    ###
     copyFileSync: (src, target) ->
         srcContents = fs.readFileSync src
         fs.writeFileSync target, srcContents
 
+    ###
     # Make sure the "target" directory exists by recursively iterating through its parents
     # and creating the directories. Returns nothing if all good or error.
     # @param {String} target The full target path, with or without a trailing slash.
+    ###
     mkdirRecursive: (target) ->
         return if fs.existsSync path.resolve(target)
 
@@ -84,11 +86,11 @@ class IoUtils
 
         return callback target
 
-    # EXECUTION
-    # --------------------------------------------------------------------------
-
-    # Helper to delay async code execution.
+    ###
+    # Helper to delay async code execution. To be used inside async functions using await.
     # @param {Number} milliseconds How long to stall the execution for.
+    # @promise
+    ###
     sleep: (milliseconds) =>
         return new Promise (resolve, reject) -> setTimeout(resolve, milliseconds)
 

@@ -9,11 +9,13 @@ util = require "util"
 class DataUtils
     newInstance: -> return new DataUtils()
 
+    ###
     # Removes all the specified characters from a string. For example you can cleanup
     # phone numbers by using removeFromString(phone, [" ", "-", "(", ")"]).
-    # @param {String} value The original value / string.
+    # @param {String} value The original value to be cleaned.
     # @param {Array} charsToRemove List of characters to be removed from the original string.
-    # @return {String} Resulting value with the characters removed.
+    # @return {String} Processed value with the characters removed.
+    ###
     removeFromString: (value, charsToRemove) ->
         return value if not value? or value is ""
 
@@ -23,12 +25,14 @@ class DataUtils
 
         return result
 
+    ###
     # Masks the specified string. For eaxmple to mask a phone number but leave the
     # last 4 digits visible you could use maskString(phone, "X", 4).
-    # @param {String} value The original value / string.
+    # @param {String} value The original value to be masked.
     # @param {String} maskChar Optional character to be used on the masking, default is *.
-    # @param {Number} leaveLast Optional, leave last X positiongs of the string unmasked.
+    # @param {Number} leaveLast Optional, leave last X positions of the string unmasked, default is 0.
     # @return {String} Masked string.
+    ###
     maskString: (value, maskChar, leaveLast) ->
         return value if not value? or not value or value is ""
 
@@ -60,10 +64,12 @@ class DataUtils
 
         return result
 
+    ###
     # Minify the passed JSON value. Removes comments, unecessary white spaces etc.
-    # @param {String} source The JSON text to be minified.
-    # @param {Boolean} asString If true, return as string instead of JSON object.
-    # @return {String} The minified JSON, or an empty string if there's an error.
+    # @param {Object} source The JSON string or object to be minified.
+    # @param {Boolean} asString If true, return as string instead of JSON object, default is false.
+    # @return {Object} The minified JSON as object or string, depending on asString.
+    ###
     minifyJson: (source, asString) ->
         source = JSON.stringify(source, null, 0) if typeof source is "object"
         index = 0
@@ -138,10 +144,13 @@ class DataUtils
         else
             return JSON.parse result
 
+    ###
     # Generates a RFC1422-compliant unique ID using random numbers.
     # @return {String} A single unique ID.
+    ###
     uuid: ->
         baseStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+
         generator = (c) ->
             r = Math.random() * 16 | 0
             v = if c is "x" then r else (r & 0x3|0x8)

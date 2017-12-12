@@ -9,7 +9,7 @@
     "main": "index",
     "domains": ["expresser.devv.com"],
     "engines": {
-        "node": "*"
+        "node": ">= 8.9.0"
     },
     "scripts": {
         "docs": "make docs",

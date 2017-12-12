@@ -11,6 +11,8 @@ class Errors
     # List of common error messages. Can be changed and extended as you wish.
     # @property
     @messages: {
+        callbackMustBeFunction: "The callback must be a valid function."
+        certificatesNotFound: "The specified certificates could not be found."
         expressNotInit: "Express app was not initialized yet, please use after app.init()."
         noNetworkInterfaces: "Could not load network interfaces info."
     }
