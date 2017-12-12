@@ -35,6 +35,8 @@ describe("AWS S3 Tests", function() {
 
     if (hasKeys) {
         it("Upload test file to S3", async function() {
+            this.timeout(5000)
+
             uploadTimestamp = moment().unix()
 
             var contents = {
@@ -45,6 +47,8 @@ describe("AWS S3 Tests", function() {
         })
 
         it("Download uploaded file from S3", async function() {
+            this.timeout(5000)
+
             var result = await aws.s3.download("expresser.devv.com", "test-" + uploadTimestamp + ".json")
             var contents = JSON.parse(result)
 
@@ -58,6 +62,8 @@ describe("AWS S3 Tests", function() {
         })
 
         it("Delete file from S3", async function() {
+            this.timeout(5000)
+
             return await aws.s3.delete("expresser.devv.com", "test-" + uploadTimestamp + ".json")
         })
     }

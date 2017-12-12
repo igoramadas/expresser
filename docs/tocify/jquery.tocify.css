@@ -17,7 +17,8 @@
 }
 
 /* The Table of Contents is composed of multiple nested unordered lists.  These styles remove the default styling of an unordered list because it is ugly. */
-.tocify ul, .tocify li {
+.tocify ul,
+.tocify li {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -52,7 +53,8 @@
 }
 
 /* Twitter Bootstrap Override Style */
-.nav-list > li > a, .nav-list .nav-header {
+.nav-list > li > a,
+.nav-list .nav-header {
     margin: 0px;
 }
 

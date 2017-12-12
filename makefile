@@ -24,6 +24,3 @@ clean:
 
 .PHONY: test
 .PHONY: docs
-
-# coffee -c -o docs/js_source lib
-# ./node_modules/.bin/esdoc
