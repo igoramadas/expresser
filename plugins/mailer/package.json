@@ -7,27 +7,17 @@
     "license": "Apache-2.0",
     "subdomain": "expresser-mailer",
     "main": "index",
-    "domains": [
-        "expresser.devv.com"
-    ],
+    "domains": ["expresser.devv.com"],
     "engines": {
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.0.3",
+        "coffeescript": "^2.1.0",
         "nodemailer": "^4.4.0"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": [
-        "email",
-        "expresser",
-        "gmail",
-        "mailgun",
-        "mailer",
-        "mandrill",
-        "smtp"
-    ]
+    "keywords": ["email", "expresser", "gmail", "mailgun", "mailer", "mandrill", "smtp"]
 }

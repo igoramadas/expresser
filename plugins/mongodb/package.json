@@ -7,25 +7,17 @@
     "license": "Apache-2.0",
     "subdomain": "expresser-mongodb",
     "main": "index",
-    "domains": [
-        "expresser.devv.com"
-    ],
+    "domains": ["expresser.devv.com"],
     "engines": {
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.0.3",
+        "coffeescript": "^2.1.0",
         "mongodb": "^3.0.0-rc0"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": [
-        "database",
-        "db",
-        "expresser",
-        "mongo",
-        "mongodb"
-    ]
+    "keywords": ["database", "db", "expresser", "mongo", "mongodb"]
 }
