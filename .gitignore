@@ -5,7 +5,6 @@
 .coveralls.yml
 coverage/
 database/
-docs/
 logs/
 node_modules/
 test/database/

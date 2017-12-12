@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Expresser - utils.DataUtils</title><script>if (location.protocol.match(/^http/) && location.pathname.match('\.html') === null && location.pathname.slice(-1) !== '/') {
+  location.href = location.href + '/';
+}</script><link href="../bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"><!--[if lt IE 9]><script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script><script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]--><link href="../google-code-prettify/prettify.css" rel="stylesheet" type="text/css"><link href="../style.css" rel="stylesheet" type="text/css"></head><body data-spy="scroll" data-target=".sidebar"><nav class="navbar navbar-default navbar-fixed-top" role="navigation"><div class="navbar-header"><button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#top-navigation-collapse"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><div class="collapse navbar-collapse" id="top-navigation-collapse"><ul class="nav navbar-nav"><li><a href="../index.html">Home</a></li><li class="active"><a href="../classes/index.html">Classes - utils.DataUtils</a></li><li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Files <span class="caret"></span></a><ul class="dropdown-menu"><li><a href="../files/app.coffee.html">app.coffee</a></li><li><a href="../files/errors.coffee.html">errors.coffee</a></li><li><a href="../files/events.coffee.html">events.coffee</a></li><li><a href="../files/index.coffee.html">index.coffee</a></li><li><a href="../files/logger.coffee.html">logger.coffee</a></li><li><a href="../files/settings.coffee.html">settings.coffee</a></li><li><a href="../files/utils.coffee.html">utils.coffee</a></li><li><a href="../files/aws.dynamodb.coffee.html">aws/dynamodb.coffee</a></li><li><a href="../files/aws.index.coffee.html">aws/index.coffee</a></li><li><a href="../files/aws.s3.coffee.html">aws/s3.coffee</a></li><li><a href="../files/aws.sns.coffee.html">aws/sns.coffee</a></li><li><a href="../files/cron.index.coffee.html">cron/index.coffee</a></li><li><a href="../files/downloader.index.coffee.html">downloader/index.coffee</a></li><li><a href="../files/gcloud.datastore.coffee.html">gcloud/datastore.coffee</a></li><li><a href="../files/gcloud.index.coffee.html">gcloud/index.coffee</a></li><li><a href="../files/gcloud.storage.coffee.html">gcloud/storage.coffee</a></li><li><a href="../files/logger-file.index.coffee.html">logger-file/index.coffee</a></li><li><a href="../files/logger-logentries.index.coffee.html">logger-logentries/index.coffee</a></li><li><a href="../files/logger-loggly.index.coffee.html">logger-loggly/index.coffee</a></li><li><a href="../files/mailer.index.coffee.html">mailer/index.coffee</a></li><li><a href="../files/mailer.templates.coffee.html">mailer/templates.coffee</a></li><li><a href="../files/metrics.httpserver.coffee.html">metrics/httpserver.coffee</a></li><li><a href="../files/metrics.index.coffee.html">metrics/index.coffee</a></li><li><a href="../files/metrics.percentile.coffee.html">metrics/percentile.coffee</a></li><li><a href="../files/mongodb.index.coffee.html">mongodb/index.coffee</a></li><li><a href="../files/sockets.index.coffee.html">sockets/index.coffee</a></li><li><a href="../files/utils.browser.coffee.html">utils/browser.coffee</a></li><li><a href="../files/utils.data.coffee.html">utils/data.coffee</a></li><li><a href="../files/utils.io.coffee.html">utils/io.coffee</a></li><li><a href="../files/utils.network.coffee.html">utils/network.coffee</a></li><li><a href="../files/utils.system.coffee.html">utils/system.coffee</a></li></ul></li></ul><div class="options"><label class="checkbox"><input id="options-private" type="checkbox"> Private</label></div></div></div></nav><div class="container-fluid content"><div class="row"><div class="hidden-xs sidebar col-sm-3" data-spy="affix"><div class="cormo-sidenav"><div class="panel panel-default"><div class="panel-collapse collapse in" id="undefined_body"><ul class="nav nav-pills nav-stacked"><li><a href="../classes/App.html">App</a></li><li><a href="../classes/Errors.html">Errors</a></li><li><a href="../classes/Events.html">Events</a></li><li><a href="../classes/Logger.html">Logger</a></li><li><a href="../classes/Settings.html">Settings</a></li><li><a href="../classes/Utils.html">Utils</a></li></ul></div></div><div class="panel panel-default"><div class="panel-heading" data-toggle="collapse" data-target="#utils_body">utils<span class="pull-right glyphicon"></span></div><div class="panel-collapse collapse in" id="utils_body"><ul class="nav nav-pills nav-stacked"><li><a href="../classes/utils.BrowserUtils.html">BrowserUtils</a></li><li class="active"><a href="#utils_DataUtils">DataUtils</a></li><li class="cormo-class-property"><a href="#utils_DataUtils__maskString">maskString</a></li><li class="cormo-class-property"><a href="#utils_DataUtils__minifyJson">minifyJson</a></li><li class="cormo-class-property"><a href="#utils_DataUtils__removeFromString">removeFromString</a></li><li class="cormo-class-property"><a href="#utils_DataUtils__uuid">uuid</a></li><li><a href="../classes/utils.IoUtils.html">IoUtils</a></li><li><a href="../classes/utils.NetworkUtils.html">NetworkUtils</a></li><li><a href="../classes/utils.SystemUtils.html">SystemUtils</a></li></ul></div></div></div></div><div class="col-sm-9 col-sm-offset-3"><span class="fix-anchor" id="utils_DataUtils"></span><section><h1 class="class_title">DataUtils</h1><div><p>General data utilities.</p>
+</div><div></div><div class="showcode"><button class="btn btn-info">Show class code</button><span> (defined in <a href="#{self.github.repository}/blob/#{self.github.branch}/#{showcode_full_path}#L#{showcode_line_number}">/lib/utils/data.coffee:9</a>)</span></div><pre class="sourcecode prettyprint .linenums:9">class DataUtils
+    newInstance: -&gt; return new DataUtils()</pre><div class="panel panel-info"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#utils_DataUtils_ctor_body"><h3 class="panel-title">Constructor<span class="pull-right glyphicon"></span></h3></div><div class="panel-collapse collapse" id="utils_DataUtils_ctor_body"><div class="panel-body"><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table></div></div></div></section><span class="fix-anchor" id="utils_DataUtils__maskString"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#utils_DataUtils__maskString_body"><h3 class="panel-title">DataUtils::maskString(value, maskChar, leaveLast)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Masks the specified string. For eaxmple to mask a phone number but leave the
+last 4 digits visible you could use maskString(phone, &quot;X&quot;, 4).</p>
+</div></div><div class="panel-collapse collapse" id="utils_DataUtils__maskString_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>value</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The original value to be masked.</span></td></tr><tr><td><span class="method-depth0"></span><code>maskChar</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Optional character to be used on the masking, default is *.</span></td></tr><tr><td><span class="method-depth0"></span><code>leaveLast</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number'>Number</a></span></td><td><span> Optional, leave last X positions of the string unmasked, default is 0.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span>Masked string.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in <a href="#{self.github.repository}/blob/#{self.github.branch}/#{showcode_full_path}#L#{showcode_line_number}">/lib/utils/data.coffee:36</a>)</span></div><pre class="sourcecode prettyprint .linenums:36">maskString: (value, maskChar, leaveLast) -&gt;
+    return value if not value? or not value or value is &quot;&quot;
+
+    # Make sure value is a string!
+    value = value.toString() if not lodash.isString value
+
+    separators = [&quot; &quot;, &quot;-&quot;, &quot;_&quot;, &quot;+&quot;, &quot;=&quot;, &quot;/&quot;]
+    maskChar = &quot;*&quot; if not maskChar? or maskChar is &quot;&quot;
+    leaveLast = 0 if not leaveLast? or leaveLast &lt; 1
+    result = &quot;&quot;
+    i = 0
+
+    # First split characters, then iterate to replace.
+    arr = value.split &quot;&quot;
+
+    while i &lt; arr.length - leaveLast
+        char = arr[i]
+
+        if separators.indexOf(char) &lt; 0
+            result += maskChar
+        else
+            result += char
+
+        i++
+
+    # Add last characters?
+    if leaveLast &gt; 0
+        result += value.substr(value.length - leaveLast)
+
+    return result</pre></div></div></div></section><span class="fix-anchor" id="utils_DataUtils__minifyJson"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#utils_DataUtils__minifyJson_body"><h3 class="panel-title">DataUtils::minifyJson(source, asString)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Minify the passed JSON value. Removes comments, unecessary white spaces etc.</p>
+</div></div><div class="panel-collapse collapse" id="utils_DataUtils__minifyJson_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>source</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The JSON string or object to be minified.</span></td></tr><tr><td><span class="method-depth0"></span><code>asString</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean'>Boolean</a></span></td><td><span> If true, return as string instead of JSON object, default is false.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The minified JSON as object or string, depending on asString.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in <a href="#{self.github.repository}/blob/#{self.github.branch}/#{showcode_full_path}#L#{showcode_line_number}">/lib/utils/data.coffee:73</a>)</span></div><pre class="sourcecode prettyprint .linenums:73">minifyJson: (source, asString) -&gt;
+    source = JSON.stringify(source, null, 0) if typeof source is &quot;object&quot;
+    index = 0
+    length = source.length
+    result = &quot;&quot;
+    symbol = undefined
+    position = undefined
+
+    # Main iterator.
+    while index &lt; length
+
+        symbol = source.charAt index
+        switch symbol
+
+            # Ignore whitespace tokens. According to ES 5.1 section 15.12.1.1,
+            # whitespace tokens include tabs, carriage returns, line feeds, and
+            # space characters.
+            when &quot;\t&quot;, &quot;\r&quot;
+            , &quot;\n&quot;
+            , &quot; &quot;
+                index += 1
+
+            # Ignore line and block comments.
+            when &quot;/&quot;
+                symbol = source.charAt(index += 1)
+                switch symbol
+
+                    # Line comments.
+                    when &quot;/&quot;
+                        position = source.indexOf(&quot;\n&quot;, index)
+
+                        # Check for CR-style line endings.
+                        position = source.indexOf(&quot;\r&quot;, index)  if position &lt; 0
+                        index = (if position &gt; -1 then position else length)
+
+                    # Block comments.
+                    when &quot;*&quot;
+                        position = source.indexOf(&quot;*/&quot;, index)
+                        if position &gt; -1
+
+                            # Advance the scanner's position past the end of the comment.
+                            index = position += 2
+                            break
+                        throw SyntaxError &quot;Unterminated block comment.&quot;
+                    else
+                        throw SyntaxError &quot;Invalid comment.&quot;
+
+            # Parse strings separately to ensure that any whitespace characters and
+            # JavaScript-style comments within them are preserved.
+            when &quot;\&quot;&quot;
+                position = index
+                while index &lt; length
+                    symbol = source.charAt(index += 1)
+                    if symbol is &quot;\\&quot;
+
+                        # Skip past escaped characters.
+                        index += 1
+                    else break  if symbol is &quot;\&quot;&quot;
+                if source.charAt(index) is &quot;\&quot;&quot;
+                    result += source.slice(position, index += 1)
+                    break
+                throw SyntaxError &quot;Unterminated string.&quot;
+
+            # Preserve all other characters.
+            else
+                result += symbol
+                index += 1
+
+    # Check if should return as string or JSON.
+    if asString
+        return result
+    else
+        return JSON.parse result</pre></div></div></div></section><span class="fix-anchor" id="utils_DataUtils__removeFromString"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#utils_DataUtils__removeFromString_body"><h3 class="panel-title">DataUtils::removeFromString(value, charsToRemove)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Removes all the specified characters from a string. For example you can cleanup
+phone numbers by using removeFromString(phone, [&quot; &quot;, &quot;-&quot;, &quot;(&quot;, &quot;)&quot;]).</p>
+</div></div><div class="panel-collapse collapse" id="utils_DataUtils__removeFromString_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>value</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The original value to be cleaned.</span></td></tr><tr><td><span class="method-depth0"></span><code>charsToRemove</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array'>Array</a></span></td><td><span> List of characters to be removed from the original string.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span>Processed value with the characters removed.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in <a href="#{self.github.repository}/blob/#{self.github.branch}/#{showcode_full_path}#L#{showcode_line_number}">/lib/utils/data.coffee:19</a>)</span></div><pre class="sourcecode prettyprint .linenums:19">removeFromString: (value, charsToRemove) -&gt;
+    return value if not value? or value is &quot;&quot;
+
+    result = value
+    result = result.toString() if not lodash.isString result
+    result = result.split(c).join(&quot;&quot;) for c in charsToRemove
+
+    return result</pre></div></div></div></section><span class="fix-anchor" id="utils_DataUtils__uuid"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#utils_DataUtils__uuid_body"><h3 class="panel-title">DataUtils::uuid()<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Generates a RFC1422-compliant unique ID using random numbers.</p>
+</div></div><div class="panel-collapse collapse" id="utils_DataUtils__uuid_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span>A single unique ID.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in <a href="#{self.github.repository}/blob/#{self.github.branch}/#{showcode_full_path}#L#{showcode_line_number}">/lib/utils/data.coffee:151</a>)</span></div><pre class="sourcecode prettyprint .linenums:151">uuid: -&gt;
+    baseStr = &quot;xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx&quot;
+
+    generator = (c) -&gt;
+        r = Math.random() * 16 | 0
+        v = if c is &quot;x&quot; then r else (r &amp; 0x3|0x8)
+        v.toString 16
+
+    return baseStr.replace(/[xy]/g, generator)</pre></div></div></div></section></div></div></div><script src="http://code.jquery.com/jquery-1.11.0.min.js"></script><script src="../bootstrap-3.2.0-dist/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="#{self.github.repository}"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>
