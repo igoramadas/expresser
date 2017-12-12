@@ -3,9 +3,13 @@
 3.2.0
 =====
 * NEW! Events emitter is now exposed to external code.
+* NEW! NetworkUtils now can return IPv4 and IPv6 addresses.
 * BREAKING! Settings.unwatch() now replaces Settings.watch(false).
+* BREAKING! BrowserUtils.getDeviceString upgraded to getDeviceDetails.
+* BREAKING! SystemUtils.getIP deprecated in favour of the new getIP/getSingleIPv4 helpers on NetworkUtils.
 * RENAMED! App.server is now App.expressApp.
 * RENAMED! App.getRoutes is now App.listRoutes.
+* DEPRECATED! Funny enough, Logger's "deprecated" helper is deprecated in favour of the built-in util.deprecate.
 * Massive code refactoring!
 
 3.1.0

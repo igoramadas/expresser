@@ -92,7 +92,7 @@ class Settings
             xtend settingsJson, this
 
         # Add file to the `files` list.
-        files.push {filename: filename, watching: false} if settingsJson?
+        @files.push {filename: filename, watching: false} if settingsJson?
 
         if @general.debug and @logger.console
             console.log "Settings.loadFromJson", filename

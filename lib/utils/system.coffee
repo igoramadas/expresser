@@ -1,5 +1,12 @@
 # EXPRESSER UTILS: SYSTEM
 # -----------------------------------------------------------------------------
+moment = require "moment"
+os = require "os"
+path = require "path"
+util = require "util"
+
+# Temporary variable used to calculate CPU usage.
+lastCpuLoad = null
 
 ###
 # System and server utilities.
@@ -7,41 +14,16 @@
 class SystemUtils
     newInstance: -> return new SystemUtils()
 
-    moment = require "moment"
-    os = require "os"
-    path = require "path"
-
-    # Temporary variable used to calculate CPU usage.
-    lastCpuLoad = null
-
-    # Returns a list of valid server IP addresses. If `firstOnly` is true it will
-    # return only the very first IP address found.
-    # @param {Boolean} firstOnly Optional, default is false which returns an array with all valid IPs, true returns a String will first valid IP.
-    # @return {String} The server IPv4 address, or null.
+    # DEPRECATED! The getIP has moved to the NetworkUtils as GetIPv4.
     getIP: (firstOnly) ->
-        try
-            ifaces = os.networkInterfaces()
-        catch ex
-            # On Windows Bash this and other corner case systems this can be unavailable.
-            return {error: ex}
+        deprecated = -> return require("./network.coffee").getIP "ipv4"
+        return util.deprecate deprecated, "SystemUtils.getIP: use NetworkUtils.getIP/.getSingleIPv4 instead."
 
-        result = []
-
-        # Parse network interfaces and try getting the server IPv4 address.
-        for i of ifaces
-            ifaces[i].forEach (details) ->
-                if details.family is "IPv4" and not details.internal
-                    result.push details.address
-
-        # Return only first IP or all of them?
-        if firstOnly
-            return result[0]
-        else
-            return result
-
-    # Return an object with general information about the server.
-    # @return {Object} Results with process pid, platform, memory, uptime and IP.
-    getInfo: ->
+    ###
+    # Return an object with general and health information about the system.
+    # @return {Object} System uptime, hostname, title, platform, memoryTotal, memoryUsage, process, cpuCores and loadAvg.
+    ###
+    getInfo: =>
         result = {}
 
         # Save parsed OS info to the result object.
@@ -51,7 +33,6 @@ class SystemUtils
         result.platform = os.platform() + " " + os.arch() + " " + os.release()
         result.memoryTotal = (os.totalmem() / 1024 / 1024).toFixed(0) + " MB"
         result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100).toFixed(0)
-        result.ips = @getIP()
         result.process = {pid: process.pid, memoryUsage: (process.memoryUsage().rss / 1024 / 1024).toFixed(0) + " MB"}
         result.cpuCores = os.cpus().length
 

@@ -231,12 +231,14 @@ class Logger
     # @param {String} message Optional message to add to the console.
     # @return {Object} Object on the format {error: 'Feature is deprecated', deprecated: true, message: '...'}
     ###
-    deprecated: (feature, message) ->
-        line = "#{feature} is deprecated. #{message}"
-        @console "deprecated", line
-        result = {error: "#{feature} is deprecated.", deprecated: true}
-        result.message = message if message? and message isnt ""
-        return result
+    deprecated: (feature, message) =>
+        deprecated = =>
+            line = "#{feature} is deprecated. #{message}"
+            @console "deprecated", line
+            result = {error: "#{feature} is deprecated.", deprecated: true}
+            result.message = message if message? and message isnt ""
+            return result
+        return util.deprecate deprecated, "Logger.deprecated: use the standard util.deprecate instead."
 
     ###
     # Helper to log to console about features not enabled.
@@ -244,7 +246,7 @@ class Logger
     # @param {String} message Optional message to add to the console.
     # @return {Object} Object on the format {error: 'Feature not enabled', notEnabled: true, message: '...'}
     ###
-    notEnabled: (feature, message) ->
+    notEnabled: (feature, message) =>
         line = "#{feature} is not enabled. #{message}"
         @console "warn", line
         result = {error: "#{feature} is not enabled.", notEnabled: true}

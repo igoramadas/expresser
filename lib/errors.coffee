@@ -12,6 +12,7 @@ class Errors
     # @property
     @messages: {
         expressNotInit: "Express app was not initialized yet, please use after app.init()."
+        noNetworkInterfaces: "Could not load network interfaces info."
     }
 
     ###

@@ -1,14 +1,13 @@
 # EXPRESSER UTILS: DATA
 # -----------------------------------------------------------------------------
+lodash = require "lodash"
+util = require "util"
 
 ###
 # General data utilities.
 ###
 class DataUtils
     newInstance: -> return new DataUtils()
-
-    lodash = require "lodash"
-    util = require "util"
 
     # Removes all the specified characters from a string. For example you can cleanup
     # phone numbers by using removeFromString(phone, [" ", "-", "(", ")"]).

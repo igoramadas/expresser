@@ -12,6 +12,8 @@ exclude:
 external-types:
   EventEmitter: https://nodejs.org/api/events.html#events_class_eventemitter
   express-Application: https://expressjs.com/en/4x/api.html#app
+  express-Request: https://expressjs.com/en/4x/api.html#req
+  express-Response: https://expressjs.com/en/4x/api.html#res
   http-Server: https://nodejs.org/api/http.html#http_class_http_server
 github:
   repository: https://github.com/igoramadas/expresser

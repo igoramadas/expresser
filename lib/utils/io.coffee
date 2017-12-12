@@ -1,15 +1,14 @@
 # EXPRESSER UTILS: IO
 # -----------------------------------------------------------------------------
+fs = require "fs"
+lodash = require "lodash"
+path = require "path"
 
 ###
 # IO (path and file) utilities.
 ###
 class IoUtils
     newInstance: -> return new IoUtils()
-
-    fs = require "fs"
-    lodash = require "lodash"
-    path = require "path"
 
     # FILE SYSTEM
     # --------------------------------------------------------------------------
