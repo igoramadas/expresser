@@ -242,13 +242,16 @@ class Settings
 
         # Iterate loaded files to create the file system watchers.
         for f in @files
-            filename = utils.io.getFilePath f.filename
+            do (f) =>
+                filename = utils.io.getFilePath f.filename
 
-            if filename? and not f.watching
-                fs.watchFile filename, {persistent: true}, (evt, filename) =>
-                    @loadFromJson filename
-                    console.log "Settings.watch", filename, "Reloaded!"
-                    callback? evt, filename
+                if filename? and not f.watching
+                    fs.watchFile filename, {persistent: true}, (evt, filename) =>
+                        @loadFromJson filename
+                        console.log "Settings.watch", f, "Reloaded!"
+                        callback? evt, filename
+
+                f.watching = true
 
         if @general.debug
             console.log "Settings.watch", (if callback? then "With callback" else "No callback")
@@ -267,6 +270,8 @@ class Settings
                     fs.unwatchFile filename, callback
                 else
                     fs.unwatchFile filename
+
+            f.watching = false
 
         if @general.debug
             console.log "Settings.unwatch", (if callback? then "With callback" else "No callback")
