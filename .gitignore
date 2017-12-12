@@ -3,6 +3,7 @@
 .openshift/
 .vscode/
 .coveralls.yml
+.DS_Store
 coverage/
 database/
 logs/
@@ -10,3 +11,4 @@ node_modules/
 test/database/
 package-lock.json
 settings.local.json
+npm-debug.log
