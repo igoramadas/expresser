@@ -43,10 +43,10 @@ describe("Settings Tests", function() {
         }
 
         var unwatch = function() {
-            settings.watch(false, callback)
+            settings.unwatch(callback)
         }
 
-        settings.watch(true, callback)
+        settings.watch(callback)
         newJson.testingFileWatcher = true
 
         var writer = function() {
