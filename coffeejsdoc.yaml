@@ -1,6 +1,7 @@
 title: Expresser
 output: docs
 files: true
+cleanup: true
 quiet: true
 reverse-see-also: true
 ga-code: UA-9331973-3
@@ -8,6 +9,7 @@ ga-code: UA-9331973-3
 sources:
   - lib
   - plugins
+  - guides
 
 exclude:
   - node_modules

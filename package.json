@@ -2,7 +2,14 @@
     "name": "expresser",
     "version": "3.1.0",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
-    "keywords": ["expresser", "express", "app", "framework", "node", "webapp"],
+    "keywords": [
+        "expresser",
+        "express",
+        "app",
+        "framework",
+        "node",
+        "webapp"
+    ],
     "author": "Igor Ramadas <igor@devv.com>",
     "homepage": "https://expresser.devv.com",
     "subdomain": "expresser",

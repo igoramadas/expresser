@@ -1,0 +1,3 @@
+# Errors
+
+Docs coming soon...

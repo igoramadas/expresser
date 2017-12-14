@@ -1,6 +1,6 @@
 # Expresser
 
-A Node.js framework with built-in web server, logging and other common utilities, built on top of Express.
+A Node.js framework with web server, events, logging and other common utilities, built on top of Express.js.
 
 [![Build Status](https://travis-ci.org/igoramadas/expresser.png?branch=master)](https://travis-ci.org/igoramadas/expresser)
 [![Coverage Status](https://coveralls.io/repos/github/igoramadas/expresser/badge.svg?branch=master)](https://coveralls.io/github/igoramadas/expresser?branch=master)
@@ -8,14 +8,20 @@ A Node.js framework with built-in web server, logging and other common utilities
 ### Why Expresser?
 
 The idea of Expresser is to aggregate common modules and utilities into a single package, making it damn easy
-to start and streamline your Node.js application. Developed with CoffeeScript v2, it has full support for all
+to start and streamline your new Node.js application. Developed with CoffeeScript v2, it has full support for all
 the new features of ES6, including async / await.
 
-### Settings
+### Use Expresser if...
 
-Settings for the app and all modules are loaded by the `settings.coffee` module. If you wish to customize any of
-these settings, please create a `settings.json` file on the root of your app folder with the specific keys
-and values. For more info please head to https://github.com/igoramadas/expresser/blob/master/docs/settings.md.
+* You're new to Node.js web apps
+* You're familiar with Express.js
+* You want to use a similar codebase on your Node.js apps
+
+### Look elsewhere if...
+
+* You hate CoffeeScript
+* You hate Express.js
+* You need ultimate performance and as little overhead as possible (in this case you should not be using many external packages anyways)
 
 ### Example app
 
@@ -35,8 +41,13 @@ and values. For more info please head to https://github.com/igoramadas/expresser
     # Renders output from the Metrics plugin.
     app.server.get "/metrics", (req, res) -> app.renderJson req, res, metrics.output()
 
-It seems pretty simple, right? Most configuration is done on the `settings.json` file. Paths, default views,
-server port, etc...
+It seems pretty simple, right? Most configuration is done on a `settings.json` file...
+
+### Settings
+
+Settings for the app and all modules are loaded by the `settings.coffee` module. If you wish to customize any of
+these settings, please create a `settings.json` file on the root of your app folder with the specific keys
+and values. For more info please head to https://github.com/igoramadas/expresser/blob/master/docs/settings.md.
 
 # Main modules
 
@@ -44,23 +55,23 @@ Now to the main modules...
 
 ### App
 *   Pre-configured Express web server.
-*   https://github.com/igoramadas/expresser/wiki/App
+*   https://expresser.devv.com/guides/App.html
 
 ### Events
 *   Central events dispatcher.
-*   https://github.com/igoramadas/expresser/wiki/Events
+*   https://expresser.devv.com/guides/Events.html
 
 ### Logger
 *   Application logging.
-*   https://github.com/igoramadas/expresser/wiki/Logger
+*   https://expresser.devv.com/guides/Logger.html
 
 ### Settings
 *   Settings wrapper.
-*   https://github.com/igoramadas/expresser/wiki/Settings
+*   https://expresser.devv.com/guides/Settings.html
 
 ### Utils
 *   General utilities and helper methods.
-*   https://github.com/igoramadas/expresser/wiki/Utils
+*   https://expresser.devv.com/guides/Utils.html
 
 # Plugins
 
@@ -77,7 +88,7 @@ And the official plugins...
 *   https://github.com/igoramadas/expresser/tree/master/plugins/cron
 
 ### Database: MongoDB
-*   MongoDB driver for the Database module.
+*   MongoDB database wrapper.
 *   https://github.com/igoramadas/expresser/tree/master/plugins/database-mongodb
 
 ### Downloader
@@ -101,9 +112,8 @@ And the official plugins...
 *   https://github.com/igoramadas/expresser/tree/master/plugins/logger-loggly
 
 ### Mailer
-*   Supports sending emails via SMTP using optional authentication and SSL/TLS.
-*   Supports email templates and keywords.
-*   Automatic switching to a failover SMTP server in case the main one fails to send.
+*   Wrapper around Nodemailer, with support for SMTP and a bunch of email services.
+*   Supports email templates and keywords parsing.
 *   https://github.com/igoramadas/expresser/tree/master/plugins/mailer
 
 ### Metrics
@@ -112,7 +122,6 @@ And the official plugins...
 
 ### Sockets
 *   Wrapper for the Socket.IO module.
-*   Works even if your server does not support websockets.
 *   https://github.com/igoramadas/expresser/tree/master/plugins/sockets
 
 # Need help?
