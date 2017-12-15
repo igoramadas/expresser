@@ -8,7 +8,7 @@ moment = require "moment"
 ###
 class CronJob
 
-    constructor: (@id, options) ->
+    constructor: (options) ->
         @[key] = value for key, value of options
 
         @startTime = options.startTime or moment 0
