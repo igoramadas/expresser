@@ -13,5 +13,3 @@ The Utils class provides general utilities and helpers for your app.
 ### System Utils
 
 ---
-
-*For detailed info on specific features, check the annotated source on /docs/source/utils.html*

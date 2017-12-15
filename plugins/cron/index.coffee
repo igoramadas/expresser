@@ -80,7 +80,9 @@ class Cron
     # @option options {Boolean} autoStart If true, call `start` after loading.
     load: (filename, options) ->
         logger.debug "Cron.load", filename, options
-        return logger.notEnabled "Cron", "load" if not settings.cron.enabled
+
+        if not settings.cron.enabled
+            return logger.notEnabled("Cron", "Cron.load aborted because settings.cron.enabled is false.")
 
         # Set default options.
         options = filename if lodash.isObject filename
@@ -149,7 +151,9 @@ class Cron
     # @param {String} idOrFilter The job id or filter, optional (if not specified, start everything).
     start: (idOrFilter) ->
         logger.debug "Cron.start", idOrFilter
-        return logger.notEnabled "Cron", "start" if not settings.cron.enabled
+
+        if not settings.cron.enabled
+            return logger.notEnabled("Cron", "Cron.start aborted because settings.cron.enabled is false.")
 
         if not idOrFilter?
             logger.info "Cron.start", "All jobs"
@@ -211,7 +215,9 @@ class Cron
     # @return {Object} Returns {error, job}, where job is the job object and error is the error message (if any).
     add: (job) ->
         logger.debug "Cron.add", job
-        return logger.notEnabled "Cron", "add" if not settings.cron.enabled
+
+        if not settings.cron.enabled
+            return logger.notEnabled("Cron", "Cron.add aborted because settings.cron.enabled is false.")
 
         # Throw error if no `id` was provided.
         if not job.id? or job.id is ""

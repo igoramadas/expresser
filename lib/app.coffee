@@ -242,54 +242,63 @@ class App
     # Helper to call the Express App .all().
     all: =>
         return errors.throw "expressNotInit" if not @expressApp?
+        logger.debug "App.all", util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.all.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .get().
     get: =>
         return errors.throw "expressNotInit" if not @expressApp?
+        logger.debug "App.get", util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.get.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .post().
     post: =>
         return errors.throw "expressNotInit" if not @expressApp?
+        logger.debug "App.post", util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.post.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .put().
     put: =>
         return errors.throw "expressNotInit" if not @expressApp?
+        logger.debug "App.put", util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.put.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .patch().
     patch: =>
         return errors.throw "expressNotInit" if not @expressApp?
+        logger.debug "App.patch", util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.patch.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .delete().
     delete: =>
         return errors.throw "expressNotInit" if not @expressApp?
+        logger.debug "App.delete", util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.delete.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .listen().
     listen: =>
         return errors.throw "expressNotInit" if not @expressApp?
+        logger.debug "App.listen", util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.listen.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .route().
     route: =>
         return errors.throw "expressNotInit" if not @expressApp?
+        logger.debug "App.route", arguments[0]
         @expressApp.route.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .use().
     use: =>
         return errors.throw "expressNotInit" if not @expressApp?
+        logger.debug "App.use", util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.use.apply @expressApp, arguments
 
     # HELPER AND UTILS

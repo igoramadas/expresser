@@ -35,7 +35,7 @@ class SNS
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "SNS.publish")
+                return reject logger.notEnabled("AWS", "SNS.publish aborted because settings.aws.enabled is false.")
 
             if not options.PhoneNumber? or options.PhoneNumber is ""
                 ex = new Error "A PhoneNumber is required."

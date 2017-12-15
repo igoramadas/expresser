@@ -35,7 +35,7 @@ class DynamoDB
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "DynamoDB.#{method}")
+                return reject logger.notEnabled("AWS", "DynamoDB.#{method} aborted because settings.aws.enabled is false.")
 
             obj[method] params, (err, data) ->
                 if err?

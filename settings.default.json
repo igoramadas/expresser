@@ -149,10 +149,10 @@
         // Colours and styles of logs sent to the console (using the Chalk module).
         // For more info see https://github.com/chalk/chalk
         "styles": {
-            "debug": ["cyan"],
+            "debug": ["gray"],
             "info": ["white"],
             "warn": ["yellow"],
-            "error": ["red", "bold"],
+            "error": ["red"],
             "critical": ["red", "bold"]
         },
         // Set `uncaughtException` to true to bind the logger to the `uncaughtException`

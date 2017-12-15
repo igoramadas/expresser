@@ -34,7 +34,7 @@ class S3
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "S3.download")
+                return reject logger.notEnabled("AWS", "S3.download aborted because settings.aws.enabled is false.")
 
             s3 = new aws.S3 {region: settings.aws.s3.region}
             params = {Bucket: bucket, Key: key}
@@ -92,7 +92,7 @@ class S3
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "S3.upload")
+                return reject logger.notEnabled("AWS", "S3.upload aborted because settings.aws.enabled is false.")
 
             s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
             options = lodash.defaults options, {acl: "public-read"}
@@ -127,7 +127,7 @@ class S3
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "S3.delete")
+                return reject logger.notEnabled("AWS", "S3.delete aborted because settings.aws.enabled is false.")
 
             s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
 

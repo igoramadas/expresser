@@ -63,7 +63,9 @@ class Metrics
     # @return {Object} Returns the metric object to be used later on `end`.
     start: (id, data, expiresIn) ->
         logger.debug "Metrics.start", obj, data, expiresIn
-        return logger.notEnabled "Metrics", "start" if not settings.metrics.enabled
+
+        if not settings.metrics.enabled
+            return logger.notEnabled("Metrics", "Aborted because settings.metrics.enabled is false.")
 
         expiresIn = 0 if not expiresIn?
 
@@ -114,7 +116,9 @@ class Metrics
     # Please note that this runs on s schedule so you shouldn't need to call it manually, in most cases.
     cleanup: ->
         logger.debug "Metrics.cleanup"
-        return logger.notEnabled "Metrics", "cleanup" if not settings.metrics.enabled
+
+        if not settings.metrics.enabled
+            return logger.notEnabled("Metrics", "Aborted because settings.metrics.enabled is false.")
 
         now = moment().valueOf()
         keyCounter = 0
@@ -159,8 +163,6 @@ class Metrics
     # @param {Object} options Options to filter the output. Available options are same as settings.metrics.
     # @return {Object} JSON output with relevant metrics.
     output: (options) ->
-        return logger.notEnabled "Metrics", "output" if not settings.metrics.enabled
-
         logger.debug "Metrics.output", options
         utils.system.getInfo()
 

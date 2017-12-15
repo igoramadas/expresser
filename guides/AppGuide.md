@@ -91,8 +91,8 @@ Renders an image (JPG, GIF, PNG etc...) to the client.
 
 ---
 
-*For detailed info on specific features, check the annotated source on /docs/source/app.html*
-
 ## Running with process managers (pm2, forever etc)
 
 Please note that the paths set on your application settings might not work if you're using process managers to start your app.
+
+---

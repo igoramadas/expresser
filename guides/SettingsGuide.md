@@ -64,5 +64,3 @@ The `settings.reset()` method will create a new instance and reset all settings 
 Custom values set programmatically will be cleared out.
 
 ---
-
-*For detailed info on specific features, check the annotated source on /docs/settings.html*

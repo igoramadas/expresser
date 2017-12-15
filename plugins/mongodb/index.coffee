@@ -48,7 +48,9 @@ class MongoDb
     # @return {Promise} The database connection object.
     connect: (connString, options) ->
         logger.debug "MongoDb.connect", connString, options
-        return logger.notEnabled "MongoDb", "connect" if not settings.mongodb.enabled
+
+        if not settings.mongodb.enabled
+            return logger.notEnabled("MongoDb", "Aborted because settings.mongodb.enabled is false.")
 
         connStringSafe = connString
         sep = connString.indexOf "@"

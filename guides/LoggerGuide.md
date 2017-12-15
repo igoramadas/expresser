@@ -71,5 +71,3 @@ Use `expresser.logger.off` to stop listeting to these logging events. For exampl
     expresser.logger.off("logError", myErrorFunction)
 
 ---
-
-*For detailed info on specific features, check the annotated source on /docs/source/logger.html*

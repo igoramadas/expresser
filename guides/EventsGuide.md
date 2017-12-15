@@ -30,5 +30,3 @@ your app step by step based on module initialization.
 Please note that the `init` method will delete itself once called!
 
 ---
-
-*For detailed info on specific features, check the annotated source on /docs/source/events.html*

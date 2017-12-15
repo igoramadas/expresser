@@ -23,7 +23,9 @@ class HttpServer
     start: ->
         logger.debug "Metrics.httpServer.start"
 
-        return logger.notEnabled "Metrics.httpServer", "start" if not settings.metrics.enabled
+        if not settings.metrics.enabled
+            return logger.notEnabled("Metrics", "Aborted because settings.metrics.enabled is false.")
+
         return if webServer?
 
         @server = express()

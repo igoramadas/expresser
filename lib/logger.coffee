@@ -225,12 +225,7 @@ class Logger
     # HELPER METHODS
     # --------------------------------------------------------------------------
 
-    ###
-    # Helper to log to console about deprecated features.
-    # @param {String} feature Module, function or feature that is deprecated, mandatory.
-    # @param {String} message Optional message to add to the console.
-    # @return {Object} Object on the format {error: 'Feature is deprecated', deprecated: true, message: '...'}
-    ###
+    # DEPRECATED! Please use the built-in util.deprecate() from Node.js.
     deprecated: (feature, message) =>
         deprecated = =>
             line = "#{feature} is deprecated. #{message}"
@@ -375,11 +370,12 @@ class Logger
                 separated.push stringified
 
         # Append IP address, if `serverIP` is set.
-        try
-            serverIP = utils.system.getIP true if settings.logger.sendIP
-            serverIP = null if serverIP.error
-        catch ex
-            serverIP = null
+        if settings.logger.sendIP
+            try
+                serverIP = utils.network.getSingleIPv4() or utils.network.getSingleIPv6()
+                serverIP = null if serverIP is ""
+            catch ex
+                serverIP = null
 
         separated.push "IP #{serverIP}" if serverIP?
         separator = settings.logger.separator
