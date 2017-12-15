@@ -54,7 +54,9 @@ class LoggerLoggly
     # @param {Object} options Transport options including the token.
     getTransport: (options) -&gt;
         logger.debug &quot;LoggerLoggly.getTransport&quot;, options
-        return logger.notEnabled &quot;LoggerLoggly&quot;, &quot;getTransport&quot; if not settings.logger.loggly.enabled
+
+        if not settings.logger.loggly.enabled
+            return logger.notEnabled(&quot;LoggerFile&quot;, &quot;Aborted because settings.logger.loggly.enabled is false.&quot;)
 
         if not options?.token? or options.token is &quot;&quot; or not options?.subdomain? or options.subdomain is &quot;&quot;
             err = new Error &quot;The options.token and options.subdomain are mandatory! Please specify a valid Loggly token / subdomain.&quot;

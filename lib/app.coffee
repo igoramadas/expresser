@@ -442,5 +442,4 @@ App.getInstance = ->
     @instance = new App() if not @instance?
     return @instance
 
-# Exports
 module.exports = App.getInstance()

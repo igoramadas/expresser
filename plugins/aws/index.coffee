@@ -1,16 +1,14 @@
 # EXPRESSER AWS
 # -----------------------------------------------------------------------------
-# Module to integrate your app with Amazon Web Services.
-# <!--
-# @see settings.aws
-# -->
+events = null
+logger = null
+settings = null
+
+###
+# Module to integrate your app with Amazon Web Services using the official AWS SDK module.
+###
 class AWS
-
     priority: 2
-
-    events = null
-    logger = null
-    settings = null
 
     sdk: require "aws-sdk"
     dynamodb: require "./dynamodb.coffee"
@@ -20,8 +18,10 @@ class AWS
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the AWS plugin.
-    init: ->
+    ###
+    # Init the AWS plugin and load its sub modules.
+    ###
+    init: =>
         events = @expresser.events
         logger = @expresser.logger
         settings = @expresser.settings
@@ -39,7 +39,10 @@ class AWS
         events.emit "AWS.on.init"
         delete @init
 
-    # Bind events.
+    ###
+    # List to AWS events.
+    # @private
+    ###
     setEvents: =>
         events.on "AWS.DynamoDB.createTable", @dynamodb.createTable
         events.on "AWS.DynamoDB.deleteTable", @dynamodb.deleteTable
@@ -53,10 +56,6 @@ class AWS
         events.on "AWS.S3.upload", @s3.upload
         events.on "AWS.SNS.publish", @sns.publish
 
-# Singleton implementation
+# Exports
 # -----------------------------------------------------------------------------
-AWS.getInstance = ->
-    @instance = new AWS() if not @instance?
-    return @instance
-
-module.exports = exports = AWS.getInstance()
+module.exports = AWS

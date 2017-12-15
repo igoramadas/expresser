@@ -54,7 +54,9 @@ class LoggerLogentries
     # @param {Object} options Transport options including the token.
     getTransport: (options) -&gt;
         logger.debug &quot;LoggerLogentries.getTransport&quot;, options
-        return logger.notEnabled &quot;LoggerLogentries&quot;, &quot;getTransport&quot; if not settings.logger.logentries.enabled
+
+        if not settings.logger.logentries.enabled
+            return logger.notEnabled(&quot;LoggerFile&quot;, &quot;Aborted because settings.logger.logentries.enabled is false.&quot;)
 
         if not options?.token? or options.token is &quot;&quot;
             err = new Error &quot;The options.token is mandatory! Please specify a valid Logentries token.&quot;

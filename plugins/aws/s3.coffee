@@ -1,21 +1,25 @@
 # AWS S3
 # -----------------------------------------------------------------------------
+aws = require "aws-sdk"
+fs = require "fs"
+path = require "path"
+lodash = null
+logger = null
+settings = null
+
+###
 # Handles communication with AWS S3.
+###
 class S3
-
-    aws = require "aws-sdk"
-    fs = require "fs"
-    path = require "path"
-
-    lodash = null
-    logger = null
-    settings = null
 
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the S3 module.
-    init: (parent) ->
+    ###
+    # Init the S3 module. Called automatically by the main main AWS module.
+    # @private
+    ###
+    @init: (parent) ->
         lodash = parent.expresser.libs.lodash
         logger = parent.expresser.logger
         settings = parent.expresser.settings
@@ -25,11 +29,15 @@ class S3
     # METHODS
     # -------------------------------------------------------------------------
 
+    ###
     # Download a file from S3 and optionally save to the specified destination.
     # @param {String} bucket Name of the S3 bucket to download from.
     # @param {String} key Key of the target S3 bucket resource (usually a filename).
     # @param {String} destination Optional, full path to the destination where file should be saved.
-    download: (bucket, key, destination) ->
+    # @return {Object} Returns the file contents as binary / buffer / string, depending on content type.
+    # @promise
+    ###
+    @download: (bucket, key, destination) ->
         logger.debug "AWS.S3.download", bucket, key, destination
 
         return new Promise (resolve, reject) ->
@@ -57,11 +65,7 @@ class S3
                             logger.error "AWS.S3.download", "getObject", bucket, key, err
                             return reject err
 
-                        try
-                            body = data.Body.toString()
-                        catch ex
-                            logger.error "AWS.S3.download", "Body.toString", bucket, key, ex
-                            return reject err
+                        body = data.Body
 
                         # Destination set? If so, write to disk.
                         if destination?
@@ -70,7 +74,7 @@ class S3
                                     logger.error "AWS.S3.download", "writeFile", bucket, key, destination, err
                                     return reject err
                                 else
-                                    logger.debug "AWS.S3.download", bucket, key, "Saved #{body.length} bytes to #{destination}."
+                                    logger.info "AWS.S3.download", bucket, key, "Saved #{data.ContentType}, #{data.ContentLength} bytes to #{destination}."
                                     return resolve body
 
                         # No destination? Simply return the file contents.
@@ -80,6 +84,7 @@ class S3
                 logger.error "AWS.S3.download", "headObject", bucket, key, ex
                 reject ex
 
+    ###
     # Upload a file to S3.
     # @param {String} bucket Name of the S3 bucket to upload to.
     # @param {String} key Key of the target S3 bucket resource (usually a filename).
@@ -87,7 +92,8 @@ class S3
     # @param {Object} options Upload options.
     # @option options {String} acl ACL to be used, default is "public-read".
     # @option options {String} contentType Content type of the file.
-    upload: (bucket, key, body, options) ->
+    ###
+    @upload: (bucket, key, body, options) ->
         logger.debug "AWS.S3.upload", bucket, key, body, options
 
         return new Promise (resolve, reject) ->
@@ -121,8 +127,10 @@ class S3
                     logger.info "AWS.S3.upload", bucket, key
                     resolve result
 
+    ###
     # Delete object(s) from S3. Keys can be a string or an array of strings.
-    delete: (bucket, keys) ->
+    ###
+    @delete: (bucket, keys) ->
         logger.debug "AWS.S3.delete", bucket, keys
 
         return new Promise (resolve, reject) ->
@@ -150,10 +158,6 @@ class S3
                     logger.info "AWS.S3.delete", bucket, keys
                     resolve result
 
-# Singleton implementation
+# Exports
 # -----------------------------------------------------------------------------
-S3.getInstance = ->
-    @instance = new S3() if not @instance?
-    return @instance
-
-module.exports = exports = S3.getInstance()
+module.exports = S3

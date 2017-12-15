@@ -23,11 +23,8 @@ class Mailer
     fs = require &quot;fs&quot;
     lodash = null
     logger = null
-    moment = null
     nodemailer = require &quot;nodemailer&quot;
-    path = require &quot;path&quot;
     settings = null
-    utils = null
 
     # Templates manager.
     templates: require &quot;./templates.coffee&quot;
@@ -43,9 +40,7 @@ class Mailer
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
-        moment = @expresser.libs.moment
         settings = @expresser.settings
-        utils = @expresser.utils
 
         logger.debug &quot;Mailer.init&quot;
         events.emit &quot;Mailer.before.init&quot;
@@ -84,7 +79,7 @@ class Mailer
 
         return new Promise (resolve, reject) =&gt;
             if not settings.mailer.enabled
-                return reject logger.notEnabled(&quot;Mailer&quot;, &quot;send&quot;)
+                return reject logger.notEnabled(&quot;Mailer&quot;, &quot;Mailer.send aborted because settings.mailer.enabled is false.&quot;)
 
             smtp = options.smtp or @smtp
 
@@ -155,7 +150,9 @@ class Mailer
     # @return {Object} A Nodemailer SMTP transport object, or null if a problem was found.
     createSmtp: (options) -&gt;
         logger.debug &quot;Mailer.createSmtp&quot;, options
-        return logger.notEnabled &quot;Mailer&quot;, &quot;createSmtp&quot; if not settings.mailer.enabled
+
+        if not settings.mailer.enabled
+            return logger.notEnabled(&quot;Mailer&quot;, &quot;Mailer.createSmtp aborted because settings.logger.file.enabled is false.&quot;)
 
         options.debug = settings.general.debug if not options.debug?
         options.secureConnection = options.secure if not options.secureConnection?

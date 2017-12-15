@@ -54,7 +54,9 @@ class LoggerFile
     # @param {Object} options File logging options.
     getTransport: (options) -&gt;
         logger.debug &quot;LoggerFile.getTransport&quot;, options
-        return logger.notEnabled &quot;LoggerFile&quot;, &quot;getTransport&quot; if not settings.logger.file.enabled
+
+        if not settings.logger.file.enabled
+            return logger.notEnabled(&quot;LoggerFile&quot;, &quot;Aborted because settings.logger.file.enabled is false.&quot;)
 
         if not options?.path? or options.path is &quot;&quot;
             err = new Error &quot;The options.path is mandatory! Please specify a valid path to the logs folder.&quot;

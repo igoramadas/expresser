@@ -248,54 +248,63 @@ class App
     # Helper to call the Express App .all().
     all: =&gt;
         return errors.throw &quot;expressNotInit&quot; if not @expressApp?
+        logger.debug &quot;App.all&quot;, util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.all.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .get().
     get: =&gt;
         return errors.throw &quot;expressNotInit&quot; if not @expressApp?
+        logger.debug &quot;App.get&quot;, util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.get.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .post().
     post: =&gt;
         return errors.throw &quot;expressNotInit&quot; if not @expressApp?
+        logger.debug &quot;App.post&quot;, util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.post.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .put().
     put: =&gt;
         return errors.throw &quot;expressNotInit&quot; if not @expressApp?
+        logger.debug &quot;App.put&quot;, util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.put.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .patch().
     patch: =&gt;
         return errors.throw &quot;expressNotInit&quot; if not @expressApp?
+        logger.debug &quot;App.patch&quot;, util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.patch.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .delete().
     delete: =&gt;
         return errors.throw &quot;expressNotInit&quot; if not @expressApp?
+        logger.debug &quot;App.delete&quot;, util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.delete.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .listen().
     listen: =&gt;
         return errors.throw &quot;expressNotInit&quot; if not @expressApp?
+        logger.debug &quot;App.listen&quot;, util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.listen.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .route().
     route: =&gt;
         return errors.throw &quot;expressNotInit&quot; if not @expressApp?
+        logger.debug &quot;App.route&quot;, arguments[0]
         @expressApp.route.apply @expressApp, arguments
 
     ##
     # Helper to call the Express App .use().
     use: =&gt;
         return errors.throw &quot;expressNotInit&quot; if not @expressApp?
+        logger.debug &quot;App.use&quot;, util.inspect(arguments[0]), util.inspect(arguments[1])
         @expressApp.use.apply @expressApp, arguments
 
     # HELPER AND UTILS
@@ -439,5 +448,4 @@ App.getInstance = -&gt;
     @instance = new App() if not @instance?
     return @instance
 
-# Exports
 module.exports = App.getInstance()</pre></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>

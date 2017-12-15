@@ -1,19 +1,23 @@
 # AWS SNS
 # -----------------------------------------------------------------------------
+aws = require "aws-sdk"
+fs = require "fs"
+logger = null
+settings = null
+sns = null
+
+###
 # Message delivery using AWS SNS.
+###
 class SNS
-
-    aws = require "aws-sdk"
-    fs = require "fs"
-
-    logger = null
-    settings = null
-    sns = null
 
     # INIT
     # -------------------------------------------------------------------------
 
-    # Init the SNS module.
+    ###
+    # Init the SNS module. Called automatically by the main main AWS module.
+    # @private
+    ###
     init: (parent) ->
         logger = parent.expresser.logger
         settings = parent.expresser.settings
@@ -54,10 +58,6 @@ class SNS
                     logger.info "AWS.SNS.publish", "Message published to #{digits}"
                     resolve data
 
-# Singleton implementation
+# Exports
 # -----------------------------------------------------------------------------
-SNS.getInstance = ->
-    @instance = new SNS() if not @instance?
-    return @instance
-
-module.exports = exports = SNS.getInstance()
+module.exports = SNS

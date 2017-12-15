@@ -18,7 +18,19 @@ class Errors
     }
 
     ###
-    # Throws an error.
+    # Returns an error message as JSON using the format {error, details}.
+    # @param {String} keyMsg Key of the message in `@messages`. If not found, use the string itself as the message. Mandatory.
+    # @param {Object} details Object or exception containing more details about the error.
+    # @return {Object} Returns the error with optional details.
+    ###
+    @reject: (keyMsg, details) ->
+        message = @messages[keyMsg] or keyMsg
+        error = {error: message}
+        error.details = details if details?
+        return error
+
+    ###
+    # Throws an error or exception using the format {error, details}.
     # @param {String} keyMsg Key of the message in `@messages`. If not found, use the string itself as the message. Mandatory.
     # @param {Object} details Object or exception containing more details about the error.
     ###
@@ -29,4 +41,5 @@ class Errors
         throw error
 
 # Exports
+# -----------------------------------------------------------------------------
 module.exports = Errors

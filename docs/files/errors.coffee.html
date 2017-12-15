@@ -24,7 +24,19 @@ class Errors
     }
 
     ###
-    # Throws an error.
+    # Returns an error message as JSON using the format {error, details}.
+    # @param {String} keyMsg Key of the message in `@messages`. If not found, use the string itself as the message. Mandatory.
+    # @param {Object} details Object or exception containing more details about the error.
+    # @return {Object} Returns the error with optional details.
+    ###
+    @reject: (keyMsg, details) -&gt;
+        message = @messages[keyMsg] or keyMsg
+        error = {error: message}
+        error.details = details if details?
+        return error
+
+    ###
+    # Throws an error or exception using the format {error, details}.
     # @param {String} keyMsg Key of the message in `@messages`. If not found, use the string itself as the message. Mandatory.
     # @param {Object} details Object or exception containing more details about the error.
     ###
@@ -35,4 +47,5 @@ class Errors
         throw error
 
 # Exports
+# -----------------------------------------------------------------------------
 module.exports = Errors</pre></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>
