@@ -1,5 +1,10 @@
 # Changelog for expresser-cron
 
+3.2.0
+=====
+* General refactoring and improvements.
+* Compatible with Expresser 3.2.0.
+
 3.0.0
 =====
 * Maintenance release for Expresser 3.0.0.

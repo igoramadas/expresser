@@ -49,7 +49,7 @@ class Sockets
     # @option options {Object} server The HTTP(S) server object to bind to.
     bind: (server) =>
         if not settings.sockets.enabled
-            return logger.notEnabled("Sockets")
+            return logger.notEnabled "Sockets"
 
         @io = require("socket.io") server
 
@@ -72,7 +72,7 @@ class Sockets
     # @param {Object} data The JSON data to be sent out to clients.
     emit: (key, data) ->
         if not settings.sockets.enabled
-            return logger.notEnabled("Sockets")
+            return logger.notEnabled "Sockets"
 
         if not @io?
             logger.error "Sockets.emit", key, JSON.stringify(data).length + " bytes", "Sockets not initiated yet, abort!"
@@ -89,7 +89,7 @@ class Sockets
     # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
     listenTo: (key, callback, onlyNewClients) ->
         if not settings.sockets.enabled
-            return logger.notEnabled("Sockets")
+            return logger.notEnabled "Sockets"
 
         if not @io?.sockets?
             logger.error "Sockets.listenTo", key, "Sockets not initiated yet, abort!"

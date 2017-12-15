@@ -1,5 +1,6 @@
 # EXPRESSER UTILS: IO
 # -----------------------------------------------------------------------------
+errors = require "../errors.coffee"
 fs = require "fs"
 lodash = require "lodash"
 path = require "path"
@@ -78,9 +79,9 @@ class IoUtils
                     try
                         stat = fs.statSync p
                     catch ex1
-                        throw ex
+                        errors.throw "cantCreateDirectory", ex1
                     if not stat.isDirectory()
-                        throw ex
+                        errors.throw "cantCreateDirectory", ex
 
             return made
 

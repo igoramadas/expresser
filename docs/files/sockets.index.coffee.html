@@ -91,7 +91,7 @@ class Sockets
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.
     # @param {String} key The event key.
-    # @param {Method} callback The callback to be called when key is triggered.
+    # @param {Function} callback The callback to be called when key is triggered.
     # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
     listenTo: (key, callback, onlyNewClients) -&gt;
         if not settings.sockets.enabled

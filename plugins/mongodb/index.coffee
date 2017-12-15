@@ -50,7 +50,7 @@ class MongoDb
         logger.debug "MongoDb.connect", connString, options
 
         if not settings.mongodb.enabled
-            return logger.notEnabled("MongoDb")
+            return logger.notEnabled "MongoDb"
 
         connStringSafe = connString
         sep = connString.indexOf "@"

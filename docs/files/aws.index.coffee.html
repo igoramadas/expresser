@@ -14,7 +14,8 @@ settings = null
 # Module to integrate your app with Amazon Web Services using the official AWS SDK module.
 ###
 class AWS
-    priority: 2
+
+    @priority: 2
 
     ##
     # Exposes the actual AWS SDK to the outside.
@@ -25,19 +26,19 @@ class AWS
     ##
     # DynamoDB methods.
     # @property
-    # @type {DynamoDB}
+    # @type DynamoDB
     @dynamodb: require &quot;./dynamodb.coffee&quot;
 
     ##
     # S3 methods.
     # @property
-    # @type {S3}
+    # @type S3
     @s3: require &quot;./s3.coffee&quot;
 
     ##
     # SNS methods.
     # @property
-    # @type {SNS}
+    # @type SNS
     @sns: require &quot;./sns.coffee&quot;
 
     # INIT

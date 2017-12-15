@@ -50,7 +50,7 @@ class LoggerFile
         logger.debug "LoggerFile.getTransport", options
 
         if not settings.logger.file.enabled
-            return logger.notEnabled("LoggerFile")
+            return logger.notEnabled "LoggerFile"
 
         if not options?.path? or options.path is ""
             err = new Error "The options.path is mandatory! Please specify a valid path to the logs folder."

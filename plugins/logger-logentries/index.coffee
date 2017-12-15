@@ -50,7 +50,7 @@ class LoggerLogentries
         logger.debug "LoggerLogentries.getTransport", options
 
         if not settings.logger.logentries.enabled
-            return logger.notEnabled("LoggerFile")
+            return logger.notEnabled "LoggerFile"
 
         if not options?.token? or options.token is ""
             err = new Error "The options.token is mandatory! Please specify a valid Logentries token."

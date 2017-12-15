@@ -45,7 +45,7 @@ class S3
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS")
+                return reject logger.notEnabled "AWS"
 
             s3 = new aws.S3 {region: settings.aws.s3.region}
             params = {Bucket: bucket, Key: key}
@@ -104,7 +104,7 @@ class S3
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS")
+                return reject logger.notEnabled "AWS"
 
             s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
             options = lodash.defaults options, {acl: "public-read"}
@@ -146,7 +146,7 @@ class S3
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS")
+                return reject logger.notEnabled "AWS"
 
             s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
 

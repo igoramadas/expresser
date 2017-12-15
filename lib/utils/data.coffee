@@ -1,5 +1,6 @@
 # EXPRESSER UTILS: DATA
 # -----------------------------------------------------------------------------
+errors = require "../errors.coffee"
 lodash = require "lodash"
 util = require "util"
 
@@ -66,7 +67,7 @@ class DataUtils
 
     ###
     # Minify the passed JSON value. Removes comments, unecessary white spaces etc.
-    # @param {Object} source The JSON string or object to be minified.
+    # @param {Object|String} source The JSON string or object to be minified.
     # @param {Boolean} asString If true, return as string instead of JSON object, default is false.
     # @return {Object} The minified JSON as object or string, depending on asString.
     ###
@@ -113,9 +114,9 @@ class DataUtils
                                 # Advance the scanner's position past the end of the comment.
                                 index = position += 2
                                 break
-                            throw SyntaxError "Unterminated block comment."
+                            errors.throw "Unterminated block comment."
                         else
-                            throw SyntaxError "Invalid comment."
+                            errors.throw "Invalid comment."
 
                 # Parse strings separately to ensure that any whitespace characters and
                 # JavaScript-style comments within them are preserved.
@@ -131,7 +132,7 @@ class DataUtils
                     if source.charAt(index) is "\""
                         result += source.slice(position, index += 1)
                         break
-                    throw SyntaxError "Unterminated string."
+                    errors.throw "Unterminated string."
 
                 # Preserve all other characters.
                 else

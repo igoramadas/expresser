@@ -65,7 +65,7 @@ class Metrics
         logger.debug "Metrics.start", obj, data, expiresIn
 
         if not settings.metrics.enabled
-            return logger.notEnabled("Metrics")
+            return logger.notEnabled "Metrics"
 
         expiresIn = 0 if not expiresIn?
 
@@ -118,7 +118,7 @@ class Metrics
         logger.debug "Metrics.cleanup"
 
         if not settings.metrics.enabled
-            return logger.notEnabled("Metrics")
+            return logger.notEnabled "Metrics"
 
         now = moment().valueOf()
         keyCounter = 0

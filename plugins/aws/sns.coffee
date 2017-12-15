@@ -46,7 +46,7 @@ class SNS
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS")
+                return reject logger.notEnabled "AWS"
 
             if not options.PhoneNumber? or options.PhoneNumber is ""
                 err = errors.reject "phoneRequired"
