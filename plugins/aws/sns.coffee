@@ -2,6 +2,7 @@
 # -----------------------------------------------------------------------------
 aws = require "aws-sdk"
 fs = require "fs"
+errors = null
 logger = null
 settings = null
 sns = null
@@ -16,9 +17,11 @@ class SNS
 
     ###
     # Init the SNS module. Called automatically by the main main AWS module.
+    # @param {AWS} parent The main AWS module.
     # @private
     ###
-    init: (parent) ->
+    @init: (parent) ->
+        errors = parent.expresser.errors
         logger = parent.expresser.logger
         settings = parent.expresser.settings
 
@@ -30,21 +33,25 @@ class SNS
     # METHODS
     # -------------------------------------------------------------------------
 
-    # Publish a message with the specified options.
-    # @param {String} options The SNS message options.
-    # @option options {String} PhoneNumber The target phone number.
-    # @option options {String} Message The SMS message to be sent.
-    publish: (options) ->
+    ###
+    # Publish a message to AWS SNS with the specified options.
+    # @param {Object} options The SNS message options.
+    # @param {String} [options.PhoneNumber] The target phone number.
+    # @param {String} [options.Message] The SMS message to be sent.
+    # @return {Object} AWS SDK SNS publish results.
+    # @promise
+    ###
+    @publish: (options) ->
         logger.debug "AWS.SNS.publish", options
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "SNS.publish aborted because settings.aws.enabled is false.")
+                return reject logger.notEnabled("AWS")
 
             if not options.PhoneNumber? or options.PhoneNumber is ""
-                ex = new Error "A PhoneNumber is required."
-                logger.error "AWS.SNS.publish", ex
-                return reject ex
+                err = errors.reject "phoneRequired"
+                logger.error "AWS.SNS.publish", err
+                return reject err
 
             # Get last 4 digits oh phone to be logged.
             digits = "XXX" + options.PhoneNumber.substr(options.PhoneNumber.length - 4)
@@ -52,7 +59,8 @@ class SNS
             # Dispatch the message.
             sns.publish options, (err, data) =>
                 if err?
-                    logger.error "AWS.SNS.publish", "Error sending to #{digits}", err, err.stack
+                    err = errors.reject "Error sending to #{digits}", err
+                    logger.error "AWS.SNS.publish", err
                     reject err
                 else
                     logger.info "AWS.SNS.publish", "Message published to #{digits}"

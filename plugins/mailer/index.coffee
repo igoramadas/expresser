@@ -73,7 +73,7 @@ class Mailer
 
         return new Promise (resolve, reject) =>
             if not settings.mailer.enabled
-                return reject logger.notEnabled("Mailer", "Mailer.send aborted because settings.mailer.enabled is false.")
+                return reject logger.notEnabled("Mailer")
 
             smtp = options.smtp or @smtp
 
@@ -146,7 +146,7 @@ class Mailer
         logger.debug "Mailer.createSmtp", options
 
         if not settings.mailer.enabled
-            return logger.notEnabled("Mailer", "Mailer.createSmtp aborted because settings.logger.file.enabled is false.")
+            return logger.notEnabled("Mailer")
 
         options.debug = settings.general.debug if not options.debug?
         options.secureConnection = options.secure if not options.secureConnection?

@@ -3,6 +3,7 @@
 aws = require "aws-sdk"
 fs = require "fs"
 path = require "path"
+errors = null
 lodash = null
 logger = null
 settings = null
@@ -17,9 +18,11 @@ class S3
 
     ###
     # Init the S3 module. Called automatically by the main main AWS module.
+    # @param {AWS} parent The main AWS module.
     # @private
     ###
     @init: (parent) ->
+        errors = parent.expresser.errors
         lodash = parent.expresser.libs.lodash
         logger = parent.expresser.logger
         settings = parent.expresser.settings
@@ -34,7 +37,7 @@ class S3
     # @param {String} bucket Name of the S3 bucket to download from.
     # @param {String} key Key of the target S3 bucket resource (usually a filename).
     # @param {String} destination Optional, full path to the destination where file should be saved.
-    # @return {Object} Returns the file contents as binary / buffer / string, depending on content type.
+    # @return {Object} The file contents as binary / buffer / string, depending on content type.
     # @promise
     ###
     @download: (bucket, key, destination) ->
@@ -42,7 +45,7 @@ class S3
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "S3.download aborted because settings.aws.enabled is false.")
+                return reject logger.notEnabled("AWS")
 
             s3 = new aws.S3 {region: settings.aws.s3.region}
             params = {Bucket: bucket, Key: key}
@@ -71,6 +74,7 @@ class S3
                         if destination?
                             fs.writeFile destination, body, {encoding: settings.general.encoding}, (err) ->
                                 if err?
+                                    err = errors.reject "cantSaveFile", err
                                     logger.error "AWS.S3.download", "writeFile", bucket, key, destination, err
                                     return reject err
                                 else
@@ -89,16 +93,18 @@ class S3
     # @param {String} bucket Name of the S3 bucket to upload to.
     # @param {String} key Key of the target S3 bucket resource (usually a filename).
     # @param {Object} body Contents of the file to be uploaded.
-    # @param {Object} options Upload options.
-    # @option options {String} acl ACL to be used, default is "public-read".
-    # @option options {String} contentType Content type of the file.
+    # @param {Object} options Upload options (please see AWS SDK for all options).
+    # @param {String} [options.acl] ACL to be used, default is "public-read".
+    # @param {String} [options.contentType] Content type of the file.
+    # @return {Object} The upload result.
+    # @promise
     ###
     @upload: (bucket, key, body, options) ->
         logger.debug "AWS.S3.upload", bucket, key, body, options
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "S3.upload aborted because settings.aws.enabled is false.")
+                return reject logger.notEnabled("AWS")
 
             s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
             options = lodash.defaults options, {acl: "public-read"}
@@ -121,6 +127,7 @@ class S3
             # Upload the specified files!
             s3upload.send (err, result) ->
                 if err?
+                    err = errors.reject "cantUploadFile", err
                     logger.error "AWS.S3.upload", bucket, key, err
                     reject err
                 else
@@ -129,13 +136,17 @@ class S3
 
     ###
     # Delete object(s) from S3. Keys can be a string or an array of strings.
+    # @param {String} bucket Name of the S3 bucket to upload to.
+    # @param {Array|String} keys Keys of items to be deleted from the bucket.
+    # @return {Object} The delete result.
+    # @promise
     ###
     @delete: (bucket, keys) ->
         logger.debug "AWS.S3.delete", bucket, keys
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
-                return reject logger.notEnabled("AWS", "S3.delete aborted because settings.aws.enabled is false.")
+                return reject logger.notEnabled("AWS")
 
             s3Bucket = new aws.S3 {region: settings.aws.s3.region, params: {Bucket: bucket}}
 
@@ -152,6 +163,7 @@ class S3
             # Delete the specified files!
             s3Bucket.deleteObjects params, (err, result) =>
                 if err?
+                    err = errors.reject "cantDeleteFile", err
                     logger.error "AWS.S3.delete", bucket, keys, err
                     reject err
                 else

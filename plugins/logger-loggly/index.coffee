@@ -50,7 +50,7 @@ class LoggerLoggly
         logger.debug "LoggerLoggly.getTransport", options
 
         if not settings.logger.loggly.enabled
-            return logger.notEnabled("LoggerFile", "Aborted because settings.logger.loggly.enabled is false.")
+            return logger.notEnabled("LoggerFile")
 
         if not options?.token? or options.token is "" or not options?.subdomain? or options.subdomain is ""
             err = new Error "The options.token and options.subdomain are mandatory! Please specify a valid Loggly token / subdomain."

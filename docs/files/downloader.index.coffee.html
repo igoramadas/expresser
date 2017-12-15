@@ -74,7 +74,7 @@ class Downloader
         logger.debug &quot;Downloader.download&quot;, remoteUrl, saveTo, options
 
         if not settings.downloader.enabled
-            return logger.notEnabled(&quot;Downloader&quot;, &quot;Downloader.download aborted because settings.downloader.enabled is false.&quot;)
+            return logger.notEnabled(&quot;Downloader&quot;)
 
         if not remoteUrl? or remoteUrl is &quot;&quot;
             err = new Error &quot;First parameter 'remoteUrl' is mandatory!&quot;

@@ -24,7 +24,7 @@ class HttpServer
         logger.debug "Metrics.httpServer.start"
 
         if not settings.metrics.enabled
-            return logger.notEnabled("Metrics", "Aborted because settings.metrics.enabled is false.")
+            return logger.notEnabled("Metrics")
 
         return if webServer?
 

@@ -259,7 +259,7 @@ class Settings
     ###
     # Unwatch changes on loaded settings files.
     # The `callback` is optional in case you want to stop notifying only for that function.
-    # @param {Method} callback Optional function to be removed from the file watchers.
+    # @param {Function} callback Optional function to be removed from the file watchers.
     ###
     unwatch: (callback) =>
         for f in @files

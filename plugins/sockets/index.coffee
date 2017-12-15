@@ -49,7 +49,7 @@ class Sockets
     # @option options {Object} server The HTTP(S) server object to bind to.
     bind: (server) =>
         if not settings.sockets.enabled
-            return logger.notEnabled("Sockets", "Aborted because settings.sockets.enabled is false.")
+            return logger.notEnabled("Sockets")
 
         @io = require("socket.io") server
 
@@ -72,7 +72,7 @@ class Sockets
     # @param {Object} data The JSON data to be sent out to clients.
     emit: (key, data) ->
         if not settings.sockets.enabled
-            return logger.notEnabled("Sockets", "Aborted because settings.sockets.enabled is false.")
+            return logger.notEnabled("Sockets")
 
         if not @io?
             logger.error "Sockets.emit", key, JSON.stringify(data).length + " bytes", "Sockets not initiated yet, abort!"
@@ -85,11 +85,11 @@ class Sockets
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.
     # @param {String} key The event key.
-    # @param {Method} callback The callback to be called when key is triggered.
+    # @param {Function} callback The callback to be called when key is triggered.
     # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
     listenTo: (key, callback, onlyNewClients) ->
         if not settings.sockets.enabled
-            return logger.notEnabled("Sockets", "Aborted because settings.sockets.enabled is false.")
+            return logger.notEnabled("Sockets")
 
         if not @io?.sockets?
             logger.error "Sockets.listenTo", key, "Sockets not initiated yet, abort!"

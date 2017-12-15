@@ -2,6 +2,7 @@
 
 3.2.0
 =====
+* Compatible with Expresser 3.2.0+.
 * NEW! SDK now exposed via the aws.sdk property.
 * BREAKING! S3.download now returns the body as it is instead of .toString().
 * Updated AWS SDK.

@@ -50,7 +50,7 @@ class MongoDb
         logger.debug "MongoDb.connect", connString, options
 
         if not settings.mongodb.enabled
-            return logger.notEnabled("MongoDb", "Aborted because settings.mongodb.enabled is false.")
+            return logger.notEnabled("MongoDb")
 
         connStringSafe = connString
         sep = connString.indexOf "@"
@@ -88,7 +88,7 @@ class MongoDb
     # @param {Object} filter Optional, if a string or number, assume it's the document ID. Otherwise assume keys-values filter.
     # @param {Object} options Options to be passed to the query.
     # @option options {Integer} limit Limits the resultset to X documents.
-    # @param {Method} callback Callback (err, result) when operation has finished.
+    # @param {Function} callback Callback (err, result) when operation has finished.
     get: (collection, filter, options, callback) ->
         if not callback?
             if lodash.isFunction options
@@ -159,7 +159,7 @@ class MongoDb
     # The `options` parameter is optional.
     # @param {String} collection The collection name.
     # @param {Object} obj Document or array of documents to be added.
-    # @param {Method} callback Callback (err, result) when operation has finished.
+    # @param {Function} callback Callback (err, result) when operation has finished.
     insert: (collection, obj, callback) ->
         if not @connection?
             throw new Error "MongoDb.insert: the db was not initialized, please check database settings and call its 'init' method."
@@ -187,7 +187,7 @@ class MongoDb
     # @option options {Object} filter Defines the query filter. If not specified, will try using the ID of the passed object.
     # @option options {Boolean} patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
     # @option options {Boolean} upsert Default is false, if true it will create documents if none was found.
-    # @param {Method} callback Callback (err, result) when operation has finished.
+    # @param {Function} callback Callback (err, result) when operation has finished.
     update: (collection, obj, options, callback) ->
         if not callback? and lodash.isFunction options
             callback = options
@@ -245,7 +245,7 @@ class MongoDb
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
     # @param {String} collection The collection name.
     # @param {Object} filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
-    # @param {Method} callback Callback (err, result) when operation has finished.
+    # @param {Function} callback Callback (err, result) when operation has finished.
     remove: (collection, filter, callback) ->
         if not callback? and lodash.isFunction options
             callback = options
@@ -285,7 +285,7 @@ class MongoDb
     # If no `filter` is not passed then count all documents.
     # @param {String} collection The collection name.
     # @param {Object} filter Optional, keys-values filter of documents to be counted.
-    # @param {Method} callback Callback (err, result) when operation has finished.
+    # @param {Function} callback Callback (err, result) when operation has finished.
     count: (collection, filter, callback) ->
         if not callback? and lodash.isFunction filter
             callback = filter

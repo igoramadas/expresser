@@ -62,13 +62,13 @@ class Downloader
     # @param {String} remoteUrl The URL of the remote file to be downloaded.
     # @param {String} saveTo The full local path and destination filename.
     # @param {Object} options Optional, object with request options, for example auth.
-    # @param {Method} callback Optional, a function (err, result) to be called when download has finished.
+    # @param {Function} callback Optional, a function (err, result) to be called when download has finished.
     # @return {Object} Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
     download: (remoteUrl, saveTo, options) ->
         logger.debug "Downloader.download", remoteUrl, saveTo, options
 
         if not settings.downloader.enabled
-            return logger.notEnabled("Downloader", "Downloader.download aborted because settings.downloader.enabled is false.")
+            return logger.notEnabled("Downloader")
 
         if not remoteUrl? or remoteUrl is ""
             err = new Error "First parameter 'remoteUrl' is mandatory!"

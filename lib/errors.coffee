@@ -12,9 +12,15 @@ class Errors
     # @property
     @messages: {
         callbackMustBeFunction: "The callback must be a valid function."
+        cantDeleteFile: "Could not delete file."
+        cantSaveFile: "Could not save file."
+        cantUploadFile: "Could not upload file."
         certificatesNotFound: "The specified certificates could not be found."
         expressNotInit: "Express app was not initialized yet, please use after app.init()."
+        moduleNotEnabled: "Module is not enabled."
+        nameRequired: "A name is required."
         noNetworkInterfaces: "Could not load network interfaces info."
+        phoneRequired: "A phone number is required."
     }
 
     ###

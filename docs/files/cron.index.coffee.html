@@ -88,7 +88,7 @@ class Cron
         logger.debug &quot;Cron.load&quot;, filename, options
 
         if not settings.cron.enabled
-            return logger.notEnabled(&quot;Cron&quot;, &quot;Cron.load aborted because settings.cron.enabled is false.&quot;)
+            return logger.notEnabled(&quot;Cron&quot;)
 
         # Set default options.
         options = filename if lodash.isObject filename
@@ -159,7 +159,7 @@ class Cron
         logger.debug &quot;Cron.start&quot;, idOrFilter
 
         if not settings.cron.enabled
-            return logger.notEnabled(&quot;Cron&quot;, &quot;Cron.start aborted because settings.cron.enabled is false.&quot;)
+            return logger.notEnabled(&quot;Cron&quot;)
 
         if not idOrFilter?
             logger.info &quot;Cron.start&quot;, &quot;All jobs&quot;
@@ -223,7 +223,7 @@ class Cron
         logger.debug &quot;Cron.add&quot;, job
 
         if not settings.cron.enabled
-            return logger.notEnabled(&quot;Cron&quot;, &quot;Cron.add aborted because settings.cron.enabled is false.&quot;)
+            return logger.notEnabled(&quot;Cron&quot;)
 
         # Throw error if no `id` was provided.
         if not job.id? or job.id is &quot;&quot;

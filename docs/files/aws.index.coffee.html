@@ -16,10 +16,29 @@ settings = null
 class AWS
     priority: 2
 
-    sdk: require &quot;aws-sdk&quot;
-    dynamodb: require &quot;./dynamodb.coffee&quot;
-    s3: require &quot;./s3.coffee&quot;
-    sns: require &quot;./sns.coffee&quot;
+    ##
+    # Exposes the actual AWS SDK to the outside.
+    # @property
+    # @see https://aws.amazon.com/sdk-for-node-js/
+    @sdk: require &quot;aws-sdk&quot;
+
+    ##
+    # DynamoDB methods.
+    # @property
+    # @type {DynamoDB}
+    @dynamodb: require &quot;./dynamodb.coffee&quot;
+
+    ##
+    # S3 methods.
+    # @property
+    # @type {S3}
+    @s3: require &quot;./s3.coffee&quot;
+
+    ##
+    # SNS methods.
+    # @property
+    # @type {SNS}
+    @sns: require &quot;./sns.coffee&quot;
 
     # INIT
     # -------------------------------------------------------------------------
@@ -27,7 +46,7 @@ class AWS
     ###
     # Init the AWS plugin and load its sub modules.
     ###
-    init: =&gt;
+    @init: -&gt;
         events = @expresser.events
         logger = @expresser.logger
         settings = @expresser.settings
@@ -49,7 +68,7 @@ class AWS
     # List to AWS events.
     # @private
     ###
-    setEvents: =&gt;
+    @setEvents: -&gt;
         events.on &quot;AWS.DynamoDB.createTable&quot;, @dynamodb.createTable
         events.on &quot;AWS.DynamoDB.deleteTable&quot;, @dynamodb.deleteTable
         events.on &quot;AWS.DynamoDB.scan&quot;, @dynamodb.scan
@@ -62,10 +81,6 @@ class AWS
         events.on &quot;AWS.S3.upload&quot;, @s3.upload
         events.on &quot;AWS.SNS.publish&quot;, @sns.publish
 
-# Singleton implementation
+# Exports
 # -----------------------------------------------------------------------------
-AWS.getInstance = -&gt;
-    @instance = new AWS() if not @instance?
-    return @instance
-
-module.exports = AWS.getInstance()</pre></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>
+module.exports = AWS</pre></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>

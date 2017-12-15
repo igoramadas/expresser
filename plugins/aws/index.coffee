@@ -10,10 +10,29 @@ settings = null
 class AWS
     priority: 2
 
-    sdk: require "aws-sdk"
-    dynamodb: require "./dynamodb.coffee"
-    s3: require "./s3.coffee"
-    sns: require "./sns.coffee"
+    ##
+    # Exposes the actual AWS SDK to the outside.
+    # @property
+    # @see https://aws.amazon.com/sdk-for-node-js/
+    @sdk: require "aws-sdk"
+
+    ##
+    # DynamoDB methods.
+    # @property
+    # @type {DynamoDB}
+    @dynamodb: require "./dynamodb.coffee"
+
+    ##
+    # S3 methods.
+    # @property
+    # @type {S3}
+    @s3: require "./s3.coffee"
+
+    ##
+    # SNS methods.
+    # @property
+    # @type {SNS}
+    @sns: require "./sns.coffee"
 
     # INIT
     # -------------------------------------------------------------------------
@@ -21,7 +40,7 @@ class AWS
     ###
     # Init the AWS plugin and load its sub modules.
     ###
-    init: =>
+    @init: ->
         events = @expresser.events
         logger = @expresser.logger
         settings = @expresser.settings
@@ -43,7 +62,7 @@ class AWS
     # List to AWS events.
     # @private
     ###
-    setEvents: =>
+    @setEvents: ->
         events.on "AWS.DynamoDB.createTable", @dynamodb.createTable
         events.on "AWS.DynamoDB.deleteTable", @dynamodb.deleteTable
         events.on "AWS.DynamoDB.scan", @dynamodb.scan
