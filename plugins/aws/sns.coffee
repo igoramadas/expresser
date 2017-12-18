@@ -12,15 +12,12 @@ sns = null
 ###
 class SNS
 
-    # INIT
-    # -------------------------------------------------------------------------
-
     ###
     # Init the SNS module. Called automatically by the main main AWS module.
     # @param {AWS} parent The main AWS module.
     # @private
     ###
-    @init: (parent) ->
+    init: (parent) =>
         errors = parent.expresser.errors
         logger = parent.expresser.logger
         settings = parent.expresser.settings
@@ -41,7 +38,7 @@ class SNS
     # @return {Object} AWS SDK SNS publish results.
     # @promise
     ###
-    @publish: (options) ->
+    publish: (options) =>
         logger.debug "AWS.SNS.publish", options
 
         return new Promise (resolve, reject) ->
@@ -66,6 +63,10 @@ class SNS
                     logger.info "AWS.SNS.publish", "Message published to #{digits}"
                     resolve data
 
-# Exports
-# -----------------------------------------------------------------------------
-module.exports = SNS
+# Singleton implementation
+# --------------------------------------------------------------------------
+SNS.getInstance = ->
+    @instance = new SNS() if not @instance?
+    return @instance
+
+module.exports = SNS.getInstance()

@@ -14,15 +14,12 @@ docClient = null
 ###
 class DynamoDB
 
-    # INIT
-    # -------------------------------------------------------------------------
-
     ###
     # Init the DynamoDB module. Called automatically by the main main AWS module.
     # @param {AWS} parent The main AWS module.
     # @private
     ###
-    @init: (parent) ->
+    init: (parent) =>
         errors = parent.expresser.errors
         logger = parent.expresser.logger
         settings = parent.expresser.settings
@@ -45,7 +42,7 @@ class DynamoDB
     # @private
     # @promise
     ###
-    @sdkCall: (obj, method, params) ->
+    sdkCall: (obj, method, params) ->
         logger.debug "AWS.DynamoDB.#{method}", params
 
         return new Promise (resolve, reject) ->
@@ -69,7 +66,7 @@ class DynamoDB
     # @return {Object} AWS SDK table creation results.
     # @promise
     ###
-    @createTable: (params) -> return @sdkCall db, "createTable", params
+    createTable: (params) => return @sdkCall db, "createTable", params
 
     ###
     # Deletes a table on DynamoDB.
@@ -77,7 +74,7 @@ class DynamoDB
     # @return {Object} AWS SDK table deletion results.
     # @promise
     ###
-    @deleteTable: (params) -> return @sdkCall db, "deleteTable", params
+    deleteTable: (params) => return @sdkCall db, "deleteTable", params
 
     # ITEMS
     # -------------------------------------------------------------------------
@@ -88,7 +85,7 @@ class DynamoDB
     # @return {Object} AWS SDK scan results.
     # @promise
     ###
-    @scan: (params) -> return @sdkCall docClient, "scan", params
+    scan: (params) => return @sdkCall docClient, "scan", params
 
     ###
     # Query item(s) from the specified table.
@@ -96,7 +93,7 @@ class DynamoDB
     # @return {Object} AWS SDK query results.
     # @promise
     ###
-    @query: (params) -> return @sdkCall docClient, "query", params
+    query: (params) => return @sdkCall docClient, "query", params
 
     ###
     # Read an item from the specified table.
@@ -104,7 +101,7 @@ class DynamoDB
     # @return {Object} AWS SDK get results.
     # @promise
     ###
-    @get: (params) -> return @sdkCall docClient, "get", params
+    get: (params) => return @sdkCall docClient, "get", params
 
     ###
     # Creates a new item on the specified table.
@@ -112,7 +109,7 @@ class DynamoDB
     # @return {Object} AWS SDK put results.
     # @promise
     ###
-    @put: (params) -> return @sdkCall docClient, "put", params
+    put: (params) => return @sdkCall docClient, "put", params
 
     ###
     # Update item(s) on the specified table.
@@ -120,7 +117,7 @@ class DynamoDB
     # @return {Object} AWS SDK update results.
     # @promise
     ###
-    @update: (params) -> return @sdkCall docClient, "update", params
+    update: (params) => return @sdkCall docClient, "update", params
 
     ###
     # Deletes item(s) from the specified table.
@@ -128,8 +125,12 @@ class DynamoDB
     # @return {Object} AWS SDK delete results.
     # @promise
     ###
-    @delete: (params) -> return @sdkCall docClient, "delete", params
+    delete: (params) => return @sdkCall docClient, "delete", params
 
-# Exports
-# -----------------------------------------------------------------------------
-module.exports = DynamoDB
+# Singleton implementation
+# --------------------------------------------------------------------------
+DynamoDB.getInstance = ->
+    @instance = new DynamoDB() if not @instance?
+    return @instance
+
+module.exports = DynamoDB.getInstance()

@@ -1,9 +1,11 @@
 {
-    "events.coffee": [{
-        "id": "cron-2",
-        "callback": "emit",
-        "params": ["cron-2", 2],
-        "description": "Testing cron from second loaded file.",
-        "schedule": 2
-    }]
+    "events.coffee": [
+        {
+            "id": "cron-2",
+            "callback": "emit",
+            "params": ["cron-2", 2],
+            "description": "Testing cron from second loaded file.",
+            "schedule": 1500
+        }
+    ]
 }

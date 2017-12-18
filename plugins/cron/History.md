@@ -2,6 +2,7 @@
 
 3.2.0
 =====
+* BREAKING! Job schedules now defined in milliseconds instead of seconds.
 * General refactoring and improvements.
 * Compatible with Expresser 3.2.0.
 

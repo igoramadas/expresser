@@ -13,15 +13,12 @@ settings = null
 ###
 class S3
 
-    # INIT
-    # -------------------------------------------------------------------------
-
     ###
     # Init the S3 module. Called automatically by the main main AWS module.
     # @param {AWS} parent The main AWS module.
     # @private
     ###
-    @init: (parent) ->
+    init: (parent) =>
         errors = parent.expresser.errors
         lodash = parent.expresser.libs.lodash
         logger = parent.expresser.logger
@@ -40,7 +37,7 @@ class S3
     # @return {Object} The file contents as binary / buffer / string, depending on content type.
     # @promise
     ###
-    @download: (bucket, key, destination) ->
+    download: (bucket, key, destination) =>
         logger.debug "AWS.S3.download", bucket, key, destination
 
         return new Promise (resolve, reject) ->
@@ -99,7 +96,7 @@ class S3
     # @return {Object} The upload result.
     # @promise
     ###
-    @upload: (bucket, key, body, options) ->
+    upload: (bucket, key, body, options) =>
         logger.debug "AWS.S3.upload", bucket, key, body, options
 
         return new Promise (resolve, reject) ->
@@ -141,7 +138,7 @@ class S3
     # @return {Object} The delete result.
     # @promise
     ###
-    @delete: (bucket, keys) ->
+    delete: (bucket, keys) ->
         logger.debug "AWS.S3.delete", bucket, keys
 
         return new Promise (resolve, reject) ->
@@ -170,6 +167,10 @@ class S3
                     logger.info "AWS.S3.delete", bucket, keys
                     resolve result
 
-# Exports
-# -----------------------------------------------------------------------------
-module.exports = S3
+# Singleton implementation
+# --------------------------------------------------------------------------
+S3.getInstance = ->
+    @instance = new S3() if not @instance?
+    return @instance
+
+module.exports = S3.getInstance()

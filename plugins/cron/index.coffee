@@ -9,6 +9,7 @@ lodash = null
 logger = null
 moment = null
 settings = null
+util = require "util"
 utils = null
 
 # Handle scheduled cron jobs. You can use intervals (seconds) or specific
@@ -16,13 +17,13 @@ utils = null
 # Jobs are added using "job" objects with id, schedule, callback and other options.
 class Cron
 
-    @priority: 3
+    priority: 3
 
     ##
     # The jobs collection, this should be managed automatically by the module.
     # @property
     # @type Array
-    @jobs: []
+    jobs: []
 
     # INIT
     # -------------------------------------------------------------------------
@@ -31,7 +32,7 @@ class Cron
     # Init the cron manager. If `loadOnInit` setting is true, the `cron.json`
     # file will be parsed and loaded straight away (if there's one).
     ###
-    @init: ->
+    init: =>
         errors = @expresser.errors
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -54,7 +55,7 @@ class Cron
     # Listen to Cron events.
     # @private
     ###
-    @setEvents: ->
+    setEvents: =>
         events.on "Cron.load", @load
         events.on "Cron.start", @start
         events.on "Cron.stop", @stop
@@ -70,7 +71,7 @@ class Cron
     # @option options {String} basePath Sets the base path of modules when requiring them.
     # @option options {Boolean} autoStart If true, call `start` after loading.
     ###
-    @load: (filename, options) ->
+    load: (filename, options) =>
         logger.debug "Cron.load", filename, options
 
         if not settings.cron.enabled
@@ -105,24 +106,20 @@ class Cron
 
                 for d in data
                     if not d.enabled? or d.enabled
+                        logger.debug "Cron.load", filename, d
+
                         jobOptions = {
                             id: d.id or key + "." + d.callback
                             callback: module[d.callback]
                             filename: filename
                             module: key
+                            autoStart: options.autoStart
                         }
 
                         job = lodash.assign d, jobOptions
                         @add job
                     else
                         logger.warn "Cron.load", filename, key, d.callback, "Job 'enabled' is false. Skip!"
-
-            # Auto starting jobs is optional.
-            if options.autoStart
-                if filename
-                    @start {filename: filename}
-                else
-                    @start()
 
             logger.info "Cron.load", "#{basename} loaded.", options
         else
@@ -137,64 +134,77 @@ class Cron
     # Start the specified cron job. If no `id` is specified, all jobs will be started.
     # A filter can also be passed as an object. For example to start all jobs for
     # the module "email", use start({module: "email"}).
-    # @param {String} idOrFilter The job id or filter, optional (if not specified, start everything).
+    # @param {CronJob|String|Object} obj The job object, id or filter, optional (if not specified, start everything).
     ###
-    @start: (idOrFilter) ->
-        logger.debug "Cron.start", idOrFilter
+    start: (filter) =>
+        logger.debug "Cron.start", filter
 
         if not settings.cron.enabled
             return logger.notEnabled "Cron"
 
-        if not idOrFilter?
+        if not filter?
             logger.info "Cron.start", "All jobs"
             arr = @jobs
 
-        if lodash.isString idOrFilter or lodash.isNumber idOrFilter
-            logger.info "Cron.start", idOrFilter
-            arr = lodash.find @jobs, {id: idOrFilter.toString()}
+        # Passing the job directly?
+        else if filter.constructor?.name is "CronJob"
+            arr = [filter]
+
+        # Passing the job ID (string or number)?
+        else if lodash.isString filter or lodash.isNumber filter
+            logger.info "Cron.start", filter
+            arr = lodash.find @jobs, {id: filter.toString()}
+
+        # Passing an object with key / value pairs to filter jobs?
         else
-            logger.info "Cron.start", idOrFilter
-            arr = lodash.find @jobs, idOrFilter
+            logger.info "Cron.start", filter
+            arr = lodash.find @jobs, filter
 
         if not arr? or arr.length < 1
-            filterString = idOrFilter
+            filterString = filter
             filterString = JSON.stringify filterString, null, 0 if lodash.isObject filterString
             logger.warn "Cron.start", "No jobs matching #{filterString}."
             return {notFound: true}
         else
             for job in arr
-                clearTimeout job.timer if job.timer?
-                setTimer job
+                job.start()
+                logger.info "Cron.start", "Started job", job.id
 
     ###
     # Stop the specified cron job. If no `id` is specified, all jobs will be stopped.
     # A filter can also be passed as an object. For example to stop all jobs for
     # the module "mymodule", use stop({module: "mymodule"}).
-    # @param {String} idOrFilter The job id or filter, optional (if not specified, stop everything).
+    # @param {CronJob|String|Object} filter The job object, id or filter, optional (if not specified, stop everything).
     ###
-    @stop: (idOrFilter) ->
-        logger.debug "Cron.stop", idOrFilter
+    stop: (filter) =>
+        logger.debug "Cron.stop", filter
 
-        if not idOrFilter?
+        if not filter?
             logger.info "Cron.stop", "All jobs"
             arr = @jobs
 
-        if lodash.isString idOrFilter or lodash.isNumber idOrFilter
-            logger.info "Cron.stop", idOrFilter
-            arr = lodash.find @jobs, {id: idOrFilter.toString()}
+        # Passing the job directly?
+        else if filter.constructor?.name is "CronJob"
+            arr = [filter]
+
+        # Passing the job ID (string or number)?
+        else if lodash.isString filter or lodash.isNumber filter
+            arr = lodash.find @jobs, {id: filter.toString()}
+
+        # Passing an object with key / value pairs to filter jobs?
         else
-            logger.info "Cron.stop", idOrFilter
-            arr = lodash.find @jobs, idOrFilter
+            logger.info "Cron.stop", filter
+            arr = lodash.find @jobs, filter
 
         if not arr? or arr.length < 1
-            filterString = idOrFilter
+            filterString = filter
             filterString = JSON.stringify filterString, null, 0 if lodash.isObject filterString
             logger.warn "Cron.stop", "No jobs matching #{filterString}."
             return {notFound: true}
         else
             for job in arr
-                clearTimeout job.timer if job.timer?
-                job.timer = null
+                job.stop()
+                logger.info "Cron.start", "Stopped job", job.id
 
     ###
     # Add a scheduled job to the cron, passing a `job`.
@@ -207,7 +217,7 @@ class Cron
     # @param {Boolean} [job.once] If true, the job will be triggered only once no matter which schedule it has.
     # @return {CronJob} The job instance.
     ###
-    @add: (job) ->
+    add: (job) =>
         logger.debug "Cron.add", job
 
         if not settings.cron.enabled
@@ -232,8 +242,11 @@ class Cron
             else
                 return errors.throw "Job #{job.id} already exists and 'allowReplacing' is false."
 
-        result = new jobModel job
+        result = new jobModel this, job
         @jobs.push result
+
+        # Auto starting the job is optional.
+        @start result if job.autoStart
 
         return result
 
@@ -242,7 +255,7 @@ class Cron
     # @param {String} id The job ID.
     # @return {Boolean} True if job removed, false if error or job does not exist.
     ###
-    @remove: (id) ->
+    remove: (id) =>
         existing = lodash.find @jobs, {id: id}
 
         # Job exists?
@@ -258,6 +271,10 @@ class Cron
 
         return true
 
- # Exports
-# -----------------------------------------------------------------------------
-module.exports = Cron
+# Singleton implementation
+# --------------------------------------------------------------------------
+Cron.getInstance = ->
+    @instance = new Cron() if not @instance?
+    return @instance
+
+module.exports = Cron.getInstance()

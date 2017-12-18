@@ -2,7 +2,14 @@
     "name": "expresser",
     "version": "3.2.0",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
-    "keywords": ["expresser", "express", "app", "framework", "node", "webapp"],
+    "keywords": [
+        "expresser",
+        "express",
+        "app",
+        "framework",
+        "node",
+        "webapp"
+    ],
     "author": "Igor Ramadas <igor@devv.com>",
     "homepage": "https://expresser.devv.com",
     "subdomain": "expresser",
@@ -37,7 +44,7 @@
         "lodash": "^4.17.4",
         "mime": "^2.0.3",
         "mimoza": "^1.0.0",
-        "moment": "^2.19.4",
+        "moment": "^2.20.0",
         "pako": "^1.0.6",
         "postcss": "^6.0.14",
         "pug": "^2.0.0-rc.4",
@@ -46,9 +53,9 @@
         "uglify-es": "^3.2.2"
     },
     "devDependencies": {
-        "@google-cloud/datastore": "^1.1.0",
+        "@google-cloud/datastore": "^1.2.0",
         "@google-cloud/storage": "^1.5.1",
-        "aws-sdk": "^2.170.0",
+        "aws-sdk": "^2.171.0",
         "betterdocco": "^0.8.0",
         "chai": "^4.1.2",
         "coffee-coverage": "^3.0.0",

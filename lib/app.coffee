@@ -71,7 +71,10 @@ class App
 
         # Get version from main app's package.json (NOT Expresser, but the actual app using it!)
         try
-            @version = require(@expresser.rootPath + "/package.json")?.version
+            if @expresser?.rootPath
+                @version = require(@expresser.rootPath + "/package.json")?.version
+            else
+                @version = require(__dirname + "../../package.json")?.version
         catch ex
             logger.error "App.init", "Could not fetch version from package.json.", ex
 

@@ -33,7 +33,7 @@ describe("Cron Tests", function() {
         cron.init()
     })
 
-    it("Load jobs from a testcron1.json and testcron2.json files", function(done) {
+    it("Load jobs from a testcron-1.json and testcron-2.json files", function(done) {
         cron.load("test/testcron-1.json", {
             basePath: "../../../lib/",
             autoStart: false
@@ -130,7 +130,7 @@ describe("Cron Tests", function() {
     })
 
     it("Add and run a cron job, passing itself to the callback", function(done) {
-        var schedule = 1
+        var schedule = 1000
         var callback = function(jobRef) {
             if (jobRef.schedule == schedule) {
                 done()
@@ -144,6 +144,7 @@ describe("Cron Tests", function() {
             callback: callback,
             schedule: schedule,
             once: true
+            autoStart: true
         }
 
         cron.add(job)

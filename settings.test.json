@@ -4,7 +4,7 @@
         "viewPath": "./test/"
     },
     "general": {
-        "debug": false
+        "debug": true
     },
     "database": {
         "file": {

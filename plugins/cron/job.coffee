@@ -2,26 +2,94 @@
 # -----------------------------------------------------------------------------
 lodash = require "lodash"
 moment = require "moment"
+logger = null
 
 ###
 # Represents a cron job.
 ###
 class CronJob
 
-    constructor: (options) ->
+    constructor: (parent, options) ->
+        logger = parent.expresser.logger
+
         @[key] = value for key, value of options
 
         @startTime = options.startTime or moment 0
         @endTime = options.endTime or moment 0
 
-        # Should job auto start?
-        @setTimer() if @autoStart
-
     # METHODS
     # -------------------------------------------------------------------------
 
     ###
-    # Helper to get the timeout value (ms) to the next job callback.
+    # Starts the job timer. Please note that if you call start on a job that was
+    # already started, it will clear and restart the timer(s) based on the job schedule.
+    # @return {Moment} Date and time of the next scheduled run.
+    ###
+    start: =>
+        logger.info "CronJob.start", @id
+
+        callback = @getCallback()
+
+        # Get the correct schedule value.
+        if not lodash.isNumber @schedule
+            schedule = moment.duration(@schedule).asMilliseconds()
+
+        # Make sure timer is not running.
+        clearTimeout @timer if @timer?
+
+        # Set the timeout based on the defined schedule.
+        timeout = @getTimeout()
+        @timer = setTimeout callback, timeout
+        @nextRun = moment().add timeout, "ms"
+
+        return timeout
+
+    ###
+    # Stops the job by clearing the timeout.
+    ###
+    stop: =>
+        logger.info "CronJob.stop", @id
+
+        clearTimeout @timer if @timer?
+        @timer = null
+
+    # HELPERS
+    # -------------------------------------------------------------------------
+
+    ###
+    # Helper to prepare and get the job callback function.
+    # @private
+    ###
+    getCallback: =>
+        callback = =>
+            logger.info "CronJob.callback", @id
+
+            @timer = null
+            @startTime = moment()
+            @endTime = moment()
+
+            try
+                # The parameters can be force set using "params".
+                # If not present, pass the job itself to the callback instead.
+                if @params
+                    @callback.apply this, @params
+                else
+                    @callback this
+
+                # Job end time should be set on the callback, but if it wasn't, we force set it here.
+                @endTime = moment() if @startTime is @endTime
+            catch ex
+                logger.error "CronJob.callback", @id, ex.message, ex.stack
+
+            # Only reset timer if once is not true.
+            @start() if not @once
+
+        # Return generated callback.
+        return callback
+
+    ###
+    # Helper to get the timeout value in milliseconds till the next job callback.
+    # @private
     ###
     getTimeout: =>
         now = moment()
@@ -29,7 +97,11 @@ class CronJob
 
         # If `schedule` is not an array, parse it as integer / seconds.
         if lodash.isNumber @schedule or lodash.isString @schedule
-            timeout = moment().add(@schedule, "s").valueOf() - now.valueOf()
+            timeout = moment().add(@schedule, "ms").valueOf() - now.valueOf()
+
+            # DEPRECATED! Schedule must be defined now in milliseconds.
+            if @schedule < 1000
+                logger.warn "CronJob.getTimeout", @id, "Schedule: #{@schedule}", "Notice: job schedules should now be defined in milliseconds."
         else
             minTime = "99:99:99"
             nextTime = "99:99:99"
@@ -51,53 +123,6 @@ class CronJob
 
         return timeout
 
-    ###
-    # Helper to prepare and get a job callback function.
-    ###
-    getCallback: =>
-        callback = =>
-            logger.debug "CronJob", "Job #{@id} trigger."
-
-            @timer = null
-            @startTime = moment()
-            @endTime = moment()
-
-            try
-                # The parameters can be force set using "params".
-                # If not present, pass the job itself to the callback instead.
-                if @params
-                    @callback.apply @callback, @params
-                else
-                    @callback this
-
-                # Job end time should be set on the callback, but if it wasn't, we force set it here.
-                @endTime = moment() if @startTime is @endTime
-            catch ex
-                logger.error "CronJob.getCallback", "Could not run job #{@id}.", ex.message, ex.stack
-
-            # Only reset timer if once is not true.
-            @setTimer() if not @once
-
-        # Return generated callback.
-        return callback
-
-    ###
-    # Helper to get a timer / interval based on the defined options.
-    ###
-    setTimer: =>
-        logger.debug "CronJob.setTimer", @id, @description, @schedule
-
-        callback = @getCallback()
-
-        # Get the correct schedule / timeout value.
-        schedule = moment.duration(@schedule).asMilliseconds() if not lodash.isNumber @schedule
-
-        # Make sure timer is not running.
-        clearTimeout @timer if @timer?
-
-        # Set the timeout based on the defined schedule.
-        timeout = @getTimeout(job)
-        @timer = setTimeout callback, timeout
-        @nextRun = moment().add timeout, "ms"
-
+# Exports
+# --------------------------------------------------------------------------
 module.exports = CronJob
