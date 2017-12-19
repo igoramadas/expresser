@@ -1,34 +1,35 @@
 # AWS DYNAMODB
 # -----------------------------------------------------------------------------
 aws = require "aws-sdk"
-errors = null
-logger = null
-settings = null
 
-# Database and document clients are created on init.
-db = null
-docClient = null
+expresser = require "expresser"
+errors = expresser.errors
+logger = expresser.logger
+settings = expresser.settings
 
 ###
 # Reads and modify data on AWS DynamoDB databases.
 ###
 class DynamoDB
 
-    ###
-    # Init the DynamoDB module. Called automatically by the main main AWS module.
-    # @param {AWS} parent The main AWS module.
-    # @private
-    ###
-    init: (parent) =>
-        errors = parent.expresser.errors
-        logger = parent.expresser.logger
-        settings = parent.expresser.settings
+    ##
+    # Exposes a default DynamoDB main object to external modules.
+    # @property
+    # @type aws-DynamoDB
+    db: null
 
-        # Create the DynamoDB handler.
-        db = new aws.DynamoDB {region: settings.aws.dynamodb.region}
-        docClient = new aws.DynamoDB.DocumentClient {region: settings.aws.dynamodb.region}
+    ##
+    # Exposes a default DynamoDB document client to external modules.
+    # @property
+    # @type aws-DocumentClient
+    docClient: null
 
-        delete @init
+    ###
+    # Creates the default DB and document clients.
+    ###
+    createClients: =>
+        @db = new aws.DynamoDB {region: settings.aws.dynamodb.region}
+        @docClient = new aws.DynamoDB.DocumentClient {region: settings.aws.dynamodb.region}
 
     # SDK HELPER
     # -------------------------------------------------------------------------
@@ -66,7 +67,7 @@ class DynamoDB
     # @return {Object} AWS SDK table creation results.
     # @promise
     ###
-    createTable: (params) => return @sdkCall db, "createTable", params
+    createTable: (params) => return @sdkCall @db, "createTable", params
 
     ###
     # Deletes a table on DynamoDB.
@@ -74,7 +75,7 @@ class DynamoDB
     # @return {Object} AWS SDK table deletion results.
     # @promise
     ###
-    deleteTable: (params) => return @sdkCall db, "deleteTable", params
+    deleteTable: (params) => return @sdkCall @db, "deleteTable", params
 
     # ITEMS
     # -------------------------------------------------------------------------
@@ -85,7 +86,7 @@ class DynamoDB
     # @return {Object} AWS SDK scan results.
     # @promise
     ###
-    scan: (params) => return @sdkCall docClient, "scan", params
+    scan: (params) => return @sdkCall @docClient, "scan", params
 
     ###
     # Query item(s) from the specified table.
@@ -93,7 +94,7 @@ class DynamoDB
     # @return {Object} AWS SDK query results.
     # @promise
     ###
-    query: (params) => return @sdkCall docClient, "query", params
+    query: (params) => return @sdkCall @docClient, "query", params
 
     ###
     # Read an item from the specified table.
@@ -101,7 +102,7 @@ class DynamoDB
     # @return {Object} AWS SDK get results.
     # @promise
     ###
-    get: (params) => return @sdkCall docClient, "get", params
+    get: (params) => return @sdkCall @docClient, "get", params
 
     ###
     # Creates a new item on the specified table.
@@ -109,7 +110,7 @@ class DynamoDB
     # @return {Object} AWS SDK put results.
     # @promise
     ###
-    put: (params) => return @sdkCall docClient, "put", params
+    put: (params) => return @sdkCall @docClient, "put", params
 
     ###
     # Update item(s) on the specified table.
@@ -117,7 +118,7 @@ class DynamoDB
     # @return {Object} AWS SDK update results.
     # @promise
     ###
-    update: (params) => return @sdkCall docClient, "update", params
+    update: (params) => return @sdkCall @docClient, "update", params
 
     ###
     # Deletes item(s) from the specified table.
@@ -125,7 +126,7 @@ class DynamoDB
     # @return {Object} AWS SDK delete results.
     # @promise
     ###
-    delete: (params) => return @sdkCall docClient, "delete", params
+    delete: (params) => return @sdkCall @docClient, "delete", params
 
 # Singleton implementation
 # --------------------------------------------------------------------------

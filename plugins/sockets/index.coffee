@@ -1,5 +1,10 @@
 # EXPRESSER SOCKETS
 # --------------------------------------------------------------------------
+events = null
+lodash =  null
+logger = null
+settings = null
+
 # Handles sockets communication using the module Socket.IO.
 # ATTENTION! The Sockets module is started automatically by the App module.
 # If you wish to disable it, set `Settings.sockets.enabled` to false.
@@ -10,21 +15,25 @@ class Sockets
 
     priority: 3
 
-    events = null
-    lodash =  null
-    logger = null
-    settings = null
 
-    # @property {Array} Holds a list of current event listeners.
+    ##
+    # List of current event listeners.
+    # @property
+    # @type Array
     currentListeners: []
 
-    # @property [Socket.IO Object] Exposes Socket.IO object to external modules.
+    ##
+    # Exposes Socket.IO object to external modules.
+    # @property
+    # @type SocketIO
     io: null
 
     # INIT
     # --------------------------------------------------------------------------
 
+    ###
     # Init the Sockets plugin.
+    ###
     init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -34,19 +43,18 @@ class Sockets
         logger.debug "Sockets.init"
         events.emit "Sockets.before.init"
 
-        @setEvents()
+        # Listen to app start so we can bind to the server.s
+        events.on "App.on.start", @bind
 
         events.emit "Sockets.on.init"
         delete @init
 
-    # Bind events.
-    setEvents: =>
-        events.on "App.on.start", @bind
-
+    ###
     # Bind the Socket.IO object to the Express app. This will also set the counter
     # to increase / decrease when users connects or disconnects from the app.
     # @param {Object} options Sockets init options.
     # @option options {Object} server The HTTP(S) server object to bind to.
+    ###
     bind: (server) =>
         if not settings.sockets.enabled
             return logger.notEnabled "Sockets"
@@ -67,10 +75,12 @@ class Sockets
     # EVENTS
     # ----------------------------------------------------------------------
 
+    ###
     # Emit the specified key and data to clients.
     # @param {String} key The event key.
     # @param {Object} data The JSON data to be sent out to clients.
-    emit: (key, data) ->
+    ###
+    emit: (key, data) =>
         if not settings.sockets.enabled
             return logger.notEnabled "Sockets"
 
@@ -82,12 +92,14 @@ class Sockets
 
         @io.emit key, data
 
+    ###
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
     # event from currently connected clients.
     # @param {String} key The event key.
     # @param {Function} callback The callback to be called when key is triggered.
     # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
-    listenTo: (key, callback, onlyNewClients) ->
+    ###
+    listenTo: (key, callback, onlyNewClients) =>
         if not settings.sockets.enabled
             return logger.notEnabled "Sockets"
 
@@ -104,10 +116,12 @@ class Sockets
             for key, socket of @io.sockets.connected
                 socket.on key, callback
 
+    ###
     # Stops listening to the specified event key.
     # @param {String} key The event key.
     # @param {Object} callback The callback to stop triggering.
-    stopListening: (key, callback) ->
+    ###
+    stopListening: (key, callback) =>
         for socketKey, socket of @io.sockets.connected
             if callback?
                 socket.removeListener key, callback
@@ -121,19 +135,25 @@ class Sockets
 
         logger.debug "Sockets.stopListening", key
 
+    ###
     # Remove invalid and expired event listeners.
+    ###
     compact: =>
         @currentListeners = lodash.compact @currentListeners
 
     # HELPERS
     # ----------------------------------------------------------------------
 
+    ###
     # Get how many users are currenly connected to the app.
+    ###
     getConnectionCount: =>
         return 0 if not @io?.sockets?
         return Object.keys(@io.sockets.connected).length
 
+    ###
     # When user disconnects, emit an event with the new connection count to all clients.
+    ###
     onDisconnect: =>
         logger.debug "Sockets.onDisconnect"
 

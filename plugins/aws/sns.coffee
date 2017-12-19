@@ -1,11 +1,11 @@
 # AWS SNS
 # -----------------------------------------------------------------------------
 aws = require "aws-sdk"
-fs = require "fs"
-errors = null
-logger = null
-settings = null
-sns = null
+
+expresser = require "expresser"
+errors = parent.expresser.errors
+logger = parent.expresser.logger
+settings = parent.expresser.settings
 
 ###
 # Message delivery using AWS SNS.
@@ -13,54 +13,48 @@ sns = null
 class SNS
 
     ###
-    # Init the SNS module. Called automatically by the main main AWS module.
-    # @param {AWS} parent The main AWS module.
-    # @private
-    ###
-    init: (parent) =>
-        errors = parent.expresser.errors
-        logger = parent.expresser.logger
-        settings = parent.expresser.settings
-
-        # Create the SNS handler.
-        sns = new aws.SNS {region: settings.aws.sns.region}
-
-        delete @init
-
-    # METHODS
-    # -------------------------------------------------------------------------
-
-    ###
     # Publish a message to AWS SNS with the specified options.
     # @param {Object} options The SNS message options.
-    # @param {String} [options.PhoneNumber] The target phone number.
-    # @param {String} [options.Message] The SMS message to be sent.
+    # @param {String} [options.phoneNumber] The target phone number.
+    # @param {String} [options.message] The SMS message to be sent.
+    # @param {String} [options.region] The AWS region, if not passed will use default from settings.
     # @return {Object} AWS SDK SNS publish results.
     # @promise
     ###
     publish: (options) =>
         logger.debug "AWS.SNS.publish", options
 
+        # Accept uppercased parameters as well, like in the AWS SDK.
+        options.phoneNumber = options.PhoneNumber if not options.phoneNumber?
+        options.message = options.Message if not options.message?
+
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
                 return reject logger.notEnabled "AWS"
 
-            if not options.PhoneNumber? or options.PhoneNumber is ""
+            sns = new aws.SNS {region: options.region or settings.aws.sns.region}
+
+            if not options.phoneNumber? or options.phoneNumber is ""
                 err = errors.reject "phoneRequired"
                 logger.error "AWS.SNS.publish", err
                 return reject err
 
             # Get last 4 digits oh phone to be logged.
-            digits = "XXX" + options.PhoneNumber.substr(options.PhoneNumber.length - 4)
+            digits = "XXX" + options.phoneNumber.substr(options.phoneNumber.length - 4)
+
+            params = {
+                PhoneNumber: options.phoneNumber
+                Message: options.message
+            }
 
             # Dispatch the message.
-            sns.publish options, (err, data) =>
+            sns.publish params, (err, data) =>
                 if err?
                     err = errors.reject "Error sending to #{digits}", err
                     logger.error "AWS.SNS.publish", err
                     reject err
                 else
-                    logger.info "AWS.SNS.publish", "Message published to #{digits}"
+                    logger.info "AWS.SNS.publish", "#{options.message.length} chars published to #{digits}"
                     resolve data
 
 # Singleton implementation

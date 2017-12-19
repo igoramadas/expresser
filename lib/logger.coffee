@@ -225,15 +225,18 @@ class Logger
     # HELPER METHODS
     # --------------------------------------------------------------------------
 
-    # DEPRECATED! Please use the built-in util.deprecate() from Node.js.
+    ###
+    # Helper to log to console about deprecated features.
+    # @param {String} feature Module, function or feature that is deprecated, mandatory.
+    # @param {String} message Optional message to add to the console.
+    # @return {Object} Object on the format {error: 'Feature not enabled', notEnabled: true, message: '...'}
+    ###
     deprecated: (feature, message) =>
-        deprecated = =>
-            line = "#{feature} is deprecated. #{message}"
-            @console "deprecated", line
-            result = {error: "#{feature} is deprecated.", deprecated: true}
-            result.message = message if message? and message isnt ""
-            return result
-        return util.deprecate deprecated, "Logger.deprecated: use the standard util.deprecate instead."
+        line = "#{feature} is deprecated. #{message}"
+        @console "deprecated", line
+        result = {error: "#{feature} is deprecated.", deprecated: true}
+        result.message = message if message? and message isnt ""
+        return result
 
     ###
     # Helper to log to console about features not enabled.

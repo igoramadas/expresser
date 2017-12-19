@@ -3,6 +3,7 @@
 3.1.0
 =====
 * BREAKING! Job schedules now defined in milliseconds instead of seconds.
+* BREAKING! Calling module methods via events is not possible anymore.
 * General refactoring and improvements.
 
 3.0.0

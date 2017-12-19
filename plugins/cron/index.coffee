@@ -44,23 +44,10 @@ class Cron
         logger.debug "Cron.init"
         events.emit "Cron.before.init"
 
-        @setEvents()
-
         @load settings.cron.defaultFilename if settings.cron.loadOnInit
 
         events.emit "Cron.on.init"
         delete @init
-
-    ###
-    # Listen to Cron events.
-    # @private
-    ###
-    setEvents: =>
-        events.on "Cron.load", @load
-        events.on "Cron.start", @start
-        events.on "Cron.stop", @stop
-        events.on "Cron.add", @add
-        events.on "Cron.remove", @remove
 
     ###
     # Load jobs from the specified (default cron.json) file.

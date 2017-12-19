@@ -3,7 +3,9 @@
 3.2.0
 =====
 * NEW! SDK now exposed via the aws.sdk property.
+* BREAKING! S3 methods now expect a single options object with named parameters.
 * BREAKING! S3.download now returns the body as it is instead of .toString().
+* BREAKING! Calling module methods via events is not possible anymore.
 * Updated AWS SDK.
 
 3.1.3
