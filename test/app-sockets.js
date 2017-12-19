@@ -15,7 +15,6 @@ describe("App Sockets Tests", function() {
 
     var socketClientOptions = {
         autoConnect: true,
-        transports: ["websocket"],
         forceNew: true
     }
 

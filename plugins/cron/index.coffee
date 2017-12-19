@@ -3,13 +3,13 @@
 fs = require "fs"
 jobModel = require "./job.coffee"
 path = require "path"
+util = require "util"
+
 errors = null
 events = null
 lodash = null
 logger = null
-moment = null
 settings = null
-util = require "util"
 utils = null
 
 # Handle scheduled cron jobs. You can use intervals (seconds) or specific
@@ -37,7 +37,6 @@ class Cron
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
-        moment = @expresser.libs.moment
         settings = @expresser.settings
         utils = @expresser.utils
 
@@ -109,6 +108,7 @@ class Cron
                         logger.warn "Cron.load", filename, key, d.callback, "Job 'enabled' is false. Skip!"
 
             logger.info "Cron.load", "#{basename} loaded.", options
+            events.emit "Cron.on.load", filename, options
         else
             err = "Cron file #{filename} not found."
             logger.error "Cron.load", err

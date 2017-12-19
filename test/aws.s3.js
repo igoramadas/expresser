@@ -43,13 +43,24 @@ describe("AWS S3 Tests", function() {
                 timestamp: uploadTimestamp
             }
 
-            return await aws.s3.upload("expresser.devv.com", "test-" + uploadTimestamp + ".json", JSON.stringify(contents, null, 2))
+            var options = {
+                bucket: "expresser.devv.com",
+                key: "test-" + uploadTimestamp + ".json",
+                body: JSON.stringify(contents, null, 2)
+            }
+
+            return await aws.s3.upload(options)
         })
 
         it("Download uploaded file from S3", async function() {
             this.timeout(5000)
 
-            var result = await aws.s3.download("expresser.devv.com", "test-" + uploadTimestamp + ".json")
+            var options = {
+                bucket: "expresser.devv.com",
+                key: "test-" + uploadTimestamp + ".json"
+            }
+
+            var result = await aws.s3.download(options)
             var contents = JSON.parse(result)
 
             return new Promise((resolve, reject) => {
@@ -64,7 +75,12 @@ describe("AWS S3 Tests", function() {
         it("Delete file from S3", async function() {
             this.timeout(5000)
 
-            return await aws.s3.delete("expresser.devv.com", "test-" + uploadTimestamp + ".json")
+            var options = {
+                bucket: "expresser.devv.com",
+                keys: "test-" + uploadTimestamp + ".json"
+            }
+
+            return await aws.s3.delete(options)
         })
     }
 })

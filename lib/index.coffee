@@ -16,6 +16,7 @@ class Expresser
     rootPath: path.dirname require.main.filename
 
     # Preload the main modules. App must be the last module to be set.
+    errors: require "./errors.coffee"
     settings: require "./settings.coffee"
     utils: require "./utils.coffee"
     events: require "./events.coffee"

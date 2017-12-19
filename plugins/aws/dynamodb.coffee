@@ -2,10 +2,9 @@
 # -----------------------------------------------------------------------------
 aws = require "aws-sdk"
 
-expresser = require "expresser"
-errors = expresser.errors
-logger = expresser.logger
-settings = expresser.settings
+errors = null
+logger = null
+settings = null
 
 ###
 # Reads and modify data on AWS DynamoDB databases.
@@ -23,6 +22,21 @@ class DynamoDB
     # @property
     # @type aws-DocumentClient
     docClient: null
+
+    # INIT
+    # -------------------------------------------------------------------------
+
+    ###
+    # Init the AWS DynamoDB module.
+    # @param {AWS} parent The AWS main module.
+    ###
+    init: (parent) =>
+        errors = parent.expresser.errors
+        logger = parent.expresser.logger
+        settings = parent.expresser.settings
+
+        @createClients()
+        delete @init
 
     ###
     # Creates the default DB and document clients.
@@ -129,7 +143,7 @@ class DynamoDB
     delete: (params) => return @sdkCall @docClient, "delete", params
 
 # Singleton implementation
-# --------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 DynamoDB.getInstance = ->
     @instance = new DynamoDB() if not @instance?
     return @instance

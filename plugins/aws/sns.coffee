@@ -2,15 +2,31 @@
 # -----------------------------------------------------------------------------
 aws = require "aws-sdk"
 
-expresser = require "expresser"
-errors = parent.expresser.errors
-logger = parent.expresser.logger
-settings = parent.expresser.settings
+errors = null
+logger = null
+settings = null
 
 ###
 # Message delivery using AWS SNS.
 ###
 class SNS
+
+    # INIT
+    # -------------------------------------------------------------------------
+
+    ###
+    # Init the AWS SNS module.
+    # @param {AWS} parent The AWS main module.
+    ###
+    init: (parent) =>
+        errors = parent.expresser.errors
+        logger = parent.expresser.logger
+        settings = parent.expresser.settings
+
+        delete @init
+
+    # METHODS
+    # -------------------------------------------------------------------------
 
     ###
     # Publish a message to AWS SNS with the specified options.
@@ -58,7 +74,7 @@ class SNS
                     resolve data
 
 # Singleton implementation
-# --------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 SNS.getInstance = ->
     @instance = new SNS() if not @instance?
     return @instance

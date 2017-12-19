@@ -4,16 +4,33 @@ aws = require "aws-sdk"
 fs = require "fs"
 path = require "path"
 
-expresser = require "expresser"
-errors = expresser.errors
-lodash = expresser.libs.lodash
-logger = expresser.logger
-settings = expresser.settings
+errors = null
+lodash = null
+logger = null
+settings = null
 
 ###
 # Handles communication with AWS S3.
 ###
 class S3
+
+    # INIT
+    # -------------------------------------------------------------------------
+
+    ###
+    # Init the AWS S3 module.
+    # @param {AWS} parent The AWS main module.
+    ###
+    init: (parent) =>
+        errors = parent.expresser.errors
+        lodash = parent.expresser.libs.lodash
+        logger = parent.expresser.logger
+        settings = parent.expresser.settings
+
+        delete @init
+
+    # METHODS
+    # -------------------------------------------------------------------------
 
     ###
     # Download a file from S3 and optionally save to the specified destination.
@@ -45,6 +62,12 @@ class S3
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
                 return reject logger.notEnabled "AWS"
+
+            # A bucket is mandatory.
+            if not options.bucket? or options.bucket is ""
+                err = errors.reject "A bucket is mandatory", "Please provide a valid options.bucket."
+                logger.error "AWS.S3.upload", err
+                return reject err
 
             s3 = new aws.S3 {region: options.region or settings.aws.s3.region}
 
@@ -79,7 +102,7 @@ class S3
                                     logger.error "AWS.S3.download", "writeFile", options.bucket, options.key, err
                                     return reject err
                                 else
-                                    logger.info "AWS.S3.download", "writeFile", options.bucket, options.key, {data.ContentType, "#{data.ContentLength} bytes", options.destination
+                                    logger.info "AWS.S3.download", "writeFile", options.bucket, options.key, data.ContentType, "#{data.ContentLength} bytes", options.destination
                                     return resolve data.Body
 
                         # No destination? Simply return the file contents.
@@ -118,23 +141,30 @@ class S3
         options.key = options.Key if not options.key?
         options.body = options.Body if not options.body?
         options.contentType = options.ContentType if not options.contentType?
+        options.acl = options.ACL or "public-read" if not options.acl?
 
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
                 return reject logger.notEnabled "AWS"
 
-            s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
+            # A bucket is mandatory.
+            if not options.bucket? or options.bucket is ""
+                err = errors.reject "A bucket is mandatory", "Please provide a valid options.bucket."
+                logger.error "AWS.S3.upload", err
+                return reject err
 
-            # Default ACL is public-read!
-            options.acl = "public-read" if not options.acl?
+            s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
 
             # Automagically discover the content type, if not set.
             if not options.contentType?
-                ext = path.extname key
+                ext = path.extname options.key
                 options.contentType = "image/jpeg" if ext is ".jpg"
                 options.contentType = "image/gif" if ext is ".gif"
                 options.contentType = "image/png" if ext is ".png"
                 options.contentType = "image/bmp" if ext is ".bmp"
+                options.contentType = "application/json" if ext is ".json"
+                options.contentType = "text/css" if ext is ".css"
+                options.contentType = "text/html" if ext is ".htm" or ext is ".html"
 
             s3upload = s3Bucket.upload {
                 ACL: options.acl,
@@ -174,14 +204,33 @@ class S3
                 keys: arguments[1]
             }
 
+        # Accept uppercased parameters as well, like in the AWS SDK.
+        options.bucket = options.Bucket if not options.bucket?
+        options.keys = options.Keys if not options.keys?
+
+        # Accept a single key as well.
+        options.keys = [options.key] if not options.keys? and options.key?
+        options.keys = [options.keys] if lodash.isString options.keys
+
         return new Promise (resolve, reject) ->
             if not settings.aws.enabled
                 return reject logger.notEnabled "AWS"
 
+            # A bucket is mandatory.
+            if not options.bucket? or options.bucket is ""
+                err = errors.reject "A bucket is mandatory", "Please provide a valid options.bucket."
+                logger.error "AWS.S3.delete", err
+                return reject err
+
+            # Ate least 1 key to be deleted.
+            if options.keys?.length < 1
+                err = errors.reject "At least 1 key must be provided", "Make sure options.keys has at least 1 key."
+                logger.error "AWS.S3.delete", err
+                return reject err
+
             s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
 
             objects = []
-            options.keys = [keys] if lodash.isString options.keys
             objects.push {Key: value} for value in options.keys
 
             params = {
@@ -197,11 +246,11 @@ class S3
                     logger.error "AWS.S3.delete", options.bucket, options.keys, err
                     reject err
                 else
-                    logger.info "AWS.S3.delete", options.bucket, options.keys, keys
+                    logger.info "AWS.S3.delete", options.bucket, options.keys
                     resolve result
 
 # Singleton implementation
-# --------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 S3.getInstance = ->
     @instance = new S3() if not @instance?
     return @instance
