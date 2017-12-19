@@ -29,7 +29,6 @@ class MongoDb
         settings = @expresser.settings
 
         logger.debug "MongoDb.init"
-        events.emit "MongoDb.before.init"
 
         # Create default database connection if `connString` was specified.
         if settings.mongodb.enabled and settings.mongodb.connString?

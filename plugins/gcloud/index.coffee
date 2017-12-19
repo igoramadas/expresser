@@ -25,7 +25,6 @@ class GCloud
         settings = @expresser.settings
 
         logger.debug "GCloud.init"
-        events.emit "GCloud.before.init"
 
         # Init the implemented Google Cloud modules.
         @datastore.init this

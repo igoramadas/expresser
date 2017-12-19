@@ -7,7 +7,10 @@ logger = null
 settings = null
 
 ###
-# Reads and modify data on AWS DynamoDB databases.
+# Methods to read and modify data on AWS DynamoDB databases. On `init()` it will
+# create a DynamoDB and a DocumentClient targeting the region defined on the
+# settings. If you wish to change the region on runtime, please call the
+# `createClients()` method manually passing {region: "REGION_ID"}.
 ###
 class DynamoDB
 
@@ -27,8 +30,9 @@ class DynamoDB
     # -------------------------------------------------------------------------
 
     ###
-    # Init the AWS DynamoDB module.
+    # Init the AWS DynamoDB module. Should be called automatically by the main AWS module.
     # @param {AWS} parent The AWS main module.
+    # @private
     ###
     init: (parent) =>
         errors = parent.expresser.errors
@@ -39,11 +43,16 @@ class DynamoDB
         delete @init
 
     ###
-    # Creates the default DB and document clients.
+    # Creates the default DB and document clients. This is called on `init()`
+    # automatically, but you can use it to change region and other options as desired.
+    # @param {Object} options Database and document client options, optional.
+    # @param {String} [options.region] The AWS region, if not passed will use default from settings.
     ###
-    createClients: =>
-        @db = new aws.DynamoDB {region: settings.aws.dynamodb.region}
-        @docClient = new aws.DynamoDB.DocumentClient {region: settings.aws.dynamodb.region}
+    createClients: (options) =>
+        options = {region: settings.aws.dynamodb.region} if not options?
+
+        @db = new aws.DynamoDB options
+        @docClient = new aws.DynamoDB.DocumentClient options
 
     # SDK HELPER
     # -------------------------------------------------------------------------

@@ -12,15 +12,16 @@ logger = null
 settings = null
 utils = null
 
-# Handle scheduled cron jobs. You can use intervals (seconds) or specific
+###
+# Simple implementation of scheduled cron jobs. You can use intervals or specific
 # times to trigger jobs, and the module will take care of setting the proper timers.
-# Jobs are added using "job" objects with id, schedule, callback and other options.
+###
 class Cron
-
     priority: 3
 
     ##
-    # The jobs collection, this should be managed automatically by the module.
+    # The jobs collection, this should be managed automatically  but it's exposed
+    # to external modules just in case you need to do something unusual.
     # @property
     # @type Array
     jobs: []
@@ -30,7 +31,8 @@ class Cron
 
     ###
     # Init the cron manager. If `loadOnInit` setting is true, the `cron.json`
-    # file will be parsed and loaded straight away (if there's one).
+    # file will be parsed and loaded straight away (if it exists).
+    # @private
     ###
     init: =>
         errors = @expresser.errors
@@ -41,7 +43,6 @@ class Cron
         utils = @expresser.utils
 
         logger.debug "Cron.init"
-        events.emit "Cron.before.init"
 
         @load settings.cron.defaultFilename if settings.cron.loadOnInit
 
@@ -53,9 +54,9 @@ class Cron
     # If `autoStart` is true, it will automatically call the `start` method after loading.
     # @param {String} filename Path to the JSON file containing jobs, optional, default is "cron.json".
     # @param {Object} options Options to be passed when loading cron jobs.
-    # @option options {String} filename Name of file to be loaded (in case filename was not set on first parameter)
-    # @option options {String} basePath Sets the base path of modules when requiring them.
-    # @option options {Boolean} autoStart If true, call `start` after loading.
+    # @param options {String} filename Name of file to be loaded (in case filename was not set on first parameter)
+    # @param options {String} basePath Sets the base path of modules when requiring them.
+    # @param options {Boolean} autoStart If true, call `start` after loading.
     ###
     load: (filename, options) =>
         logger.debug "Cron.load", filename, options

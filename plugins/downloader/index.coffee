@@ -1,79 +1,80 @@
 # EXPRESSER DOWNLOADER
 # --------------------------------------------------------------------------
-# Helper to manage downloads from external sources. Supports downloading
-# throttling, avoids duplicates, etc.
-# <!--
-# @see settings.downloader
-# -->
+fs = require "fs"
+http = require "http"
+https = require "https"
+path = require "path"
+url = require "url"
+
+errors = null
+events = null
+lodash = null
+logger = null
+settings = null
+
+###
+# Simple download manager. Supports all common HTTP and HTTPS options, defining
+# a maximum of concurrent downloads.
+###
 class Downloader
+    priority: 4
 
-    priority: 3
+    ##
+    # The download queue, should be managed automatically by the module.
+    # @property
+    # @type Array
+    queue: []
 
-    fs = require "fs"
-    http = require "http"
-    https = require "https"
-    path = require "path"
-    url = require "url"
-
-    events = null
-    lodash = null
-    logger = null
-    moment = null
-    settings = null
-
-    # The download queue and simultaneous count.
-    queue = []
-    downloading = []
+    ##
+    # List of active downloads.
+    # @property
+    # @type Array
+    downloading: []
 
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the module.
-    # @param {Object} options Downloader init options.
-    init: (options) ->
+    ###
+    # Init the Downloader module. Should be called automatically by the main Expresser module.
+    # @private
+    ###
+    init: =>
+        errors = @expresser.errors
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
-        moment = @expresser.libs.moment
         settings = @expresser.settings
 
-        logger.debug "Downloader.init", options
-        events.emit "Downloader.before.init"
+        logger.debug "Downloader.init"
 
-        @setEvents()
-
-        events.emit "Downloader.on.init", options
+        events.emit "Downloader.on.init"
         delete @init
-
-    # Bind events.
-    setEvents: ->
-        events.on "Downloader.download", @download
-        events.on "Downloader.stop", @stop
 
     # METHODS
     # --------------------------------------------------------------------------
 
-    # Download an external file and save it to the specified location. The `callback`
+    ###
+    # Download a resource and save it to the specified location. The `callback`
     # has the signature (error, data). Returns the downloader object which is added
     # to the `queue`, which has the download properties and a `stop` helper to force
     # stopping it. Returns false on error or duplicate.
     # Tip: if you want to get the downloaded data without having to read the target file
     # you can get the downloaded contents via the `options.downloadedData`.
-    # @param {String} remoteUrl The URL of the remote file to be downloaded.
-    # @param {String} saveTo The full local path and destination filename.
-    # @param {Object} options Optional, object with request options, for example auth.
+    # @param {String} resourceUrl The full URL of the resource to be downloaded.
+    # @param {String} saveTo The destination path where it should be saved. Optional.
+    # @param {Object} options Request options, for example auth. Optional.
     # @param {Function} callback Optional, a function (err, result) to be called when download has finished.
-    # @return {Object} Returns the download job having timestamp, remoteUrl, saveTo, options, callback and stop helper.
-    download: (remoteUrl, saveTo, options) ->
-        logger.debug "Downloader.download", remoteUrl, saveTo, options
+    # @return {Object} Returns the download job with timestamp, resourceUrl, saveTo, options, callback and stop helper.
+    ###
+    download: (resourceUrl, saveTo, options, callback) =>
+        logger.debug "Downloader.download", resourceUrl, saveTo, options
 
         if not settings.downloader.enabled
             return logger.notEnabled "Downloader"
 
-        if not remoteUrl? or remoteUrl is ""
-            err = new Error "First parameter 'remoteUrl' is mandatory!"
-            logger.error "Downloader.download", err
-            throw err
+        # The resource URL is mandatory.
+        if not resourceUrl? or resourceUrl is ""
+            return errors.throw "urlMandatory", "Please pass a valid URL on first argument 'resourceUrl'."
 
         # Check options and callback.
         if not callback? and lodash.isFunction options
@@ -83,15 +84,15 @@ class Downloader
         now = new Date().getTime()
 
         # Create the download object.
-        downloadObj = {timestamp: now, remoteUrl: remoteUrl, saveTo: saveTo, options: options, callback: callback, stopFlag: false}
+        downloadObj = {timestamp: now, resourceUrl: resourceUrl, saveTo: saveTo, options: options, callback: callback, stopFlag: false}
 
         # Prevent duplicates?
         if settings.downloader.preventDuplicates
-            existing = lodash.find downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
+            existing = lodash.find @downloading, {resourceUrl: resourceUrl, saveTo: saveTo}
 
             # If downloading the same file and to the same location, abort download.
             if existing?.saveTo is saveTo
-                logger.error "Downloader.download", "Aborted, already downloading.", remoteUrl, saveTo
+                logger.error "Downloader.download", "Aborted, already downloading.", resourceUrl, saveTo
                 err = {message: "Download aborted: same file is already downloading.", duplicate: true}
                 callback? err, downloadObj
                 return null
@@ -102,19 +103,19 @@ class Downloader
 
         # Update download object with stop helper and add to queue.
         downloadObj.stop = stopHelper
-        queue.push downloadObj
+        @queue.push downloadObj
 
         # Start download immediatelly if not exceeding the `maxSimultaneous` setting.
-        next() if downloading.length < settings.downloader.maxSimultaneous
+        next() if @downloading.length < settings.downloader.maxSimultaneous
 
         return downloadObj
 
     # Force stop a current download.
-    # @param {String} remoteUrl The URL of the download to stop.
+    # @param {String} resourceUrl The URL of the download to stop.
     # @param {String} saveTo The full local path of the download to stop.
     # @return {Boolean} Returns true if a match was found, or false if no matching download to stop.
-    stop: (remoteUrl, saveTo, keep) ->
-        existing = lodash.find downloading, {remoteUrl: remoteUrl, saveTo: saveTo}
+    stop: (resourceUrl, saveTo, keep) =>
+        existing = lodash.find @downloading, {resourceUrl: resourceUrl, saveTo: saveTo}
 
         # Download exists? If so set its stop flag and return true, otherwise false.
         if existing?
@@ -127,23 +128,23 @@ class Downloader
     # --------------------------------------------------------------------------
 
     # Helper to remove a download from the `downloading` list.
-    removeDownloading = (obj) ->
-        filter = {timestamp: obj.timestamp, remoteUrl: obj.remoteUrl, saveTo: obj.saveTo}
-        downloading = lodash.reject downloading, filter
+    removeDownloading = (obj) =>
+        filter = {timestamp: obj.timestamp, resourceUrl: obj.resourceUrl, saveTo: obj.saveTo}
+        @downloading = lodash.reject @downloading, filter
 
     # Helper function to proccess download errors.
-    downloadError = (err, obj) ->
+    downloadError = (err, obj) =>
         logger.debug "Downloader.downloadError", err, obj
         removeDownloading obj
         next()
         obj.callback(err, obj) if obj.callback?
 
     # Helper function to parse the URL and get its options.
-    parseUrlOptions = (obj, options) ->
+    parseUrlOptions = (obj, options) =>
         if obj.redirectUrl? and obj.redirectUrl isnt ""
             urlInfo = url.parse obj.redirectUrl
         else
-            urlInfo = url.parse obj.remoteUrl
+            urlInfo = url.parse obj.resourceUrl
 
         # Set URL options.
         options =
@@ -159,8 +160,8 @@ class Downloader
         return options
 
     # Helper function to start a download request.
-    reqStart = (obj, options) ->
-        if obj.remoteUrl.indexOf("https") is 0
+    reqStart = (obj, options) =>
+        if obj.resourceUrl.indexOf("https") is 0
             options.port = 443 if not options.port?
             httpHandler = https
         else
@@ -234,7 +235,7 @@ class Downloader
                         removeDownloading obj
                         obj.callback(err, obj) if obj.callback?
 
-                        logger.debug "Downloader.next", "End", obj.remoteUrl, obj.saveTo
+                        logger.debug "Downloader.next", "End", obj.resourceUrl, obj.saveTo
 
                     fileWriter.end()
                     fileWriter.destroySoon()
@@ -249,11 +250,11 @@ class Downloader
             downloadError err, obj
 
     # Process next download.
-    next = ->
-        return if queue.length < 0
+    next = =>
+        return if @queue.length < 0
 
         # Get first download from queue.
-        obj = queue.shift()
+        obj = @queue.shift()
 
         # Check if download is valid.
         if not obj?
@@ -263,7 +264,7 @@ class Downloader
             logger.debug "Downloader.next", obj
 
         # Add to downloading array.
-        downloading.push obj
+        @downloading.push obj
 
         if settings.downloader.headers? and settings.downloader.headers isnt ""
             headers = settings.web.downloaderHeaders

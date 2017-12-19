@@ -33,7 +33,6 @@ class LoggerFile
         logger.drivers.file = this
 
         logger.debug "LoggerFile.init"
-        events.emit "LoggerFile.before.init"
 
         # Auto register as "file" if a default path is defined on the settings.
         if settings.logger.file.enabled and settings.logger.file.path?

@@ -23,7 +23,7 @@ class Mailer
     # Templates manager.
     templates: require "./templates.coffee"
 
-    # SMTP objects will be instantiated on `init`.
+    # SMTP objects will be instantiated on `init()`.
     smtp: null
 
     # INIT
@@ -37,7 +37,6 @@ class Mailer
         settings = @expresser.settings
 
         logger.debug "Mailer.init"
-        events.emit "Mailer.before.init"
 
         # Init the templates helper.
         @templates.init this

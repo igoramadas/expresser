@@ -23,6 +23,7 @@ class Errors
         nameRequired: "A name is required."
         noNetworkInterfaces: "Could not load network interfaces info."
         phoneRequired: "A phone number is required."
+        urlMandatory: "A URL is mandatory."
     }
 
     ###

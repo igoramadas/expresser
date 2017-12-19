@@ -33,7 +33,6 @@ class LoggerLogentries
         logger.drivers.logentries = this
 
         logger.debug "LoggerLogentries.init"
-        events.emit "LoggerLogentries.before.init"
 
         # Auto register as "logentries" if a default token is defined on the settings.
         if settings.logger.logentries.enabled and settings.logger.logentries.token?

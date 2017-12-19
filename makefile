@@ -14,10 +14,13 @@ endif
 
 test:
 	$(MOCHA) --exit -u tdd -R spec
+
 cover:
 	$(ISTANBUL) cover $(MOCHAEXEC) -- -R spec $(TESTPATH)
+
 docs:
-	$(DOCCO) -o docs lib/*.coffee plugins/**/*.coffee
+	$(DOCCO) -o docs src/*.coffee plugins/**/*.coffee
+
 clean:
 	rm -rf ./node_modules
 	rm -rf ./logs/*.log

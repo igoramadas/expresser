@@ -8,6 +8,7 @@
 * BREAKING! BrowserUtils.getDeviceString upgraded to getDeviceDetails.
 * BREAKING! SystemUtils.getIP deprecated in favour of the new getIP/getSingleIPv4 helpers on NetworkUtils.
 * BREAKING! Calling module methods via events is not possible anymore (not worth the performance penalty).
+* BREAKING! Plugins do not emit a "before.init" event any longer.
 * RENAMED! App.server is now App.expressApp.
 * RENAMED! App.getRoutes is now App.listRoutes.
 * Massive code refactoring!

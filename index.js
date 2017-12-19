@@ -1,2 +1,9 @@
 require("coffeescript/register")
-module.exports = require("./lib/index.coffee")
+
+var fs = require("fs")
+
+if (fs.existsSync(__dirname + "/lib")) {
+    module.exports = require("./lib/index.coffee")
+} else {
+    module.exports = require("./build/index.coffee")
+}

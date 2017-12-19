@@ -41,7 +41,6 @@ class Sockets
         settings = @expresser.settings
 
         logger.debug "Sockets.init"
-        events.emit "Sockets.before.init"
 
         # Listen to app start so we can bind to the server.s
         events.on "App.on.start", @bind

@@ -18,8 +18,9 @@ class S3
     # -------------------------------------------------------------------------
 
     ###
-    # Init the AWS S3 module.
+    # Init the AWS S3 module. Should be called automatically by the main AWS module.
     # @param {AWS} parent The AWS main module.
+    # @private
     ###
     init: (parent) =>
         errors = parent.expresser.errors

@@ -21,6 +21,7 @@ plugins:
   - crojsdoc-plugin-auto-namespace
 
 external-types:
+  AWS-SDK: https://aws.amazon.com/sdk-for-node-js/
   aws-DynamoDB: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB.html
   aws-DocumentClient: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html
   EventEmitter: https://nodejs.org/api/events.html#events_class_eventemitter

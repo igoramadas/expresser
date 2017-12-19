@@ -4,6 +4,7 @@
 .vscode/
 .coveralls.yml
 .DS_Store
+build/
 coverage/
 database/
 logs/

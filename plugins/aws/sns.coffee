@@ -15,8 +15,9 @@ class SNS
     # -------------------------------------------------------------------------
 
     ###
-    # Init the AWS SNS module.
+    # Init the AWS SNS module. Should be called automatically by the main AWS module.
     # @param {AWS} parent The AWS main module.
+    # @private
     ###
     init: (parent) =>
         errors = parent.expresser.errors

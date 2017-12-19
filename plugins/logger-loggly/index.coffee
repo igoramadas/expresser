@@ -33,7 +33,6 @@ class LoggerLoggly
         logger.drivers.loggly = this
 
         logger.debug "LoggerLoggly.init"
-        events.emit "LoggerLoggly.before.init"
 
         # Auto register as "loggly" if a default token is defined on the settings.
         if settings.logger.loggly.enabled and settings.logger.loggly.token?

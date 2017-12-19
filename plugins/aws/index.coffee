@@ -6,6 +6,10 @@ settings = null
 
 ###
 # Module to integrate your app with Amazon Web Services using the official AWS SDK module.
+# As of now it implements helpers for DynamoDB, S3 and SNS, but you can use any of the
+# AWS SDK features by accessing the `sdk` of this module directly.
+#
+# Please see https://aws.amazon.com/sdk-for-node-js/ for the AWS SDK docs.
 ###
 class AWS
     priority: 2
@@ -13,7 +17,7 @@ class AWS
     ##
     # Exposes the actual AWS SDK to the outside.
     # @property
-    # @see https://aws.amazon.com/sdk-for-node-js/
+    # @type AWS-SDK
     sdk: require "aws-sdk"
 
     ##
@@ -38,8 +42,9 @@ class AWS
     # -------------------------------------------------------------------------
 
     ###
-    # Init the AWS plugin and load its sub modules.
-    # @param {Expresser} exprsser The expresser main module.
+    # Init the AWS plugin and load its sub modules. Should be called automatically
+    # by the main Expresser module.
+    # @private
     ###
     init: =>
         events = @expresser.events
@@ -47,7 +52,6 @@ class AWS
         settings = @expresser.settings
 
         logger.debug "AWS.init"
-        events.emit "AWS.before.init"
 
         # Init the implemented AWS modules.
         @dynamodb.init this

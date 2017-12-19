@@ -36,7 +36,6 @@ class Metrics
         utils = @expresser.utils
 
         logger.debug "Metrics.init"
-        events.emit "Metrics.before.init"
 
         # Make sure settings are valid.
         settings.metrics.httpServer = {} if not settings.metrics.httpServer?
