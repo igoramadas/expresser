@@ -143,7 +143,7 @@ describe("Cron Tests", function() {
             id: "testjob",
             callback: callback,
             schedule: schedule,
-            once: true
+            once: true,
             autoStart: true
         }
 
