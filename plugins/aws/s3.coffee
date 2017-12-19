@@ -66,7 +66,13 @@ class S3
             # A bucket is mandatory.
             if not options.bucket? or options.bucket is ""
                 err = errors.reject "A bucket is mandatory", "Please provide a valid options.bucket."
-                logger.error "AWS.S3.upload", err
+                logger.error "AWS.S3.download", err
+                return reject err
+
+            # A key is mandatory.
+            if not options.key? or options.key is ""
+                err = errors.reject "A key is mandatory", "Please provide a valid options.key."
+                logger.error "AWS.S3.download", err
                 return reject err
 
             s3 = new aws.S3 {region: options.region or settings.aws.s3.region}
@@ -132,9 +138,9 @@ class S3
             logger.deprecated "AWS.S3.upload(bucket, key, body, options)", "Please use upload(options) passing the named parameters."
 
             options = if arguments.length > 2 then arguments[3] else {}
-            options.Bucket = arguments[0]
-            options.Key = arguments[1]
-            options.Body = arguments[2]
+            options.bucket = arguments[0]
+            options.key = arguments[1]
+            options.body = arguments[2]
 
         # Accept uppercased parameters as well, like in the AWS SDK.
         options.bucket = options.Bucket if not options.bucket?
@@ -150,6 +156,12 @@ class S3
             # A bucket is mandatory.
             if not options.bucket? or options.bucket is ""
                 err = errors.reject "A bucket is mandatory", "Please provide a valid options.bucket."
+                logger.error "AWS.S3.upload", err
+                return reject err
+
+            # A key is mandatory.
+            if not options.key? or options.key is ""
+                err = errors.reject "A key is mandatory", "Please provide a valid options.key."
                 logger.error "AWS.S3.upload", err
                 return reject err
 
