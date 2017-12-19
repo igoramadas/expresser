@@ -45,10 +45,11 @@ class Expresser
     # for plugins installed via NPM (most production scenarios).
     loadPlugins: =>
         initializers = []
+        pluginsPath = path.resolve __dirname, "../plugins"
 
-        if fs.existsSync "#{__dirname}/../../plugins" and not isProduction
+        if fs.existsSync(pluginsPath) and not isProduction
             pluginsFolder = true
-            plugins = fs.readdirSync "#{__dirname}/../../plugins"
+            plugins = fs.readdirSync pluginsPath
         else
             pluginsFolder = false
             plugins = fs.readdirSync "#{@rootPath}/node_modules"

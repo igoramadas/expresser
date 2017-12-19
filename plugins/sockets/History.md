@@ -1,5 +1,9 @@
 # Changelog for expresser-sockets
 
+3.0.3
+=====
+* General improvements and updated documentation.
+
 3.0.2
 =====
 * Maintenance release for Expresser 3.2.0.

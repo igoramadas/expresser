@@ -1,5 +1,10 @@
 # Changelog for expresser-mongodb
 
+3.0.1
+=====
+* Updated MongoDB driver.
+* General improvements and updated documentation.
+
 3.0.0
 =====
 * BREAKING! This is now a standalone module (Expresser Database has been deprecated).

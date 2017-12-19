@@ -1,5 +1,9 @@
 # Changelog for expresser-metrics
 
+3.1.3
+=====
+* General improvements and updated documentation.
+
 3.1.2
 =====
 * BREAKING! Metrics expiration is now passed as milliseconds instead of seconds.

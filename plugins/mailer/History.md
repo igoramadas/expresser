@@ -1,5 +1,9 @@
 # Changelog for expresser-mailer
 
+3.0.5
+=====
+* General improvements and updated documentation.
+
 3.0.4
 =====
 * Updated nodemailer.
