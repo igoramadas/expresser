@@ -89,7 +89,9 @@ describe("Cron Tests", function() {
 
         events.on("cron-2", verify)
 
-        cron.start("cron-2")
+        if (cron.start("cron-2").notFound) {
+            done("Job was not found.")
+        }
     })
 
     it("Start specific job that does not exist", function(done) {

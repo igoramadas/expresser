@@ -1,7 +1,7 @@
 # EXPRESSER CRON
 # -----------------------------------------------------------------------------
 fs = require "fs"
-jobModel = require "./job.coffee"
+cronJob = require "./job.coffee"
 path = require "path"
 util = require "util"
 
@@ -83,9 +83,9 @@ class Cron
                 cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
                 cronJson = utils.data.minifyJson cronJson
             catch ex
-                err = "Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}"
-                logger.error "Cron.load", err
-                throw {error: "Invalid JSON", message: err}
+                ex.details = "Could not parse #{filepath} as JSON."
+                logger.error "Cron.load", ex
+                return errors.throw "invalidJson", ex
 
             # Iterate jobs, but do not add if job's `enabled` is false.
             for key, data of cronJson
