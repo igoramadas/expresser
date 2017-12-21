@@ -1,6 +1,6 @@
 # App
 
-This is the core of any Expresser app. It holds the HTTP(s) server along session and cookie secrets, asset
+This is the core of an Expresser app. It holds the HTTP(s) server along session and cookie secrets, asset
 bindings, middlewares etc. By default it will bind to all local addresses on port 8080 (when running
 on your local environment). The Express server is exposed via the `server` property on the App module.
 
