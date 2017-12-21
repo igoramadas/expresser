@@ -1,29 +1,33 @@
 # EXPRESSER LOGGER - FILE
-# --------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+fs = require "fs"
+path = require "path"
+
+errors = null
+events = null
+lodash = null
+logger = null
+moment = null
+settings = null
+
+###
 # File logging plugin for Expresser. Supports saving directly to the disk
 # using one file per log type per day, and includes auto cleaning features.
-# <!--
-# @see settings.logger.file
-# -->
+###
 class LoggerFile
-
     priority: 1
 
-    events = null
-    fs = require "fs"
-    lodash = null
-    logger = null
-    moment = null
-    path = require "path"
-    settings = null
-
     # INIT
-    # --------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
 
-    # Init the File module. Verify which services are set, and add the necessary transports.
-    # IP address and timestamp will be appended to logs depending on the settings.
-    # @return {Object} Returns the File transport created (only if default settings are set).
-    init: ->
+    ###
+    # Init the File logging module. If default settings are defined on "settings.logger.file",
+    # it will auto register itself to the main Logger as "file". Please note that this init
+    # should be called automatically by the main Expresser `init()`.
+    # @private
+    ###
+    init: =>
+        errors = @expresser.errors
         events = @expresser.events
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
@@ -36,15 +40,19 @@ class LoggerFile
 
         # Auto register as "file" if a default path is defined on the settings.
         if settings.logger.file.enabled and settings.logger.file.path?
-            result = logger.register "file", "file", settings.logger.file
+            logger.register "file", "file", settings.logger.file
 
         events.emit "LoggerFile.on.init"
         delete @init
 
-        return result
-
-    # Get the file transport object.
+    ###
+    # Get the File transport object.
     # @param {Object} options File logging options.
+    # @param {String} [options.path] Path where log files should be saved, mandatory.
+    # @param {Function} [options.onLogSuccess] Function to execute on successful log calls, optional.
+    # @param {Function} [options.onLogError] Function to execute on failed log calls, optional.
+    # @return {Object} The File logger transport.
+    ###
     getTransport: (options) ->
         logger.debug "LoggerFile.getTransport", options
 
@@ -52,9 +60,7 @@ class LoggerFile
             return logger.notEnabled "LoggerFile"
 
         if not options?.path? or options.path is ""
-            err = new Error "The options.path is mandatory! Please specify a valid path to the logs folder."
-            logger.error "LoggerFile.getTransport", err, options
-            throw err
+            return errors.throw pathRequired, "Please set a valid options.path."
 
         options = lodash.defaultsDeep options, settings.logger.file
         options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
@@ -82,12 +88,14 @@ class LoggerFile
         return transport
 
     # LOG METHODS
-    # --------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
 
+    ###
     # Log locally. The path is defined on `settings.logger.file.path`.
     # @param {String} logType The log type (info, warn, error, debug, etc).
     # @param {Array} args Array or string to be logged.
     # @param {Boolean} avoidConsole If true it will NOT log to the console.
+    ###
     log: (logType, args, avoidConsole) ->
         return if settings.logger.levels.indexOf(logType) < 0
 
@@ -108,7 +116,13 @@ class LoggerFile
         if settings.logger.console and not avoidConsole
             logger.console logType, args
 
-    # Flush all local buffered log messages to disk. This is usually called by the `bufferDispatcher` timer.
+    # PERSISTENCE
+    # -------------------------------------------------------------------------
+
+    ###
+    # Flush all local buffered log messages to disk. This is automatically called
+    # by the `bufferDispatcher` timer but you can also trigger it manually.
+    ###
     flush: ->
         return if @flushing
 
@@ -142,9 +156,10 @@ class LoggerFile
 
                         events.emit "LoggerFile.on.flush", this
 
-    # Delete old log files from disk. The maximum date is taken from the settings
-    # if not passed.
-    # @param {Integer} maxAge Max age of logs, in days.
+    ###
+    # Delete old log files from disk.
+    # @param {Integer} maxAge Max age of logs, in days, default is defined on settings.
+    ###
     clean: (maxAge) ->
         maxAge = settings.logger.file.maxAge if not maxAge?
         maxDate = moment().subtract maxAge, "d"
@@ -161,7 +176,7 @@ class LoggerFile
                 events.emit "LoggerFile.on.clean", this, maxAge
 
 # Singleton implementation
-# --------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 LoggerFile.getInstance = ->
     @instance = new LoggerFile() if not @instance?
     return @instance

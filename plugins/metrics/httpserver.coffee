@@ -1,6 +1,9 @@
 # METRICS: HTTP SERVER HELPER
 # --------------------------------------------------------------------------
+
+###
 # Helper class to manage the HTTP server exposing the metrics output.
+###
 class HttpServer
 
     metrics = null

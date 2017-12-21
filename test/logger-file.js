@@ -66,7 +66,8 @@ describe("Logger File Tests", function() {
 
     it("Creates transport object", function() {
         logger.init()
-        transport = loggerFile.init()
+        loggerFile.init()
+        transport = logger.transports["file"]
     })
 
     it("Save log to file", function(done) {

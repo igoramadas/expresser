@@ -17,12 +17,15 @@ class Errors
         cantSaveFile: "Could not save file."
         cantUploadFile: "Could not upload file."
         certificatesNotFound: "The specified certificates could not be found."
+        domainRequired: "A valid domain is required."
         expressNotInit: "Express app was not initialized yet, please use after app.init()."
         uniqueIdRequired: "ID is required and must be an unique value."
         moduleNotEnabled: "Module is not enabled."
         nameRequired: "A name is required."
         noNetworkInterfaces: "Could not load network interfaces info."
+        pathRequired: "A valid path is required."
         phoneRequired: "A phone number is required."
+        tokenRequired: "A valid token is required."
         urlMandatory: "A URL is mandatory."
     }
 

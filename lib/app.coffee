@@ -336,7 +336,7 @@ class App
 
         try
             options = {} if not options?
-            options.device = utils.browser.getDeviceString req
+            options.device = utils.browser.getDeviceDetails req
             options.title = settings.app.title if not options.title?
 
             # View filename must jave .pug extension.

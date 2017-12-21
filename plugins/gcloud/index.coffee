@@ -1,25 +1,32 @@
 # EXPRESSER GOOGLE CLOUD
 # -----------------------------------------------------------------------------
-# Integrate your app with Google Cloud services.
-# <!--
-# @see settings.gcloud
-# -->
-class GCloud
+events = null
+logger = null
+settings = null
 
+###
+# Integrate your app with Google Cloud services.
+###
+class GCloud
     priority: 2
 
-    events = null
-    logger = null
-    settings = null
-
+    ##
+    # Google Cloud Datastore module.
+    # @property
+    # @type GCloudDatastore
     datastore: require "./datastore"
+
+    ##
+    # Google Cloud Storage module.
+    # @property
+    # @type GCloudStorage
     storage: require "./storage"
 
     # INIT
     # -------------------------------------------------------------------------
 
     # Init the Google Cloud plugin
-    init: ->
+    init: =>
         events = @expresser.events
         logger = @expresser.logger
         settings = @expresser.settings
@@ -30,14 +37,8 @@ class GCloud
         @datastore.init this
         @storage.init this
 
-        @setEvents()
-
         events.emit "GCloud.on.init"
         delete @init
-
-    # Bind events.
-    setEvents: ->
-        events.on "GCloud.Datastore.get", @datastore.get.bind(@datastore)
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

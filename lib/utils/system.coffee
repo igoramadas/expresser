@@ -16,8 +16,8 @@ class SystemUtils
 
     # DEPRECATED! The getIP has moved to the NetworkUtils as GetIPv4.
     getIP: (firstOnly) ->
-        deprecated = -> return require("./network.coffee").getIP "ipv4"
-        return util.deprecate deprecated, "SystemUtils.getIP: use NetworkUtils.getIP/.getSingleIPv4 instead."
+        console.warn "SystemUtils.getIP(firstOnly)", "DEPRECATED! Use NetworkUtils.getIP() or NetworkUtils.getSingleIPv4() instead."
+        return require("./network.coffee").getSingleIPv4()
 
     ###
     # Return an object with general and health information about the system.

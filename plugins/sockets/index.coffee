@@ -5,16 +5,11 @@ lodash =  null
 logger = null
 settings = null
 
+###
 # Handles sockets communication using the module Socket.IO.
-# ATTENTION! The Sockets module is started automatically by the App module.
-# If you wish to disable it, set `Settings.sockets.enabled` to false.
-# <!--
-# @see settings.sockets
-# -->
+###
 class Sockets
-
     priority: 3
-
 
     ##
     # List of current event listeners.
@@ -145,6 +140,7 @@ class Sockets
 
     ###
     # Get how many users are currenly connected to the app.
+    # @return {Numeric} Number of active connections to the server.
     ###
     getConnectionCount: =>
         return 0 if not @io?.sockets?

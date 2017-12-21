@@ -41,6 +41,9 @@ class BrowserUtils
             browser: "Unknown"
         }
 
+        # Helper to return details as string.
+        result.toString = -> return @device + " - " + @browser
+
         return result if not req?.headers?
         ua = req.headers["user-agent"]?.toLowerCase().replace(/\s/g, "").replace(/_/g, "")
         return result if not ua? or ua is ""
@@ -110,8 +113,8 @@ class BrowserUtils
 
     # DEPRECATED! Please use `getDeviceDetails` instead.
     getDeviceString: (req) =>
-        deprecated = => return @getDeviceDetails req
-        return util.deprecate deprecated, "BrowserUtils.getDeviceString: use getDeviceDetails instead."
+        console.warn "BrowserUtils.getDeviceString()", "DEPRECATED! Please use getDeviceDetails() instead."
+        return @getDeviceDetails(req).toString()
 
 # Singleton implementation
 # --------------------------------------------------------------------------

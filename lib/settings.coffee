@@ -235,8 +235,11 @@ class Settings
     # @param {Function} callback Optional function (event, filename) triggered when a settings file gets updated.
     ###
     watch: (callback) =>
+        if lodash.isBoolean callback
+            console.warn "Settings.watch(boolean)", "DEPRECATED! Please use watch(callback) and unwatch(callback)."
+
         if callback? and not lodash.isFunction callback
-            return errors.throw "callbackMustBeFunction", "Pass callback=null if you don't need a callback for the file watchers."
+            return errors.throw "callbackMustBeFunction", "Pass null if you don't need a callback for the file watchers."
 
         logToConsole = @general.debug and @logger.console
 

@@ -1,29 +1,28 @@
 # EXPRESSER LOGGER - LOGENTRIES
 # --------------------------------------------------------------------------
+fs = require "fs"
+logentries = require "node-logentries"
+path = require "path"
+
+lodash = null
+logger = null
+settings = null
+
+###
 # Logentries plugin for Expresser.
-# <!--
-# @see settings.logger.logentries
-# -->
+###
 class LoggerLogentries
-
     priority: 1
-
-    fs = require "fs"
-    lodash = null
-    logentries = require "node-logentries"
-    logger = null
-    path = require "path"
-    settings = null
-
-    # The Logentries transport object.
-    loggerLogentries = null
 
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Logentries module. Verify which services are set, and add the necessary transports.
-    # IP address and timestamp will be appended to logs depending on the settings.
-    # @return {Object} Returns the Logentries transport created (only if default settings are set).
+    ###
+    # Init the Logentries logging module. If default settings are defined on "settings.logger.logentries",
+    # it will auto register itself to the main Logger as "logentries". Please note that this init
+    # should be called automatically by the main Expresser `init()`.
+    # @private
+    ###
     init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -36,15 +35,20 @@ class LoggerLogentries
 
         # Auto register as "logentries" if a default token is defined on the settings.
         if settings.logger.logentries.enabled and settings.logger.logentries.token?
-            result = logger.register "logentries", "logentries", settings.logger.logentries
+            logger.register "logentries", "logentries", settings.logger.logentries
 
         events.emit "LoggerLogentries.on.init"
         delete @init
 
-        return result
-
-    # Get the transport object.
-    # @param {Object} options Transport options including the token.
+    ###
+    # Get the Logentries transport object.
+    # @param {Object} options Logentries options.
+    # @param {String} [options.token] Logentries access token, mandatory.
+    # @param {Boolean} [options.sendTimestamp] Send timestamp along log lines? Default is defined on settings.
+    # @param {Function} [options.onLogSuccess] Function to execute on successful log calls, optional.
+    # @param {Function} [options.onLogError] Function to execute on failed log calls, optional.
+    # @return {Object} The Logentries logger transport.
+    ###
     getTransport: (options) ->
         logger.debug "LoggerLogentries.getTransport", options
 
@@ -52,9 +56,7 @@ class LoggerLogentries
             return logger.notEnabled "LoggerFile"
 
         if not options?.token? or options.token is ""
-            err = new Error "The options.token is mandatory! Please specify a valid Logentries token."
-            logger.error "LoggerLogentries.getTransport", err, options
-            throw err
+            return errors.throw tokenRequired, "Please set a valid options.token."
 
         options = lodash.defaultsDeep options, settings.logger.logentries
         options.sendTimestamp = settings.logger.sendTimestamp if not options.sendTimestamp?
@@ -70,10 +72,12 @@ class LoggerLogentries
     # LOG METHODS
     # --------------------------------------------------------------------------
 
+    ###
     # Logentries log method.
     # @param {String} logType The log type (info, warn, error, debug, etc).
     # @param {Array} args Array or string to be logged.
     # @param {Boolean} avoidConsole If true it will NOT log to the console.
+    ###
     log: (logType, args, avoidConsole) ->
         return if settings.logger.levels.indexOf(logType) < 0
 
