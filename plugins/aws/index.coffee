@@ -21,19 +21,19 @@ class AWS
     sdk: require "aws-sdk"
 
     ##
-    # DynamoDB methods.
+    # DynamoDB module.
     # @property
     # @type DynamoDB
     dynamodb: require "./dynamodb.coffee"
 
     ##
-    # S3 methods.
+    # S3 module.
     # @property
     # @type S3
     s3: require "./s3.coffee"
 
     ##
-    # SNS methods.
+    # SNS module.
     # @property
     # @type SNS
     sns: require "./sns.coffee"

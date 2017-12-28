@@ -2,6 +2,7 @@
 
 3.0.1
 =====
+* BREAKING! The init() does not return a transport any longer.
 * General improvements and updated documentation.
 
 3.0.0

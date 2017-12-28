@@ -8,8 +8,8 @@ path = require "path"
 ###
 # IO utilities.
 ###
-class IoUtils
-    newInstance: -> return new IoUtils()
+class IOUtils
+    newInstance: -> return new IOUtils()
 
     ###
     # Helper to get the correct file path for the specified filename. This will look into the current
@@ -97,8 +97,8 @@ class IoUtils
 
 # Singleton implementation
 # --------------------------------------------------------------------------
-IoUtils.getInstance = ->
-    @instance = new IoUtils() if not @instance?
+IOUtils.getInstance = ->
+    @instance = new IOUtils() if not @instance?
     return @instance
 
-module.exports = IoUtils.getInstance()
+module.exports = IOUtils.getInstance()

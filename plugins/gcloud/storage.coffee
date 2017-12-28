@@ -1,34 +1,32 @@
 # GOOGLE CLOUD: STORAGE
 # -----------------------------------------------------------------------------
+logger = null
+settings = null
+
+###
 # Read and write data to the Google Cloud Storage.
-class Storage
+###
+class GCloudStorage
 
-    gcloudStorage = require "@google-cloud/storage"
-
-    logger = null
-    settings = null
+    ##
+    # Exposes the actual Storage SDK to the outside.
+    # @property
+    sdk: require "@google-cloud/storage"
 
     # INIT
     # -------------------------------------------------------------------------
 
     # Init the Storage module.
-    init: (parent) ->
+    init: (parent) =>
         logger = parent.expresser.logger
         settings = parent.expresser.settings
 
         delete @init
 
-    # IMPLEMENTATION
-    # -------------------------------------------------------------------------
-
-    # Get files from Google Storage.
-    get: ->
-        return
-
 # Singleton implementation
 # -----------------------------------------------------------------------------
-Storage.getInstance = ->
-    @instance = new Storage() if not @instance?
+GCloudStorage.getInstance = ->
+    @instance = new GCloudStorage() if not @instance?
     return @instance
 
-module.exports = exports = Storage.getInstance()
+module.exports = exports = GCloudStorage.getInstance()

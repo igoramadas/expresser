@@ -58,24 +58,8 @@ class Logger
             @deprecated "settings.logger.maxDeepLevel", "Please use settings.logger.maxDepth instead."
             settings.logger.maxDepth = settings.logger.maxDeepLevel
 
-        @setEvents()
-
         events.emit "Logger.on.init"
         delete @init
-
-    ###
-    # Listen to Logger events.
-    # @private
-    ###
-    setEvents: ->
-        events.on "Logger.register", @register
-        events.on "Logger.unregister", @unregister
-        events.on "Logger.console", @console.bind this
-        events.on "Logger.debug", @debug.bind this
-        events.on "Logger.info", @info.bind this
-        events.on "Logger.warn", @warn.bind this
-        events.on "Logger.error", @error.bind this
-        events.on "Logger.critical", @critical.bind this
 
     # IMPLEMENTATION
     # -------------------------------------------------------------------------

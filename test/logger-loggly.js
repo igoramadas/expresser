@@ -57,8 +57,8 @@ describe("Logger Loggly Tests", function() {
     if (hasEnv) {
         it("Creates transport object", function() {
             logger.init()
-
-            transport = loggerLoggly.init()
+            loggerLoggly.init()
+            transport = logger.transports["loggly"]
         })
 
         it("Send log to Loggly", function(done) {

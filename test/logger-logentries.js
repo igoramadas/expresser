@@ -53,8 +53,8 @@ describe("Logger Logentries Tests", function() {
     if (hasEnv) {
         it("Creates transport object", function() {
             logger.init()
-
-            transport = loggerLogentries.init()
+            loggerLogentries.init()
+            transport = logger.transports["logentries"]
         })
 
         it("Send log to Logentries", function(done) {

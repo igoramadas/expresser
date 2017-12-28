@@ -1,32 +1,36 @@
 # EXPRESSER METRICS
 # --------------------------------------------------------------------------
-# Gather application metrics and generate JSON output to be used by
-# monitoring systems.
-# <!--
-# @see settings.metrics
-# -->
-class Metrics
+percentile = require "./percentile.coffee"
 
+events = null
+lodash = null
+logger = null
+moment = null
+settings = null
+utils = null
+
+# This is where we store all metrics.
+metrics = {}
+
+# Timer to cleanup metrics.
+cleanupTimer = null
+
+###
+# To gather application metrics and generate JSON output to be used by
+# monitoring systems.
+###
+class Metrics
     priority: 2
 
-    events = null
-    lodash = null
-    logger = null
-    moment = null
-    percentile = require "./percentile.coffee"
-    settings = null
-    utils = null
-
-    # This is where we store all metrics.
-    metrics = {}
-
-    # Timer to cleanup metrics.
-    cleanupTimer = null
-
+    ##
     # HTTP server module exposed to other modules.
+    # @property
+    # @type HttpServer
     httpServer: require "./httpserver.coffee"
 
+    ###
     # Init metrics and set up cleanup timer.
+    ###
     init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -55,11 +59,13 @@ class Metrics
     # COUNTERS
     # -------------------------------------------------------------------------
 
+    ###
     # Starts the counter for a specific metric. The data is optional.
     # @param {String} id ID of the metric to be started.
     # @param {Object} data Additional info about the current metric (URL data, for example).
     # @param {Number} expiresIn Optional, metric should expire in these amount of milliseconds if not ended.
     # @return {Object} Returns the metric object to be used later on `end`.
+    ###
     start: (id, data, expiresIn) ->
         logger.debug "Metrics.start", obj, data, expiresIn
 
@@ -88,9 +94,11 @@ class Metrics
 
         return obj
 
+    ###
     # Ends the counter for the specified metric, with an optional error to be passed along.
     # @param {Object} obj The metric object started previsouly on `start`.
     # @param {Object} error Optional error that ocurred while processing the metric.
+    ###
     end: (obj, error) ->
         obj.endTime = moment().valueOf()
         obj.duration = obj.endTime - obj.startTime
@@ -111,8 +119,10 @@ class Metrics
     # CLEANUP
     # -------------------------------------------------------------------------
 
+    ###
     # Clean collected metrics by removing data older than X minutes (defined on settings).
     # Please note that this runs on s schedule so you shouldn't need to call it manually, in most cases.
+    ###
     cleanup: ->
         logger.debug "Metrics.cleanup"
 
@@ -158,10 +168,12 @@ class Metrics
     # OUTPUT
     # -------------------------------------------------------------------------
 
+    ###
     # Generate the JSON output with all metrics.
     # @param {Object} options Options to filter the output. Available options are same as settings.metrics.
     # @return {Object} JSON output with relevant metrics.
-    output: (options) ->
+    ###
+    output: (options) =>
         logger.debug "Metrics.output", options
         utils.system.getInfo()
 
@@ -193,13 +205,13 @@ class Metrics
 
                 # Iterate intervals (for example 1m, 5m and 15m) to get specific stats.
                 for interval in options.intervals
-                    result[key]["last_#{interval}min"] = getSummary options, obj, interval
+                    result[key]["last_#{interval}min"] = @summary.get options, obj, interval
 
                 # Stats for last 3 calls.
                 samples = []
-                samples.push getLastSummary(obj[2]) if obj[2]?
-                samples.push getLastSummary(obj[1]) if obj[1]?
-                samples.push getLastSummary(obj[0]) if obj[0]?
+                samples.push @summary.getLast(obj[2]) if obj[2]?
+                samples.push @summary.getLast(obj[1]) if obj[1]?
+                samples.push @summary.getLast(obj[0]) if obj[0]?
 
                 result[key].last_samples = samples
 
@@ -207,55 +219,66 @@ class Metrics
 
         return result
 
-    # Helper to generate summary for the specified interval.
-    getSummary = (options, obj, interval) ->
-        now = moment().valueOf()
-        values = []
-        errorCount = 0
-        expiredCount = 0
-        i = 0
+    ###
+    # Summary helper methods.
+    # @private
+    ###
+    summary: {
 
-        # Iterate logged metrics, and get only if corresponding to the specified interval.
-        while i < obj.length
-            diff = now - obj[i].startTime
-            minutes = diff / 1000 / 60
+        ###
+        # Generate summary for the specified object and interval.
+        ###
+        get: (options, obj, interval) ->
+            now = moment().valueOf()
+            values = []
+            errorCount = 0
+            expiredCount = 0
+            i = 0
 
-            if minutes <= interval
-                values.push obj[i]
-                errorCount++ if obj[i].error
-                expiredCount++ if obj[i].expired
-                i++
-            else
-                i = obj.length
+            # Iterate logged metrics, and get only if corresponding to the specified interval.
+            while i < obj.length
+                diff = now - obj[i].startTime
+                minutes = diff / 1000 / 60
 
-        # All we care about is the duration for the relevant requests.
-        durations = lodash.map values, "duration"
-        avg = lodash.mean durations
-        avg = 0 if isNaN avg
+                if minutes <= interval
+                    values.push obj[i]
+                    errorCount++ if obj[i].error
+                    expiredCount++ if obj[i].expired
+                    i++
+                else
+                    i = obj.length
 
-        # Create a summary with the important stats for each metric.
-        summary = {}
-        summary.calls = values.length
-        summary.errors = errorCount
-        summary.expired = expiredCount
-        summary.min = lodash.min(durations) or 0
-        summary.max = lodash.max(durations) or 0
-        summary.avg = avg or 0
-        summary.avg = Math.round summary.avg
+            # All we care about is the duration for the relevant requests.
+            durations = lodash.map values, "duration"
+            avg = lodash.mean durations
+            avg = 0 if isNaN avg
 
-        # Get percentiles based on settings.
-        for perc in options.percentiles
-            summary["p#{perc}"] = percentile.calculate durations, perc
+            # Create a summary with the important stats for each metric.
+            result = {}
+            result.calls = values.length
+            result.errors = errorCount
+            result.expired = expiredCount
+            result.min = lodash.min(durations) or 0
+            result.max = lodash.max(durations) or 0
+            result.avg = avg or 0
+            result.avg = Math.round result.avg
 
-        return summary
+            # Get percentiles based on settings.
+            for perc in options.percentiles
+                result["p#{perc}"] = percentile.calculate durations, perc
 
-    # Helper to get summary for last calls.
-    getLastSummary = (value) ->
-        return {
-            startTime: moment(value.startTime).format "MMM Do - HH:mm:ss.SSSS"
-            duration: value.duration
-            data: value.data
-        }
+            return result
+
+        ###
+        # Helper to get summary for last calls.
+        ###
+        getLast: (value) ->
+            return {
+                startTime: moment(value.startTime).format "MMM Do - HH:mm:ss.SSSS"
+                duration: value.duration
+                data: value.data
+            }
+    }
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

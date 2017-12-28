@@ -1,29 +1,29 @@
 # EXPRESSER LOGGER - LOGGLY
 # --------------------------------------------------------------------------
-# Logger plugin to log to Loggly (www.loggly.com).
-# <!--
-# @see settings.logger.loggly
-# -->
+fs = require "fs"
+loggly = require "loggly"
+path = require "path"
+
+lodash = null
+logger = null
+logglyClient = null
+settings = null
+
+###
+# Loggly plugin for Expresser.
+###
 class LoggerLoggly
-
     priority: 1
-
-    fs = require "fs"
-    loggly = require "loggly"
-    path = require "path"
-    lodash = null
-    logger = null
-    settings = null
-
-    # Wrapper for the Loggly client.
-    logglyClient = null
 
     # INIT
     # --------------------------------------------------------------------------
 
-    # Init the Loggly module. Verify which services are set, and add the necessary transports.
-    # IP address and timestamp will be appended to logs depending on the settings.
-    # @return {Object} Returns the Loggly transport created (only if default settings are set).
+    ###
+    # Init the Loggly logging module. If default settings are defined on "settings.logger.loggly",
+    # it will auto register itself to the main Logger as "loggly". Please note that this init
+    # should be called automatically by the main Expresser `init()`.
+    # @private
+    ###
     init: ->
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -36,25 +36,33 @@ class LoggerLoggly
 
         # Auto register as "loggly" if a default token is defined on the settings.
         if settings.logger.loggly.enabled and settings.logger.loggly.token?
-            result = logger.register "loggly", "loggly", settings.logger.loggly
+            logger.register "loggly", "loggly", settings.logger.loggly
 
         events.emit "LoggerLoggly.on.init"
         delete @init
 
-        return result
-
-    # Get the transport object.
-    # @param {Object} options Transport options including the token.
+    ###
+    # Get the Loggly transport object.
+    # @param {Object} options Loggly options.
+    # @param {String} [options.token] Loggly access token, mandatory.
+    # @param {String} [options.subdomain] Subdomain registered on Loggly, mandatory.
+    # @param {Boolean} [options.json] Treat log parameters as JSON? Should be false unless you have very specific reasons.
+    # @param {Boolean} [options.sendTimestamp] Send timestamp along log lines? Default is defined on settings.
+    # @param {Function} [options.onLogSuccess] Function to execute on successful log calls, optional.
+    # @param {Function} [options.onLogError] Function to execute on failed log calls, optional.
+    # @return {Object} The Loggly logger transport.
+    ###
     getTransport: (options) ->
         logger.debug "LoggerLoggly.getTransport", options
 
         if not settings.logger.loggly.enabled
             return logger.notEnabled "LoggerFile"
 
-        if not options?.token? or options.token is "" or not options?.subdomain? or options.subdomain is ""
-            err = new Error "The options.token and options.subdomain are mandatory! Please specify a valid Loggly token / subdomain."
-            logger.error "LoggerLoggly.getTransport", err, options
-            throw err
+        if not options?.token? or options.token is ""
+            return errors.throw tokenRequired, "Please set a valid options.token."
+
+        if not options?.subdomain? or options.subdomain is ""
+            return errors.throw domainRequired, "Please set a valid options.subdomain."
 
         options = lodash.defaultsDeep options, settings.logger.loggly
         options.sendTimestamp = settings.logger.sendTimestamp if not options.sendTimestamp
@@ -71,10 +79,12 @@ class LoggerLoggly
     # LOG METHODS
     # --------------------------------------------------------------------------
 
+    ###
     # Loggly log method.
     # @param {String} logType The log type (info, warn, error, debug, etc).
     # @param {Array} args Array or string to be logged.
     # @param {Boolean} avoidConsole If true it will NOT log to the console.
+    ###
     log: (logType, args, avoidConsole) ->
         return if settings.logger.levels.indexOf(logType) < 0
 

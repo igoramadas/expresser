@@ -1,26 +1,33 @@
 # EXPRESSER MONGODB
 # -----------------------------------------------------------------------------
-# Handles MongoDB database transactions using the native `mongodb` module.
-# <!--
-# @see settings.mongodb
-# -->
-class MongoDb
+lodash = null
+logger = null
+settings = null
 
+###
+# Handles MongoDB database transactions using the native `mongodb` module.
+###
+class MongoDb
     priority: 2
 
-    mongodb = require("mongodb").MongoClient
-    lodash = null
-    logger = null
-    settings = null
+    ##
+    # The MongoDB official client.
+    # @propery
+    client: require("mongodb").MongoClient
 
+    ##
     # Collection holding all connected databases.
+    # @property
+    # @type Array
     connections: []
 
     # INIT
     # -------------------------------------------------------------------------
 
+    ###
     # Init the MongoDB database module.
     # @return {Object} Returns the MongoDB connection created (only if default settings are set).
+    ###
     init: =>
         database = @expresser.database
         events = @expresser.events
@@ -37,14 +44,12 @@ class MongoDb
         events.emit "MongoDb.on.init"
         delete @init
 
-    # Bind events.
-    setEvents: =>
-        events.on "MongoDb.connect", @connect
-
+    ###
     # Get the DB connection object.
     # @param {Object} connString The connection string, for example user:password@hostname/dbname.
     # @param {Object} options Additional options to be passed when creating the DB connection object.
     # @return {Promise} The database connection object.
+    ###
     connect: (connString, options) ->
         logger.debug "MongoDb.connect", connString, options
 
@@ -61,7 +66,7 @@ class MongoDb
         return new Promise (resolve, reject) ->
             result = {connString: connString, connection: null}
 
-            mongodb.connect connString, options, (err, conn) ->
+            @client.connect connString, options, (err, conn) ->
                 if err?
                     logger.error "MongoDb.getConnection", "Could not connect to #{connStringSafe}.", err
 
@@ -80,14 +85,16 @@ class MongoDb
     # MAIN METHODS
     # -------------------------------------------------------------------------
 
+    ###
     # Get data from the database. A `collection` and `callback` must be specified. The `filter` is optional.
     # Please note that if `filter` has an _id or id field, or if it's a plain string or number, it will be used
     # to return documents by ID. Otherwise it's used as keys-values object for filtering.
     # @param {String} collection The collection name.
     # @param {Object} filter Optional, if a string or number, assume it's the document ID. Otherwise assume keys-values filter.
     # @param {Object} options Options to be passed to the query.
-    # @option options {Integer} limit Limits the resultset to X documents.
+    # @param {Numeric} [options.limit] Limits the resultset to X documents.
     # @param {Function} callback Callback (err, result) when operation has finished.
+    ###
     get: (collection, filter, options, callback) ->
         if not callback?
             if lodash.isFunction options
@@ -154,11 +161,13 @@ class MongoDb
         else
             logger.debug "MongoDb.get", collection, "No filter.", options
 
+    ###
     # Add new documents to the database.
     # The `options` parameter is optional.
     # @param {String} collection The collection name.
     # @param {Object} obj Document or array of documents to be added.
     # @param {Function} callback Callback (err, result) when operation has finished.
+    ###
     insert: (collection, obj, callback) ->
         if not @connection?
             throw new Error "MongoDb.insert: the db was not initialized, please check database settings and call its 'init' method."
@@ -178,15 +187,17 @@ class MongoDb
         dbCollection.insert obj, dbCallback
         logger.debug "MongoDb.insert", collection
 
+    ###
     # Update existing documents on the database.
     # The `options` parameter is optional.
     # @param {String} collection The collection name.
     # @param {Object} obj Document or data to be updated.
     # @param {Object} options Optional, options to control and filter the insert behaviour.
-    # @option options {Object} filter Defines the query filter. If not specified, will try using the ID of the passed object.
-    # @option options {Boolean} patch Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
-    # @option options {Boolean} upsert Default is false, if true it will create documents if none was found.
+    # @param {Object} [options.filter] Defines the query filter. If not specified, will try using the ID of the passed object.
+    # @param {Boolean} [options.patch] Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
+    # @param {Boolean} [options.upsert] Default is false, if true it will create documents if none was found.
     # @param {Function} callback Callback (err, result) when operation has finished.
+    ###
     update: (collection, obj, options, callback) ->
         if not callback? and lodash.isFunction options
             callback = options
@@ -241,10 +252,12 @@ class MongoDb
         else
             logger.debug "MongoDb.update", collection, options, "New document."
 
+    ###
     # Delete an object from the database. The `obj` argument can be either the document itself, or its integer/string ID.
     # @param {String} collection The collection name.
     # @param {Object} filter If a string or number, assume it's the document ID. Otherwise assume the document itself.
     # @param {Function} callback Callback (err, result) when operation has finished.
+    ###
     remove: (collection, filter, callback) ->
         if not callback? and lodash.isFunction options
             callback = options
@@ -280,11 +293,13 @@ class MongoDb
 
         logger.debug "MongoDb.remove", collection, filter
 
+    ###
     # Count documents from the database. A `collection` must be specified.
     # If no `filter` is not passed then count all documents.
     # @param {String} collection The collection name.
     # @param {Object} filter Optional, keys-values filter of documents to be counted.
     # @param {Function} callback Callback (err, result) when operation has finished.
+    ###
     count: (collection, filter, callback) ->
         if not callback? and lodash.isFunction filter
             callback = filter

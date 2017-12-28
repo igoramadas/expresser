@@ -1,27 +1,33 @@
 # GOOGLE CLOUD: DATASTORE
 # -----------------------------------------------------------------------------
+logger = null
+settings = null
+
+###
 # Read and write data to the Google Cloud Datastore.
-class Datastore
+###
+class GCloudDatastore
 
-    gcloudDatastore = require "@google-cloud/datastore"
-    ds = null
+    ##
+    # Exposes the actual Datastore SDK to the outside.
+    # @property
+    sdk: require "@google-cloud/datastore"
 
-    logger = null
-    settings = null
-
-    # Expose the datastore object.
+    ##
+    # The datastore object, instantiated automatically on `init()`.
+    # @property
     ds: null
 
     # INIT
     # -------------------------------------------------------------------------
 
     # Init the Datastore module.
-    init: (parent) ->
+    init: (parent) =>
         logger = parent.expresser.logger
         settings = parent.expresser.settings
 
         # Create the SNS handler.
-        @ds = gcloudDatastore {projectId: settings.app.id}
+        @ds = @sdk {projectId: settings.app.id}
 
         delete @init
 
@@ -29,7 +35,7 @@ class Datastore
     # -------------------------------------------------------------------------
 
     # Get records from the Datastore.
-    get: (kind, options) ->
+    get: (kind, options) =>
         options = options or {}
 
         q = @ds.createQuery kind
@@ -42,7 +48,7 @@ class Datastore
         try
             query = await @ds.runQuery q
             endCursor = if query.moreResults isnt Datastore.NO_MORE_RESULTS then query.endCursor else false
-            entities = query[0].map fromDs
+            entities = query[0].map @transform.fromDs
         catch ex
             logger.error "GCloud.Datastore.get", kind, options, ex
             throw ex
@@ -52,7 +58,7 @@ class Datastore
         return await result
 
     # Create / update records on the Datastore.
-    upsert = (kind, data, id) ->
+    upsert = (kind, data, id) =>
         if id?
             key = @ds.key [kind, parseInt(id, 10)]
         else
@@ -61,7 +67,7 @@ class Datastore
         # Create entity object to be sent out.
         entity = {
             key: key
-            data: toDs data, ["description"]
+            data: @transform.toDs data, ["description"]
         }
 
         # Try saving the entity to the Datastore.
@@ -75,7 +81,7 @@ class Datastore
         return await result
 
     # Remove (delete) a record from the Datastore.
-    remove: (kind, id) ->
+    remove: (kind, id) =>
         try
             key = @ds.key [kind, parseInt(id, 10)]
             result = await @ds.delete key
@@ -88,31 +94,38 @@ class Datastore
     # HELPER METHODS
     # -------------------------------------------------------------------------
 
-    # Transform data from Google's datastore.
-    fromDs = (obj) ->
-        obj.id = obj[gcloudDatastore.KEY].id
-        return obj
+    ###
+    # Helper methods to transform data from and to DS stores.
+    # @private
+    ###
+    transform: {
 
-    # Transform data to Google's datastore.
-    toDs = (obj, nonIndexed) ->
-        nonIndexed = nonIndexed or []
-        results = []
+        # Transform data from Google's datastore.
+        fromDs: (obj) ->
+            obj.id = obj[@sdk.KEY].id
+            return obj
 
-        for key, value of obj
-            return if not value?
+        # Transform data to Google's datastore.
+        toDs: (obj, nonIndexed) ->
+            nonIndexed = nonIndexed or []
+            results = []
 
-            results.push {
-                name: key
-                value: value
-                excludeFromIndexes: nonIndexed.indexOf(k) > -1
-            }
+            for key, value of obj
+                return if not value?
 
-        return results
+                results.push {
+                    name: key
+                    value: value
+                    excludeFromIndexes: nonIndexed.indexOf(k) > -1
+                }
+
+            return results
+    }
 
 # Singleton implementation
 # -----------------------------------------------------------------------------
-Datastore.getInstance = ->
-    @instance = new Datastore() if not @instance?
+GCloudDatastore.getInstance = ->
+    @instance = new GCloudDatastore() if not @instance?
     return @instance
 
-module.exports = exports = Datastore.getInstance()
+module.exports = exports = GCloudDatastore.getInstance()
