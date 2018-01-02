@@ -158,7 +158,7 @@ class LoggerFile
 
     ###
     # Delete old log files from disk.
-    # @param {Integer} maxAge Max age of logs, in days, default is defined on settings.
+    # @param {Number} maxAge Max age of logs, in days, default is defined on settings.
     ###
     clean: (maxAge) ->
         maxAge = settings.logger.file.maxAge if not maxAge?

@@ -200,8 +200,8 @@ class Cron
     # @param {String} id The job ID, optional, overrides job.id in case it has one.
     # @param {Object} job The job object.
     # @param {String} [job.id] The job ID, optional.
-    # @param [Integer, Array] [job.schedule] If a number assume it's the interval in seconds, otherwise a times array.
-    # @param {Method} [job.callback] The callback (job) to be triggered.
+    # @param [Number, Array] [job.schedule] If a number assume it's the interval in seconds, otherwise a times array.
+    # @param {Function} [job.callback] The callback (job) to be triggered.
     # @param {Boolean} [job.once] If true, the job will be triggered only once no matter which schedule it has.
     # @return {CronJob} The job instance.
     ###
