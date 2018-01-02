@@ -4,7 +4,7 @@
 =====
 * BREAKING! Job schedules now defined in milliseconds instead of seconds.
 * BREAKING! Calling module methods via events is not possible anymore.
-* General refactoring and improvements.
+* General refactoring and code improvements.
 
 3.0.0
 =====
