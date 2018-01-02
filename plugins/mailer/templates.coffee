@@ -1,19 +1,24 @@
 # MAILER TEMPLATES
 # --------------------------------------------------------------------------
+fs = require "fs"
+path = require "path"
+
+logger = null
+moment = null
+settings = null
+utils = null
+
+# Holds all cached templates.
+cache = {}
+
+###
 # Helper class to load and parse email templates.
-class Templates
+###
+class EmailTemplates
 
-    fs = require "fs"
-    logger = null
-    moment = null
-    path = require "path"
-    settings = null
-    utils = null
-
-    # Holds all cached templates.
-    cache = {}
-
+    ###
     # Init the Templates class.
+    ###
     init: (parent) =>
         logger = parent.expresser.logger
         moment = parent.expresser.libs.moment
@@ -22,6 +27,7 @@ class Templates
 
         delete @init
 
+    ###
     # Load and return the specified template. Get from the cache or from the disk
     # if it wasn't loaded yet. Templates are stored inside the `/emailtemplates`
     # folder by default and should have a .html extension. The base template,
@@ -29,6 +35,7 @@ class Templates
     # The contents will be inserted on the {contents} tag.
     # @param {String} name The template name, without .html.
     # @return {String} The template HTML.
+    ###
     get: (name) ->
         name = name.toString()
         name = name.replace(".html", "") if name.indexOf(".html")
@@ -66,12 +73,14 @@ class Templates
 
         return result
 
+    ###
     # Parse the specified template to replace keywords. The `keywords` is a set of key-values
     # to be replaced. For example if keywords is `{id: 1, friendlyUrl: "abc"}` then the tags
     # `{id}` and `{friendlyUrl}` will be replaced with the values 1 and abc.
     # @param {String} template The template (its value, not its name!) to be parsed.
     # @param {Object} keywords Object with keys to be replaced with its values.
     # @return {String} The parsed template, keywords replaced with values.
+    ###
     parse: (template, keywords) ->
         logger.debug "Mailer.templates.parse", template.replace(/(\r\n|\n|\r)/gm,""), keywords
 
@@ -82,7 +91,9 @@ class Templates
 
         return template
 
+    ###
     # Force clear the templates cache.
+    ###
     clearCache: ->
         count = Object.keys(cache).length
         cache = {}
@@ -90,8 +101,8 @@ class Templates
 
 # Singleton implementation
 # --------------------------------------------------------------------------
-Templates.getInstance = ->
-    @instance = new Templates() if not @instance?
+EmailTemplates.getInstance = ->
+    @instance = new EmailTemplates() if not @instance?
     return @instance
 
-module.exports = exports = Templates.getInstance()
+module.exports = exports = EmailTemplates.getInstance()

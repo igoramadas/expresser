@@ -12,17 +12,25 @@ class HttpServer
     settings = null
     webServer = null
 
-    # Express server is exposed to other modules.
+    ##
+    # Express server used to expose the reports via HTTP.
+    # @property
     server: null
 
+    ###
     # Init the HTTP server class.
-    init: (parent) ->
+    ###
+    init: (parent) =>
         metrics = parent
         express = metrics.expresser.libs.express
         logger = metrics.expresser.logger
         settings = metrics.expresser.settings
 
-    # Start the server.
+        delete @init
+
+    ###
+    # Start the Express / HTTP server.
+    ###
     start: ->
         logger.debug "Metrics.httpServer.start"
 
@@ -42,7 +50,9 @@ class HttpServer
 
         logger.info "Metrics.httpServer.start", settings.metrics.httpServer.port
 
-    # Kill the server.
+    ###
+    # Kill the Express / HTTP server.
+    ###
     kill: ->
         logger.debug "Metrics.httpServer.kill"
 

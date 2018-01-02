@@ -1,35 +1,41 @@
 # EXPRESSER MAILER
 # --------------------------------------------------------------------------
+fs = require "fs"
+nodemailer = require "nodemailer"
+
+events = null
+lodash = null
+logger = null
+settings = null
+
+###
 # Sends and manages emails, with template and tags replacement support.
 # When parsing templates, the tags should be wrapped with normal brackets {}.
 # Example: {contents}
 # The base message template (which is loaded with every single sent message)
-# must be saved as base.html, under the /emailtemplates folder (or whatever
+# must be saved as base.html, under the /assets/email folder (or whatever
 # folder / base file name you have set on the settings).
-# <!--
-# @see settings.mailer
-# -->
+###
 class Mailer
-
     priority: 2
 
-    events = null
-    fs = require "fs"
-    lodash = null
-    logger = null
-    nodemailer = require "nodemailer"
-    settings = null
-
+    ##
     # Templates manager.
+    # @property
+    # @type EmailTemplates
     templates: require "./templates.coffee"
 
-    # SMTP objects will be instantiated on `init()`.
+    ##
+    # The SMTP transport object.
+    # @property
     smtp: null
 
     # INIT
     # --------------------------------------------------------------------------
 
+    ###
     # Init the Mailer module and create the SMTP objects.
+    ###
     init: =>
         events = @expresser.events
         lodash = @expresser.libs.lodash
@@ -47,26 +53,22 @@ class Mailer
         else if settings.mailer.smtp.host? and settings.mailer.smtp.host isnt "" and settings.mailer.smtp.port > 0
             @setSmtp settings.mailer.smtp, false
 
-        @setEvents()
-
         events.emit "Mailer.on.init"
         delete @init
-
-    # Bind event listeners.
-    setEvents: =>
-        events.on "Mailer.send", @send
 
     # OUTBOUND
     # --------------------------------------------------------------------------
 
+    ###
     # Sends an email to the specified address.
     # @param {String} options The email message options
-    # @option options {String} body The email body in text or HTML.
-    # @option options {String} subject The email subject.
-    # @option options {String} to The "to" address.
-    # @option options {String} from The "from" address, optional, if blank use default from settings.
-    # @option options {String} template The template file to be loaded, optional.
-    # @option options {Boolean} doNotSend If true, the actual email will not be sent out. Used for testing.
+    # @param {String} [options.body] The email body in text or HTML.
+    # @param {String} [options.subject] The email subject.
+    # @param {String} [options.to] The "to" address.
+    # @param {String} [options.from] The "from" address, optional, if blank use default from settings.
+    # @param {String} [options.template] The template file to be loaded, optional.
+    # @param {Boolean} doNotSend If true, the actual email will not be sent out. Used for testing.
+    ###
     send: (options) =>
         logger.debug "Mailer.send", options
 
@@ -138,9 +140,11 @@ class Mailer
     # SMTP HELPER METHODS
     # --------------------------------------------------------------------------
 
+    ###
     # Helper to create a SMTP object.
     # @param {Object} options Options like service, host and port, username, password etc.
     # @return {Object} A Nodemailer SMTP transport object, or null if a problem was found.
+    ###
     createSmtp: (options) ->
         logger.debug "Mailer.createSmtp", options
 
@@ -166,8 +170,11 @@ class Mailer
 
         return result
 
-    # Use the specified options and create a new SMTP server. If no options are set, use default from settings.
+    ###
+    # Use the specified options and create a new SMTP server.
+    # If no options are set, use default from settings.
     # @param {Object} options Options to be passed to SMTP creator.
+    ###
     setSmtp: (options) ->
         options = settings.mailer.smtp if not options?
         @smtp = @createSmtp options
