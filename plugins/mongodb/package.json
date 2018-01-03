@@ -12,8 +12,8 @@
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.1.0",
         "mongodb": "^3.0.1"
+        "coffeescript": "^2.1.1",
     },
     "repository": {
         "type": "git",

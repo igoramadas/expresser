@@ -12,7 +12,7 @@ class MongoDb
 
     ##
     # The MongoDB official client.
-    # @propery
+    # @property
     client: require("mongodb").MongoClient
 
     ##
@@ -48,7 +48,8 @@ class MongoDb
     # Get the DB connection object.
     # @param {Object} connString The connection string, for example user:password@hostname/dbname.
     # @param {Object} options Additional options to be passed when creating the DB connection object.
-    # @return {Promise} The database connection object.
+    # @return {Object} The database connection object.
+    # @promise
     ###
     connect: (connString, options) ->
         logger.debug "MongoDb.connect", connString, options
@@ -92,7 +93,7 @@ class MongoDb
     # @param {String} collection The collection name.
     # @param {Object} filter Optional, if a string or number, assume it's the document ID. Otherwise assume keys-values filter.
     # @param {Object} options Options to be passed to the query.
-    # @param {Numeric} [options.limit] Limits the resultset to X documents.
+    # @param {Number} [options.limit] Limits the resultset to X documents.
     # @param {Function} callback Callback (err, result) when operation has finished.
     ###
     get: (collection, filter, options, callback) ->
