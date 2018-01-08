@@ -13,7 +13,7 @@
     },
     "dependencies": {
         "coffeescript": "^2.1.1",
-        "aws-sdk": "^2.176.0"
+        "aws-sdk": "^2.177.0"
     },
     "repository": {
         "type": "git",
