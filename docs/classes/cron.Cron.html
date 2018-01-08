@@ -82,9 +82,9 @@ If <code>autoStart</code> is true, it will automatically call the <code>start</c
             cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
             cronJson = utils.data.minifyJson cronJson
         catch ex
-            err = &quot;Could not parse #{filepath} as JSON. #{ex.name} #{ex.message}&quot;
-            logger.error &quot;Cron.load&quot;, err
-            throw {error: &quot;Invalid JSON&quot;, message: err}
+            ex.details = &quot;Could not parse #{filepath} as JSON.&quot;
+            logger.error &quot;Cron.load&quot;, ex
+            return errors.throw &quot;invalidJson&quot;, ex
 
         # Iterate jobs, but do not add if job's `enabled` is false.
         for key, data of cronJson
