@@ -230,7 +230,7 @@ class Cron
             else
                 return errors.throw "Job #{job.id} already exists and 'allowReplacing' is false."
 
-        result = new jobModel this, job
+        result = new cronJob this, job
         @jobs.push result
 
         # Auto starting the job is optional.
