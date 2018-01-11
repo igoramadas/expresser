@@ -1,6 +1,6 @@
 {
     "name": "expresser-logger-loggly",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "Loggly plugin for Expresser apps.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",

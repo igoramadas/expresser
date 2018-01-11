@@ -1,15 +1,13 @@
 {
     "name": "expresser-sockets",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "description": "Web sockets plugin (using Socket.IO) for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache-2.0",
     "subdomain": "expresser-sockets",
     "main": "index",
-    "domains": [
-        "expresser.devv.com"
-    ],
+    "domains": ["expresser.devv.com"],
     "engines": {
         "node": "*"
     },
@@ -21,10 +19,5 @@
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": [
-        "ajax",
-        "expresser",
-        "sockets",
-        "web sockets"
-    ]
+    "keywords": ["ajax", "expresser", "sockets", "web sockets"]
 }

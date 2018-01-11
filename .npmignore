@@ -7,7 +7,6 @@ docs/
 database/
 logs/
 plugins/
-src/
 test/
 .coveralls.yml
 .groc.json

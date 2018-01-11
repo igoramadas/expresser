@@ -1,6 +1,6 @@
 {
     "name": "expresser-logger-logentries",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "Logentries plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
