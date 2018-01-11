@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>index.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>index.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-mongodb">EXPRESSER MONGODB</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>lodash = <span class="hljs-literal">null</span>
+logger = <span class="hljs-literal">null</span>
+settings = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>##
+Handles MongoDB database transactions using the native <code>mongodb</code> module.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MongoDb</span></span>
+    priority: <span class="hljs-number">2</span></pre></div>
+        
+      
+        
+        <p>#
+The MongoDB official client.
+@property</p>
+
+        
+          <div class='highlight'><pre>    client: <span class="hljs-built_in">require</span>(<span class="hljs-string">"mongodb"</span>).MongoClient</pre></div>
+        
+      
+        
+        <p>#
+Collection holding all connected databases.
+@property
+@type Array</p>
+
+        
+          <div class='highlight'><pre>    connections: []</pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Init the MongoDB database module.
+@return {Object} Returns the MongoDB connection created (only if default settings are set).</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+        database = @expresser.database
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        settings = @expresser.settings
+
+        logger.debug <span class="hljs-string">"MongoDb.init"</span></pre></div>
+        
+      
+        
+        <p>Create default database connection if <code>connString</code> was specified.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mongodb.enabled <span class="hljs-keyword">and</span> settings.mongodb.connString?
+            @connect settings.mongodb.connString, settings.mongodb.options
+
+        events.emit <span class="hljs-string">"MongoDb.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <p>##
+Get the DB connection object.
+@param {Object} connString The connection string, for example user:password@hostname/dbname.
+@param {Object} options Additional options to be passed when creating the DB connection object.
+@return {Object} The database connection object.
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    connect: <span class="hljs-function"><span class="hljs-params">(connString, options)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"MongoDb.connect"</span>, connString, options
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.mongodb.enabled
+            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"MongoDb"</span>
+
+        connStringSafe = connString
+        sep = connString.indexOf <span class="hljs-string">"@"</span>
+        connStringSafe = connStringSafe.substring sep <span class="hljs-keyword">if</span> sep &gt; <span class="hljs-number">0</span>
+        sep = connString.indexOf <span class="hljs-string">"/"</span>
+        connStringSafe = connStringSafe.substring <span class="hljs-number">0</span>, sep <span class="hljs-keyword">if</span> sep &gt; <span class="hljs-number">0</span></pre></div>
+        
+      
+        
+        <p>Tries to connect to the specified database.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            result = {connString: connString, connection: <span class="hljs-literal">null</span>}
+
+            @client.connect connString, options, <span class="hljs-function"><span class="hljs-params">(err, conn)</span> -&gt;</span>
+                <span class="hljs-keyword">if</span> err?
+                    logger.error <span class="hljs-string">"MongoDb.getConnection"</span>, <span class="hljs-string">"Could not connect to <span class="hljs-subst">#{connStringSafe}</span>."</span>, err
+
+                    reject err
+                <span class="hljs-keyword">else</span>
+                    logger.info <span class="hljs-string">"MongoDb.getConnection"</span>, <span class="hljs-string">"Connected to <span class="hljs-subst">#{connStringSafe}</span>"</span>
+                    result.connection = conn
+                    result.get = @drivers[driver].get
+                    result.insert = @drivers[driver].insert
+                    result.update = @drivers[driver].update
+                    result.remove = @drivers[driver].remove
+                    result.count = @drivers[driver].count
+
+                    resolve result</pre></div>
+        
+      
+        
+        <h2 id="main-methods">MAIN METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Get data from the database. A <code>collection</code> and <code>callback</code> must be specified. The <code>filter</code> is optional.
+Please note that if <code>filter</code> has an _id or id field, or if it’s a plain string or number, it will be used
+to return documents by ID. Otherwise it’s used as keys-values object for filtering.
+@param {String} collection The collection name.
+@param {Object} filter Optional, if a string or number, assume it’s the document ID. Otherwise assume keys-values filter.
+@param {Object} options Options to be passed to the query.
+@param {Number} [options.limit] Limits the resultset to X documents.
+@param {Function} callback Callback (err, result) when operation has finished.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    get: <span class="hljs-function"><span class="hljs-params">(collection, filter, options, callback)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback?
+            <span class="hljs-keyword">if</span> lodash.isFunction options
+                callback = options
+                options = <span class="hljs-literal">null</span>
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction filter
+                callback = filter
+                filter = <span class="hljs-literal">null</span>
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @connection?
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"MongoDb.get: the db was not initialized, please check database settings and call its 'init' method."</span></pre></div>
+        
+      
+        
+        <p>Callback is mandatory!</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback?
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"MongoDb.get: a callback (last argument) must be specified."</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> callback?
+                callback err, result</pre></div>
+        
+      
+        
+        <p>Set collection object.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = @connection.collection collection</pre></div>
+        
+      
+        
+        <p>Parse ID depending on <code>filter</code>.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> filter?
+            <span class="hljs-keyword">if</span> filter._id?
+                id = filter._id
+            <span class="hljs-keyword">else</span>
+                t = <span class="hljs-keyword">typeof</span> filter
+                id = filter <span class="hljs-keyword">if</span> t <span class="hljs-keyword">is</span> <span class="hljs-string">"string"</span> <span class="hljs-keyword">or</span> t <span class="hljs-keyword">is</span> <span class="hljs-string">"integer"</span></pre></div>
+        
+      
+        
+        <p>Get <code>limit</code> option.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options?.limit?
+            limit = options.limit
+        <span class="hljs-keyword">else</span>
+            limit = <span class="hljs-number">0</span></pre></div>
+        
+      
+        
+        <p>Find documents depending on <code>filter</code> and <code>options</code>.
+If id is set, use the shorter findById.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> id?
+            dbCollection.findById id, dbCallback</pre></div>
+        
+      
+        
+        <p>Create a params object for the find method.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> filter?
+            findParams = {$query: filter}
+            findParams[<span class="hljs-string">"$orderby"</span>] = options.orderBy <span class="hljs-keyword">if</span> options?.orderBy?
+
+            <span class="hljs-keyword">if</span> limit &gt; <span class="hljs-number">0</span>
+                dbCollection.find(findParams).limit(limit).toArray dbCallback
+            <span class="hljs-keyword">else</span>
+                dbCollection.find(findParams).toArray dbCallback</pre></div>
+        
+      
+        
+        <p>Search everything!</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">if</span> limit &gt; <span class="hljs-number">0</span>
+                dbCollection.find({}).limit(limit).toArray dbCallback
+            <span class="hljs-keyword">else</span>
+                dbCollection.find({}).toArray dbCallback
+
+        <span class="hljs-keyword">if</span> filter?
+            filterLog = filter
+            logger.debug <span class="hljs-string">"MongoDb.get"</span>, collection, filterLog, options
+        <span class="hljs-keyword">else</span>
+            logger.debug <span class="hljs-string">"MongoDb.get"</span>, collection, <span class="hljs-string">"No filter."</span>, options</pre></div>
+        
+      
+        
+        <p>##
+Add new documents to the database.
+The <code>options</code> parameter is optional.
+@param {String} collection The collection name.
+@param {Object} obj Document or array of documents to be added.
+@param {Function} callback Callback (err, result) when operation has finished.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    insert: <span class="hljs-function"><span class="hljs-params">(collection, obj, callback)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @connection?
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"MongoDb.insert: the db was not initialized, please check database settings and call its 'init' method."</span>
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"MongoDb.insert: no object (second argument) was specified."</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> callback?
+                callback err, result</pre></div>
+        
+      
+        
+        <p>Set collection object.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = @connection.collection collection</pre></div>
+        
+      
+        
+        <p>Execute insert!</p>
+
+        
+          <div class='highlight'><pre>        dbCollection.insert obj, dbCallback
+        logger.debug <span class="hljs-string">"MongoDb.insert"</span>, collection</pre></div>
+        
+      
+        
+        <p>##
+Update existing documents on the database.
+The <code>options</code> parameter is optional.
+@param {String} collection The collection name.
+@param {Object} obj Document or data to be updated.
+@param {Object} options Optional, options to control and filter the insert behaviour.
+@param {Object} [options.filter] Defines the query filter. If not specified, will try using the ID of the passed object.
+@param {Boolean} [options.patch] Default is false, if true replace only the specific properties of documents instead of the whole data, using $set.
+@param {Boolean} [options.upsert] Default is false, if true it will create documents if none was found.
+@param {Function} callback Callback (err, result) when operation has finished.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    update: <span class="hljs-function"><span class="hljs-params">(collection, obj, options, callback)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction options
+            callback = options
+            options = {}
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @connection?
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"MongoDb.update: the db was not initialized, please check database settings and call its 'init' method."</span></pre></div>
+        
+      
+        
+        <p>Object or filter is mandatory.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"MongoDb.update: no object (second argument) was specified."</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> callback?
+                callback err, result</pre></div>
+        
+      
+        
+        <p>Set collection object.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = @connection.collection collection</pre></div>
+        
+      
+        
+        <p>Make sure the ID is converted to ObjectID.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> obj._id?
+            id = mongoskin.ObjectID.createFromHexString obj._id.toString()</pre></div>
+        
+      
+        
+        <p>Make sure options is valid.</p>
+
+        
+          <div class='highlight'><pre>        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?</pre></div>
+        
+      
+        
+        <p>If a <code>filter</code> option was set, use it as the query filter otherwise use the “_id” property.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.filter?
+            filter = options.filter
+        <span class="hljs-keyword">else</span>
+            filter = {_id: id}
+
+        <span class="hljs-keyword">delete</span> options.filter</pre></div>
+        
+      
+        
+        <p>If options patch is set, replace specified document properties only instead of replacing the whole document.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.patch
+            docData = {$set: obj}
+        <span class="hljs-keyword">else</span>
+            docData = obj
+
+        <span class="hljs-keyword">delete</span> options.patch</pre></div>
+        
+      
+        
+        <p>Set default options.</p>
+
+        
+          <div class='highlight'><pre>        options = lodash.defaults options, {upsert: <span class="hljs-literal">false</span>, multi: <span class="hljs-literal">true</span>}</pre></div>
+        
+      
+        
+        <p>Execute update!</p>
+
+        
+          <div class='highlight'><pre>        dbCollection.update filter, docData, options, dbCallback
+
+        <span class="hljs-keyword">if</span> id?
+            logger.debug <span class="hljs-string">"MongoDb.update"</span>, collection, options, <span class="hljs-string">"ID: <span class="hljs-subst">#{id}</span>"</span>
+        <span class="hljs-keyword">else</span>
+            logger.debug <span class="hljs-string">"MongoDb.update"</span>, collection, options, <span class="hljs-string">"New document."</span></pre></div>
+        
+      
+        
+        <p>##
+Delete an object from the database. The <code>obj</code> argument can be either the document itself, or its integer/string ID.
+@param {String} collection The collection name.
+@param {Object} filter If a string or number, assume it’s the document ID. Otherwise assume the document itself.
+@param {Function} callback Callback (err, result) when operation has finished.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    remove: <span class="hljs-function"><span class="hljs-params">(collection, filter, callback)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction options
+            callback = options
+            options = {}
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @connection?
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"MongoDb.remove: the db was not initialized, please check database settings and call its 'init' method."</span></pre></div>
+        
+      
+        
+        <p>Filter is mandatory.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter?
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"MongoDb.remove: no filter (second argument) was specified."</span></pre></div>
+        
+      
+        
+        <p>Check it the <code>obj</code> is the model itself, or only the ID string / number.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> filter._id?
+            id = filter._id
+        <span class="hljs-keyword">else</span>
+            t = <span class="hljs-keyword">typeof</span> filter
+            id = filter <span class="hljs-keyword">if</span> t <span class="hljs-keyword">is</span> <span class="hljs-string">"string"</span> <span class="hljs-keyword">or</span> t <span class="hljs-keyword">is</span> <span class="hljs-string">"integer"</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> callback?
+                callback err, result</pre></div>
+        
+      
+        
+        <p>Set collection object and remove specified object from the database.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = @connection.collection collection</pre></div>
+        
+      
+        
+        <p>Remove object by ID or filter.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> id? <span class="hljs-keyword">and</span> id <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            dbCollection.removeById id, dbCallback
+        <span class="hljs-keyword">else</span>
+            dbCollection.remove filter, dbCallback
+
+        logger.debug <span class="hljs-string">"MongoDb.remove"</span>, collection, filter</pre></div>
+        
+      
+        
+        <p>##
+Count documents from the database. A <code>collection</code> must be specified.
+If no <code>filter</code> is not passed then count all documents.
+@param {String} collection The collection name.
+@param {Object} filter Optional, keys-values filter of documents to be counted.
+@param {Function} callback Callback (err, result) when operation has finished.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    count: <span class="hljs-function"><span class="hljs-params">(collection, filter, callback)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback? <span class="hljs-keyword">and</span> lodash.isFunction filter
+            callback = filter
+            filter = {}
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @connection?
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"MongoDb.count: the db was not initialized, please check database settings and call its 'init' method."</span></pre></div>
+        
+      
+        
+        <p>Callback is mandatory!</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> callback?
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"MongoDb.count: a callback (last argument) must be specified."</span></pre></div>
+        
+      
+        
+        <p>Create the DB callback helper.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">dbCallback</span> = <span class="hljs-params">(err, result)</span> =&gt;</span>
+            <span class="hljs-keyword">if</span> callback?
+                logger.debug <span class="hljs-string">"MongoDb.count"</span>, collection, filter, <span class="hljs-string">"Result <span class="hljs-subst">#{result}</span>"</span>
+                callback err, result</pre></div>
+        
+      
+        
+        <p>MongoDB has a built-in count so use it.</p>
+
+        
+          <div class='highlight'><pre>        dbCollection = @connection.collection collection
+        dbCollection.count filter, dbCallback</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>MongoDb.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> MongoDb() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = exports = MongoDb.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

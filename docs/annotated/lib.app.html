@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>app.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>app.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-app">EXPRESSER APP</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>express = <span class="hljs-built_in">require</span> <span class="hljs-string">"express"</span>
+errors = <span class="hljs-built_in">require</span> <span class="hljs-string">"./errors.coffee"</span>
+events = <span class="hljs-built_in">require</span> <span class="hljs-string">"./events.coffee"</span>
+fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+http = <span class="hljs-built_in">require</span> <span class="hljs-string">"http"</span>
+https = <span class="hljs-built_in">require</span> <span class="hljs-string">"https"</span>
+lodash = <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
+logger = <span class="hljs-built_in">require</span> <span class="hljs-string">"./logger.coffee"</span>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
+settings = <span class="hljs-built_in">require</span> <span class="hljs-string">"./settings.coffee"</span>
+util = <span class="hljs-built_in">require</span> <span class="hljs-string">"util"</span>
+utils = <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils.coffee"</span>
+
+nodeEnv = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>##
+This is the “core” of an Expresser based application. The App wraps the
+Express server and its middlewares / routes, along with a few extra helpers.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span></span>
+    newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> App()</pre></div>
+        
+      
+        
+        <p>#
+Exposes the Express app object to the outside.
+@property
+@type express-Application</p>
+
+        
+          <div class='highlight'><pre>    expressApp: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>#
+The underlying HTTP(S) server.
+@property
+@type http-Server</p>
+
+        
+          <div class='highlight'><pre>    webServer: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>#
+The HTTP to HTTPS redirector server (only if settings.app.ssl.redirectorPort is set).
+@property
+@type http-Server</p>
+
+        
+          <div class='highlight'><pre>    redirectorServer: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>#
+Additional middlewares to be used by the Express server.
+These will be called before the default middlewares.
+@property
+@type Array</p>
+
+        
+          <div class='highlight'><pre>    prependMiddlewares: []</pre></div>
+        
+      
+        
+        <p>#
+Additional middlewares to be used by the Express server.
+These will be called after the default middlewares.
+@property
+@type Array</p>
+
+        
+          <div class='highlight'><pre>    appendMiddlewares: []</pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Create, configure and run the Express application. In most cases this should be
+the last step of you app loading, after loading custom modules, setting custom
+configuration, etc. Please note that this will be called automatically if
+you call the main <code>expresser.init()</code>.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function">-&gt;</span>
+        logger.debug <span class="hljs-string">"App.init"</span>
+        events.emit <span class="hljs-string">"App.before.init"</span>
+
+        nodeEnv = process.env.NODE_ENV</pre></div>
+        
+      
+        
+        <p>Get version from main app’s package.json (NOT Expresser, but the actual app using it!)</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">try</span>
+            <span class="hljs-keyword">if</span> @expresser?.rootPath
+                @version = <span class="hljs-built_in">require</span>(@expresser.rootPath + <span class="hljs-string">"/package.json"</span>)?.version
+            <span class="hljs-keyword">else</span>
+                @version = <span class="hljs-built_in">require</span>(__dirname + <span class="hljs-string">"../../package.json"</span>)?.version
+        <span class="hljs-keyword">catch</span> ex
+            logger.error <span class="hljs-string">"App.init"</span>, <span class="hljs-string">"Could not fetch version from package.json."</span>, ex</pre></div>
+        
+      
+        
+        <p>Configure the Express server.</p>
+
+        
+          <div class='highlight'><pre>        @configure()</pre></div>
+        
+      
+        
+        <p>Start web server!</p>
+
+        
+          <div class='highlight'><pre>        @start()
+
+        events.emit <span class="hljs-string">"App.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <p>##
+Configure the server. Set views, options, use Express modules, etc.
+Called automatically on <code>init()</code>, so normally you should never need
+to call <code>configure()</code> on your own.
+@private</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    configure: <span class="hljs-function">-&gt;</span>
+        midBodyParser = <span class="hljs-built_in">require</span> <span class="hljs-string">"body-parser"</span>
+        midCookieParser = <span class="hljs-built_in">require</span> <span class="hljs-string">"cookie-parser"</span>
+        midSession = <span class="hljs-built_in">require</span> <span class="hljs-string">"cookie-session"</span>
+        midCompression = <span class="hljs-built_in">require</span> <span class="hljs-string">"compression"</span>
+
+        <span class="hljs-keyword">if</span> settings.general.debug <span class="hljs-keyword">or</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
+            midErrorHandler = <span class="hljs-built_in">require</span> <span class="hljs-string">"errorhandler"</span></pre></div>
+        
+      
+        
+        <p>Create express v4 app.</p>
+
+        
+          <div class='highlight'><pre>        @expressApp = express()</pre></div>
+        
+      
+        
+        <p>DEPRECATED! The “server” was renamed to “expressApp”.</p>
+
+        
+          <div class='highlight'><pre>        @server = @expressApp</pre></div>
+        
+      
+        
+        <p>Set view options, use Pug for HTML templates.</p>
+
+        
+          <div class='highlight'><pre>        @expressApp.set <span class="hljs-string">"views"</span>, settings.app.viewPath
+        @expressApp.set <span class="hljs-string">"view engine"</span>, settings.app.viewEngine
+        @expressApp.set <span class="hljs-string">"view options"</span>, { layout: <span class="hljs-literal">false</span> }</pre></div>
+        
+      
+        
+        <p>Prepend middlewares, if any was specified.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> @prependMiddlewares.length &gt; <span class="hljs-number">0</span>
+            @expressApp.use mw <span class="hljs-keyword">for</span> mw <span class="hljs-keyword">in</span> @prependMiddlewares</pre></div>
+        
+      
+        
+        <p>Use Express basic handlers.</p>
+
+        
+          <div class='highlight'><pre>        @expressApp.use midBodyParser.json {limit: settings.app.bodyParser.limit}
+        @expressApp.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
+
+        <span class="hljs-keyword">if</span> settings.app.cookie.enabled
+            @expressApp.use midCookieParser settings.app.cookie.secret
+
+        <span class="hljs-keyword">if</span> settings.app.session.enabled
+            @expressApp.use midSession {secret: settings.app.session.secret, cookie: {maxAge: <span class="hljs-keyword">new</span> Date(Date.now() + (settings.app.session.maxAge * <span class="hljs-number">1000</span>))}}</pre></div>
+        
+      
+        
+        <p>Use HTTP compression only if enabled on settings.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.app.compressionEnabled
+            @expressApp.use midCompression</pre></div>
+        
+      
+        
+        <p>Fix connect assets helper context.</p>
+
+        
+          <div class='highlight'><pre>        connectAssetsOptions = lodash.cloneDeep settings.app.connectAssets
+        connectAssetsOptions.helperContext = @expressApp.locals</pre></div>
+        
+      
+        
+        <p>Connect assets and dynamic compiling.</p>
+
+        
+          <div class='highlight'><pre>        ConnectAssets = (<span class="hljs-built_in">require</span> <span class="hljs-string">"./app/connect-assets.js"</span>) connectAssetsOptions
+        @expressApp.use ConnectAssets</pre></div>
+        
+      
+        
+        <p>Append extra middlewares, if any was specified.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> @appendMiddlewares.length &gt; <span class="hljs-number">0</span>
+            @expressApp.use mw <span class="hljs-keyword">for</span> mw <span class="hljs-keyword">in</span> @appendMiddlewares</pre></div>
+        
+      
+        
+        <p>Configure development environment to dump exceptions and show stack.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.general.debug <span class="hljs-keyword">or</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
+            @expressApp.use midErrorHandler {dumpExceptions: <span class="hljs-literal">true</span>, showStack: <span class="hljs-literal">true</span>}</pre></div>
+        
+      
+        
+        <p>Use Express static routing.</p>
+
+        
+          <div class='highlight'><pre>        @expressApp.use express.static settings.app.publicPath</pre></div>
+        
+      
+        
+        <p>Log all requests if debug is true.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.general.debug
+            @expressApp.use (req, res, next) -&gt;
+                ip = utils.browser.getClientIP req
+                method = req.method
+                url = req.url
+
+                <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Request from <span class="hljs-subst">#{ip}</span>"</span>, method, url
+
+                next() <span class="hljs-keyword">if</span> next?
+
+                <span class="hljs-keyword">return</span> url</pre></div>
+        
+      
+        
+        <p>We should not call configure more than once!</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">delete</span> @configure</pre></div>
+        
+      
+        
+        <h2 id="start-and-kill">START AND KILL</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Start the server using HTTP or HTTPS, depending on the settings.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    start: <span class="hljs-function">-&gt;</span>
+        <span class="hljs-keyword">if</span> @webServer?
+            <span class="hljs-keyword">return</span> logger.warn <span class="hljs-string">"App.start"</span>, <span class="hljs-string">"Application has already started (webServer is not null). Abort!"</span>
+
+        events.emit <span class="hljs-string">"App.before.start"</span>
+
+        <span class="hljs-keyword">if</span> settings.app.ssl.enabled <span class="hljs-keyword">and</span> settings.app.ssl.keyFile? <span class="hljs-keyword">and</span> settings.app.ssl.certFile?
+            sslKeyFile = utils.io.getFilePath settings.app.ssl.keyFile
+            sslCertFile = utils.io.getFilePath settings.app.ssl.certFile</pre></div>
+        
+      
+        
+        <p>Certificate files were found? Proceed, otherwise alert the user and throw an error.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> sslKeyFile? <span class="hljs-keyword">and</span> sslCertFile?
+                <span class="hljs-keyword">if</span> fs.existsSync(sslKeyFile) <span class="hljs-keyword">and</span> fs.existsSync(sslCertFile)
+                    sslKey = fs.readFileSync sslKeyFile, {encoding: settings.general.encoding}
+                    sslCert = fs.readFileSync sslCertFile, {encoding: settings.general.encoding}
+                    sslOptions = {key: sslKey, cert: sslCert}
+                    serverRef = https.createServer sslOptions, @expressApp
+                <span class="hljs-keyword">else</span>
+                    <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"certificatesNotFound"</span>, <span class="hljs-string">"Please check paths defined on settings.app.ssl."</span>
+            <span class="hljs-keyword">else</span>
+                <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"certificatesNotFound"</span>, <span class="hljs-string">"Please check paths defined on settings.app.ssl."</span>
+        <span class="hljs-keyword">else</span>
+            serverRef = http.createServer @expressApp</pre></div>
+        
+      
+        
+        <p>Expose the web server.</p>
+
+        
+          <div class='highlight'><pre>        @webServer = serverRef</pre></div>
+        
+      
+        
+        <p>Start the app!</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.app.ip? <span class="hljs-keyword">and</span> settings.app.ip <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            serverRef.listen settings.app.port, settings.app.ip
+            logger.info <span class="hljs-string">"App"</span>, settings.app.title, <span class="hljs-string">"Listening on <span class="hljs-subst">#{settings.app.ip}</span> port <span class="hljs-subst">#{settings.app.port}</span>"</span>
+        <span class="hljs-keyword">else</span>
+            serverRef.listen settings.app.port
+            logger.info <span class="hljs-string">"App"</span>, settings.app.title, <span class="hljs-string">"Listening on port <span class="hljs-subst">#{settings.app.port}</span>"</span></pre></div>
+        
+      
+        
+        <p>Using SSL and redirector port is set? Then create the http server.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.app.ssl.enabled <span class="hljs-keyword">and</span> settings.app.ssl.redirectorPort &gt; <span class="hljs-number">0</span>
+            logger.info <span class="hljs-string">"App"</span>, <span class="hljs-string">"<span class="hljs-subst">#{settings.app.title}</span> will redirect HTTP <span class="hljs-subst">#{settings.app.ssl.redirectorPort}</span> to HTTPS on <span class="hljs-subst">#{settings.app.port}</span>."</span>
+
+            redirServer = express()
+            redirServer.get <span class="hljs-string">"*"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span> res.redirect <span class="hljs-string">"https://<span class="hljs-subst">#{req.hostname}</span>:<span class="hljs-subst">#{settings.app.port}</span><span class="hljs-subst">#{req.url}</span>"</span></pre></div>
+        
+      
+        
+        <p>Log all redirector requests if debug is true.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> settings.general.debug
+                redirServer.use @requestLogger
+
+            @redirectorServer = http.createServer redirServer
+            @redirectorServer.listen settings.app.ssl.redirectorPort</pre></div>
+        
+      
+        
+        <p>Pass the HTTP(s) server created to external modules.</p>
+
+        
+          <div class='highlight'><pre>        events.emit <span class="hljs-string">"App.on.start"</span>, serverRef</pre></div>
+        
+      
+        
+        <p>##
+Kill the underlying HTTP(S) server(s).</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    kill: <span class="hljs-function">-&gt;</span>
+        events.emit <span class="hljs-string">"App.before.kill"</span>
+
+        @redirectorServer?.close()
+        @redirectorServer = <span class="hljs-literal">null</span>
+
+        @webServer?.close()
+        webServer = <span class="hljs-literal">null</span>
+
+        events.emit <span class="hljs-string">"App.on.kill"</span></pre></div>
+        
+      
+        
+        <h2 id="bridged-express-methods">BRIDGED EXPRESS METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>#
+Helper to call the Express App .all().</p>
+
+        
+          <div class='highlight'><pre>    all: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"expressNotInit"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @expressApp?
+        logger.debug <span class="hljs-string">"App.all"</span>, util.inspect(arguments[<span class="hljs-number">0</span>]), util.inspect(arguments[<span class="hljs-number">1</span>])
+        @expressApp.all.apply @expressApp, arguments</pre></div>
+        
+      
+        
+        <p>#
+Helper to call the Express App .get().</p>
+
+        
+          <div class='highlight'><pre>    get: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"expressNotInit"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @expressApp?
+        logger.debug <span class="hljs-string">"App.get"</span>, util.inspect(arguments[<span class="hljs-number">0</span>]), util.inspect(arguments[<span class="hljs-number">1</span>])
+        @expressApp.get.apply @expressApp, arguments</pre></div>
+        
+      
+        
+        <p>#
+Helper to call the Express App .post().</p>
+
+        
+          <div class='highlight'><pre>    post: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"expressNotInit"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @expressApp?
+        logger.debug <span class="hljs-string">"App.post"</span>, util.inspect(arguments[<span class="hljs-number">0</span>]), util.inspect(arguments[<span class="hljs-number">1</span>])
+        @expressApp.post.apply @expressApp, arguments</pre></div>
+        
+      
+        
+        <p>#
+Helper to call the Express App .put().</p>
+
+        
+          <div class='highlight'><pre>    put: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"expressNotInit"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @expressApp?
+        logger.debug <span class="hljs-string">"App.put"</span>, util.inspect(arguments[<span class="hljs-number">0</span>]), util.inspect(arguments[<span class="hljs-number">1</span>])
+        @expressApp.put.apply @expressApp, arguments</pre></div>
+        
+      
+        
+        <p>#
+Helper to call the Express App .patch().</p>
+
+        
+          <div class='highlight'><pre>    patch: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"expressNotInit"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @expressApp?
+        logger.debug <span class="hljs-string">"App.patch"</span>, util.inspect(arguments[<span class="hljs-number">0</span>]), util.inspect(arguments[<span class="hljs-number">1</span>])
+        @expressApp.patch.apply @expressApp, arguments</pre></div>
+        
+      
+        
+        <p>#
+Helper to call the Express App .delete().</p>
+
+        
+          <div class='highlight'><pre>    delete: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"expressNotInit"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @expressApp?
+        logger.debug <span class="hljs-string">"App.delete"</span>, util.inspect(arguments[<span class="hljs-number">0</span>]), util.inspect(arguments[<span class="hljs-number">1</span>])
+        @expressApp.<span class="hljs-keyword">delete</span>.apply @expressApp, arguments</pre></div>
+        
+      
+        
+        <p>#
+Helper to call the Express App .listen().</p>
+
+        
+          <div class='highlight'><pre>    listen: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"expressNotInit"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @expressApp?
+        logger.debug <span class="hljs-string">"App.listen"</span>, util.inspect(arguments[<span class="hljs-number">0</span>]), util.inspect(arguments[<span class="hljs-number">1</span>])
+        @expressApp.listen.apply @expressApp, arguments</pre></div>
+        
+      
+        
+        <p>#
+Helper to call the Express App .route().</p>
+
+        
+          <div class='highlight'><pre>    route: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"expressNotInit"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @expressApp?
+        logger.debug <span class="hljs-string">"App.route"</span>, arguments[<span class="hljs-number">0</span>]
+        @expressApp.route.apply @expressApp, arguments</pre></div>
+        
+      
+        
+        <p>#
+Helper to call the Express App .use().</p>
+
+        
+          <div class='highlight'><pre>    use: <span class="hljs-function">=&gt;</span>
+        <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"expressNotInit"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @expressApp?
+        logger.debug <span class="hljs-string">"App.use"</span>, util.inspect(arguments[<span class="hljs-number">0</span>]), util.inspect(arguments[<span class="hljs-number">1</span>])
+        @expressApp.use.apply @expressApp, arguments</pre></div>
+        
+      
+        
+        <h2 id="helper-and-utils">HELPER AND UTILS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Return an array with all routes registered on the Express application.
+@param {Boolean} asString If true, returns the route strings only, otherwise returns full objects.
+@return {Array} Array with the routes (as object or as string if asString = true).</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    listRoutes: <span class="hljs-function"><span class="hljs-params">(asString = <span class="hljs-literal">false</span>)</span> =&gt;</span>
+        result = []
+
+        <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> @expressApp._router.stack
+            <span class="hljs-keyword">if</span> r.route?.path? <span class="hljs-keyword">and</span> r.route.path <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                <span class="hljs-keyword">if</span> asString
+                    result.push r.route.path
+                <span class="hljs-keyword">else</span>
+                    result.push {route: r.route.path, methods: lodash.keys(r.route.methods)}
+
+        <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>##
+Render a Pug view and send to the client.
+@param {Object} req The Express request object, mandatory.
+@param {Object} res The Express response object, mandatory.
+@param {String} view The Pug view filename, mandatory.
+@param {Object} options Options passed to the view, optional.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    renderView: <span class="hljs-function"><span class="hljs-params">(req, res, view, options)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"App.renderView"</span>, req.originalUrl, view, options
+
+        <span class="hljs-keyword">try</span>
+            options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
+            options.device = utils.browser.getDeviceDetails req
+            options.title = settings.app.title <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.title?</pre></div>
+        
+      
+        
+        <p>View filename must jave .pug extension.</p>
+
+        
+          <div class='highlight'><pre>            view += <span class="hljs-string">".pug"</span> <span class="hljs-keyword">if</span> view.indexOf(<span class="hljs-string">".pug"</span>) &lt; <span class="hljs-number">0</span></pre></div>
+        
+      
+        
+        <p>Send rendered view to client.</p>
+
+        
+          <div class='highlight'><pre>            res.render view, options
+
+        <span class="hljs-keyword">catch</span> ex
+            logger.error <span class="hljs-string">"App.renderView"</span>, view, ex
+            @renderError req, res, ex
+
+        events.emit <span class="hljs-string">"App.on.renderView"</span>, req, res, view, options</pre></div>
+        
+      
+        
+        <p>##
+Render response as JSON data and send to the client.
+@param {Object} req The Express request object, mandatory.
+@param {Object} res The Express response object, mandatory.
+@param {Object} data The JSON data to be sent, mandatory.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    renderJson: <span class="hljs-function"><span class="hljs-params">(req, res, data)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"App.renderJson"</span>, req.originalUrl, data
+
+        <span class="hljs-keyword">if</span> lodash.isString data
+            <span class="hljs-keyword">try</span>
+                data = JSON.parse data
+            <span class="hljs-keyword">catch</span> ex
+                <span class="hljs-keyword">return</span> @renderError req, res, ex, <span class="hljs-number">500</span></pre></div>
+        
+      
+        
+        <p>Remove methods from JSON before rendering.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">cleanJson</span> = <span class="hljs-params">(obj)</span> -&gt;</span>
+            <span class="hljs-keyword">if</span> lodash.isArray obj
+                cleanJson i <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> obj
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject obj
+                <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">of</span> obj
+                    <span class="hljs-keyword">if</span> lodash.isFunction v
+                        <span class="hljs-keyword">delete</span> obj[k]
+                    <span class="hljs-keyword">else</span>
+                        cleanJson v
+
+        cleanJson data</pre></div>
+        
+      
+        
+        <p>Add Access-Control-Allow-Origin to all when debug is true.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.general.debug
+            res.setHeader <span class="hljs-string">"Access-Control-Allow-Origin"</span>, <span class="hljs-string">"*"</span></pre></div>
+        
+      
+        
+        <p>Send JSON response.</p>
+
+        
+          <div class='highlight'><pre>        res.json data
+
+        events.emit <span class="hljs-string">"App.on.renderJson"</span>, req, res, data</pre></div>
+        
+      
+        
+        <p>##
+Render an image from the speficied file, and send to the client.
+@param {Object} req The Express request object, mandatory.
+@param {Object} res The Express response object, mandatory.
+@param {String} filename The full path to the image file, mandatory.
+@param {Object} options Options passed to the image renderer, for example the “mimetype”.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    renderImage: <span class="hljs-function"><span class="hljs-params">(req, res, filename, options)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"App.renderImage"</span>, req.originalUrl, filename, options
+
+        mimetype = options?.mimetype</pre></div>
+        
+      
+        
+        <p>Try to figure out the mime type in case it wasn’t passed along the options.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> mimetype?
+            extname = path.extname(filename).toLowerCase().replace(<span class="hljs-string">"."</span>,<span class="hljs-string">""</span>)
+            extname = <span class="hljs-string">"jpeg"</span> <span class="hljs-keyword">if</span> extname <span class="hljs-keyword">is</span> <span class="hljs-string">"jpg"</span>
+            mimetype = <span class="hljs-string">"image/<span class="hljs-subst">#{extname}</span>"</span></pre></div>
+        
+      
+        
+        <p>Send image to client.</p>
+
+        
+          <div class='highlight'><pre>        res.contentType mimetype
+        res.sendFile filename
+
+        events.emit <span class="hljs-string">"App.on.renderImage"</span>, req, res, filename, options</pre></div>
+        
+      
+        
+        <p>##
+Sends error response as JSON.
+@param {Object} req The Express request object, mandatory.
+@param {Object} res The Express response object, mandatory.
+@param {Object} error The error object or message to be sent to the client, mandatory.
+@param {Number} status The response status code, optional, default is 500.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    renderError: <span class="hljs-function"><span class="hljs-params">(req, res, error, status)</span> -&gt;</span>
+        logger.error <span class="hljs-string">"App.renderError"</span>, req.originalUrl, status, error</pre></div>
+        
+      
+        
+        <p>Status defaults to 500.</p>
+
+        
+          <div class='highlight'><pre>        status = error?.statusCode <span class="hljs-keyword">or</span> <span class="hljs-number">500</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> status?
+        status = <span class="hljs-number">408</span> <span class="hljs-keyword">if</span> status <span class="hljs-keyword">is</span> <span class="hljs-string">"ETIMEDOUT"</span>
+
+        <span class="hljs-keyword">try</span>
+            <span class="hljs-keyword">if</span> lodash.isError error
+                error = error.message + <span class="hljs-string">" "</span> + error.stack
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString error
+                error = JSON.stringify error, <span class="hljs-literal">null</span>, <span class="hljs-number">0</span>
+        <span class="hljs-keyword">catch</span> ex
+            error = error.toString()</pre></div>
+        
+      
+        
+        <p>Send error JSON to client.</p>
+
+        
+          <div class='highlight'><pre>        res.status(status).json {error: error, url: req.originalUrl}
+
+        events.emit <span class="hljs-string">"App.on.renderError"</span>, req, res, error, status</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>App.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> App() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = App.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

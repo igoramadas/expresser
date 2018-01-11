@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>logger.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>logger.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-logger">EXPRESSER LOGGER</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>chalk = <span class="hljs-built_in">require</span> <span class="hljs-string">"chalk"</span>
+events = <span class="hljs-built_in">require</span> <span class="hljs-string">"./events.coffee"</span>
+fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+lodash = <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
+moment = <span class="hljs-built_in">require</span> <span class="hljs-string">"moment"</span>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
+settings = <span class="hljs-built_in">require</span> <span class="hljs-string">"./settings.coffee"</span>
+utils = <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils.coffee"</span></pre></div>
+        
+      
+        
+        <p>##
+Handles server logging using the console, local files, Logentries, Loggly and
+other transports available as plugins. Multiple transports can be enabled at
+the same time.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Logger</span></span>
+    newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Logger()</pre></div>
+        
+      
+        
+        <p>#
+List of available logging drivers. This list will be populated automatically by installed plugins.
+@property
+@type Object</p>
+
+        
+          <div class='highlight'><pre>    drivers: {}</pre></div>
+        
+      
+        
+        <p>#
+List of registered transports.
+@property
+@type Object</p>
+
+        
+          <div class='highlight'><pre>    transports: {}</pre></div>
+        
+      
+        
+        <p>#
+Method to call on every log request.
+@property
+@type Function</p>
+
+        
+          <div class='highlight'><pre>    onLog: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Init the Logger module and set default settings.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+        events.emit <span class="hljs-string">"Logger.before.init"</span>
+
+        <span class="hljs-keyword">if</span> settings.logger.uncaughtException
+            @debug <span class="hljs-string">"Logger.init"</span>, <span class="hljs-string">"Catching unhandled exceptions."</span>
+
+            process.<span class="hljs-literal">on</span> <span class="hljs-string">"uncaughtException"</span>, <span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span>
+                <span class="hljs-keyword">try</span>
+                    @error <span class="hljs-string">"Unhandled exception!"</span>, err.message, err.stack
+                <span class="hljs-keyword">catch</span> ex
+                    <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Unhandled exception!"</span>, err.message, err.stack, ex</pre></div>
+        
+      
+        
+        <p>DEPRECATED! Use settings.logger.maxDepth instead of maxDeepLevel.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.logger.maxDeepLevel?
+            @deprecated <span class="hljs-string">"settings.logger.maxDeepLevel"</span>, <span class="hljs-string">"Please use settings.logger.maxDepth instead."</span>
+            settings.logger.maxDepth = settings.logger.maxDeepLevel
+
+        events.emit <span class="hljs-string">"Logger.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <h2 id="implementation">IMPLEMENTATION</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Register a Logger transport.
+@param {String} id Unique ID of the transport to be registered, mandatory.
+@param {String} driver The transport driver ID (logger, loggly, etc), mandatory.
+@param {Object} options Registration options to be passed to the transport handler.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    register: <span class="hljs-function"><span class="hljs-params">(id, driver, options)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @drivers[driver]?
+            <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Logger.register"</span>, <span class="hljs-string">"<span class="hljs-subst">#{driver}</span> is not installed! Please check if plugin expresser-logger-<span class="hljs-subst">#{driver}</span> is available on the current environment."</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">if</span> settings.general.debug
+                <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Logger.register"</span>, id, driver, options
+
+            @transports[id] = @drivers[driver].getTransport options
+            @transports[id].log = @drivers[driver].log
+            @transports[id].debug = @debug
+            @transports[id].info = @info
+            @transports[id].warn = @warn
+            @transports[id].error = @error
+            @transports[id].critical = @critical
+
+            <span class="hljs-keyword">return</span> @transports[id]</pre></div>
+        
+      
+        
+        <p>##
+Unregister a Logger transport.
+@param {String} id Unique ID of the transport to be unregistered.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    unregister: <span class="hljs-function"><span class="hljs-params">(id)</span> =&gt;</span>
+        @transports[id]?.unregister?()
+        <span class="hljs-keyword">delete</span> @transports[id]
+
+        <span class="hljs-keyword">if</span> settings.general.debug
+            <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Logger.unregister"</span>, id</pre></div>
+        
+      
+        
+        <h2 id="log-methods">LOG METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Log to the console.
+@param {String} logType The log type (ex: warning, error, info, etc).
+@param {String} msg The message to be logged, mandatory.
+@param {Boolean} doNotParse If true, message won’t be cleaned using the <code>argsCleaner</code> helper.
+@return {String} The human readable log sent to the console.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    console: <span class="hljs-function"><span class="hljs-params">(logType, msg, doNotParse = <span class="hljs-literal">false</span>)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> process.env.NODE_ENV <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span> <span class="hljs-keyword">and</span> logType <span class="hljs-keyword">isnt</span> <span class="hljs-string">"test"</span>
+
+        timestamp = moment().format <span class="hljs-string">"HH:mm:ss.SS"</span></pre></div>
+        
+      
+        
+        <p>Only parse message if doNotClean is false or unset.</p>
+
+        
+          <div class='highlight'><pre>        msg = @getMessage msg <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> doNotParse
+
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">console</span>[logType]? <span class="hljs-keyword">and</span> logType <span class="hljs-keyword">isnt</span> <span class="hljs-string">"debug"</span>
+            method = <span class="hljs-built_in">console</span>[logType]
+        <span class="hljs-keyword">else</span>
+            method = <span class="hljs-built_in">console</span>.log</pre></div>
+        
+      
+        
+        <p>Get styles (text colour, bold, italic etc…) for the correlated log type.</p>
+
+        
+          <div class='highlight'><pre>        styles = settings.logger.styles[logType]
+
+        <span class="hljs-keyword">if</span> styles?
+            chalkStyle = chalk
+            chalkStyle = chalkStyle[s] <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> styles
+        <span class="hljs-keyword">else</span>
+            chalkStyle = chalk.white
+
+        method timestamp, chalkStyle msg
+
+        <span class="hljs-keyword">return</span> msg</pre></div>
+        
+      
+        
+        <p>##
+Generic log method. You can use this if you want to have your own customized log types
+instead of the more traditional debug / info / warning / error …
+@param {String} logType The log type (for example: info, error, myCustomType etc).
+@param {Array} args Array to be stringified and logged, mandatory.
+@return {String} The parsed, stringified log message.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    log: <span class="hljs-function"><span class="hljs-params">(logType, args)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> settings.logger.levels?.indexOf(logType) &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> settings.general.debug</pre></div>
+        
+      
+        
+        <p>Get message out of the arguments.</p>
+
+        
+          <div class='highlight'><pre>        msg = @getMessage args</pre></div>
+        
+      
+        
+        <p>Dispatch to all registered transports.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> key, obj <span class="hljs-keyword">of</span> @transports
+            obj.log logType, msg, <span class="hljs-literal">true</span></pre></div>
+        
+      
+        
+        <p>Log to the console depending on <code>console</code> setting.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.logger.<span class="hljs-built_in">console</span>
+            @console logType, msg, <span class="hljs-literal">true</span></pre></div>
+        
+      
+        
+        <p>Custom onLog callback?</p>
+
+        
+          <div class='highlight'><pre>        @onLog? logType, args
+
+        <span class="hljs-keyword">return</span> msg</pre></div>
+        
+      
+        
+        <p>##
+Log to the active transports as <code>debug</code>, only if <code>settings.general.debug</code> is true.
+@param {Arguments} args Any number of arguments to be parsed and stringified.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    debug: <span class="hljs-function">-&gt;</span>
+        args = Array.prototype.slice.call arguments
+        args.unshift <span class="hljs-string">"DEBUG"</span>
+        @log <span class="hljs-string">"debug"</span>, args</pre></div>
+        
+      
+        
+        <p>##
+Log to the active transports as <code>info</code>.
+@param {Arguments} args Any number of arguments to be parsed and stringified.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    info: <span class="hljs-function">-&gt;</span>
+        args = Array.prototype.slice.call arguments
+        args.unshift <span class="hljs-string">"INFO"</span>
+        @log <span class="hljs-string">"info"</span>, args</pre></div>
+        
+      
+        
+        <p>##
+Log to the active transports as <code>warn</code>.
+@param {Arguments} args Any number of arguments to be parsed and stringified.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    warn: <span class="hljs-function">-&gt;</span>
+        args = Array.prototype.slice.call arguments
+        args.unshift <span class="hljs-string">"WARN"</span>
+        @log <span class="hljs-string">"warn"</span>, args</pre></div>
+        
+      
+        
+        <p>##
+Log to the active transports as <code>error</code>.
+@param {Arguments} args Any number of arguments to be parsed and stringified.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    error: <span class="hljs-function">-&gt;</span>
+        args = Array.prototype.slice.call arguments
+        args.unshift <span class="hljs-string">"ERROR"</span>
+        @log <span class="hljs-string">"error"</span>, args</pre></div>
+        
+      
+        
+        <p>##
+Log to the active transports as <code>critical</code>.
+@param {Arguments} args Any number of arguments to be parsed and stringified.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    critical: <span class="hljs-function">-&gt;</span>
+        args = Array.prototype.slice.call arguments
+        args.unshift <span class="hljs-string">"CRITICAL"</span>
+        @log <span class="hljs-string">"critical"</span>, args</pre></div>
+        
+      
+        
+        <h2 id="helper-methods">HELPER METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Helper to log to console about deprecated features.
+@param {String} feature Module, function or feature that is deprecated, mandatory.
+@param {String} message Optional message to add to the console.
+@return {Object} Object on the format {error: ‘Feature not enabled’, notEnabled: true, message: ‘…’}</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    deprecated: <span class="hljs-function"><span class="hljs-params">(feature, message)</span> =&gt;</span>
+        line = <span class="hljs-string">"<span class="hljs-subst">#{feature}</span> is deprecated. <span class="hljs-subst">#{message}</span>"</span>
+        @console <span class="hljs-string">"deprecated"</span>, line
+        result = {error: <span class="hljs-string">"<span class="hljs-subst">#{feature}</span> is deprecated."</span>, deprecated: <span class="hljs-literal">true</span>}
+        result.message = message <span class="hljs-keyword">if</span> message? <span class="hljs-keyword">and</span> message <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+        <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>##
+Helper to log to console about features not enabled.
+@param {String} feature Module, function or feature that is deprecated, mandatory.
+@param {String} message Optional message to add to the console.
+@return {Object} Object on the format {error: ‘Feature not enabled’, notEnabled: true, message: ‘…’}</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    notEnabled: <span class="hljs-function"><span class="hljs-params">(feature, message)</span> =&gt;</span>
+        line = <span class="hljs-string">"<span class="hljs-subst">#{feature}</span> is not enabled. <span class="hljs-subst">#{message}</span>"</span>
+        @console <span class="hljs-string">"warn"</span>, line
+        result = {error: <span class="hljs-string">"<span class="hljs-subst">#{feature}</span> is not enabled."</span>, notEnabled: <span class="hljs-literal">true</span>}
+        result.message = message <span class="hljs-keyword">if</span> message? <span class="hljs-keyword">and</span> message <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+        <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>##
+Process and clean arguments according to the <code>removeFields</code>, <code>maskFields</code>
+and <code>obfuscateFields</code> settings. The maximum level deep down the object
+is defined by the <code>maxDepth</code> setting.
+@return {Arguments} Arguments with masked, hidden and obfuscated fields processed.
+@private</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    argsCleaner: <span class="hljs-function">-&gt;</span>
+        funcText = <span class="hljs-string">"[Function]"</span>
+        unreadableText = <span class="hljs-string">"[Unreadable]"</span>
+        max = settings.logger.maxDepth - <span class="hljs-number">1</span>
+        result = []</pre></div>
+        
+      
+        
+        <p>Recursive cleaning function.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">cleaner</span> = <span class="hljs-params">(obj, index)</span> -&gt;</span>
+            i = <span class="hljs-number">0</span>
+
+            <span class="hljs-keyword">if</span> lodash.isArray obj
+                <span class="hljs-keyword">while</span> i &lt; obj.length
+                    <span class="hljs-keyword">if</span> index &gt; max
+                        obj[i] = <span class="hljs-string">"..."</span>
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction obj[i]
+                        obj[i] = funcText
+                    <span class="hljs-keyword">else</span>
+                        cleaner obj[i], index + <span class="hljs-number">1</span>
+                    i++
+
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject obj
+                <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">of</span> obj
+                    <span class="hljs-keyword">try</span>
+                        <span class="hljs-keyword">if</span> index &gt; max
+                            obj[key] = <span class="hljs-string">"..."</span>
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.obfuscateFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
+                            obj[key] = <span class="hljs-string">"***"</span>
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.maskFields?[key]?
+                            <span class="hljs-keyword">if</span> lodash.isObject value
+                                maskedValue = value.value <span class="hljs-keyword">or</span> value.text <span class="hljs-keyword">or</span> value.contents <span class="hljs-keyword">or</span> value.data <span class="hljs-keyword">or</span> <span class="hljs-string">""</span>
+                            <span class="hljs-keyword">else</span>
+                                maskedValue = value.toString()
+                            obj[key] = utils.data.maskString maskedValue, <span class="hljs-string">"*"</span>, settings.logger.maskFields[key]
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.removeFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
+                            <span class="hljs-keyword">delete</span> obj[key]
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isArray value
+                            <span class="hljs-keyword">while</span> i &lt; value.length
+                                cleaner value[i], index + <span class="hljs-number">1</span>
+                                i++
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction value
+                            obj[key] = funcText
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject value
+                            cleaner value, index + <span class="hljs-number">1</span>
+                    <span class="hljs-keyword">catch</span> ex
+                        <span class="hljs-keyword">delete</span> obj[key]
+                        obj[key] = unreadableText</pre></div>
+        
+      
+        
+        <p>Iterate arguments and execute cleaner on objects.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> argKey, arg <span class="hljs-keyword">of</span> arguments
+            <span class="hljs-keyword">try</span>
+                <span class="hljs-keyword">if</span> lodash.isArray arg
+                    <span class="hljs-keyword">for</span> a <span class="hljs-keyword">in</span> arg
+                        <span class="hljs-keyword">if</span> lodash.isError a
+                            result.push a
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject a
+                            cloned = lodash.cloneDeep a
+                            cleaner cloned, <span class="hljs-number">0</span>
+                            result.push cloned
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction a
+                            result.push funcText
+                        <span class="hljs-keyword">else</span>
+                            result.push a
+                <span class="hljs-keyword">else</span>
+                    result.push a
+
+            <span class="hljs-keyword">catch</span> ex
+                <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Logger.argsCleaner"</span>, argKey, ex
+
+        <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>##
+Parses arguments and returns a human readable message to be used for logging.
+@param {Array} params Arguments or array of parameters to be parsed.
+@return {String} The human readable, parsed JSON message.
+@private</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    getMessage: <span class="hljs-function"><span class="hljs-params">(params)</span> -&gt;</span>
+        separated = []
+        args = []
+
+        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">1</span>
+            args.push value <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> arguments
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isArray params
+            args.push value <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> params
+        <span class="hljs-keyword">else</span>
+            args.push params
+
+        args = @argsCleaner args</pre></div>
+        
+      
+        
+        <p>Parse all arguments and stringify objects. Please note that fields defined
+on the <code>removeFields</code> setting won’t be added to the message.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> arg <span class="hljs-keyword">in</span> args
+            <span class="hljs-keyword">if</span> arg?
+                stringified = <span class="hljs-string">""</span>
+
+                <span class="hljs-keyword">try</span>
+                    <span class="hljs-keyword">if</span> lodash.isArray arg
+                        <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> arg
+                            stringified += JSON.stringify value, <span class="hljs-literal">null</span>, <span class="hljs-number">2</span>
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isError arg
+                        stringified = arg.message + <span class="hljs-string">" "</span> + arg.stack
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject arg
+                        stringified = JSON.stringify arg, <span class="hljs-literal">null</span>, <span class="hljs-number">2</span>
+                    <span class="hljs-keyword">else</span>
+                        stringified = arg.toString()
+                <span class="hljs-keyword">catch</span> ex
+                    stringified = arg.toString()</pre></div>
+        
+      
+        
+        <p>Compact log lines?</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> settings.logger.compact
+                    stringified = stringified.replace(<span class="hljs-regexp">/(\r\n|\n|\r)/gm</span>, <span class="hljs-string">""</span>).replace(/  +/g, <span class="hljs-string">" "</span>);
+
+                separated.push stringified</pre></div>
+        
+      
+        
+        <p>Append IP address, if <code>serverIP</code> is set.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.logger.sendIP
+            <span class="hljs-keyword">try</span>
+                serverIP = utils.network.getSingleIPv4() <span class="hljs-keyword">or</span> utils.network.getSingleIPv6()
+                serverIP = <span class="hljs-literal">null</span> <span class="hljs-keyword">if</span> serverIP <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+            <span class="hljs-keyword">catch</span> ex
+                serverIP = <span class="hljs-literal">null</span>
+
+        separated.push <span class="hljs-string">"IP <span class="hljs-subst">#{serverIP}</span>"</span> <span class="hljs-keyword">if</span> serverIP?
+        separator = settings.logger.separator</pre></div>
+        
+      
+        
+        <p>Return single string log message.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">return</span> separated.join separator</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Logger.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> Logger() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = Logger.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

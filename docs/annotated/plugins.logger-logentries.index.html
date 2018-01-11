@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>index.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>index.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-logger-logentries">EXPRESSER LOGGER - LOGENTRIES</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+logentries = <span class="hljs-built_in">require</span> <span class="hljs-string">"node-logentries"</span>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
+
+lodash = <span class="hljs-literal">null</span>
+logger = <span class="hljs-literal">null</span>
+settings = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>##
+Logentries plugin for Expresser.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LoggerLogentries</span></span>
+    priority: <span class="hljs-number">1</span></pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Init the Logentries logging module. If default settings are defined on “settings.logger.logentries”,
+it will auto register itself to the main Logger as “logentries”. Please note that this init
+should be called automatically by the main Expresser <code>init()</code>.
+@private</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function">-&gt;</span>
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        settings = @expresser.settings
+
+        logger.drivers.logentries = <span class="hljs-keyword">this</span>
+
+        logger.debug <span class="hljs-string">"LoggerLogentries.init"</span></pre></div>
+        
+      
+        
+        <p>Auto register as “logentries” if a default token is defined on the settings.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.logger.logentries.enabled <span class="hljs-keyword">and</span> settings.logger.logentries.token?
+            logger.register <span class="hljs-string">"logentries"</span>, <span class="hljs-string">"logentries"</span>, settings.logger.logentries
+
+        events.emit <span class="hljs-string">"LoggerLogentries.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <p>##
+Get the Logentries transport object.
+@param {Object} options Logentries options.
+@param {String} [options.token] Logentries access token, mandatory.
+@param {Boolean} [options.sendTimestamp] Send timestamp along log lines? Default is defined on settings.
+@param {Function} [options.onLogSuccess] Function to execute on successful log calls, optional.
+@param {Function} [options.onLogError] Function to execute on failed log calls, optional.
+@return {Object} The Logentries logger transport.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    getTransport: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"LoggerLogentries.getTransport"</span>, options
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.logger.logentries.enabled
+            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"LoggerFile"</span>
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?.token? <span class="hljs-keyword">or</span> options.token <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+            <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> tokenRequired, <span class="hljs-string">"Please set a valid options.token."</span>
+
+        options = lodash.defaultsDeep options, settings.logger.logentries
+        options.sendTimestamp = settings.logger.sendTimestamp <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.sendTimestamp?
+        options.onLogSuccess = logger.onLogSuccess <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.onLogSuccess?
+        options.onLogError = logger.onLogError <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.onLogError?
+
+        transport = {client: logentries.logger {token: options.token, timestamp: options.sendTimestamp}}
+        transport.client.<span class="hljs-literal">on</span>(<span class="hljs-string">"log"</span>, options.onLogSuccess) <span class="hljs-keyword">if</span> lodash.isFunction options.onLogSuccess
+        transport.client.<span class="hljs-literal">on</span>(<span class="hljs-string">"error"</span>, options.onLogError) <span class="hljs-keyword">if</span> lodash.isFunction options.onLogError
+
+        <span class="hljs-keyword">return</span> transport</pre></div>
+        
+      
+        
+        <h2 id="log-methods">LOG METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Logentries log method.
+@param {String} logType The log type (info, warn, error, debug, etc).
+@param {Array} args Array or string to be logged.
+@param {Boolean} avoidConsole If true it will NOT log to the console.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    log: <span class="hljs-function"><span class="hljs-params">(logType, args, avoidConsole)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> settings.logger.levels.indexOf(logType) &lt; <span class="hljs-number">0</span></pre></div>
+        
+      
+        
+        <p>Get message out of the arguments if not a string.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> lodash.isString args
+            message = args
+        <span class="hljs-keyword">else</span>
+            message = logger.getMessage args
+
+        @client.log logType, message</pre></div>
+        
+      
+        
+        <p>Log to the console depending on <code>console</code> setting.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.logger.<span class="hljs-built_in">console</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> avoidConsole
+            logger.<span class="hljs-built_in">console</span> logType, args</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>LoggerLogentries.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> LoggerLogentries() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = exports = LoggerLogentries.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

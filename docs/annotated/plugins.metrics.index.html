@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>index.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>index.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-metrics">EXPRESSER METRICS</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>percentile = <span class="hljs-built_in">require</span> <span class="hljs-string">"./percentile.coffee"</span>
+
+events = <span class="hljs-literal">null</span>
+lodash = <span class="hljs-literal">null</span>
+logger = <span class="hljs-literal">null</span>
+moment = <span class="hljs-literal">null</span>
+settings = <span class="hljs-literal">null</span>
+utils = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>This is where we store all metrics.</p>
+
+        
+          <div class='highlight'><pre>metrics = {}</pre></div>
+        
+      
+        
+        <p>Timer to cleanup metrics.</p>
+
+        
+          <div class='highlight'><pre>cleanupTimer = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>##
+To gather application metrics and generate JSON output to be used by
+monitoring systems.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Metrics</span></span>
+    priority: <span class="hljs-number">2</span></pre></div>
+        
+      
+        
+        <p>#
+HTTP server module exposed to other modules.
+@property
+@type HttpServer</p>
+
+        
+          <div class='highlight'><pre>    httpServer: <span class="hljs-built_in">require</span> <span class="hljs-string">"./httpserver.coffee"</span></pre></div>
+        
+      
+        
+        <p>##
+Init metrics and set up cleanup timer.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function">-&gt;</span>
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        moment = @expresser.libs.moment
+        settings = @expresser.settings
+        utils = @expresser.utils
+
+        logger.debug <span class="hljs-string">"Metrics.init"</span></pre></div>
+        
+      
+        
+        <p>Make sure settings are valid.</p>
+
+        
+          <div class='highlight'><pre>        settings.metrics.httpServer = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.httpServer?
+        settings.metrics.intervals = [] <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.intervals?
+        settings.metrics.percentiles = [] <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.percentiles?</pre></div>
+        
+      
+        
+        <p>Schedule the cleanup job.</p>
+
+        
+          <div class='highlight'><pre>        cleanupTimer = setInterval @cleanup, settings.metrics.cleanupInterval * <span class="hljs-number">60</span> * <span class="hljs-number">1000</span></pre></div>
+        
+      
+        
+        <p>Init the HTTP server module. Start if a valid port was set.</p>
+
+        
+          <div class='highlight'><pre>        @httpServer.init <span class="hljs-keyword">this</span>
+        @httpServer.start() <span class="hljs-keyword">if</span> settings.metrics.httpServer.port? <span class="hljs-keyword">and</span> settings.metrics.httpServer.autoStart
+
+        events.emit <span class="hljs-string">"Metrics.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <h2 id="counters">COUNTERS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Starts the counter for a specific metric. The data is optional.
+@param {String} id ID of the metric to be started.
+@param {Object} data Additional info about the current metric (URL data, for example).
+@param {Number} expiresIn Optional, metric should expire in these amount of milliseconds if not ended.
+@return {Object} Returns the metric object to be used later on <code>end</code>.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(id, data, expiresIn)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"Metrics.start"</span>, obj, data, expiresIn
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
+            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>
+
+        expiresIn = <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> expiresIn?
+
+        obj = {}
+        obj.id = id
+        obj.data = data
+        obj.startTime = moment().valueOf()</pre></div>
+        
+      
+        
+        <p>Should the metric expire (value in milliseconds)?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> expiresIn &gt; <span class="hljs-number">0</span>
+<span class="hljs-function">            <span class="hljs-title">expiryTimeout</span> = =&gt;</span>
+                logger.debug <span class="hljs-string">"Metrics.start"</span>, <span class="hljs-string">"Expired!"</span>, obj
+                obj.expired = <span class="hljs-literal">true</span>
+                @end obj
+
+            obj.timeout = setTimeout expiryTimeout, expiresIn</pre></div>
+        
+      
+        
+        <p>Create array of counters for the selected ID. Add metric to the beggining of the array.</p>
+
+        
+          <div class='highlight'><pre>        metrics[id] = [] <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> metrics[id]?
+        metrics[id].unshift obj
+
+        <span class="hljs-keyword">return</span> obj</pre></div>
+        
+      
+        
+        <p>##
+Ends the counter for the specified metric, with an optional error to be passed along.
+@param {Object} obj The metric object started previsouly on <code>start</code>.
+@param {Object} error Optional error that ocurred while processing the metric.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    end: <span class="hljs-function"><span class="hljs-params">(obj, error)</span> -&gt;</span>
+        obj.endTime = moment().valueOf()
+        obj.duration = obj.endTime - obj.startTime
+        obj.error = error</pre></div>
+        
+      
+        
+        <p>Clear the expiry timeout only if there’s one.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> obj.timeout?
+            clearTimeout obj.timeout
+            <span class="hljs-keyword">delete</span> obj.timeout
+
+        logger.debug <span class="hljs-string">"Metrics.end"</span>, obj</pre></div>
+        
+      
+        
+        <p>Get collected data for the specified metric.
+@param {String} id ID of the metric.</p>
+
+        
+          <div class='highlight'><pre>    get: <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> metrics[id]</pre></div>
+        
+      
+        
+        <h2 id="cleanup">CLEANUP</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Clean collected metrics by removing data older than X minutes (defined on settings).
+Please note that this runs on s schedule so you shouldn’t need to call it manually, in most cases.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    cleanup: <span class="hljs-function">-&gt;</span>
+        logger.debug <span class="hljs-string">"Metrics.cleanup"</span>
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
+            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>
+
+        now = moment().valueOf()
+        keyCounter = <span class="hljs-number">0</span></pre></div>
+        
+      
+        
+        <p>Hold empty metric IDs.</p>
+
+        
+          <div class='highlight'><pre>        emptyIds = []</pre></div>
+        
+      
+        
+        <p>Iterate metrics collection.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> key, obj <span class="hljs-keyword">of</span> metrics
+            i = obj.length - <span class="hljs-number">1</span>
+            counter = <span class="hljs-number">0</span>
+            keyCounter++
+
+            <span class="hljs-keyword">if</span> obj.length &lt; <span class="hljs-number">1</span>
+                emptyIds.push key</pre></div>
+        
+      
+        
+        <p>Iterate requests for the current metrics, last to first.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">while</span> i &gt;= <span class="hljs-number">0</span>
+                diff = now - obj[i].startTime
+                minutes = diff / <span class="hljs-number">1000</span> / <span class="hljs-number">60</span></pre></div>
+        
+      
+        
+        <p>Remove if verified as old. Otherwise, force finish the iteration.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> minutes &gt; settings.metrics.expireAfter <span class="hljs-keyword">or</span> settings.metrics.expireAfter <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+                    obj.pop()
+                    i--
+                    counter++
+                <span class="hljs-keyword">else</span>
+                    i = <span class="hljs-number">-1</span></pre></div>
+        
+      
+        
+        <p>Delete empty metrics if enabled on settings.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.metrics.cleanupEmpty <span class="hljs-keyword">and</span> emptyIds.length &gt; <span class="hljs-number">0</span>
+            <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> emptyIds
+                <span class="hljs-keyword">delete</span> metrics[key]
+
+        <span class="hljs-keyword">if</span> counter &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> keyCounter &gt; <span class="hljs-number">0</span>
+            logger.info <span class="hljs-string">"Metrics.cleanup"</span>, <span class="hljs-string">"Removed <span class="hljs-subst">#{counter}</span> records from <span class="hljs-subst">#{keyCounter}</span> keys."</span></pre></div>
+        
+      
+        
+        <h2 id="output">OUTPUT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Generate the JSON output with all metrics.
+@param {Object} options Options to filter the output. Available options are same as settings.metrics.
+@return {Object} JSON output with relevant metrics.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    output: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Metrics.output"</span>, options
+        utils.system.getInfo()</pre></div>
+        
+      
+        
+        <p>Get all metrics keys.</p>
+
+        
+          <div class='highlight'><pre>        keys = lodash.keys metrics</pre></div>
+        
+      
+        
+        <p>Set default options.</p>
+
+        
+          <div class='highlight'><pre>        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
+        options = lodash.defaultsDeep options, settings.metrics
+        options.keys = keys <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.keys?
+
+        result = {}</pre></div>
+        
+      
+        
+        <p>Add server info to the output?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.systemMetrics?.fields?.length &gt; <span class="hljs-number">0</span>
+            serverInfo = utils.system.getInfo()
+            serverKey = options.systemMetrics.key
+            result[serverKey] = {}
+
+            <span class="hljs-keyword">for</span> f <span class="hljs-keyword">in</span> options.systemMetrics.fields
+                result[serverKey][f] = serverInfo[f]</pre></div>
+        
+      
+        
+        <p>For each different metric…</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> keys
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?.keys? <span class="hljs-keyword">or</span> options?.keys?.indexOf(key) &gt;= <span class="hljs-number">0</span>
+                obj = metrics[key]
+
+                result[key] = {total_calls: obj.length}</pre></div>
+        
+      
+        
+        <p>Iterate intervals (for example 1m, 5m and 15m) to get specific stats.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">for</span> interval <span class="hljs-keyword">in</span> options.intervals
+                    result[key][<span class="hljs-string">"last_<span class="hljs-subst">#{interval}</span>min"</span>] = @summary.get options, obj, interval</pre></div>
+        
+      
+        
+        <p>Stats for last 3 calls.</p>
+
+        
+          <div class='highlight'><pre>                samples = []
+                samples.push @summary.getLast(obj[<span class="hljs-number">2</span>]) <span class="hljs-keyword">if</span> obj[<span class="hljs-number">2</span>]?
+                samples.push @summary.getLast(obj[<span class="hljs-number">1</span>]) <span class="hljs-keyword">if</span> obj[<span class="hljs-number">1</span>]?
+                samples.push @summary.getLast(obj[<span class="hljs-number">0</span>]) <span class="hljs-keyword">if</span> obj[<span class="hljs-number">0</span>]?
+
+                result[key].last_samples = samples
+
+        logger.debug <span class="hljs-string">"Metrics.output"</span>, options, result
+
+        <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>##
+Summary helper methods.
+@private</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    summary: {</pre></div>
+        
+      
+        
+        <p>##
+Generate summary for the specified object and interval.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>        get: <span class="hljs-function"><span class="hljs-params">(options, obj, interval)</span> -&gt;</span>
+            now = moment().valueOf()
+            values = []
+            errorCount = <span class="hljs-number">0</span>
+            expiredCount = <span class="hljs-number">0</span>
+            i = <span class="hljs-number">0</span></pre></div>
+        
+      
+        
+        <p>Iterate logged metrics, and get only if corresponding to the specified interval.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">while</span> i &lt; obj.length
+                diff = now - obj[i].startTime
+                minutes = diff / <span class="hljs-number">1000</span> / <span class="hljs-number">60</span>
+
+                <span class="hljs-keyword">if</span> minutes &lt;= interval
+                    values.push obj[i]
+                    errorCount++ <span class="hljs-keyword">if</span> obj[i].error
+                    expiredCount++ <span class="hljs-keyword">if</span> obj[i].expired
+                    i++
+                <span class="hljs-keyword">else</span>
+                    i = obj.length</pre></div>
+        
+      
+        
+        <p>All we care about is the duration for the relevant requests.</p>
+
+        
+          <div class='highlight'><pre>            durations = lodash.map values, <span class="hljs-string">"duration"</span>
+            avg = lodash.mean durations
+            avg = <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> isNaN avg</pre></div>
+        
+      
+        
+        <p>Create a summary with the important stats for each metric.</p>
+
+        
+          <div class='highlight'><pre>            result = {}
+            result.calls = values.length
+            result.errors = errorCount
+            result.expired = expiredCount
+            result.min = lodash.min(durations) <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>
+            result.max = lodash.max(durations) <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>
+            result.avg = avg <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>
+            result.avg = Math.round result.avg</pre></div>
+        
+      
+        
+        <p>Get percentiles based on settings.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">for</span> perc <span class="hljs-keyword">in</span> options.percentiles
+                result[<span class="hljs-string">"p<span class="hljs-subst">#{perc}</span>"</span>] = percentile.calculate durations, perc
+
+            <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>##
+Helper to get summary for last calls.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>        getLast: <span class="hljs-function"><span class="hljs-params">(value)</span> -&gt;</span>
+            <span class="hljs-keyword">return</span> {
+                startTime: moment(value.startTime).format <span class="hljs-string">"MMM Do - HH:mm:ss.SSSS"</span>
+                duration: value.duration
+                data: value.data
+            }
+    }</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Metrics.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> Metrics() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = exports = Metrics.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

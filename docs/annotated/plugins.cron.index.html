@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>index.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>index.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-cron">EXPRESSER CRON</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+cronJob = <span class="hljs-built_in">require</span> <span class="hljs-string">"./job.coffee"</span>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
+util = <span class="hljs-built_in">require</span> <span class="hljs-string">"util"</span>
+
+errors = <span class="hljs-literal">null</span>
+events = <span class="hljs-literal">null</span>
+lodash = <span class="hljs-literal">null</span>
+logger = <span class="hljs-literal">null</span>
+settings = <span class="hljs-literal">null</span>
+utils = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>##
+Simple implementation of scheduled cron jobs. You can use intervals or specific
+times to trigger jobs, and the module will take care of setting the proper timers.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Cron</span></span>
+    priority: <span class="hljs-number">3</span></pre></div>
+        
+      
+        
+        <p>#
+The jobs collection, this should be managed automatically  but it’s exposed
+to external modules just in case you need to do something unusual.
+@property
+@type Array</p>
+
+        
+          <div class='highlight'><pre>    jobs: []</pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Init the cron manager. If <code>loadOnInit</code> setting is true, the <code>cron.json</code>
+file will be parsed and loaded straight away (if it exists).
+@private</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+        errors = @expresser.errors
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        settings = @expresser.settings
+        utils = @expresser.utils
+
+        logger.debug <span class="hljs-string">"Cron.init"</span>
+
+        @load settings.cron.defaultFilename <span class="hljs-keyword">if</span> settings.cron.loadOnInit
+
+        events.emit <span class="hljs-string">"Cron.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <p>##
+Load jobs from the specified (default cron.json) file.
+If <code>autoStart</code> is true, it will automatically call the <code>start</code> method after loading.
+@param {String} filename Path to the JSON file containing jobs, optional, default is “cron.json”.
+@param {Object} options Options to be passed when loading cron jobs.
+@param options {String} filename Name of file to be loaded (in case filename was not set on first parameter)
+@param options {String} basePath Sets the base path of modules when requiring them.
+@param options {Boolean} autoStart If true, call <code>start</code> after loading.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    load: <span class="hljs-function"><span class="hljs-params">(filename, options)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Cron.load"</span>, filename, options
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
+            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Cron"</span></pre></div>
+        
+      
+        
+        <p>Set default options.</p>
+
+        
+          <div class='highlight'><pre>        options = filename <span class="hljs-keyword">if</span> lodash.isObject filename
+        options = lodash.defaults options, {autoStart: settings.cron.autoStart, basePath: settings.cron.basePath}</pre></div>
+        
+      
+        
+        <p>Make sure filename is set.</p>
+
+        
+          <div class='highlight'><pre>        filename = options.filename <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filename?</pre></div>
+        
+      
+        
+        <p>Get full path to the passed json file.</p>
+
+        
+          <div class='highlight'><pre>        filepath = utils.io.getFilePath filename</pre></div>
+        
+      
+        
+        <p>Found the cron json file? Read it.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> filepath?
+            basename = path.basename filepath
+            cronJson = <span class="hljs-string">""</span>
+
+            <span class="hljs-keyword">try</span>
+                cronJson = fs.readFileSync filepath, {encoding: settings.general.encoding}
+                cronJson = utils.data.minifyJson cronJson
+            <span class="hljs-keyword">catch</span> ex
+                ex.details = <span class="hljs-string">"Could not parse <span class="hljs-subst">#{filepath}</span> as JSON."</span>
+                logger.error <span class="hljs-string">"Cron.load"</span>, ex
+                <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"invalidJson"</span>, ex</pre></div>
+        
+      
+        
+        <p>Iterate jobs, but do not add if job’s <code>enabled</code> is false.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">for</span> key, data <span class="hljs-keyword">of</span> cronJson
+                <span class="hljs-built_in">module</span> = <span class="hljs-built_in">require</span>(path.dirname(<span class="hljs-built_in">require</span>.main.filename) + <span class="hljs-string">"/"</span> + options.basePath + key)
+
+                <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> data
+                    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> d.enabled? <span class="hljs-keyword">or</span> d.enabled
+                        logger.debug <span class="hljs-string">"Cron.load"</span>, filename, d
+
+                        jobOptions = {
+                            id: d.id <span class="hljs-keyword">or</span> key + <span class="hljs-string">"."</span> + d.callback
+                            callback: <span class="hljs-built_in">module</span>[d.callback]
+                            filename: filename
+                            module: key
+                            autoStart: options.autoStart
+                        }
+
+                        job = lodash.assign d, jobOptions
+                        @add job
+                    <span class="hljs-keyword">else</span>
+                        logger.warn <span class="hljs-string">"Cron.load"</span>, filename, key, d.callback, <span class="hljs-string">"Job 'enabled' is false. Skip!"</span>
+
+            logger.info <span class="hljs-string">"Cron.load"</span>, <span class="hljs-string">"<span class="hljs-subst">#{basename}</span> loaded."</span>, options
+            events.emit <span class="hljs-string">"Cron.on.load"</span>, filename, options
+        <span class="hljs-keyword">else</span>
+            err = <span class="hljs-string">"Cron file <span class="hljs-subst">#{filename}</span> not found."</span>
+            logger.error <span class="hljs-string">"Cron.load"</span>, err
+            <span class="hljs-keyword">throw</span> {error: <span class="hljs-string">"Not found"</span>, message: <span class="hljs-string">"Could not load cron file <span class="hljs-subst">#{filename}</span>."</span>}</pre></div>
+        
+      
+        
+        <h2 id="methods">METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Start the specified cron job. If no <code>id</code> is specified, all jobs will be started.
+A filter can also be passed as an object. For example to start all jobs for
+the module “email”, use start({module: “email”}).
+@param {CronJob|String|Object} obj The job object, id or filter, optional (if not specified, start everything).</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(filter)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Cron.start"</span>, filter
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
+            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Cron"</span>
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter?
+            logger.info <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"All jobs"</span>
+            arr = @jobs</pre></div>
+        
+      
+        
+        <p>Passing the job directly?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> filter.constructor?.name <span class="hljs-keyword">is</span> <span class="hljs-string">"CronJob"</span>
+            arr = [filter]</pre></div>
+        
+      
+        
+        <p>Passing the job ID (string or number)?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isString filter <span class="hljs-keyword">or</span> lodash.isNumber filter
+            logger.info <span class="hljs-string">"Cron.start"</span>, filter
+            arr = lodash.find @jobs, {id: filter.toString()}</pre></div>
+        
+      
+        
+        <p>Passing an object with key / value pairs to filter jobs?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span>
+            logger.info <span class="hljs-string">"Cron.start"</span>, filter
+            arr = lodash.find @jobs, filter
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> arr? <span class="hljs-keyword">or</span> arr.length &lt; <span class="hljs-number">1</span>
+            filterString = filter
+            filterString = JSON.stringify filterString, <span class="hljs-literal">null</span>, <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> lodash.isObject filterString
+            logger.warn <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"No jobs matching <span class="hljs-subst">#{filterString}</span>."</span>
+            <span class="hljs-keyword">return</span> {notFound: <span class="hljs-literal">true</span>}
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">for</span> job <span class="hljs-keyword">in</span> arr
+                job.start()
+                logger.info <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"Started job"</span>, job.id</pre></div>
+        
+      
+        
+        <p>##
+Stop the specified cron job. If no <code>id</code> is specified, all jobs will be stopped.
+A filter can also be passed as an object. For example to stop all jobs for
+the module “mymodule”, use stop({module: “mymodule”}).
+@param {CronJob|String|Object} filter The job object, id or filter, optional (if not specified, stop everything).</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    stop: <span class="hljs-function"><span class="hljs-params">(filter)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Cron.stop"</span>, filter
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter?
+            logger.info <span class="hljs-string">"Cron.stop"</span>, <span class="hljs-string">"All jobs"</span>
+            arr = @jobs</pre></div>
+        
+      
+        
+        <p>Passing the job directly?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> filter.constructor?.name <span class="hljs-keyword">is</span> <span class="hljs-string">"CronJob"</span>
+            arr = [filter]</pre></div>
+        
+      
+        
+        <p>Passing the job ID (string or number)?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isString filter <span class="hljs-keyword">or</span> lodash.isNumber filter
+            arr = lodash.find @jobs, {id: filter.toString()}</pre></div>
+        
+      
+        
+        <p>Passing an object with key / value pairs to filter jobs?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span>
+            logger.info <span class="hljs-string">"Cron.stop"</span>, filter
+            arr = lodash.find @jobs, filter
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> arr? <span class="hljs-keyword">or</span> arr.length &lt; <span class="hljs-number">1</span>
+            filterString = filter
+            filterString = JSON.stringify filterString, <span class="hljs-literal">null</span>, <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> lodash.isObject filterString
+            logger.warn <span class="hljs-string">"Cron.stop"</span>, <span class="hljs-string">"No jobs matching <span class="hljs-subst">#{filterString}</span>."</span>
+            <span class="hljs-keyword">return</span> {notFound: <span class="hljs-literal">true</span>}
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">for</span> job <span class="hljs-keyword">in</span> arr
+                job.stop()
+                logger.info <span class="hljs-string">"Cron.start"</span>, <span class="hljs-string">"Stopped job"</span>, job.id</pre></div>
+        
+      
+        
+        <p>##
+Add a scheduled job to the cron, passing a <code>job</code>.
+You can also pass only the <code>job</code> if it has an id property.
+@param {String} id The job ID, optional, overrides job.id in case it has one.
+@param {Object} job The job object.
+@param {String} [job.id] The job ID, optional.
+@param [Number, Array] [job.schedule] If a number assume it’s the interval in seconds, otherwise a times array.
+@param {Function} [job.callback] The callback (job) to be triggered.
+@param {Boolean} [job.once] If true, the job will be triggered only once no matter which schedule it has.
+@return {CronJob} The job instance.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    add: <span class="hljs-function"><span class="hljs-params">(job)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Cron.add"</span>, job
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.cron.enabled
+            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Cron"</span></pre></div>
+        
+      
+        
+        <p>Throw error if no <code>id</code> was provided.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> job.id? <span class="hljs-keyword">or</span> job.id <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+            <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"uniqueIdRequired"</span>, <span class="hljs-string">"Please set job.id."</span></pre></div>
+        
+      
+        
+        <p>Throw error if job callback is not a valid function.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isFunction job.callback
+            <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"callbackMustBeFunction"</span>, <span class="hljs-string">"Please set job.callback."</span></pre></div>
+        
+      
+        
+        <p>Find existing job.</p>
+
+        
+          <div class='highlight'><pre>        existing = lodash.find @jobs, {id: job.id}</pre></div>
+        
+      
+        
+        <p>Handle existing jobs.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> existing?
+            <span class="hljs-keyword">if</span> settings.cron.allowReplacing
+                clearTimeout existing.timer <span class="hljs-keyword">if</span> existing.timer?
+                existing.timer = <span class="hljs-literal">null</span>
+            <span class="hljs-keyword">else</span>
+                <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"Job <span class="hljs-subst">#{job.id}</span> already exists and 'allowReplacing' is false."</span>
+
+        result = <span class="hljs-keyword">new</span> cronJob <span class="hljs-keyword">this</span>, job
+        @jobs.push result</pre></div>
+        
+      
+        
+        <p>Auto starting the job is optional.</p>
+
+        
+          <div class='highlight'><pre>        @start result <span class="hljs-keyword">if</span> job.autoStart
+
+        <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>##
+Remove and stop a current job. If job does not exist, a warning will be logged.
+@param {String} id The job ID.
+@return {Boolean} True if job removed, false if error or job does not exist.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    remove: <span class="hljs-function"><span class="hljs-params">(id)</span> =&gt;</span>
+        existing = lodash.find @jobs, {id: id}</pre></div>
+        
+      
+        
+        <p>Job exists?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> existing?
+            logger.warn <span class="hljs-string">"Cron.remove"</span>, <span class="hljs-string">"Job <span class="hljs-subst">#{id}</span> does not exist."</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>Clear timer and remove job from array.</p>
+
+        
+          <div class='highlight'><pre>        clearTimeout existing.timer <span class="hljs-keyword">if</span> existing.timer?
+        existing.timer = <span class="hljs-literal">null</span>
+
+        @jobs.splice existing
+
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span></pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Cron.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> Cron() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = Cron.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

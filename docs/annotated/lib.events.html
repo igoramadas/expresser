@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>events.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>events.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-events">EXPRESSER EVENTS</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>evt = <span class="hljs-built_in">require</span> <span class="hljs-string">"events"</span></pre></div>
+        
+      
+        
+        <p>##
+Central event manager to dispatch events to other Expresser modules.
+Acts as a wrapper to Node’s builtin EventEmitter class.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Events</span></span>
+    newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Events()</pre></div>
+        
+      
+        
+        <p>#
+The underlying event emmiter.
+@property
+@type EventEmitter</p>
+
+        
+          <div class='highlight'><pre>    emitter: <span class="hljs-keyword">new</span> evt.EventEmitter()</pre></div>
+        
+      
+        
+        <h2 id="methods">METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Emit a new event. Te frst argument is the event ID, all others are
+passed to the event emitter.
+@param {Arguments} args Arguments to be passed to the emitter.
+@return {Object} Returns itself.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    emit: <span class="hljs-function">=&gt;</span>
+        @emitter.emit.apply @emitter, arguments
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div>
+        
+      
+        
+        <p>##
+Bind the specified callback to an event ID.
+@param {String} id The event ID.
+@param {Function} callback The callback to be triggered, mandatory.
+@param {Boolean} prepend If true, prepend the callback to the list so it executes before others, default is false.
+@return {Object} Returns itself.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    on: <span class="hljs-function"><span class="hljs-params">(id, callback, prepend = <span class="hljs-literal">false</span>)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> prepend <span class="hljs-keyword">is</span> <span class="hljs-literal">true</span>
+            @emitter.prependListener id, callback
+        <span class="hljs-keyword">else</span>
+            @emitter.addListener id, callback
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div>
+        
+      
+        
+        <p>##
+Bind the specified “one time” callback to an event ID.
+@param {String} id The event ID.
+@param {Function} callback The callback to be triggered only once.
+@param {Boolean} prepend If true, prepend the callback to the list so it executes before others, default is false.
+@return {Object} Returns itself.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    once: <span class="hljs-function"><span class="hljs-params">(id, callback, prepend = <span class="hljs-literal">false</span>)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> prepend <span class="hljs-keyword">is</span> <span class="hljs-literal">true</span>
+            @emitter.prependOnceListener id, callback
+        <span class="hljs-keyword">else</span>
+            @emitter.once id, callback
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div>
+        
+      
+        
+        <p>##
+Remove a specific callback from the listeners related to an event ID.
+@param {String} id The event ID, mandatory.
+@param {Function} callback The callback to be removed, mandatory.
+@return {Object} Returns itself.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    off: <span class="hljs-function"><span class="hljs-params">(id, callback)</span> =&gt;</span>
+        @emitter.removeListener id, callback
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></pre></div>
+        
+      
+        
+        <p>##
+Returns an array with all listeners attached to the specified event ID.
+@param {String} id The event ID, mandatory.
+@return {Object} Returns an array with listeners.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    listeners: <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> @emitter.listeners id</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Events.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> Events() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = Events.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

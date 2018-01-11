@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>index.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>index.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser">EXPRESSER</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
+
+isTest = process.env.NODE_ENV <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
+isProduction = process.env.NODE_ENV <span class="hljs-keyword">is</span> <span class="hljs-string">"production"</span></pre></div>
+        
+      
+        
+        <p>##
+A platform for Node.js web apps, built on top of Express. This is the main wrapper.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Expresser</span></span>
+    newInstance: <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Expresser()</pre></div>
+        
+      
+        
+        <p>Set application root path.</p>
+
+        
+          <div class='highlight'><pre>    rootPath: path.dirname <span class="hljs-built_in">require</span>.main.filename</pre></div>
+        
+      
+        
+        <p>Preload the main modules. App must be the last module to be set.</p>
+
+        
+          <div class='highlight'><pre>    errors: <span class="hljs-built_in">require</span> <span class="hljs-string">"./errors.coffee"</span>
+    settings: <span class="hljs-built_in">require</span> <span class="hljs-string">"./settings.coffee"</span>
+    utils: <span class="hljs-built_in">require</span> <span class="hljs-string">"./utils.coffee"</span>
+    events: <span class="hljs-built_in">require</span> <span class="hljs-string">"./events.coffee"</span>
+    logger: <span class="hljs-built_in">require</span> <span class="hljs-string">"./logger.coffee"</span>
+    app: <span class="hljs-built_in">require</span> <span class="hljs-string">"./app.coffee"</span></pre></div>
+        
+      
+        
+        <p>Expose 3rd party modules.</p>
+
+        
+          <div class='highlight'><pre>    libs:
+        async: <span class="hljs-built_in">require</span> <span class="hljs-string">"async"</span>
+        express: <span class="hljs-built_in">require</span> <span class="hljs-string">"express"</span>
+        lodash: <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
+        moment: <span class="hljs-built_in">require</span> <span class="hljs-string">"moment"</span></pre></div>
+        
+      
+        
+        <p>Holds all loaded plugins.</p>
+
+        
+          <div class='highlight'><pre>    plugins: {}</pre></div>
+        
+      
+        
+        <p>Helper to load default modules. Basically everything inside the lib folder.</p>
+
+        
+          <div class='highlight'><pre>    initDefaultModules: <span class="hljs-function">=&gt;</span>
+        modules = fs.readdirSync __dirname
+
+        <span class="hljs-keyword">for</span> id, m <span class="hljs-keyword">of</span> <span class="hljs-keyword">this</span>
+            <span class="hljs-keyword">if</span> id <span class="hljs-keyword">isnt</span> <span class="hljs-string">"app"</span> <span class="hljs-keyword">and</span> modules.indexOf(id) &gt;= <span class="hljs-number">0</span>
+                @[id].init?()
+
+        @events.emitter.setMaxListeners @settings.events.maxListeners</pre></div>
+        
+      
+        
+        <p>Helper to load plugins. This will look first inside a /plugins
+folder for local development setups, or directly under /node_modules
+for plugins installed via NPM (most production scenarios).</p>
+
+        
+          <div class='highlight'><pre>    loadPlugins: <span class="hljs-function">=&gt;</span>
+        initializers = []
+        pluginsPath = path.resolve __dirname, <span class="hljs-string">"../plugins"</span>
+
+        <span class="hljs-keyword">if</span> fs.existsSync(pluginsPath) <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> isProduction
+            pluginsFolder = <span class="hljs-literal">true</span>
+            plugins = fs.readdirSync pluginsPath
+        <span class="hljs-keyword">else</span>
+            pluginsFolder = <span class="hljs-literal">false</span>
+            plugins = fs.readdirSync <span class="hljs-string">"<span class="hljs-subst">#{@rootPath}</span>/node_modules"</span></pre></div>
+        
+      
+        
+        <p>Iterate plugins and get it’s ID by removing the “expresser-“ prefix.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> isTest
+            <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> plugins
+                pluginId = p.substring(p.lastIndexOf(<span class="hljs-string">"/"</span>) + <span class="hljs-number">1</span>)
+
+                <span class="hljs-keyword">if</span> pluginsFolder <span class="hljs-keyword">or</span> pluginId.substring(<span class="hljs-number">0</span>, <span class="hljs-number">10</span>) <span class="hljs-keyword">is</span> <span class="hljs-string">"expresser-"</span>
+                    pluginName = pluginId.replace <span class="hljs-string">"expresser-"</span>, <span class="hljs-string">""</span></pre></div>
+        
+      
+        
+        <p>Check if plugin was already attached.</p>
+
+        
+          <div class='highlight'><pre>                    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @plugins[pluginName]?
+                        <span class="hljs-keyword">if</span> pluginsFolder
+                            pluginSettingsPath = <span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/../plugins/<span class="hljs-subst">#{p}</span>/settings.default.json"</span>
+                        <span class="hljs-keyword">else</span>
+                            pluginSettingsPath = <span class="hljs-string">"<span class="hljs-subst">#{@rootPath}</span>/node_modules/<span class="hljs-subst">#{pluginId}</span>/settings.default.json"</span></pre></div>
+        
+      
+        
+        <p>Check if there are default settings to be loaded for the plugin.</p>
+
+        
+          <div class='highlight'><pre>                        <span class="hljs-keyword">if</span> fs.existsSync pluginSettingsPath
+                            @settings.loadFromJson pluginSettingsPath, <span class="hljs-literal">true</span></pre></div>
+        
+      
+        
+        <p>Get options accordingly to plugin name.</p>
+
+        
+          <div class='highlight'><pre>                        pluginArr = pluginName.split <span class="hljs-string">"-"</span>
+                        optionsRef = @settings
+                        i = <span class="hljs-number">0</span>
+
+                        <span class="hljs-keyword">while</span> i &lt; pluginArr.length
+                            optionsRef = optionsRef?[pluginArr[i]]
+                            i++</pre></div>
+        
+      
+        
+        <p>Only load if plugin is enabled.</p>
+
+        
+          <div class='highlight'><pre>                        <span class="hljs-keyword">if</span> optionsRef?.enabled
+                            <span class="hljs-keyword">if</span> pluginsFolder <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> fs.existsSync(<span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/../../<span class="hljs-subst">#{pluginId}</span>"</span>)
+                                @plugins[pluginName] = <span class="hljs-built_in">require</span> <span class="hljs-string">"../plugins/<span class="hljs-subst">#{pluginName}</span>"</span>
+                            <span class="hljs-keyword">else</span>
+                                @plugins[pluginName] = <span class="hljs-built_in">require</span> pluginId</pre></div>
+        
+      
+        
+        <p>Attach itself to the plugin.</p>
+
+        
+          <div class='highlight'><pre>                            @plugins[pluginName].expresser = <span class="hljs-keyword">this</span>
+                            initializers.push {priority: @plugins[pluginName].priority, plugin: @plugins[pluginName]}
+
+        sortedInit = @libs.lodash.sortBy initializers, [<span class="hljs-string">"priority"</span>]</pre></div>
+        
+      
+        
+        <p>Init all loaded plugins on the correct order, by checking their ‘priority’ value.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> sortedInit
+            i.plugin.init?()</pre></div>
+        
+      
+        
+        <p>##
+Helper to init all modules. Load settings first, then Logger, then general
+modules, and finally the App.
+@param {Boolean} forceTest Used for testing the module init.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(forceTest = <span class="hljs-literal">false</span>)</span> =&gt;</span></pre></div>
+        
+      
+        
+        <p>Accept invalid certificates?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @settings.app.ssl.rejectUnauthorized
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = <span class="hljs-string">"0"</span>
+
+        @initDefaultModules()
+        @loadPlugins()</pre></div>
+        
+      
+        
+        <p>App must be the last thing to be started!</p>
+
+        
+          <div class='highlight'><pre>        @app.expresser = <span class="hljs-keyword">this</span>
+        @app.init() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> isTest <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> forceTest</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Expresser.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> Expresser() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = Expresser.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

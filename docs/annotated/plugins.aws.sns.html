@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>sns.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>sns.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="aws-sns">AWS SNS</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>aws = <span class="hljs-built_in">require</span> <span class="hljs-string">"aws-sdk"</span>
+
+errors = <span class="hljs-literal">null</span>
+logger = <span class="hljs-literal">null</span>
+settings = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>##
+Message delivery using AWS SNS.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SNS</span></span></pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Init the AWS SNS module. Should be called automatically by the main AWS module.
+@param {AWS} parent The AWS main module.
+@private</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(parent)</span> =&gt;</span>
+        errors = parent.expresser.errors
+        logger = parent.expresser.logger
+        settings = parent.expresser.settings
+
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <h2 id="methods">METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Publish a message to AWS SNS with the specified options.
+@param {Object} options The SNS message options.
+@param {String} [options.phoneNumber] The target phone number.
+@param {String} [options.message] The SMS message to be sent.
+@param {String} [options.region] The AWS region, if not passed will use default from settings.
+@return {Object} AWS SDK SNS publish results.
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    publish: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"AWS.SNS.publish"</span>, options</pre></div>
+        
+      
+        
+        <p>Accept uppercased parameters as well, like in the AWS SDK.</p>
+
+        
+          <div class='highlight'><pre>        options.phoneNumber = options.PhoneNumber <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.phoneNumber?
+        options.message = options.Message <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.message?
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
+                <span class="hljs-keyword">return</span> reject logger.notEnabled <span class="hljs-string">"AWS"</span>
+
+            sns = <span class="hljs-keyword">new</span> aws.SNS {region: options.region <span class="hljs-keyword">or</span> settings.aws.sns.region}
+
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.phoneNumber? <span class="hljs-keyword">or</span> options.phoneNumber <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+                err = errors.reject <span class="hljs-string">"phoneRequired"</span>
+                logger.error <span class="hljs-string">"AWS.SNS.publish"</span>, err
+                <span class="hljs-keyword">return</span> reject err</pre></div>
+        
+      
+        
+        <p>Get last 4 digits oh phone to be logged.</p>
+
+        
+          <div class='highlight'><pre>            digits = <span class="hljs-string">"XXX"</span> + options.phoneNumber.substr(options.phoneNumber.length - <span class="hljs-number">4</span>)
+
+            params = {
+                PhoneNumber: options.phoneNumber
+                Message: options.message
+            }</pre></div>
+        
+      
+        
+        <p>Dispatch the message.</p>
+
+        
+          <div class='highlight'><pre>            sns.publish params, <span class="hljs-function"><span class="hljs-params">(err, data)</span> =&gt;</span>
+                <span class="hljs-keyword">if</span> err?
+                    err = errors.reject <span class="hljs-string">"Error sending to <span class="hljs-subst">#{digits}</span>"</span>, err
+                    logger.error <span class="hljs-string">"AWS.SNS.publish"</span>, err
+                    reject err
+                <span class="hljs-keyword">else</span>
+                    logger.info <span class="hljs-string">"AWS.SNS.publish"</span>, <span class="hljs-string">"<span class="hljs-subst">#{options.message.length}</span> chars published to <span class="hljs-subst">#{digits}</span>"</span>
+                    resolve data</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>SNS.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> SNS() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = SNS.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

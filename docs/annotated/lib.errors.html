@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>errors.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>errors.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-errors">EXPRESSER ERRORS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+This is a helper class to make it easier to keep error management and
+exception handling consistent across the app.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Errors</span></span></pre></div>
+        
+      
+        
+        <p>#
+List of common error messages. Can be changed and extended as you wish.
+@property</p>
+
+        
+          <div class='highlight'><pre>    @messages: {
+        callbackMustBeFunction: <span class="hljs-string">"The callback must be a valid function."</span>
+        cantCreateDirectory: <span class="hljs-string">"Could not create directory."</span>
+        cantDeleteFile: <span class="hljs-string">"Could not delete file."</span>
+        cantSaveFile: <span class="hljs-string">"Could not save file."</span>
+        cantUploadFile: <span class="hljs-string">"Could not upload file."</span>
+        certificatesNotFound: <span class="hljs-string">"The specified certificates could not be found."</span>
+        domainRequired: <span class="hljs-string">"A valid domain is required."</span>
+        expressNotInit: <span class="hljs-string">"Express app was not initialized yet, please use after app.init()."</span>
+        invalidJson: <span class="hljs-string">"Invalid or unparseable JSON."</span>
+        moduleNotEnabled: <span class="hljs-string">"Module is not enabled."</span>
+        nameRequired: <span class="hljs-string">"A name is required."</span>
+        noNetworkInterfaces: <span class="hljs-string">"Could not load network interfaces info."</span>
+        pathRequired: <span class="hljs-string">"A valid path is required."</span>
+        phoneRequired: <span class="hljs-string">"A phone number is required."</span>
+        uniqueIdRequired: <span class="hljs-string">"ID is required and must be an unique value."</span>
+        tokenRequired: <span class="hljs-string">"A valid token is required."</span>
+        urlMandatory: <span class="hljs-string">"A URL is mandatory."</span>
+    }</pre></div>
+        
+      
+        
+        <p>##
+Returns an error message as JSON using the format {error, details}.
+@param {String} keyMsg Key of the message in <code>@messages</code>. If not found, use the string itself as the message. Mandatory.
+@param {Object} details Object or exception containing more details about the error.
+@return {Object} Returns the error with optional details.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    @reject: <span class="hljs-function"><span class="hljs-params">(keyMsg, details)</span> -&gt;</span>
+        message = @messages[keyMsg] <span class="hljs-keyword">or</span> keyMsg
+        error = {error: message}
+        error.details = details <span class="hljs-keyword">if</span> details?
+        <span class="hljs-keyword">return</span> error</pre></div>
+        
+      
+        
+        <p>##
+Throws an error or exception using the format {error, details}.
+@param {String} keyMsg Key of the message in <code>@messages</code>. If not found, use the string itself as the message. Mandatory.
+@param {Object} details Object or exception containing more details about the error.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    @throw: <span class="hljs-function"><span class="hljs-params">(keyMsg, details)</span> -&gt;</span>
+        message = @messages[keyMsg] <span class="hljs-keyword">or</span> keyMsg
+        error = {error: message}
+        error.details = details <span class="hljs-keyword">if</span> details?
+        <span class="hljs-keyword">throw</span> error</pre></div>
+        
+      
+        
+        <h2 id="exports">Exports</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = Errors</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

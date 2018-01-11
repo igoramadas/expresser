@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>index.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>index.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-mailer">EXPRESSER MAILER</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+nodemailer = <span class="hljs-built_in">require</span> <span class="hljs-string">"nodemailer"</span>
+
+events = <span class="hljs-literal">null</span>
+lodash = <span class="hljs-literal">null</span>
+logger = <span class="hljs-literal">null</span>
+settings = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>##
+Sends and manages emails, with template and tags replacement support.
+When parsing templates, the tags should be wrapped with normal brackets {}.
+Example: {contents}
+The base message template (which is loaded with every single sent message)
+must be saved as base.html, under the /assets/email folder (or whatever
+folder / base file name you have set on the settings).</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Mailer</span></span>
+    priority: <span class="hljs-number">2</span></pre></div>
+        
+      
+        
+        <p>#
+Templates manager.
+@property
+@type EmailTemplates</p>
+
+        
+          <div class='highlight'><pre>    templates: <span class="hljs-built_in">require</span> <span class="hljs-string">"./templates.coffee"</span></pre></div>
+        
+      
+        
+        <p>#
+The SMTP transport object.
+@property</p>
+
+        
+          <div class='highlight'><pre>    smtp: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Init the Mailer module and create the SMTP objects.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        settings = @expresser.settings
+
+        logger.debug <span class="hljs-string">"Mailer.init"</span></pre></div>
+        
+      
+        
+        <p>Init the templates helper.</p>
+
+        
+          <div class='highlight'><pre>        @templates.init <span class="hljs-keyword">this</span></pre></div>
+        
+      
+        
+        <p>Define default primary SMTP.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mailer.smtp.service? <span class="hljs-keyword">and</span> settings.mailer.smtp.service <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+            @setSmtp settings.mailer.smtp, <span class="hljs-literal">false</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.mailer.smtp.host? <span class="hljs-keyword">and</span> settings.mailer.smtp.host <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span> <span class="hljs-keyword">and</span> settings.mailer.smtp.port &gt; <span class="hljs-number">0</span>
+            @setSmtp settings.mailer.smtp, <span class="hljs-literal">false</span>
+
+        events.emit <span class="hljs-string">"Mailer.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <h2 id="outbound">OUTBOUND</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Sends an email to the specified address.
+@param {String} options The email message options
+@param {String} [options.body] The email body in text or HTML.
+@param {String} [options.subject] The email subject.
+@param {String} [options.to] The “to” address.
+@param {String} [options.from] The “from” address, optional, if blank use default from settings.
+@param {String} [options.template] The template file to be loaded, optional.
+@param {Boolean} doNotSend If true, the actual email will not be sent out. Used for testing.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    send: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"Mailer.send"</span>, options
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) =&gt;
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.mailer.enabled
+                <span class="hljs-keyword">return</span> reject logger.notEnabled <span class="hljs-string">"Mailer"</span>
+
+            smtp = options.smtp <span class="hljs-keyword">or</span> @smtp</pre></div>
+        
+      
+        
+        <p>Check if SMTP server is set.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> smtp?
+                err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Default SMTP transports were not initiated and nothing was passed on options.smtp."</span>
+                logger.error <span class="hljs-string">"Mailer.send"</span>, err, options
+                reject err</pre></div>
+        
+      
+        
+        <p>Make sure “to” address is valid.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.to? <span class="hljs-keyword">or</span> options.to <span class="hljs-keyword">is</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">or</span> options.to <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+                err = <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Option 'to' is mandatory and cannot be empty."</span>
+                logger.error <span class="hljs-string">"Mailer.send"</span>, err, options
+                reject err</pre></div>
+        
+      
+        
+        <p>Set from to default address if no <code>to</code> was set.</p>
+
+        
+          <div class='highlight'><pre>            options.<span class="hljs-keyword">from</span> = <span class="hljs-string">"<span class="hljs-subst">#{settings.app.title}</span> &lt;<span class="hljs-subst">#{settings.mailer.<span class="hljs-keyword">from</span>}</span>&gt;"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.<span class="hljs-keyword">from</span>?</pre></div>
+        
+      
+        
+        <p>Set HTML to body, if passed.</p>
+
+        
+          <div class='highlight'><pre>            html = <span class="hljs-keyword">if</span> options.body? <span class="hljs-keyword">then</span> options.body.toString() <span class="hljs-keyword">else</span> <span class="hljs-string">""</span></pre></div>
+        
+      
+        
+        <p>If to is an array, make it a string separated by commas.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> lodash.isArray options.to
+                options.to = options.to.join <span class="hljs-string">", "</span></pre></div>
+        
+      
+        
+        <p>Get the name of recipient based on the <code>to</code> option.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.to.indexOf(<span class="hljs-string">"&lt;"</span>) &lt; <span class="hljs-number">3</span>
+                toName = options.to
+            <span class="hljs-keyword">else</span>
+                toName = options.to.substring <span class="hljs-number">0</span>, options.to.indexOf(<span class="hljs-string">"&lt;"</span>) - <span class="hljs-number">1</span></pre></div>
+        
+      
+        
+        <p>Load template if a <code>template</code> was passed.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.template? <span class="hljs-keyword">and</span> options.template <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+                template = @templates.get options.template
+                html = @templates.parse template, {contents: html}</pre></div>
+        
+      
+        
+        <p>Parse template keywords if a <code>keywords</code> was passed.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> lodash.isObject options.keywords
+                    html = @templates.parse html, options.keywords</pre></div>
+        
+      
+        
+        <p>Parse final template and set it on the <code>options</code>.</p>
+
+        
+          <div class='highlight'><pre>            html = @templates.parse html, {to: toName, appTitle: settings.app.title, appUrl: settings.app.url}
+            options.html = html</pre></div>
+        
+      
+        
+        <p>Check if <code>doNotSend</code> flag is set, and if so, do not send anything.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.doNotSend <span class="hljs-keyword">or</span> settings.mailer.doNotSend
+                logger.warn <span class="hljs-string">"Mailer.smtpSend"</span>, <span class="hljs-string">"Abort! doNotSend = true"</span>, options.to, options.subject
+                <span class="hljs-keyword">return</span> resolve {doNotSend: <span class="hljs-literal">true</span>}</pre></div>
+        
+      
+        
+        <p>Send using the main SMTP. If failed and a secondary is also set, try using the secondary.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">try</span>
+                smtp.sendMail options, <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
+                    <span class="hljs-keyword">if</span> err?
+                        logger.error <span class="hljs-string">"Mailer.send"</span>, smtp.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, err
+                        reject err
+                    <span class="hljs-keyword">else</span>
+                        logger.info <span class="hljs-string">"Mailer.send"</span>, smtp.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, options.subject
+                        resolve result
+            <span class="hljs-keyword">catch</span> ex
+                logger.error <span class="hljs-string">"Mailer.send"</span>, smtp.host, <span class="hljs-string">"to <span class="hljs-subst">#{options.to}</span>"</span>, <span class="hljs-string">"from <span class="hljs-subst">#{options.<span class="hljs-keyword">from</span>}</span>"</span>, ex
+                reject err</pre></div>
+        
+      
+        
+        <h2 id="smtp-helper-methods">SMTP HELPER METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Helper to create a SMTP object.
+@param {Object} options Options like service, host and port, username, password etc.
+@return {Object} A Nodemailer SMTP transport object, or null if a problem was found.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    createSmtp: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"Mailer.createSmtp"</span>, options
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.mailer.enabled
+            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Mailer"</span>
+
+        options.debug = settings.general.debug <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.debug?
+        options.secureConnection = options.secure <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.secureConnection?
+        dkim = options.dkim <span class="hljs-keyword">or</span> settings.mailer.dkim</pre></div>
+        
+      
+        
+        <p>Make sure auth is properly set.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.auth? <span class="hljs-keyword">and</span> options.user? <span class="hljs-keyword">and</span> options.password?
+            options.auth = {user: options.user, pass: options.password}
+            <span class="hljs-keyword">delete</span> options[<span class="hljs-string">"user"</span>]
+            <span class="hljs-keyword">delete</span> options[<span class="hljs-string">"password"</span>]</pre></div>
+        
+      
+        
+        <p>Set the correct SMTP details based on the options.</p>
+
+        
+          <div class='highlight'><pre>        result = nodemailer.createTransport options</pre></div>
+        
+      
+        
+        <p>Sign using DKIM?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> dkim.domainName? <span class="hljs-keyword">and</span> dkim.privateKey?
+            result.useDKIM dkim
+
+        <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>##
+Use the specified options and create a new SMTP server.
+If no options are set, use default from settings.
+@param {Object} options Options to be passed to SMTP creator.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    setSmtp: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+        options = settings.mailer.smtp <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
+        @smtp = @createSmtp options</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Mailer.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> Mailer() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = exports = Mailer.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

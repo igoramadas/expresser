@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>job.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>job.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-cron-job">EXPRESSER CRON JOB</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>lodash = <span class="hljs-built_in">require</span> <span class="hljs-string">"lodash"</span>
+moment = <span class="hljs-built_in">require</span> <span class="hljs-string">"moment"</span>
+logger = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>##
+Represents a cron job.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CronJob</span></span>
+
+    constructor: <span class="hljs-function"><span class="hljs-params">(parent, options)</span> -&gt;</span>
+        logger = parent.expresser.logger
+
+        @[key] = value <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">of</span> options
+
+        @startTime = options.startTime <span class="hljs-keyword">or</span> moment <span class="hljs-number">0</span>
+        @endTime = options.endTime <span class="hljs-keyword">or</span> moment <span class="hljs-number">0</span></pre></div>
+        
+      
+        
+        <h2 id="methods">METHODS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Starts the job timer. Please note that if you call start on a job that was
+already started, it will clear and restart the timer(s) based on the job schedule.
+@return {Moment} Date and time of the next scheduled run.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    start: <span class="hljs-function">=&gt;</span>
+        logger.info <span class="hljs-string">"CronJob.start"</span>, @id
+
+        callback = @getCallback()</pre></div>
+        
+      
+        
+        <p>Get the correct schedule value.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isNumber @schedule
+            schedule = moment.duration(@schedule).asMilliseconds()</pre></div>
+        
+      
+        
+        <p>Make sure timer is not running.</p>
+
+        
+          <div class='highlight'><pre>        clearTimeout @timer <span class="hljs-keyword">if</span> @timer?</pre></div>
+        
+      
+        
+        <p>Set the timeout based on the defined schedule.</p>
+
+        
+          <div class='highlight'><pre>        timeout = @getTimeout()
+        @timer = setTimeout callback, timeout
+        @nextRun = moment().add timeout, <span class="hljs-string">"ms"</span>
+
+        <span class="hljs-keyword">return</span> timeout</pre></div>
+        
+      
+        
+        <p>##
+Stops the job by clearing the timeout.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    stop: <span class="hljs-function">=&gt;</span>
+        logger.info <span class="hljs-string">"CronJob.stop"</span>, @id
+
+        clearTimeout @timer <span class="hljs-keyword">if</span> @timer?
+        @timer = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <h2 id="helpers">HELPERS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Helper to prepare and get the job callback function.
+@private</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    getCallback: <span class="hljs-function">=&gt;</span>
+<span class="hljs-function">        <span class="hljs-title">callback</span> = =&gt;</span>
+            logger.info <span class="hljs-string">"CronJob.callback"</span>, @id
+
+            @timer = <span class="hljs-literal">null</span>
+            @startTime = moment()
+            @endTime = moment()
+
+            <span class="hljs-keyword">try</span></pre></div>
+        
+      
+        
+        <p>The parameters can be force set using “params”.
+If not present, pass the job itself to the callback instead.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> @params
+                    @callback.apply <span class="hljs-keyword">this</span>, @params
+                <span class="hljs-keyword">else</span>
+                    @callback <span class="hljs-keyword">this</span></pre></div>
+        
+      
+        
+        <p>Job end time should be set on the callback, but if it wasn’t, we force set it here.</p>
+
+        
+          <div class='highlight'><pre>                @endTime = moment() <span class="hljs-keyword">if</span> @startTime <span class="hljs-keyword">is</span> @endTime
+            <span class="hljs-keyword">catch</span> ex
+                logger.error <span class="hljs-string">"CronJob.callback"</span>, @id, ex.message, ex.stack</pre></div>
+        
+      
+        
+        <p>Only reset timer if once is not true.</p>
+
+        
+          <div class='highlight'><pre>            @start() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @once</pre></div>
+        
+      
+        
+        <p>Return generated callback.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">return</span> callback</pre></div>
+        
+      
+        
+        <p>##
+Helper to get the timeout value in milliseconds till the next job callback.
+@private</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    getTimeout: <span class="hljs-function">=&gt;</span>
+        now = moment()
+        nextDate = moment()</pre></div>
+        
+      
+        
+        <p>If <code>schedule</code> is not an array, parse it as integer / seconds.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> lodash.isNumber @schedule <span class="hljs-keyword">or</span> lodash.isString @schedule
+            timeout = moment().add(@schedule, <span class="hljs-string">"ms"</span>).valueOf() - now.valueOf()</pre></div>
+        
+      
+        
+        <p>DEPRECATED! Schedule must be defined now in milliseconds.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> @schedule &lt; <span class="hljs-number">1000</span>
+                logger.warn <span class="hljs-string">"CronJob.getTimeout"</span>, @id, <span class="hljs-string">"Schedule: <span class="hljs-subst">#{@schedule}</span>"</span>, <span class="hljs-string">"Notice: job schedules should now be defined in milliseconds."</span>
+        <span class="hljs-keyword">else</span>
+            minTime = <span class="hljs-string">"99:99:99"</span>
+            nextTime = <span class="hljs-string">"99:99:99"</span></pre></div>
+        
+      
+        
+        <p>Get the next and minimum times from <code>schedule</code>.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">for</span> sc <span class="hljs-keyword">in</span> @schedule
+                minTime = sc <span class="hljs-keyword">if</span> sc &lt; minTime
+                nextTime = sc <span class="hljs-keyword">if</span> sc &lt; nextTime <span class="hljs-keyword">and</span> sc &gt; nextDate.format(<span class="hljs-string">"HH:mm:ss"</span>)</pre></div>
+        
+      
+        
+        <p>If no times were found for today then set for tomorrow, minimum time.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> nextTime <span class="hljs-keyword">is</span> <span class="hljs-string">"99:99:99"</span>
+                nextDate = nextDate.add <span class="hljs-number">1</span>, <span class="hljs-string">"d"</span>
+                nextTime = minTime</pre></div>
+        
+      
+        
+        <p>Return the timeout.</p>
+
+        
+          <div class='highlight'><pre>            arr = nextTime.split <span class="hljs-string">":"</span>
+            dateValue = [nextDate.year(), nextDate.month(), nextDate.date(), parseInt(arr[<span class="hljs-number">0</span>]), parseInt(arr[<span class="hljs-number">1</span>]), parseInt(arr[<span class="hljs-number">2</span>])]
+            timeout = moment(dateValue).valueOf() - now.valueOf()
+
+        <span class="hljs-keyword">return</span> timeout</pre></div>
+        
+      
+        
+        <h2 id="exports">Exports</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = CronJob</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

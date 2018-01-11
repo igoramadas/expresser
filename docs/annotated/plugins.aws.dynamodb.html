@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>dynamodb.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>dynamodb.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="aws-dynamodb">AWS DYNAMODB</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>aws = <span class="hljs-built_in">require</span> <span class="hljs-string">"aws-sdk"</span>
+
+errors = <span class="hljs-literal">null</span>
+logger = <span class="hljs-literal">null</span>
+settings = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>##
+Methods to read and modify data on AWS DynamoDB databases. On <code>init()</code> it will
+create a DynamoDB and a DocumentClient targeting the region defined on the
+settings. If you wish to change the region on runtime, please call the
+<code>createClients()</code> method manually passing {region: “REGION_ID”}.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DynamoDB</span></span></pre></div>
+        
+      
+        
+        <p>#
+Exposes a default DynamoDB main object to external modules.
+@property
+@type aws-DynamoDB</p>
+
+        
+          <div class='highlight'><pre>    db: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>#
+Exposes a default DynamoDB document client to external modules.
+@property
+@type aws-DocumentClient</p>
+
+        
+          <div class='highlight'><pre>    docClient: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Init the AWS DynamoDB module. Should be called automatically by the main AWS module.
+@param {AWS} parent The AWS main module.
+@private</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(parent)</span> =&gt;</span>
+        errors = parent.expresser.errors
+        logger = parent.expresser.logger
+        settings = parent.expresser.settings
+
+        @createClients()
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <p>##
+Creates the default DB and document clients. This is called on <code>init()</code>
+automatically, but you can use it to change region and other options as desired.
+@param {Object} options Database and document client options, optional.
+@param {String} [options.region] The AWS region, if not passed will use default from settings.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    createClients: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
+        options = {region: settings.aws.dynamodb.region} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
+
+        @db = <span class="hljs-keyword">new</span> aws.DynamoDB options
+        @docClient = <span class="hljs-keyword">new</span> aws.DynamoDB.DocumentClient options</pre></div>
+        
+      
+        
+        <h2 id="sdk-helper">SDK HELPER</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Helper to call the SDK method with the specified parameters.
+@param {Object} obj AWS SDK object (db, docClient, etc).
+@param {String} method AWS SDK method name.
+@param {Object} method Parameters to be passed to the method above.
+@return {Object} AWS SDK call result.
+@private
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    sdkCall: <span class="hljs-function"><span class="hljs-params">(obj, method, params)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"AWS.DynamoDB.<span class="hljs-subst">#{method}</span>"</span>, params
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
+                <span class="hljs-keyword">return</span> reject logger.notEnabled <span class="hljs-string">"AWS"</span>
+
+            obj[method] params, <span class="hljs-function"><span class="hljs-params">(err, data)</span> -&gt;</span>
+                <span class="hljs-keyword">if</span> err?
+                    err = errors.reject <span class="hljs-string">"Problem calling DynamoDB on AWS."</span>, err
+                    logger.error <span class="hljs-string">"AWS.DynamoDB.<span class="hljs-subst">#{method}</span>"</span>, params, err
+                    <span class="hljs-keyword">return</span> reject err
+
+                <span class="hljs-keyword">return</span> resolve data</pre></div>
+        
+      
+        
+        <h2 id="tables-and-management">TABLES AND MANAGEMENT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Creates a new table on DynamoDB.
+@param {Object} params The table parameters.
+@return {Object} AWS SDK table creation results.
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    createTable: <span class="hljs-function"><span class="hljs-params">(params)</span> =&gt;</span> <span class="hljs-keyword">return</span> @sdkCall @db, <span class="hljs-string">"createTable"</span>, params</pre></div>
+        
+      
+        
+        <p>##
+Deletes a table on DynamoDB.
+@param {Object} params The table parameters.
+@return {Object} AWS SDK table deletion results.
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    deleteTable: <span class="hljs-function"><span class="hljs-params">(params)</span> =&gt;</span> <span class="hljs-keyword">return</span> @sdkCall @db, <span class="hljs-string">"deleteTable"</span>, params</pre></div>
+        
+      
+        
+        <h2 id="items">ITEMS</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Gets all items (with optional filter) from the specified table.
+@param {Object} params The query parameters.
+@return {Object} AWS SDK scan results.
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    scan: <span class="hljs-function"><span class="hljs-params">(params)</span> =&gt;</span> <span class="hljs-keyword">return</span> @sdkCall @docClient, <span class="hljs-string">"scan"</span>, params</pre></div>
+        
+      
+        
+        <p>##
+Query item(s) from the specified table.
+@param {Object} params The query parameters.
+@return {Object} AWS SDK query results.
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    query: <span class="hljs-function"><span class="hljs-params">(params)</span> =&gt;</span> <span class="hljs-keyword">return</span> @sdkCall @docClient, <span class="hljs-string">"query"</span>, params</pre></div>
+        
+      
+        
+        <p>##
+Read an item from the specified table.
+@param {Object} params The item parameters.
+@return {Object} AWS SDK get results.
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    get: <span class="hljs-function"><span class="hljs-params">(params)</span> =&gt;</span> <span class="hljs-keyword">return</span> @sdkCall @docClient, <span class="hljs-string">"get"</span>, params</pre></div>
+        
+      
+        
+        <p>##
+Creates a new item on the specified table.
+@param {Object} params The item creation parameters.
+@return {Object} AWS SDK put results.
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    put: <span class="hljs-function"><span class="hljs-params">(params)</span> =&gt;</span> <span class="hljs-keyword">return</span> @sdkCall @docClient, <span class="hljs-string">"put"</span>, params</pre></div>
+        
+      
+        
+        <p>##
+Update item(s) on the specified table.
+@param {Object} params The item update parameters.
+@return {Object} AWS SDK update results.
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    update: <span class="hljs-function"><span class="hljs-params">(params)</span> =&gt;</span> <span class="hljs-keyword">return</span> @sdkCall @docClient, <span class="hljs-string">"update"</span>, params</pre></div>
+        
+      
+        
+        <p>##
+Deletes item(s) from the specified table.
+@param {Object} params The item deletion parameters.
+@return {Object} AWS SDK delete results.
+@promise</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    delete: <span class="hljs-function"><span class="hljs-params">(params)</span> =&gt;</span> <span class="hljs-keyword">return</span> @sdkCall @docClient, <span class="hljs-string">"delete"</span>, params</pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>DynamoDB.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> DynamoDB() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = DynamoDB.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

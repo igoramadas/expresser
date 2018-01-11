@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>templates.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>templates.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="mailer-templates">MAILER TEMPLATES</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
+
+logger = <span class="hljs-literal">null</span>
+moment = <span class="hljs-literal">null</span>
+settings = <span class="hljs-literal">null</span>
+utils = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>Holds all cached templates.</p>
+
+        
+          <div class='highlight'><pre>cache = {}</pre></div>
+        
+      
+        
+        <p>##
+Helper class to load and parse email templates.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EmailTemplates</span></span></pre></div>
+        
+      
+        
+        <p>##
+Init the Templates class.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(parent)</span> =&gt;</span>
+        logger = parent.expresser.logger
+        moment = parent.expresser.libs.moment
+        settings = parent.expresser.settings
+        utils = parent.expresser.utils
+
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <p>##
+Load and return the specified template. Get from the cache or from the disk
+if it wasn’t loaded yet. Templates are stored inside the <code>/emailtemplates</code>
+folder by default and should have a .html extension. The base template,
+which is always loaded first, should be called base.html by default.
+The contents will be inserted on the {contents} tag.
+@param {String} name The template name, without .html.
+@return {String} The template HTML.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    get: <span class="hljs-function"><span class="hljs-params">(name)</span> -&gt;</span>
+        name = name.toString()
+        name = name.replace(<span class="hljs-string">".html"</span>, <span class="hljs-string">""</span>) <span class="hljs-keyword">if</span> name.indexOf(<span class="hljs-string">".html"</span>)
+
+        cached = cache[name]</pre></div>
+        
+      
+        
+        <p>Is it already cached? If so do not hit the disk.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> cached? <span class="hljs-keyword">and</span> cached.expires &gt; moment()
+            logger.debug <span class="hljs-string">"Mailer.templates.get"</span>, name, <span class="hljs-string">"Loaded from cache."</span>
+            <span class="hljs-keyword">return</span> cache[name].template
+        <span class="hljs-keyword">else</span>
+            logger.debug <span class="hljs-string">"Mailer.templates.get"</span>, name</pre></div>
+        
+      
+        
+        <p>Set file system reading options.</p>
+
+        
+          <div class='highlight'><pre>        readOptions = {encoding: settings.general.encoding}
+        baseFile = utils.io.getFilePath path.join(settings.mailer.templates.path, settings.mailer.templates.baseFile)
+        templateFile = utils.io.getFilePath path.join(settings.mailer.templates.path, <span class="hljs-string">"<span class="hljs-subst">#{name}</span>.html"</span>)
+
+        logger.debug <span class="hljs-string">"Mailer.templates.get"</span>, <span class="hljs-string">"Templates from"</span>, baseFile, templateFile</pre></div>
+        
+      
+        
+        <p>Read base and <code>name</code> template and merge them together.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">try</span>
+            base = fs.readFileSync baseFile, readOptions
+        <span class="hljs-keyword">catch</span> ex
+            logger.warn <span class="hljs-string">"Mailer.templates.get"</span>, ex, <span class="hljs-string">"Could not read base.html file, will use template content as body."</span>
+            base = <span class="hljs-string">"{contents}"</span>
+
+        template = fs.readFileSync templateFile, readOptions
+        result = @parse base, {contents: template}</pre></div>
+        
+      
+        
+        <p>Save to cache.</p>
+
+        
+          <div class='highlight'><pre>        cache[name] = {}
+        cache[name].template = result
+        cache[name].expires = moment().add settings.general.ioCacheTimeout, <span class="hljs-string">"s"</span>
+
+        <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>##
+Parse the specified template to replace keywords. The <code>keywords</code> is a set of key-values
+to be replaced. For example if keywords is <code>{id: 1, friendlyUrl: &quot;abc&quot;}</code> then the tags
+<code>{id}</code> and <code>{friendlyUrl}</code> will be replaced with the values 1 and abc.
+@param {String} template The template (its value, not its name!) to be parsed.
+@param {Object} keywords Object with keys to be replaced with its values.
+@return {String} The parsed template, keywords replaced with values.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    parse: <span class="hljs-function"><span class="hljs-params">(template, keywords)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"Mailer.templates.parse"</span>, template.replace(<span class="hljs-regexp">/(\r\n|\n|\r)/gm</span>,<span class="hljs-string">""</span>), keywords
+
+        template = template.toString()
+
+        <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">of</span> keywords
+            template = template.replace <span class="hljs-keyword">new</span> RegExp(<span class="hljs-string">"\\{<span class="hljs-subst">#{key}</span>\\}"</span>, <span class="hljs-string">"gi"</span>), value
+
+        <span class="hljs-keyword">return</span> template</pre></div>
+        
+      
+        
+        <p>##
+Force clear the templates cache.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    clearCache: <span class="hljs-function">-&gt;</span>
+        count = Object.keys(cache).length
+        cache = {}
+        logger.info <span class="hljs-string">"Mailer.templates.clearCache"</span>, <span class="hljs-string">"Cleared <span class="hljs-subst">#{count}</span> templates."</span></pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>EmailTemplates.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> EmailTemplates() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = exports = EmailTemplates.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
