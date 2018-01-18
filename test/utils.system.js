@@ -7,7 +7,8 @@ var fs = require("fs")
 chai.should()
 
 describe("Utils System Tests", function() {
-    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test"
+    env.NODE_ENV = "test"
+    process.setMaxListeners(20)
 
     var settings = require("../lib/settings.coffee")
     var utils = require("../lib/utils.coffee")

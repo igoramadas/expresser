@@ -6,7 +6,8 @@ var chai = require("chai")
 chai.should()
 
 describe("^Google Cloud Storage Tests", function() {
-    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test"
+    env.NODE_ENV = "test"
+    process.setMaxListeners(20)
 
     var settings = require("../lib/settings.coffee")
     var fs = require("fs")

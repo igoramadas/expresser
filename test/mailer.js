@@ -6,7 +6,9 @@ var chai = require("chai")
 chai.should()
 
 describe("Mailer Tests", function() {
-    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test"
+    env.NODE_ENV = "test"
+    process.setMaxListeners(20)
+
     var hasEnv = env["SMTP_USER"] ? true : false
 
     var settings = require("../lib/settings.coffee")

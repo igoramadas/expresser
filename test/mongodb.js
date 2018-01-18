@@ -6,7 +6,8 @@ var chai = require("chai")
 chai.should()
 
 describe("MongoDB Tests", function() {
-    if (!env.NODE_ENV || env.NODE_ENV == "") env.NODE_ENV = "test"
+    env.NODE_ENV = "test"
+    process.setMaxListeners(20)
 
     var testTimestamp = require("moment")().valueOf()
     var settings = require("../lib/settings.coffee")
