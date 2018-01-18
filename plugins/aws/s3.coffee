@@ -101,6 +101,8 @@ class S3
                             logger.error "AWS.S3.download", "getObject", options.bucket, options.key, err
                             return reject err
 
+                        logger.debug "AWS.S3.download", "getObject", options.key, data.ContentType, "#{data.ContentLength} bytes"
+
                         # Destination set? If so, write to disk.
                         if options.destination?
                             fs.writeFile options.destination, data.Body, {encoding: settings.general.encoding}, (err) ->

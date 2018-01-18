@@ -108,13 +108,14 @@ class Expresser
     # @param {Boolean} forceTest Used for testing the module init.
     ###
     init: (forceTest = false) =>
+        process.on "exit", (code) -> console.warn "Quitting #{@settings.app.title}...", code
+
+        @initDefaultModules()
+        @loadPlugins()
 
         # Accept invalid certificates?
         if not @settings.app.ssl.rejectUnauthorized
             process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-
-        @initDefaultModules()
-        @loadPlugins()
 
         # App must be the last thing to be started!
         @app.expresser = this
