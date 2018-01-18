@@ -79,11 +79,11 @@ class LoggerFile
         transport = {flushing: false, buffer: {}, flush: @flush, clean: @clean}
         transport.onLogSuccess = options.onLogSuccess
         transport.onLogError = options.onLogError
-        transport.bufferDispatcher = setInterval transport.flush, options.bufferInterval
+        transport.timerFlush = setInterval transport.flush, options.bufferInterval
 
         # Check the maxAge of local logs and set up auto clean.
         if options.maxAge? and options.maxAge > 0
-            transport.timerCleanLocal = setInterval transport.clean, options.bufferInterval * 20
+            transport.timerClean = setInterval transport.clean, options.bufferInterval * 20
 
         return transport
 

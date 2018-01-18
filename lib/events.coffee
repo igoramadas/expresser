@@ -78,6 +78,7 @@ class Events
 # -----------------------------------------------------------------------------
 Events.getInstance = ->
     @instance = new Events() if not @instance?
+    @instance.emitter.setMaxListeners 20
     return @instance
 
 module.exports = Events.getInstance()

@@ -1,5 +1,9 @@
 # Changelog for expresser-logger-file
 
+3.0.2
+=====
+* Improved log flushing and cleaning.
+
 3.0.1
 =====
 * BREAKING! The init() does not return a transport any longer.

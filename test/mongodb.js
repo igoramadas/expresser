@@ -51,8 +51,18 @@ describe("MongoDB Tests", function() {
         })
 
         it("Connets", async function() {
-            dbMongo = await mongodb.connect(settings.mongodb.connString, settings.mongodb.options)
-            return dbMongo
+            var err;
+
+            try {
+                dbMongo = await mongodb.connect(settings.mongodb.connString, settings.mongodb.options)
+            } catch (ex) {
+                err = ex;
+            }
+
+            return new Promise((resolve, reject) => {
+                if (dbMongo) resolve()
+                else reject(err);
+            })
         })
     }
 

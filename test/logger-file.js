@@ -62,6 +62,8 @@ describe("Logger File Tests", function() {
     })
 
     after(function() {
+        clearInterval(transport.timerFlush);
+        clearInterval(transport.timerClean);
         deleteLogsFolder()
     })
 
