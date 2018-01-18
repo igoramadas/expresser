@@ -37,10 +37,6 @@ class MongoDb
 
         logger.debug "MongoDb.init"
 
-        # Create default database connection if `connString` was specified.
-        if settings.mongodb.enabled and settings.mongodb.connString?
-            @connect settings.mongodb.connString, settings.mongodb.options
-
         events.emit "MongoDb.on.init"
         delete @init
 
@@ -51,7 +47,7 @@ class MongoDb
     # @return {Object} The database connection object.
     # @promise
     ###
-    connect: (connString, options) ->
+    connect: (connString, options) =>
         logger.debug "MongoDb.connect", connString, options
 
         if not settings.mongodb.enabled
@@ -64,10 +60,10 @@ class MongoDb
         connStringSafe = connStringSafe.substring 0, sep if sep > 0
 
         # Tries to connect to the specified database.
-        return new Promise (resolve, reject) ->
+        return new Promise (resolve, reject) =>
             result = {connString: connString, connection: null}
 
-            @client.connect connString, options, (err, conn) ->
+            @client.connect connString, options, (err, conn) =>
                 if err?
                     logger.error "MongoDb.getConnection", "Could not connect to #{connStringSafe}.", err
 

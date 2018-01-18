@@ -1,6 +1,6 @@
 {
     "name": "expresser-mongodb",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "description": "MongoDB database plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",

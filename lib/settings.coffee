@@ -8,6 +8,9 @@ lodash = require "lodash"
 path = require "path"
 utils = require "./utils.coffee"
 
+# Current environment
+env = null
+
 ###
 # All main settings for an Expresser apps are set and described on the
 # settings.default.json file. Do not edit it!!! To change settings please
@@ -235,6 +238,8 @@ class Settings
     # @param {Function} callback Optional function (event, filename) triggered when a settings file gets updated.
     ###
     watch: (callback) =>
+        env = process.env.NODE_ENV or "development"
+
         if lodash.isBoolean callback
             console.warn "Settings.watch(boolean)", "DEPRECATED! Please use watch(callback) and unwatch(callback)."
 
@@ -256,7 +261,7 @@ class Settings
 
                 f.watching = true
 
-        if @general.debug
+        if @general.debug and env isnt "test"
             console.log "Settings.watch", (if callback? then "With callback" else "No callback")
 
     ###
@@ -265,6 +270,8 @@ class Settings
     # @param {Function} callback Optional function to be removed from the file watchers.
     ###
     unwatch: (callback) =>
+        env = process.env.NODE_ENV or "development"
+
         for f in @files
             filename = utils.io.getFilePath f.filename
 
@@ -276,7 +283,7 @@ class Settings
 
             f.watching = false
 
-        if @general.debug
+        if @general.debug and env isnt "test"
             console.log "Settings.unwatch", (if callback? then "With callback" else "No callback")
 
 # Singleton implementation

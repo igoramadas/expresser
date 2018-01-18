@@ -1,5 +1,9 @@
 # Changelog for expresser-mongodb
 
+3.0.2
+=====
+* Critical release, fixed incorrect bindings, module should be working again.
+
 3.0.1
 =====
 * Updated MongoDB driver.

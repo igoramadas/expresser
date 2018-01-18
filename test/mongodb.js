@@ -46,9 +46,16 @@ describe("MongoDB Tests", function() {
 
     if (settings.mongodb && settings.mongodb.connString) {
         it("Inits", function() {
-            dbMongo = mongodb.init()
+            mongodb.init()
         })
 
+        it("Connets", async function() {
+            dbMongo = await mongodb.connect(settings.mongodb.connString, settings.mongodb.options)
+            return dbMongo
+        })
+    }
+
+    if (dbMongo) {
         it("Add 100 records to the database", function(done) {
             this.timeout(12000)
 
@@ -68,8 +75,7 @@ describe("MongoDB Tests", function() {
             var execution = function() {
                 for (var i = 0; i < counter; i++) {
                     dbMongo.insert(
-                        "test",
-                        {
+                        "test", {
                             counter: i
                         },
                         callback
@@ -172,8 +178,7 @@ describe("MongoDB Tests", function() {
             }
 
             dbMongo.get(
-                "test",
-                {
+                "test", {
                     limit: 5
                 },
                 callback
@@ -332,6 +337,6 @@ describe("MongoDB Tests", function() {
             }
         })
     } else {
-        it.skip("Database MongoDB tests skipped, no connection string set")
+        it.skip("Database MongoDB tests skipped, no connection available")
     }
 })
