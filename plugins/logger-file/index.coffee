@@ -134,27 +134,30 @@ class LoggerFile
         # Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
         # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
         # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
-        for key, logs of @buffer
-            if logs.length > 0
-                writeData = logs.join "\n"
-                filePath = path.join settings.logger.file.path, "#{date}.#{key}.log"
-                successMsg = "#{logs.length} records logged to disk."
+        try
+            for key, logs of @buffer
+                if logs.length > 0
+                    writeData = logs.join "\n"
+                    filePath = path.join settings.logger.file.path, "#{date}.#{key}.log"
+                    successMsg = "#{logs.length} records logged to disk."
 
-                # Reset this local buffer.
-                @buffer[key] = []
+                    # Reset this local buffer.
+                    @buffer[key] = []
 
-                # Only use `appendFile` on new versions of Node.
-                if fs.appendFile?
-                    fs.appendFile filePath, "\n" + writeData, (err) =>
-                        @flushing = false
+                    # Only use `appendFile` on new versions of Node.
+                    if fs.appendFile?
+                        fs.appendFile filePath, "\n" + writeData, (err) =>
+                            @flushing = false
 
-                        if err?
-                            console.error "LoggerFile.flush", err
-                            @onLogError? err
-                        else
-                            @onLogSuccess? successMsg
+                            if err?
+                                console.error "LoggerFile.flush", err
+                                @onLogError? err
+                            else
+                                @onLogSuccess? successMsg
 
-                        events.emit "LoggerFile.on.flush", this
+                            events.emit "LoggerFile.on.flush", this
+        catch ex
+            console.error "LoggerFile.flush", ex
 
     ###
     # Delete old log files from disk.

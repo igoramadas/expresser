@@ -71,11 +71,11 @@ class MongoDb
                 else
                     logger.info "MongoDb.getConnection", "Connected to #{connStringSafe}"
                     result.connection = conn
-                    result.get = @drivers[driver].get
-                    result.insert = @drivers[driver].insert
-                    result.update = @drivers[driver].update
-                    result.remove = @drivers[driver].remove
-                    result.count = @drivers[driver].count
+                    result.get = @get
+                    result.insert = @insert
+                    result.update = @update
+                    result.remove = @remove
+                    result.count = @count
 
                     resolve result
 
