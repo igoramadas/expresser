@@ -63,6 +63,10 @@ class MongoDb
         return new Promise (resolve, reject) =>
             result = {connString: connString, connection: null}
 
+            # Connection string is mandatory!
+            if not connString? or connString is ""
+                return reject {error: "Connection string not set."}
+
             @client.connect connString, options, (err, conn) =>
                 if err?
                     logger.error "MongoDb.getConnection", "Could not connect to #{connStringSafe}.", err

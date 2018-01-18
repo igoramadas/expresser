@@ -52,8 +52,6 @@ class Settings
     # environment specific settings.
     ###
     load: =>
-        env = process.env.NODE_ENV or "development"
-
         @loadFromJson "settings.default.json"
         @loadFromJson "settings.json"
         @loadFromJson "settings.#{env.toString().toLowerCase()}.json"
@@ -67,6 +65,8 @@ class Settings
     # @return {Object} Returns the JSON representation of the loaded file, or null if error / empty.
     ###
     loadFromJson: (filename, extend = false) =>
+        env = process.env.NODE_ENV or "development"
+
         filename = utils.io.getFilePath filename
         settingsJson = null
 
@@ -97,7 +97,7 @@ class Settings
         # Add file to the `files` list.
         @files.push {filename: filename, watching: false} if settingsJson?
 
-        if @general.debug and @logger.console
+        if @general.debug and @logger.console and env isnt "test"
             console.log "Settings.loadFromJson", filename
 
         events.emit "Settings.on.loadFromJson", filename
@@ -256,7 +256,7 @@ class Settings
                 if filename? and not f.watching
                     fs.watchFile filename, {persistent: true}, (evt, filename) =>
                         @loadFromJson filename
-                        console.log "Settings.watch", f, "Reloaded!"
+                        console.log "Settings.watch", f, "Reloaded!" if env isnt "test"
                         callback? evt, filename
 
                 f.watching = true
