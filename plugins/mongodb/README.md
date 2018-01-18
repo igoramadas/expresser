@@ -2,12 +2,7 @@
 
 The Database module is a MongoDB wrapper and has 3 main methods: {{ get }}, {{ set }} and {{ del }}. There's also a {{ count }} helper that works with newer versions of MongoDB.
 
-It also provides a super simple failover mechanism to switch to a backup database in case the main
-database fails repeatedly. This will be activated only if you set the {{ settings.database.connString2 }} value. Please note that Expresser won't keep the main and backup database in sync! If you wish to keep them in sync you'll have to implement this feature yourself - we suggest using background workers with IronWorker ([url:http://iron.io]).
-
 If the {{ settings.app.cloud }} setting is enabled, the Database module will automatically figure out the connection details for the following MongoDB services: AppFog, MongoLab, MongoHQ.
-
-If you're using Backbone.js or any other framework which uses "id" as the document identifier, you might want to leave the {{ settings.database.normalizeId }} true, so the Database module will parse results and convert {""_id""} to "id" on output documents and from "id" to {""_id""} when saving documents to the db.
 
 ### Sample code
 

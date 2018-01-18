@@ -6,17 +6,6 @@
     "general": {
         "debug": true
     },
-    "database": {
-        "file": {
-            "path": "test/database"
-        },
-        "mongodb": {
-            "connString": "mongodb://127.0.0.1/expresser"
-        },
-        "tingodb": {
-            "dbPath": "test/database"
-        }
-    },
     "logger": {
         "console": true
     },
@@ -42,6 +31,9 @@
         "httpServer": {
             "port": 8991
         }
+    },
+    "mongodb": {
+        "connString": "mongodb://127.0.0.1/expresser"
     },
     "testingFileWatcher": true
 }

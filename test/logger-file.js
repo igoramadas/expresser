@@ -29,15 +29,19 @@ describe("Logger File Tests", function() {
     }
 
     var deleteLogsFolder = function() {
-        if (fs.existsSync(settings.logger.file.path)) {
-            var files = fs.readdirSync(settings.logger.file.path)
-            var f
+        try {
+            if (fs.existsSync(settings.logger.file.path)) {
+                var files = fs.readdirSync(settings.logger.file.path)
+                var f
 
-            for (f = 0; f < files.length; f++) {
-                fs.unlinkSync(settings.logger.file.path + files[f])
+                for (f = 0; f < files.length; f++) {
+                    fs.unlinkSync(settings.logger.file.path + files[f])
+                }
+
+                fs.rmdirSync(settings.logger.file.path)
             }
-
-            fs.rmdirSync(settings.logger.file.path)
+        } catch (ex) {
+            console.warn("Could not delete logs folder.", ex)
         }
     }
 

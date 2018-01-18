@@ -164,16 +164,19 @@ class LoggerFile
         maxAge = settings.logger.file.maxAge if not maxAge?
         maxDate = moment().subtract maxAge, "d"
 
-        fs.readdir settings.logger.file.path, (err, files) =>
-            if err?
-                console.error "LoggerFile.clean", err
-            else
-                for f in files
-                    date = moment f.split(".")[0], settings.logger.file.dateFormat
-                    if date.isSameOrBefore maxDate
-                        fs.unlinkSync path.join(settings.logger.file.path, f)
+        try
+            fs.readdir settings.logger.file.path, (err, files) =>
+                if err?
+                    console.error "LoggerFile.clean", err
+                else
+                    for f in files
+                        date = moment f.split(".")[0], settings.logger.file.dateFormat
+                        if date.isSameOrBefore maxDate
+                            fs.unlinkSync path.join(settings.logger.file.path, f)
 
-                events.emit "LoggerFile.on.clean", this, maxAge
+                    events.emit "LoggerFile.on.clean", this, maxAge
+        catch ex
+            console.error "LoggerFile.clean", ex
 
 # Singleton implementation
 # -----------------------------------------------------------------------------
