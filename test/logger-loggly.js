@@ -53,13 +53,6 @@ describe("Logger Loggly Tests", function() {
         loggerLoggly.expresser.logger = logger
     })
 
-    after(function() {
-        if (transport) {
-            transport.onLogSuccess = null
-            transport.onLogError = null
-        }
-    })
-
     it("Has settings defined", function() {
         settings.logger.should.have.property("loggly")
     })
@@ -78,7 +71,7 @@ describe("Logger Loggly Tests", function() {
                 transport.onLogSuccess = helperLogOnSuccess(done)
                 transport.onLogError = helperLogOnError(done)
 
-                transport.info("Expresser Loggly log test.", new Date())
+                transport.info("Expresser Loggly log test.", "Some test message")
             } catch (ex) {
                 helperLogOnError(done, ex)
             }

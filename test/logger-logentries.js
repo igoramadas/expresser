@@ -50,7 +50,9 @@ describe("Logger Logentries Tests", function() {
 
     after(function() {
         if (transport && transport.client) {
-            transport.client.closeConnection()
+            try {
+                transport.client.closeConnection()
+            } catch (ex) {}
         }
     })
 
