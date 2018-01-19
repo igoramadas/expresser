@@ -272,16 +272,19 @@ class Settings
     unwatch: (callback) =>
         env = process.env.NODE_ENV or "development"
 
-        for f in @files
-            filename = utils.io.getFilePath f.filename
+        try
+            for f in @files
+                filename = utils.io.getFilePath f.filename
 
-            if filename?
-                if callback?
-                    fs.unwatchFile filename, callback
-                else
-                    fs.unwatchFile filename
+                if filename?
+                    if callback?
+                        fs.unwatchFile filename, callback
+                    else
+                        fs.unwatchFile filename
 
-            f.watching = false
+                f.watching = false
+        catch ex
+            console.error "Settings.unwatch", ex
 
         if @general.debug and env isnt "test"
             console.log "Settings.unwatch", (if callback? then "With callback" else "No callback")

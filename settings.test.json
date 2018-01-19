@@ -33,7 +33,7 @@
         }
     },
     "mongodb": {
-        "connString": "mongodb://127.0.0.1/expresser"
+        "connString": "mongodb://127.0.0.1/expresser?autoReconnect=false"
     },
     "testingFileWatcher": true
 }

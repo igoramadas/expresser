@@ -92,9 +92,7 @@
     "events": {
         // Enable central event dispatcher? Please note that if you disable it some
         // inter-module features will not work, although it won't give you exceptions on errors.
-        "enabled": true,
-        // Maximum event listeners.
-        "maxListeners": 20
+        "enabled": true
     },
     // FIREWALL
     // -------------------------------------------------------------------------

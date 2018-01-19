@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+3.2.1
+=====
+* NEW! Using a faster event emitter.
+* Updated and fixed tests.
+
 3.2.0
 =====
 * NEW! Events emitter is now exposed to external code.

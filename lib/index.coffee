@@ -41,8 +41,6 @@ class Expresser
             if id isnt "app" and modules.indexOf(id) >= 0
                 @[id].init?()
 
-        @events.emitter.setMaxListeners @settings.events.maxListeners
-
     # Helper to load plugins. This will look first inside a /plugins
     # folder for local development setups, or directly under /node_modules
     # for plugins installed via NPM (most production scenarios).

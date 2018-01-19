@@ -30,10 +30,8 @@ describe("MongoDB Tests", function() {
     })
 
     after(function() {
-        var fs = require("fs")
-
         try {
-            if (dbMongo.connection) {
+            if (dbMongo && dbMongo.connection) {
                 dbMongo.connection.close()
             }
         } catch (ex) {
@@ -50,19 +48,9 @@ describe("MongoDB Tests", function() {
             mongodb.init()
         })
 
-        it("Connets", async function() {
-            var err;
-
-            try {
-                dbMongo = await mongodb.connect(settings.mongodb.connString, settings.mongodb.options)
-            } catch (ex) {
-                err = ex;
-            }
-
-            return new Promise((resolve, reject) => {
-                if (dbMongo) resolve()
-                else reject(err);
-            })
+        it("Connects", async function() {
+            dbMongo = await mongodb.connect(settings.mongodb.connString, settings.mongodb.options)
+            return dbMongo
         })
     }
 
@@ -86,7 +74,8 @@ describe("MongoDB Tests", function() {
             var execution = function() {
                 for (var i = 0; i < counter; i++) {
                     dbMongo.insert(
-                        "test", {
+                        "test",
+                        {
                             counter: i
                         },
                         callback
@@ -189,7 +178,8 @@ describe("MongoDB Tests", function() {
             }
 
             dbMongo.get(
-                "test", {
+                "test",
+                {
                     limit: 5
                 },
                 callback

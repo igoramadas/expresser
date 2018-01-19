@@ -48,10 +48,7 @@ class MongoDb
     # @promise
     ###
     connect: (connString, options) =>
-        logger.debug "MongoDb.connect", connString, options
-
-        if not settings.mongodb.enabled
-            return logger.notEnabled "MongoDb"
+        logger.debug "MongoDb.connect", connString
 
         connStringSafe = connString
         sep = connString.indexOf "@"
@@ -61,6 +58,10 @@ class MongoDb
 
         # Tries to connect to the specified database.
         return new Promise (resolve, reject) =>
+            if not settings.mongodb.enabled
+                notEnabled = logger.notEnabled "MongoDb"
+                return reject notEnabled
+
             result = {connString: connString, connection: null}
 
             # Connection string is mandatory!

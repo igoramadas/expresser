@@ -1,6 +1,6 @@
 # EXPRESSER EVENTS
 # -----------------------------------------------------------------------------
-evt = require "events"
+evt = require "eventemitter3"
 
 ###
 # Central event manager to dispatch events to other Expresser modules.
@@ -13,7 +13,7 @@ class Events
     # The underlying event emmiter.
     # @property
     # @type EventEmitter
-    emitter: new evt.EventEmitter()
+    emitter: new evt()
 
     # METHODS
     # -------------------------------------------------------------------------
@@ -78,7 +78,6 @@ class Events
 # -----------------------------------------------------------------------------
 Events.getInstance = ->
     @instance = new Events() if not @instance?
-    @instance.emitter.setMaxListeners 20
     return @instance
 
 module.exports = Events.getInstance()
