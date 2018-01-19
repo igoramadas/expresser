@@ -24,9 +24,10 @@ describe("Logger Loggly Tests", function() {
         }
     }
 
-    var helperLogOnError = function(done) {
+    var helperLogOnError = function(done, ex) {
         return function(err) {
             if (done.ran) return
+            if (!err) err = ex
             done.ran = true
             done(err)
         }
@@ -73,10 +74,14 @@ describe("Logger Loggly Tests", function() {
         it("Send log to Loggly", function(done) {
             this.timeout(10000)
 
-            transport.onLogSuccess = helperLogOnSuccess(done)
-            transport.onLogError = helperLogOnError(done)
+            try {
+                transport.onLogSuccess = helperLogOnSuccess(done)
+                transport.onLogError = helperLogOnError(done)
 
-            transport.info("Expresser Loggly log test.", new Date())
+                transport.info("Expresser Loggly log test.", new Date())
+            } catch (ex) {
+                helperLogOnError(done, ex)
+            }
         })
     } else {
         it.skip("Send log to Loggly (skipped, no token or subdomain set)")
