@@ -1,3 +1,4 @@
 --require coffeescript/register
+--require ./testdump.js
 --require ./coffeecoverage.js
 --exit

@@ -55,7 +55,7 @@ class Expresser
             pluginsFolder = false
             plugins = fs.readdirSync "#{@rootPath}/node_modules"
 
-        # Iterate plugins and get it's ID by removing the "expresser-" prefix.
+        # Iterate and set up plugins.
         if not isTest
             for p in plugins
                 pluginId = p.substring(p.lastIndexOf("/") + 1)
@@ -94,18 +94,17 @@ class Expresser
                             @plugins[pluginName].expresser = this
                             initializers.push {priority: @plugins[pluginName].priority, plugin: @plugins[pluginName]}
 
-        sortedInit = @libs.lodash.sortBy initializers, ["priority"]
+            sortedInit = @libs.lodash.sortBy initializers, ["priority"]
 
-        # Init all loaded plugins on the correct order, by checking their 'priority' value.
-        for i in sortedInit
-            i.plugin.init?()
+            # Init all loaded plugins on the correct order.
+            for i in sortedInit
+                i.plugin.init?()
 
     ###
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App.
-    # @param {Boolean} forceTest Used for testing the module init.
     ###
-    init: (forceTest = false) =>
+    init: =>
         process.on "exit", (code) -> console.warn "Quitting #{@settings.app.title}...", code
 
         @initDefaultModules()
@@ -117,7 +116,7 @@ class Expresser
 
         # App must be the last thing to be started!
         @app.expresser = this
-        @app.init() if not isTest and not forceTest
+        @app.init() if not isTest
 
 # Singleton implementation
 # --------------------------------------------------------------------------

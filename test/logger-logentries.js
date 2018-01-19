@@ -48,6 +48,12 @@ describe("Logger Logentries Tests", function() {
         loggerLogentries.expresser.logger = logger
     })
 
+    after(function() {
+        if (transport && transport.client) {
+            transport.client.closeConnection()
+        }
+    })
+
     it("Has settings defined", function() {
         settings.logger.should.have.property("logentries")
     })

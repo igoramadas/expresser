@@ -15,9 +15,12 @@ describe("Expresser (Main) Tests", function() {
         expresser.settings.loadFromJson("settings.test.json")
     })
 
-    after(function() {})
+    after(function() {
+        expresser.app.kill()
+        global.asyncDump()
+    })
 
     it("Inits", function() {
-        expresser.init()
+        expresser.init(false)
     })
 })

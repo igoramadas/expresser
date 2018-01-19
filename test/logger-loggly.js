@@ -52,6 +52,10 @@ describe("Logger Loggly Tests", function() {
         loggerLoggly.expresser.logger = logger
     })
 
+    after(function( {
+
+    }))
+
     it("Has settings defined", function() {
         settings.logger.should.have.property("loggly")
     })
