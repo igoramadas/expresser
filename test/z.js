@@ -18,6 +18,12 @@ describe("Expresser (Main) Tests", function() {
     after(function() {
         expresser.app.kill()
         global.asyncDump()
+
+        var quit = function() {
+            process.exit()
+        }
+
+        setTimeout(quit, 5000)
     })
 
     it("Inits", function() {

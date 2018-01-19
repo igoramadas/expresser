@@ -52,9 +52,12 @@ describe("Logger Loggly Tests", function() {
         loggerLoggly.expresser.logger = logger
     })
 
-    after(function( {
-
-    }))
+    after(function() {
+        if (transport) {
+            transport.onLogSuccess = null
+            transport.onLogError = null
+        }
+    })
 
     it("Has settings defined", function() {
         settings.logger.should.have.property("loggly")

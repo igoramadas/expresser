@@ -19,6 +19,10 @@ describe("Settings Tests", function() {
         utils = require("../lib/utils.coffee")
     })
 
+    after(function() {
+        settings.unwatch()
+    })
+
     it("Settings file watchers properly working", function(done) {
         this.timeout(10000)
 

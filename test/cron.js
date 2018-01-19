@@ -26,6 +26,12 @@ describe("Cron Tests", function() {
         cron.expresser.logger = require("../lib/logger.coffee")
     })
 
+    after(function() {
+        for (var job of cron.jobs) {
+            job.stop()
+        }
+    })
+
     it("Has settings defined", function() {
         settings.should.have.property("cron")
     })
