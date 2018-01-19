@@ -15,6 +15,8 @@ describe("Expresser (Main) Tests", function() {
         expresser.settings.loadFromJson("settings.test.json")
     })
 
+    after(function() {})
+
     it("Inits", function() {
         expresser.init()
     })

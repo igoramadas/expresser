@@ -1,5 +1,9 @@
 # Changelog for expresser-logger-logentries
 
+3.1.0
+=====
+* NEW! Using new LogEntries client.
+
 3.0.1
 =====
 * BREAKING! The init() does not return a transport any longer.
