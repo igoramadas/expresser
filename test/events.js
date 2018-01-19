@@ -18,10 +18,10 @@ describe("Cron Tests", function() {
         events = require("../lib/events.coffee")
     })
 
-    after(function( {
+    after(function() {
         events.off("Test.addListener")
         events.off("Test.addRemoveListener")
-    }))
+    })
 
     it("Emit a test event", function(done) {
         var listener = function(someString) {

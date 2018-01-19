@@ -6,7 +6,7 @@ Logentries plugin for Expresser. Attaches itself to the main Logger module.
 
 Create an account on Logentries. Then register your host, and create a default log for this host. You should then get the "Token" for this log, and change the Logentries token key:
 
-    "logger": { 
+    "logger": {
         "logentries": {
             "enabled": true,
             "token": "your-logentries-token-here"
@@ -16,3 +16,6 @@ Create an account on Logentries. Then register your host, and create a default l
 
         }
     }
+
+This module is a wrapper to the le_node module.
+Please check https://www.npmjs.com/package/le_node for more details.

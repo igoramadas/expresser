@@ -66,6 +66,12 @@ class Sockets
             for listener in @currentListeners
                 socket.on listener.key, listener.callback if listener?.callback?
 
+    ###
+    # Close the Socket server.
+    ###
+    close: =>
+        @io?.close () -> logger.info "Sockets.close"
+
     # EVENTS
     # ----------------------------------------------------------------------
 

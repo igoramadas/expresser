@@ -1,5 +1,9 @@
 # Changelog for expresser-sockets
 
+3.0.4
+=====
+* NEW! Helper close() method to close the Socket.IO server.
+
 3.0.3
 =====
 * General improvements and updated documentation.

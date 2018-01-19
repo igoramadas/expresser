@@ -1,7 +1,7 @@
 # EXPRESSER LOGGER - LOGENTRIES
 # --------------------------------------------------------------------------
 fs = require "fs"
-logentries = require "node-logentries"
+logentries = require "le_node"
 path = require "path"
 
 lodash = null
@@ -63,7 +63,7 @@ class LoggerLogentries
         options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
         options.onLogError = logger.onLogError if not options.onLogError?
 
-        transport = {client: logentries.logger {token: options.token, timestamp: options.sendTimestamp}}
+        transport = {client: new logentries {token: options.token, timestamp: options.sendTimestamp}}
         transport.client.on("log", options.onLogSuccess) if lodash.isFunction options.onLogSuccess
         transport.client.on("error", options.onLogError) if lodash.isFunction options.onLogError
 

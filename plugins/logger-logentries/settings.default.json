@@ -1,6 +1,7 @@
 // EXPRESSER LOGGER - LOGENTRIES SETTINGS
 {
     "logger": {
+        // For extra options, please check reference on https://www.npmjs.com/package/le_node.
         "logentries": {
             // Enable Logentries plugin?
             "enabled": true,
