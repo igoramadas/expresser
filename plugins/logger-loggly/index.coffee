@@ -1,7 +1,7 @@
 # EXPRESSER LOGGER - LOGGLY
 # --------------------------------------------------------------------------
 fs = require "fs"
-loggly = require "loggly"
+loggly = require "./loggly/index.js"
 path = require "path"
 
 lodash = null
