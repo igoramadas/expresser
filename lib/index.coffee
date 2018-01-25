@@ -105,7 +105,9 @@ class Expresser
     # modules, and finally the App.
     ###
     init: =>
-        process.on "exit", (code) -> console.warn "Quitting #{@settings.app.title}...", code
+        process.on "exit", (code) =>
+            appTitle = @settings.app?.title or "app"
+            console.warn "Quitting #{appTitle}...", code
 
         @initDefaultModules()
         @loadPlugins()

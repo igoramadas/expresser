@@ -133,7 +133,7 @@
         },
         // List of properties to be obfuscated with the static value "***". This is useful to hide passwords, secret keys, etc.
         // Values separated by comma, case insensitive.
-        "obfuscateFields": "password,passwordhash,passwordencrypted,accesstoken,access_token,refreshtoken,refresh_token,auth,recaptcha",
+        "obfuscateFields": "password,passwordhash,passwordencrypted,accesstoken,access_token,refreshtoken,refresh_token,auth,recaptcha,securityToken",
         // List of properties to be removed. This is used to take out specific data from logs (functions for example).
         // Values separated by comma.
         "removeFields": null,
