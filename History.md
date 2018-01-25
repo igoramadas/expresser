@@ -3,7 +3,7 @@
 3.2.1
 =====
 * NEW! Using a faster event emitter.
-* Updated and fixed tests.
+* Updated dependencies.
 
 3.2.0
 =====
