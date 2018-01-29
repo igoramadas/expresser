@@ -76,15 +76,15 @@ class S3
                 logger.error "AWS.S3.download", err
                 return reject err
 
-            s3 = new aws.S3 {region: options.region or settings.aws.s3.region}
-
-            params = {
-                Bucket: options.bucket
-                Key: options.key
-            }
-
-            # First make sure the file exists in the S3 bucket, then fetch it.
             try
+                s3 = new aws.S3 {region: options.region or settings.aws.s3.region}
+
+                params = {
+                    Bucket: options.bucket
+                    Key: options.key
+                }
+
+                # First make sure the file exists in the S3 bucket, then fetch it.
                 s3.headObject params, (err, meta) ->
                     if err?
                         logger.error "AWS.S3.download", "headObject", options.bucket, options.key, err

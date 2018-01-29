@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.2.2
+=====
+* Added console style for deprecated messages.
+
 3.2.1
 =====
 * NEW! Using a faster event emitter.

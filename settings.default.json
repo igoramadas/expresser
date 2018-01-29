@@ -153,7 +153,8 @@
             "info": ["white"],
             "warn": ["yellow"],
             "error": ["red"],
-            "critical": ["red", "bold"]
+            "critical": ["red", "bold"],
+            "deprecated": ["orange", "bold"]
         },
         // Set `uncaughtException` to true to bind the logger to the `uncaughtException`
         // event on the process and log all uncaught expcetions as errors.
