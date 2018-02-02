@@ -49,30 +49,34 @@ class SNS
             if not settings.aws.enabled
                 return reject logger.notEnabled "AWS"
 
-            sns = new aws.SNS {region: options.region or settings.aws.sns.region}
+            try
+                sns = new aws.SNS {region: options.region or settings.aws.sns.region}
 
-            if not options.phoneNumber? or options.phoneNumber is ""
-                err = errors.reject "phoneRequired"
-                logger.error "AWS.SNS.publish", err
-                return reject err
-
-            # Get last 4 digits oh phone to be logged.
-            digits = "XXX" + options.phoneNumber.substr(options.phoneNumber.length - 4)
-
-            params = {
-                PhoneNumber: options.phoneNumber
-                Message: options.message
-            }
-
-            # Dispatch the message.
-            sns.publish params, (err, data) =>
-                if err?
-                    err = errors.reject "Error sending to #{digits}", err
+                if not options.phoneNumber? or options.phoneNumber is ""
+                    err = errors.reject "phoneRequired"
                     logger.error "AWS.SNS.publish", err
-                    reject err
-                else
-                    logger.info "AWS.SNS.publish", "#{options.message.length} chars published to #{digits}"
-                    resolve data
+                    return reject err
+
+                # Get last 4 digits oh phone to be logged.
+                digits = "XXX" + options.phoneNumber.substr(options.phoneNumber.length - 4)
+
+                params = {
+                    PhoneNumber: options.phoneNumber
+                    Message: options.message
+                }
+
+                # Dispatch the message.
+                sns.publish params, (err, data) =>
+                    if err?
+                        err = errors.reject "Error sending to #{digits}", err
+                        logger.error "AWS.SNS.publish", err
+                        reject err
+                    else
+                        logger.info "AWS.SNS.publish", "#{options.message.length} chars published to #{digits}"
+                        resolve data
+        catch ex
+            logger.error "AWS.SNS.publish", options, ex
+            reject ex
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

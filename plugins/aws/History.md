@@ -1,5 +1,10 @@
 # Changelog for expresser-aws
 
+3.2.1
+=====
+* Minor improvements on S3 and SNS calls.
+* Updated dependencies.
+
 3.2.0
 =====
 * NEW! SDK now exposed via the aws.sdk property.

@@ -46,7 +46,7 @@ class S3
     download: (options) =>
         logger.debug "AWS.S3.download", options
 
-        # DEPRECATED! Please use a single `options` with named parameters.
+        # DEPRECATED! Please use a single `options` with named parameters {bucket, key, destination}.
         if arguments.length > 1
             logger.deprecated "AWS.S3.download(bucket, key, destination)", "Please use download(options) passing the named parameters."
 
@@ -118,7 +118,7 @@ class S3
                         else
                             return resolve data.Body
             catch ex
-                logger.error "AWS.S3.download", "headObject", options, ex
+                logger.error "AWS.S3.download", options, ex
                 reject ex
 
     ###
@@ -136,7 +136,7 @@ class S3
     upload: (options) =>
         logger.debug "AWS.S3.upload", options
 
-        # DEPRECATED! Please use a single `options` with named parameters.
+        # DEPRECATED! Please use a single `options` with named parameters {bucket, key, body}.
         if arguments.length > 1
             logger.deprecated "AWS.S3.upload(bucket, key, body, options)", "Please use upload(options) passing the named parameters."
 
@@ -168,35 +168,39 @@ class S3
                 logger.error "AWS.S3.upload", err
                 return reject err
 
-            s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
+            try
+                s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
 
-            # Automagically discover the content type, if not set.
-            if not options.contentType?
-                ext = path.extname options.key
-                options.contentType = "image/jpeg" if ext is ".jpg"
-                options.contentType = "image/gif" if ext is ".gif"
-                options.contentType = "image/png" if ext is ".png"
-                options.contentType = "image/bmp" if ext is ".bmp"
-                options.contentType = "application/json" if ext is ".json"
-                options.contentType = "text/css" if ext is ".css"
-                options.contentType = "text/html" if ext is ".htm" or ext is ".html"
+                # Automagically discover the content type, if not set.
+                if not options.contentType?
+                    ext = path.extname options.key
+                    options.contentType = "image/jpeg" if ext is ".jpg"
+                    options.contentType = "image/gif" if ext is ".gif"
+                    options.contentType = "image/png" if ext is ".png"
+                    options.contentType = "image/bmp" if ext is ".bmp"
+                    options.contentType = "application/json" if ext is ".json"
+                    options.contentType = "text/css" if ext is ".css"
+                    options.contentType = "text/html" if ext is ".htm" or ext is ".html"
 
-            s3upload = s3Bucket.upload {
-                ACL: options.acl,
-                Body: options.body,
-                Key: options.key,
-                ContentType: options.contentType
-            }
+                s3upload = s3Bucket.upload {
+                    ACL: options.acl,
+                    Body: options.body,
+                    Key: options.key,
+                    ContentType: options.contentType
+                }
 
-            # Upload the specified files!
-            s3upload.send (err, result) ->
-                if err?
-                    err = errors.reject "cantUploadFile", err
-                    logger.error "AWS.S3.upload", options.bucket, options.key, options.contentType, err
-                    reject err
-                else
-                    logger.info "AWS.S3.upload", options.bucket, options.key, options.contentType
-                    resolve result
+                # Upload the specified files!
+                s3upload.send (err, result) ->
+                    if err?
+                        err = errors.reject "cantUploadFile", err
+                        logger.error "AWS.S3.upload", options.bucket, options.key, options.contentType, err
+                        reject err
+                    else
+                        logger.info "AWS.S3.upload", options.bucket, options.key, options.contentType
+                        resolve result
+            catch ex
+                logger.error "AWS.S3.upload", options.bucket, options.key, options.contentType, ex
+                reject ex
 
     ###
     # Delete object(s) from S3.
@@ -210,7 +214,7 @@ class S3
     delete: (options) ->
         logger.debug "AWS.S3.delete", options
 
-        # DEPRECATED! Please use a single `options` with named parameters.
+        # DEPRECATED! Please use a single `options` with named parameters {bucket, keys}.
         if arguments.length > 1
             logger.deprecated "AWS.S3.delete(bucket, keys)", "Please use download(options) passing the named parameters."
 
@@ -243,26 +247,30 @@ class S3
                 logger.error "AWS.S3.delete", err
                 return reject err
 
-            s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
+            try
+                s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
 
-            objects = []
-            objects.push {Key: value} for value in options.keys
+                objects = []
+                objects.push {Key: value} for value in options.keys
 
-            params = {
-                Delete: {
-                    Objects: objects
+                params = {
+                    Delete: {
+                        Objects: objects
+                    }
                 }
-            }
 
-            # Delete the specified files!
-            s3Bucket.deleteObjects params, (err, result) =>
-                if err?
-                    err = errors.reject "cantDeleteFile", err
-                    logger.error "AWS.S3.delete", options.bucket, options.keys, err
-                    reject err
-                else
-                    logger.info "AWS.S3.delete", options.bucket, options.keys
-                    resolve result
+                # Delete the specified files!
+                s3Bucket.deleteObjects params, (err, result) =>
+                    if err?
+                        err = errors.reject "cantDeleteFile", err
+                        logger.error "AWS.S3.delete", options.bucket, options.keys, err
+                        reject err
+                    else
+                        logger.info "AWS.S3.delete", options.bucket, options.keys
+                        resolve result
+            catch ex
+                logger.error "AWS.S3.delete", options.bucket, options.keys, ex
+                reject ex
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

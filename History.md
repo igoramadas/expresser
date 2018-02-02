@@ -2,7 +2,8 @@
 
 3.2.2
 =====
-* Added console style for deprecated messages.
+* Added console style for deprecated messages on Logger.
+* Updated dependencies.
 
 3.2.1
 =====
