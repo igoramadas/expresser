@@ -274,15 +274,7 @@ Init the MongoDB database module.
         logger = @expresser.logger
         settings = @expresser.settings
 
-        logger.debug <span class="hljs-string">"MongoDb.init"</span></pre></div>
-        
-      
-        
-        <p>Create default database connection if <code>connString</code> was specified.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.mongodb.enabled <span class="hljs-keyword">and</span> settings.mongodb.connString?
-            @connect settings.mongodb.connString, settings.mongodb.options
+        logger.debug <span class="hljs-string">"MongoDb.init"</span>
 
         events.emit <span class="hljs-string">"MongoDb.on.init"</span>
         <span class="hljs-keyword">delete</span> @init</pre></div>
@@ -298,11 +290,8 @@ Get the DB connection object.
 <p>##</p>
 
         
-          <div class='highlight'><pre>    connect: <span class="hljs-function"><span class="hljs-params">(connString, options)</span> -&gt;</span>
-        logger.debug <span class="hljs-string">"MongoDb.connect"</span>, connString, options
-
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.mongodb.enabled
-            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"MongoDb"</span>
+          <div class='highlight'><pre>    connect: <span class="hljs-function"><span class="hljs-params">(connString, options)</span> =&gt;</span>
+        logger.debug <span class="hljs-string">"MongoDb.connect"</span>, connString
 
         connStringSafe = connString
         sep = connString.indexOf <span class="hljs-string">"@"</span>
@@ -315,10 +304,22 @@ Get the DB connection object.
         <p>Tries to connect to the specified database.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
-            result = {connString: connString, connection: <span class="hljs-literal">null</span>}
+          <div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) =&gt;
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.mongodb.enabled
+                notEnabled = logger.notEnabled <span class="hljs-string">"MongoDb"</span>
+                <span class="hljs-keyword">return</span> reject notEnabled
 
-            @client.connect connString, options, <span class="hljs-function"><span class="hljs-params">(err, conn)</span> -&gt;</span>
+            result = {connString: connString, connection: <span class="hljs-literal">null</span>}</pre></div>
+        
+      
+        
+        <p>Connection string is mandatory!</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> connString? <span class="hljs-keyword">or</span> connString <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+                <span class="hljs-keyword">return</span> reject {error: <span class="hljs-string">"Connection string not set."</span>}
+
+            @client.connect connString, options, <span class="hljs-function"><span class="hljs-params">(err, conn)</span> =&gt;</span>
                 <span class="hljs-keyword">if</span> err?
                     logger.error <span class="hljs-string">"MongoDb.getConnection"</span>, <span class="hljs-string">"Could not connect to <span class="hljs-subst">#{connStringSafe}</span>."</span>, err
 
@@ -326,11 +327,11 @@ Get the DB connection object.
                 <span class="hljs-keyword">else</span>
                     logger.info <span class="hljs-string">"MongoDb.getConnection"</span>, <span class="hljs-string">"Connected to <span class="hljs-subst">#{connStringSafe}</span>"</span>
                     result.connection = conn
-                    result.get = @drivers[driver].get
-                    result.insert = @drivers[driver].insert
-                    result.update = @drivers[driver].update
-                    result.remove = @drivers[driver].remove
-                    result.count = @drivers[driver].count
+                    result.get = @get
+                    result.insert = @insert
+                    result.update = @update
+                    result.remove = @remove
+                    result.count = @count
 
                     resolve result</pre></div>
         

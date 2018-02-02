@@ -330,7 +330,7 @@ Get the File transport object.
           <div class='highlight'><pre>        transport = {flushing: <span class="hljs-literal">false</span>, buffer: {}, flush: @flush, clean: @clean}
         transport.onLogSuccess = options.onLogSuccess
         transport.onLogError = options.onLogError
-        transport.bufferDispatcher = setInterval transport.flush, options.bufferInterval</pre></div>
+        transport.timerFlush = setInterval transport.flush, options.bufferInterval</pre></div>
         
       
         
@@ -338,7 +338,7 @@ Get the File transport object.
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.maxAge? <span class="hljs-keyword">and</span> options.maxAge &gt; <span class="hljs-number">0</span>
-            transport.timerCleanLocal = setInterval transport.clean, options.bufferInterval * <span class="hljs-number">20</span>
+            transport.timerClean = setInterval transport.clean, options.bufferInterval * <span class="hljs-number">20</span>
 
         <span class="hljs-keyword">return</span> transport</pre></div>
         
@@ -429,35 +429,38 @@ can be saved to the current day depending on how long it takes for the bufferDis
 Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> key, logs <span class="hljs-keyword">of</span> @buffer
-            <span class="hljs-keyword">if</span> logs.length &gt; <span class="hljs-number">0</span>
-                writeData = logs.join <span class="hljs-string">"\n"</span>
-                filePath = path.join settings.logger.file.path, <span class="hljs-string">"<span class="hljs-subst">#{date}</span>.<span class="hljs-subst">#{key}</span>.log"</span>
-                successMsg = <span class="hljs-string">"<span class="hljs-subst">#{logs.length}</span> records logged to disk."</span></pre></div>
+          <div class='highlight'><pre>        <span class="hljs-keyword">try</span>
+            <span class="hljs-keyword">for</span> key, logs <span class="hljs-keyword">of</span> @buffer
+                <span class="hljs-keyword">if</span> logs.length &gt; <span class="hljs-number">0</span>
+                    writeData = logs.join <span class="hljs-string">"\n"</span>
+                    filePath = path.join settings.logger.file.path, <span class="hljs-string">"<span class="hljs-subst">#{date}</span>.<span class="hljs-subst">#{key}</span>.log"</span>
+                    successMsg = <span class="hljs-string">"<span class="hljs-subst">#{logs.length}</span> records logged to disk."</span></pre></div>
         
       
         
         <p>Reset this local buffer.</p>
 
         
-          <div class='highlight'><pre>                @buffer[key] = []</pre></div>
+          <div class='highlight'><pre>                    @buffer[key] = []</pre></div>
         
       
         
         <p>Only use <code>appendFile</code> on new versions of Node.</p>
 
         
-          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> fs.appendFile?
-                    fs.appendFile filePath, <span class="hljs-string">"\n"</span> + writeData, <span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span>
-                        @flushing = <span class="hljs-literal">false</span>
+          <div class='highlight'><pre>                    <span class="hljs-keyword">if</span> fs.appendFile?
+                        fs.appendFile filePath, <span class="hljs-string">"\n"</span> + writeData, <span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span>
+                            @flushing = <span class="hljs-literal">false</span>
 
-                        <span class="hljs-keyword">if</span> err?
-                            <span class="hljs-built_in">console</span>.error <span class="hljs-string">"LoggerFile.flush"</span>, err
-                            @onLogError? err
-                        <span class="hljs-keyword">else</span>
-                            @onLogSuccess? successMsg
+                            <span class="hljs-keyword">if</span> err?
+                                <span class="hljs-built_in">console</span>.error <span class="hljs-string">"LoggerFile.flush"</span>, err
+                                @onLogError? err
+                            <span class="hljs-keyword">else</span>
+                                @onLogSuccess? successMsg
 
-                        events.emit <span class="hljs-string">"LoggerFile.on.flush"</span>, <span class="hljs-keyword">this</span></pre></div>
+                            events.emit <span class="hljs-string">"LoggerFile.on.flush"</span>, <span class="hljs-keyword">this</span>
+        <span class="hljs-keyword">catch</span> ex
+            <span class="hljs-built_in">console</span>.error <span class="hljs-string">"LoggerFile.flush"</span>, ex</pre></div>
         
       
         
@@ -471,16 +474,19 @@ Delete old log files from disk.
         maxAge = settings.logger.file.maxAge <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> maxAge?
         maxDate = moment().subtract maxAge, <span class="hljs-string">"d"</span>
 
-        fs.readdir settings.logger.file.path, <span class="hljs-function"><span class="hljs-params">(err, files)</span> =&gt;</span>
-            <span class="hljs-keyword">if</span> err?
-                <span class="hljs-built_in">console</span>.error <span class="hljs-string">"LoggerFile.clean"</span>, err
-            <span class="hljs-keyword">else</span>
-                <span class="hljs-keyword">for</span> f <span class="hljs-keyword">in</span> files
-                    date = moment f.split(<span class="hljs-string">"."</span>)[<span class="hljs-number">0</span>], settings.logger.file.dateFormat
-                    <span class="hljs-keyword">if</span> date.isSameOrBefore maxDate
-                        fs.unlinkSync path.join(settings.logger.file.path, f)
+        <span class="hljs-keyword">try</span>
+            fs.readdir settings.logger.file.path, <span class="hljs-function"><span class="hljs-params">(err, files)</span> =&gt;</span>
+                <span class="hljs-keyword">if</span> err?
+                    <span class="hljs-built_in">console</span>.error <span class="hljs-string">"LoggerFile.clean"</span>, err
+                <span class="hljs-keyword">else</span>
+                    <span class="hljs-keyword">for</span> f <span class="hljs-keyword">in</span> files
+                        date = moment f.split(<span class="hljs-string">"."</span>)[<span class="hljs-number">0</span>], settings.logger.file.dateFormat
+                        <span class="hljs-keyword">if</span> date.isSameOrBefore maxDate
+                            fs.unlinkSync path.join(settings.logger.file.path, f)
 
-                events.emit <span class="hljs-string">"LoggerFile.on.clean"</span>, <span class="hljs-keyword">this</span>, maxAge</pre></div>
+                    events.emit <span class="hljs-string">"LoggerFile.on.clean"</span>, <span class="hljs-keyword">this</span>, maxAge
+        <span class="hljs-keyword">catch</span> ex
+            <span class="hljs-built_in">console</span>.error <span class="hljs-string">"LoggerFile.clean"</span>, ex</pre></div>
         
       
         

@@ -43,10 +43,6 @@ class MongoDb
 
         logger.debug &quot;MongoDb.init&quot;
 
-        # Create default database connection if `connString` was specified.
-        if settings.mongodb.enabled and settings.mongodb.connString?
-            @connect settings.mongodb.connString, settings.mongodb.options
-
         events.emit &quot;MongoDb.on.init&quot;
         delete @init
 
@@ -57,11 +53,8 @@ class MongoDb
     # @return {Object} The database connection object.
     # @promise
     ###
-    connect: (connString, options) -&gt;
-        logger.debug &quot;MongoDb.connect&quot;, connString, options
-
-        if not settings.mongodb.enabled
-            return logger.notEnabled &quot;MongoDb&quot;
+    connect: (connString, options) =&gt;
+        logger.debug &quot;MongoDb.connect&quot;, connString
 
         connStringSafe = connString
         sep = connString.indexOf &quot;@&quot;
@@ -70,10 +63,18 @@ class MongoDb
         connStringSafe = connStringSafe.substring 0, sep if sep &gt; 0
 
         # Tries to connect to the specified database.
-        return new Promise (resolve, reject) -&gt;
+        return new Promise (resolve, reject) =&gt;
+            if not settings.mongodb.enabled
+                notEnabled = logger.notEnabled &quot;MongoDb&quot;
+                return reject notEnabled
+
             result = {connString: connString, connection: null}
 
-            @client.connect connString, options, (err, conn) -&gt;
+            # Connection string is mandatory!
+            if not connString? or connString is &quot;&quot;
+                return reject {error: &quot;Connection string not set.&quot;}
+
+            @client.connect connString, options, (err, conn) =&gt;
                 if err?
                     logger.error &quot;MongoDb.getConnection&quot;, &quot;Could not connect to #{connStringSafe}.&quot;, err
 
@@ -81,11 +82,11 @@ class MongoDb
                 else
                     logger.info &quot;MongoDb.getConnection&quot;, &quot;Connected to #{connStringSafe}&quot;
                     result.connection = conn
-                    result.get = @drivers[driver].get
-                    result.insert = @drivers[driver].insert
-                    result.update = @drivers[driver].update
-                    result.remove = @drivers[driver].remove
-                    result.count = @drivers[driver].count
+                    result.get = @get
+                    result.insert = @insert
+                    result.update = @update
+                    result.remove = @remove
+                    result.count = @count
 
                     resolve result
 

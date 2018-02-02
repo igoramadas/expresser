@@ -37,8 +37,6 @@ gtag('config', 'UA-9331973-3');
             if id isnt &quot;app&quot; and modules.indexOf(id) &gt;= 0
                 @[id].init?()
 
-        @events.emitter.setMaxListeners @settings.events.maxListeners
-
     # Helper to load plugins. This will look first inside a /plugins
     # folder for local development setups, or directly under /node_modules
     # for plugins installed via NPM (most production scenarios).
@@ -53,7 +51,7 @@ gtag('config', 'UA-9331973-3');
             pluginsFolder = false
             plugins = fs.readdirSync &quot;#{@rootPath}/node_modules&quot;
 
-        # Iterate plugins and get it's ID by removing the &quot;expresser-&quot; prefix.
+        # Iterate and set up plugins.
         if not isTest
             for p in plugins
                 pluginId = p.substring(p.lastIndexOf(&quot;/&quot;) + 1)
@@ -92,21 +90,24 @@ gtag('config', 'UA-9331973-3');
                             @plugins[pluginName].expresser = this
                             initializers.push {priority: @plugins[pluginName].priority, plugin: @plugins[pluginName]}
 
-        sortedInit = @libs.lodash.sortBy initializers, [&quot;priority&quot;]
+            sortedInit = @libs.lodash.sortBy initializers, [&quot;priority&quot;]
 
-        # Init all loaded plugins on the correct order, by checking their 'priority' value.
-        for i in sortedInit
-            i.plugin.init?()</pre><div class="panel panel-info"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Expresser_ctor_body"><h3 class="panel-title">Constructor<span class="pull-right glyphicon"></span></h3></div><div class="panel-collapse collapse" id="Expresser_ctor_body"><div class="panel-body"><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table></div></div></div></section><span class="fix-anchor" id="Expresser__init"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Expresser__init_body"><h3 class="panel-title">Expresser::init(forceTest)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Helper to init all modules. Load settings first, then Logger, then general
+            # Init all loaded plugins on the correct order.
+            for i in sortedInit
+                i.plugin.init?()</pre><div class="panel panel-info"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Expresser_ctor_body"><h3 class="panel-title">Constructor<span class="pull-right glyphicon"></span></h3></div><div class="panel-collapse collapse" id="Expresser_ctor_body"><div class="panel-body"><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table></div></div></div></section><span class="fix-anchor" id="Expresser__init"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Expresser__init_body"><h3 class="panel-title">Expresser::init()<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Helper to init all modules. Load settings first, then Logger, then general
 modules, and finally the App.</p>
-</div></div><div class="panel-collapse collapse" id="Expresser__init_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>forceTest</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean'>Boolean</a></span></td><td><span> Used for testing the module init.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/index.coffee#L110">/lib/index.coffee:110</a>)</span></div><pre class="sourcecode prettyprint .linenums:110">init: (forceTest = false) =&gt;
+</div></div><div class="panel-collapse collapse" id="Expresser__init_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/index.coffee#L107">/lib/index.coffee:107</a>)</span></div><pre class="sourcecode prettyprint .linenums:107">init: =&gt;
+    process.on &quot;exit&quot;, (code) =&gt;
+        appTitle = @settings.app?.title or &quot;app&quot;
+        console.warn &quot;Quitting #{appTitle}...&quot;, code
+
+    @initDefaultModules()
+    @loadPlugins()
 
     # Accept invalid certificates?
     if not @settings.app.ssl.rejectUnauthorized
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = &quot;0&quot;
 
-    @initDefaultModules()
-    @loadPlugins()
-
     # App must be the last thing to be started!
     @app.expresser = this
-    @app.init() if not isTest and not forceTest</pre></div></div></div></section></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>
+    @app.init() if not isTest</pre></div></div></div></section></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>

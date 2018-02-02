@@ -9,10 +9,10 @@ gtag('config', 'UA-9331973-3');
 
     # INIT
     # -------------------------------------------------------------------------</pre><div class="panel panel-info"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#aws_S3_ctor_body"><h3 class="panel-title">Constructor<span class="pull-right glyphicon"></span></h3></div><div class="panel-collapse collapse" id="aws_S3_ctor_body"><div class="panel-body"><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table></div></div></div></section><span class="fix-anchor" id="aws_S3__delete"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#aws_S3__delete_body"><h3 class="panel-title">S3::delete(options)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Delete object(s) from S3.</p>
-</div></div><div class="panel-collapse collapse" id="aws_S3__delete_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Delete options.</span></td></tr><tr><td><span class="method-depth1"></span><code>bucket</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Name of the S3 bucket to upload to.</span></td></tr><tr><td><span class="method-depth1"></span><code>keys</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array'>Array</a>, <a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Keys of items to be deleted from the bucket.</span></td></tr><tr><td><span class="method-depth1"></span><code>region</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The AWS region, if not passed will use default from settings.</span></td></tr></table><h4>Returns<small><span> as</span><span class="label label-info">Promise</span></small></h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The delete result.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/aws/s3.coffee#L208">/plugins/aws/s3.coffee:208</a>)</span></div><pre class="sourcecode prettyprint .linenums:208">delete: (options) -&gt;
+</div></div><div class="panel-collapse collapse" id="aws_S3__delete_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Delete options.</span></td></tr><tr><td><span class="method-depth1"></span><code>bucket</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Name of the S3 bucket to upload to.</span></td></tr><tr><td><span class="method-depth1"></span><code>keys</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array'>Array</a>, <a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Keys of items to be deleted from the bucket.</span></td></tr><tr><td><span class="method-depth1"></span><code>region</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The AWS region, if not passed will use default from settings.</span></td></tr></table><h4>Returns<small><span> as</span><span class="label label-info">Promise</span></small></h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The delete result.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/aws/s3.coffee#L214">/plugins/aws/s3.coffee:214</a>)</span></div><pre class="sourcecode prettyprint .linenums:214">delete: (options) -&gt;
     logger.debug &quot;AWS.S3.delete&quot;, options
 
-    # DEPRECATED! Please use a single `options` with named parameters.
+    # DEPRECATED! Please use a single `options` with named parameters {bucket, keys}.
     if arguments.length &gt; 1
         logger.deprecated &quot;AWS.S3.delete(bucket, keys)&quot;, &quot;Please use download(options) passing the named parameters.&quot;
 
@@ -45,30 +45,34 @@ gtag('config', 'UA-9331973-3');
             logger.error &quot;AWS.S3.delete&quot;, err
             return reject err
 
-        s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
+        try
+            s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
 
-        objects = []
-        objects.push {Key: value} for value in options.keys
+            objects = []
+            objects.push {Key: value} for value in options.keys
 
-        params = {
-            Delete: {
-                Objects: objects
+            params = {
+                Delete: {
+                    Objects: objects
+                }
             }
-        }
 
-        # Delete the specified files!
-        s3Bucket.deleteObjects params, (err, result) =&gt;
-            if err?
-                err = errors.reject &quot;cantDeleteFile&quot;, err
-                logger.error &quot;AWS.S3.delete&quot;, options.bucket, options.keys, err
-                reject err
-            else
-                logger.info &quot;AWS.S3.delete&quot;, options.bucket, options.keys
-                resolve result</pre></div></div></div></section><span class="fix-anchor" id="aws_S3__download"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#aws_S3__download_body"><h3 class="panel-title">S3::download(options)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Download a file from S3 and optionally save to the specified destination.</p>
+            # Delete the specified files!
+            s3Bucket.deleteObjects params, (err, result) =&gt;
+                if err?
+                    err = errors.reject &quot;cantDeleteFile&quot;, err
+                    logger.error &quot;AWS.S3.delete&quot;, options.bucket, options.keys, err
+                    reject err
+                else
+                    logger.info &quot;AWS.S3.delete&quot;, options.bucket, options.keys
+                    resolve result
+        catch ex
+            logger.error &quot;AWS.S3.delete&quot;, options.bucket, options.keys, ex
+            reject ex</pre></div></div></div></section><span class="fix-anchor" id="aws_S3__download"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#aws_S3__download_body"><h3 class="panel-title">S3::download(options)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Download a file from S3 and optionally save to the specified destination.</p>
 </div></div><div class="panel-collapse collapse" id="aws_S3__download_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Download options.</span></td></tr><tr><td><span class="method-depth1"></span><code>bucket</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Name of the S3 bucket to download from.</span></td></tr><tr><td><span class="method-depth1"></span><code>key</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Key of the target S3 bucket resource (usually a filename).</span></td></tr><tr><td><span class="method-depth1"></span><code>destination</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Optional, full path to the destination where file should be saved.</span></td></tr><tr><td><span class="method-depth1"></span><code>region</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The AWS region, if not passed will use default from settings.</span></td></tr></table><h4>Returns<small><span> as</span><span class="label label-info">Promise</span></small></h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The file contents as binary / buffer / string, depending on content type.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/aws/s3.coffee#L46">/plugins/aws/s3.coffee:46</a>)</span></div><pre class="sourcecode prettyprint .linenums:46">download: (options) =&gt;
     logger.debug &quot;AWS.S3.download&quot;, options
 
-    # DEPRECATED! Please use a single `options` with named parameters.
+    # DEPRECATED! Please use a single `options` with named parameters {bucket, key, destination}.
     if arguments.length &gt; 1
         logger.deprecated &quot;AWS.S3.download(bucket, key, destination)&quot;, &quot;Please use download(options) passing the named parameters.&quot;
 
@@ -98,15 +102,15 @@ gtag('config', 'UA-9331973-3');
             logger.error &quot;AWS.S3.download&quot;, err
             return reject err
 
-        s3 = new aws.S3 {region: options.region or settings.aws.s3.region}
-
-        params = {
-            Bucket: options.bucket
-            Key: options.key
-        }
-
-        # First make sure the file exists in the S3 bucket, then fetch it.
         try
+            s3 = new aws.S3 {region: options.region or settings.aws.s3.region}
+
+            params = {
+                Bucket: options.bucket
+                Key: options.key
+            }
+
+            # First make sure the file exists in the S3 bucket, then fetch it.
             s3.headObject params, (err, meta) -&gt;
                 if err?
                     logger.error &quot;AWS.S3.download&quot;, &quot;headObject&quot;, options.bucket, options.key, err
@@ -123,6 +127,8 @@ gtag('config', 'UA-9331973-3');
                         logger.error &quot;AWS.S3.download&quot;, &quot;getObject&quot;, options.bucket, options.key, err
                         return reject err
 
+                    logger.debug &quot;AWS.S3.download&quot;, &quot;getObject&quot;, options.key, data.ContentType, &quot;#{data.ContentLength} bytes&quot;
+
                     # Destination set? If so, write to disk.
                     if options.destination?
                         fs.writeFile options.destination, data.Body, {encoding: settings.general.encoding}, (err) -&gt;
@@ -138,7 +144,7 @@ gtag('config', 'UA-9331973-3');
                     else
                         return resolve data.Body
         catch ex
-            logger.error &quot;AWS.S3.download&quot;, &quot;headObject&quot;, options, ex
+            logger.error &quot;AWS.S3.download&quot;, options, ex
             reject ex</pre></div></div></div></section><span class="fix-anchor" id="aws_S3__init"></span><section class="private"><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#aws_S3__init_body"><h3 class="panel-title">S3::init(parent)<span class="label label-private">private</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Init the AWS S3 module. Should be called automatically by the main AWS module.</p>
 </div></div><div class="panel-collapse collapse" id="aws_S3__init_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>parent</code></td><td><span><a href='../classes/aws.AWS.html#aws_AWS'>AWS</a></span></td><td><span> The AWS main module.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/aws/s3.coffee#L25">/plugins/aws/s3.coffee:25</a>)</span></div><pre class="sourcecode prettyprint .linenums:25">init: (parent) =&gt;
     errors = parent.expresser.errors
@@ -147,10 +153,10 @@ gtag('config', 'UA-9331973-3');
     settings = parent.expresser.settings
 
     delete @init</pre></div></div></div></section><span class="fix-anchor" id="aws_S3__upload"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#aws_S3__upload_body"><h3 class="panel-title">S3::upload(options)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Upload a file to S3.</p>
-</div></div><div class="panel-collapse collapse" id="aws_S3__upload_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Upload options.</span></td></tr><tr><td><span class="method-depth1"></span><code>bucket</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Name of the S3 bucket to upload to.</span></td></tr><tr><td><span class="method-depth1"></span><code>key</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Key of the target S3 bucket resource (usually a filename).</span></td></tr><tr><td><span class="method-depth1"></span><code>body</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Contents of the file to be uploaded.</span></td></tr><tr><td><span class="method-depth1"></span><code>contentType</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Content type of the file.</span></td></tr><tr><td><span class="method-depth1"></span><code>acl</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> ACL to be used, default is "public-read".</span></td></tr><tr><td><span class="method-depth1"></span><code>region</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The AWS region, if not passed will use default from settings.</span></td></tr></table><h4>Returns<small><span> as</span><span class="label label-info">Promise</span></small></h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The upload result.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/aws/s3.coffee#L134">/plugins/aws/s3.coffee:134</a>)</span></div><pre class="sourcecode prettyprint .linenums:134">upload: (options) =&gt;
+</div></div><div class="panel-collapse collapse" id="aws_S3__upload_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Upload options.</span></td></tr><tr><td><span class="method-depth1"></span><code>bucket</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Name of the S3 bucket to upload to.</span></td></tr><tr><td><span class="method-depth1"></span><code>key</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Key of the target S3 bucket resource (usually a filename).</span></td></tr><tr><td><span class="method-depth1"></span><code>body</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Contents of the file to be uploaded.</span></td></tr><tr><td><span class="method-depth1"></span><code>contentType</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Content type of the file.</span></td></tr><tr><td><span class="method-depth1"></span><code>acl</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> ACL to be used, default is "public-read".</span></td></tr><tr><td><span class="method-depth1"></span><code>region</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The AWS region, if not passed will use default from settings.</span></td></tr></table><h4>Returns<small><span> as</span><span class="label label-info">Promise</span></small></h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The upload result.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/aws/s3.coffee#L136">/plugins/aws/s3.coffee:136</a>)</span></div><pre class="sourcecode prettyprint .linenums:136">upload: (options) =&gt;
     logger.debug &quot;AWS.S3.upload&quot;, options
 
-    # DEPRECATED! Please use a single `options` with named parameters.
+    # DEPRECATED! Please use a single `options` with named parameters {bucket, key, body}.
     if arguments.length &gt; 1
         logger.deprecated &quot;AWS.S3.upload(bucket, key, body, options)&quot;, &quot;Please use upload(options) passing the named parameters.&quot;
 
@@ -182,32 +188,36 @@ gtag('config', 'UA-9331973-3');
             logger.error &quot;AWS.S3.upload&quot;, err
             return reject err
 
-        s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
+        try
+            s3Bucket = new aws.S3 {region: options.region or settings.aws.s3.region, params: {Bucket: options.bucket}}
 
-        # Automagically discover the content type, if not set.
-        if not options.contentType?
-            ext = path.extname options.key
-            options.contentType = &quot;image/jpeg&quot; if ext is &quot;.jpg&quot;
-            options.contentType = &quot;image/gif&quot; if ext is &quot;.gif&quot;
-            options.contentType = &quot;image/png&quot; if ext is &quot;.png&quot;
-            options.contentType = &quot;image/bmp&quot; if ext is &quot;.bmp&quot;
-            options.contentType = &quot;application/json&quot; if ext is &quot;.json&quot;
-            options.contentType = &quot;text/css&quot; if ext is &quot;.css&quot;
-            options.contentType = &quot;text/html&quot; if ext is &quot;.htm&quot; or ext is &quot;.html&quot;
+            # Automagically discover the content type, if not set.
+            if not options.contentType?
+                ext = path.extname options.key
+                options.contentType = &quot;image/jpeg&quot; if ext is &quot;.jpg&quot;
+                options.contentType = &quot;image/gif&quot; if ext is &quot;.gif&quot;
+                options.contentType = &quot;image/png&quot; if ext is &quot;.png&quot;
+                options.contentType = &quot;image/bmp&quot; if ext is &quot;.bmp&quot;
+                options.contentType = &quot;application/json&quot; if ext is &quot;.json&quot;
+                options.contentType = &quot;text/css&quot; if ext is &quot;.css&quot;
+                options.contentType = &quot;text/html&quot; if ext is &quot;.htm&quot; or ext is &quot;.html&quot;
 
-        s3upload = s3Bucket.upload {
-            ACL: options.acl,
-            Body: options.body,
-            Key: options.key,
-            ContentType: options.contentType
-        }
+            s3upload = s3Bucket.upload {
+                ACL: options.acl,
+                Body: options.body,
+                Key: options.key,
+                ContentType: options.contentType
+            }
 
-        # Upload the specified files!
-        s3upload.send (err, result) -&gt;
-            if err?
-                err = errors.reject &quot;cantUploadFile&quot;, err
-                logger.error &quot;AWS.S3.upload&quot;, options.bucket, options.key, options.contentType, err
-                reject err
-            else
-                logger.info &quot;AWS.S3.upload&quot;, options.bucket, options.key, options.contentType
-                resolve result</pre></div></div></div></section></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>
+            # Upload the specified files!
+            s3upload.send (err, result) -&gt;
+                if err?
+                    err = errors.reject &quot;cantUploadFile&quot;, err
+                    logger.error &quot;AWS.S3.upload&quot;, options.bucket, options.key, options.contentType, err
+                    reject err
+                else
+                    logger.info &quot;AWS.S3.upload&quot;, options.bucket, options.key, options.contentType
+                    resolve result
+        catch ex
+            logger.error &quot;AWS.S3.upload&quot;, options.bucket, options.key, options.contentType, ex
+            reject ex</pre></div></div></div></section></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>

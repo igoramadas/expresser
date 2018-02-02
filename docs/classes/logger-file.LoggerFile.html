@@ -11,20 +11,23 @@ using one file per log type per day, and includes auto cleaning features.</p>
 
     # INIT
     # -------------------------------------------------------------------------</pre><div class="panel panel-info"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#logger_file_LoggerFile_ctor_body"><h3 class="panel-title">Constructor<span class="pull-right glyphicon"></span></h3></div><div class="panel-collapse collapse" id="logger_file_LoggerFile_ctor_body"><div class="panel-body"><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table></div></div></div></section><span class="fix-anchor" id="logger_file_LoggerFile__clean"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#logger_file_LoggerFile__clean_body"><h3 class="panel-title">LoggerFile::clean(maxAge)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Delete old log files from disk.</p>
-</div></div><div class="panel-collapse collapse" id="logger_file_LoggerFile__clean_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>maxAge</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number'>Number</a></span></td><td><span> Max age of logs, in days, default is defined on settings.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/logger-file/index.coffee#L163">/plugins/logger-file/index.coffee:163</a>)</span></div><pre class="sourcecode prettyprint .linenums:163">clean: (maxAge) -&gt;
+</div></div><div class="panel-collapse collapse" id="logger_file_LoggerFile__clean_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>maxAge</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number'>Number</a></span></td><td><span> Max age of logs, in days, default is defined on settings.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/logger-file/index.coffee#L166">/plugins/logger-file/index.coffee:166</a>)</span></div><pre class="sourcecode prettyprint .linenums:166">clean: (maxAge) -&gt;
     maxAge = settings.logger.file.maxAge if not maxAge?
     maxDate = moment().subtract maxAge, &quot;d&quot;
 
-    fs.readdir settings.logger.file.path, (err, files) =&gt;
-        if err?
-            console.error &quot;LoggerFile.clean&quot;, err
-        else
-            for f in files
-                date = moment f.split(&quot;.&quot;)[0], settings.logger.file.dateFormat
-                if date.isSameOrBefore maxDate
-                    fs.unlinkSync path.join(settings.logger.file.path, f)
+    try
+        fs.readdir settings.logger.file.path, (err, files) =&gt;
+            if err?
+                console.error &quot;LoggerFile.clean&quot;, err
+            else
+                for f in files
+                    date = moment f.split(&quot;.&quot;)[0], settings.logger.file.dateFormat
+                    if date.isSameOrBefore maxDate
+                        fs.unlinkSync path.join(settings.logger.file.path, f)
 
-            events.emit &quot;LoggerFile.on.clean&quot;, this, maxAge</pre></div></div></div></section><span class="fix-anchor" id="logger_file_LoggerFile__flush"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#logger_file_LoggerFile__flush_body"><h3 class="panel-title">LoggerFile::flush()<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Flush all local buffered log messages to disk. This is automatically called
+                events.emit &quot;LoggerFile.on.clean&quot;, this, maxAge
+    catch ex
+        console.error &quot;LoggerFile.clean&quot;, ex</pre></div></div></div></section><span class="fix-anchor" id="logger_file_LoggerFile__flush"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#logger_file_LoggerFile__flush_body"><h3 class="panel-title">LoggerFile::flush()<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Flush all local buffered log messages to disk. This is automatically called
 by the <code>bufferDispatcher</code> timer but you can also trigger it manually.</p>
 </div></div><div class="panel-collapse collapse" id="logger_file_LoggerFile__flush_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/logger-file/index.coffee#L126">/plugins/logger-file/index.coffee:126</a>)</span></div><pre class="sourcecode prettyprint .linenums:126">flush: -&gt;
     return if @flushing
@@ -37,27 +40,30 @@ by the <code>bufferDispatcher</code> timer but you can also trigger it manually.
     # Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
     # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
     # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
-    for key, logs of @buffer
-        if logs.length &gt; 0
-            writeData = logs.join &quot;\n&quot;
-            filePath = path.join settings.logger.file.path, &quot;#{date}.#{key}.log&quot;
-            successMsg = &quot;#{logs.length} records logged to disk.&quot;
+    try
+        for key, logs of @buffer
+            if logs.length &gt; 0
+                writeData = logs.join &quot;\n&quot;
+                filePath = path.join settings.logger.file.path, &quot;#{date}.#{key}.log&quot;
+                successMsg = &quot;#{logs.length} records logged to disk.&quot;
 
-            # Reset this local buffer.
-            @buffer[key] = []
+                # Reset this local buffer.
+                @buffer[key] = []
 
-            # Only use `appendFile` on new versions of Node.
-            if fs.appendFile?
-                fs.appendFile filePath, &quot;\n&quot; + writeData, (err) =&gt;
-                    @flushing = false
+                # Only use `appendFile` on new versions of Node.
+                if fs.appendFile?
+                    fs.appendFile filePath, &quot;\n&quot; + writeData, (err) =&gt;
+                        @flushing = false
 
-                    if err?
-                        console.error &quot;LoggerFile.flush&quot;, err
-                        @onLogError? err
-                    else
-                        @onLogSuccess? successMsg
+                        if err?
+                            console.error &quot;LoggerFile.flush&quot;, err
+                            @onLogError? err
+                        else
+                            @onLogSuccess? successMsg
 
-                    events.emit &quot;LoggerFile.on.flush&quot;, this</pre></div></div></div></section><span class="fix-anchor" id="logger_file_LoggerFile__getTransport"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#logger_file_LoggerFile__getTransport_body"><h3 class="panel-title">LoggerFile::getTransport(options)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Get the File transport object.</p>
+                        events.emit &quot;LoggerFile.on.flush&quot;, this
+    catch ex
+        console.error &quot;LoggerFile.flush&quot;, ex</pre></div></div></div></section><span class="fix-anchor" id="logger_file_LoggerFile__getTransport"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#logger_file_LoggerFile__getTransport_body"><h3 class="panel-title">LoggerFile::getTransport(options)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Get the File transport object.</p>
 </div></div><div class="panel-collapse collapse" id="logger_file_LoggerFile__getTransport_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> File logging options.</span></td></tr><tr><td><span class="method-depth1"></span><code>path</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Path where log files should be saved, mandatory.</span></td></tr><tr><td><span class="method-depth1"></span><code>onLogSuccess</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function'>Function</a>()</span></td><td><span> Function to execute on successful log calls, optional.</span></td></tr><tr><td><span class="method-depth1"></span><code>onLogError</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function'>Function</a>()</span></td><td><span> Function to execute on failed log calls, optional.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The File logger transport.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/logger-file/index.coffee#L56">/plugins/logger-file/index.coffee:56</a>)</span></div><pre class="sourcecode prettyprint .linenums:56">getTransport: (options) -&gt;
     logger.debug &quot;LoggerFile.getTransport&quot;, options
 
@@ -84,11 +90,11 @@ by the <code>bufferDispatcher</code> timer but you can also trigger it manually.
     transport = {flushing: false, buffer: {}, flush: @flush, clean: @clean}
     transport.onLogSuccess = options.onLogSuccess
     transport.onLogError = options.onLogError
-    transport.bufferDispatcher = setInterval transport.flush, options.bufferInterval
+    transport.timerFlush = setInterval transport.flush, options.bufferInterval
 
     # Check the maxAge of local logs and set up auto clean.
     if options.maxAge? and options.maxAge &gt; 0
-        transport.timerCleanLocal = setInterval transport.clean, options.bufferInterval * 20
+        transport.timerClean = setInterval transport.clean, options.bufferInterval * 20
 
     return transport</pre></div></div></div></section><span class="fix-anchor" id="logger_file_LoggerFile__init"></span><section class="private"><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#logger_file_LoggerFile__init_body"><h3 class="panel-title">LoggerFile::init()<span class="label label-private">private</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Init the File logging module. If default settings are defined on &quot;settings.logger.file&quot;,
 it will auto register itself to the main Logger as &quot;file&quot;. Please note that this init

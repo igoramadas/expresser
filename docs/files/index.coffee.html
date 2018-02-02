@@ -47,8 +47,6 @@ class Expresser
             if id isnt &quot;app&quot; and modules.indexOf(id) &gt;= 0
                 @[id].init?()
 
-        @events.emitter.setMaxListeners @settings.events.maxListeners
-
     # Helper to load plugins. This will look first inside a /plugins
     # folder for local development setups, or directly under /node_modules
     # for plugins installed via NPM (most production scenarios).
@@ -63,7 +61,7 @@ class Expresser
             pluginsFolder = false
             plugins = fs.readdirSync &quot;#{@rootPath}/node_modules&quot;
 
-        # Iterate plugins and get it's ID by removing the &quot;expresser-&quot; prefix.
+        # Iterate and set up plugins.
         if not isTest
             for p in plugins
                 pluginId = p.substring(p.lastIndexOf(&quot;/&quot;) + 1)
@@ -102,29 +100,31 @@ class Expresser
                             @plugins[pluginName].expresser = this
                             initializers.push {priority: @plugins[pluginName].priority, plugin: @plugins[pluginName]}
 
-        sortedInit = @libs.lodash.sortBy initializers, [&quot;priority&quot;]
+            sortedInit = @libs.lodash.sortBy initializers, [&quot;priority&quot;]
 
-        # Init all loaded plugins on the correct order, by checking their 'priority' value.
-        for i in sortedInit
-            i.plugin.init?()
+            # Init all loaded plugins on the correct order.
+            for i in sortedInit
+                i.plugin.init?()
 
     ###
     # Helper to init all modules. Load settings first, then Logger, then general
     # modules, and finally the App.
-    # @param {Boolean} forceTest Used for testing the module init.
     ###
-    init: (forceTest = false) =&gt;
+    init: =&gt;
+        process.on &quot;exit&quot;, (code) =&gt;
+            appTitle = @settings.app?.title or &quot;app&quot;
+            console.warn &quot;Quitting #{appTitle}...&quot;, code
+
+        @initDefaultModules()
+        @loadPlugins()
 
         # Accept invalid certificates?
         if not @settings.app.ssl.rejectUnauthorized
             process.env.NODE_TLS_REJECT_UNAUTHORIZED = &quot;0&quot;
 
-        @initDefaultModules()
-        @loadPlugins()
-
         # App must be the last thing to be started!
         @app.expresser = this
-        @app.init() if not isTest and not forceTest
+        @app.init() if not isTest
 
 # Singleton implementation
 # --------------------------------------------------------------------------

@@ -55,30 +55,34 @@ class SNS
             if not settings.aws.enabled
                 return reject logger.notEnabled &quot;AWS&quot;
 
-            sns = new aws.SNS {region: options.region or settings.aws.sns.region}
+            try
+                sns = new aws.SNS {region: options.region or settings.aws.sns.region}
 
-            if not options.phoneNumber? or options.phoneNumber is &quot;&quot;
-                err = errors.reject &quot;phoneRequired&quot;
-                logger.error &quot;AWS.SNS.publish&quot;, err
-                return reject err
-
-            # Get last 4 digits oh phone to be logged.
-            digits = &quot;XXX&quot; + options.phoneNumber.substr(options.phoneNumber.length - 4)
-
-            params = {
-                PhoneNumber: options.phoneNumber
-                Message: options.message
-            }
-
-            # Dispatch the message.
-            sns.publish params, (err, data) =&gt;
-                if err?
-                    err = errors.reject &quot;Error sending to #{digits}&quot;, err
+                if not options.phoneNumber? or options.phoneNumber is &quot;&quot;
+                    err = errors.reject &quot;phoneRequired&quot;
                     logger.error &quot;AWS.SNS.publish&quot;, err
-                    reject err
-                else
-                    logger.info &quot;AWS.SNS.publish&quot;, &quot;#{options.message.length} chars published to #{digits}&quot;
-                    resolve data
+                    return reject err
+
+                # Get last 4 digits oh phone to be logged.
+                digits = &quot;XXX&quot; + options.phoneNumber.substr(options.phoneNumber.length - 4)
+
+                params = {
+                    PhoneNumber: options.phoneNumber
+                    Message: options.message
+                }
+
+                # Dispatch the message.
+                sns.publish params, (err, data) =&gt;
+                    if err?
+                        err = errors.reject &quot;Error sending to #{digits}&quot;, err
+                        logger.error &quot;AWS.SNS.publish&quot;, err
+                        reject err
+                    else
+                        logger.info &quot;AWS.SNS.publish&quot;, &quot;#{options.message.length} chars published to #{digits}&quot;
+                        resolve data
+            catch ex
+                logger.error &quot;AWS.SNS.publish&quot;, options, ex
+                reject ex
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

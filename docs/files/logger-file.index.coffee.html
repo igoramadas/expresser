@@ -85,11 +85,11 @@ class LoggerFile
         transport = {flushing: false, buffer: {}, flush: @flush, clean: @clean}
         transport.onLogSuccess = options.onLogSuccess
         transport.onLogError = options.onLogError
-        transport.bufferDispatcher = setInterval transport.flush, options.bufferInterval
+        transport.timerFlush = setInterval transport.flush, options.bufferInterval
 
         # Check the maxAge of local logs and set up auto clean.
         if options.maxAge? and options.maxAge &gt; 0
-            transport.timerCleanLocal = setInterval transport.clean, options.bufferInterval * 20
+            transport.timerClean = setInterval transport.clean, options.bufferInterval * 20
 
         return transport
 
@@ -140,27 +140,30 @@ class LoggerFile
         # Flush all buffered logs to disk. Please note that messages from the last seconds of the previous day
         # can be saved to the current day depending on how long it takes for the bufferDispatcher to run.
         # Default is every 10 seconds, so messages from 23:59:50 onwards could be saved on the next day.
-        for key, logs of @buffer
-            if logs.length &gt; 0
-                writeData = logs.join &quot;\n&quot;
-                filePath = path.join settings.logger.file.path, &quot;#{date}.#{key}.log&quot;
-                successMsg = &quot;#{logs.length} records logged to disk.&quot;
+        try
+            for key, logs of @buffer
+                if logs.length &gt; 0
+                    writeData = logs.join &quot;\n&quot;
+                    filePath = path.join settings.logger.file.path, &quot;#{date}.#{key}.log&quot;
+                    successMsg = &quot;#{logs.length} records logged to disk.&quot;
 
-                # Reset this local buffer.
-                @buffer[key] = []
+                    # Reset this local buffer.
+                    @buffer[key] = []
 
-                # Only use `appendFile` on new versions of Node.
-                if fs.appendFile?
-                    fs.appendFile filePath, &quot;\n&quot; + writeData, (err) =&gt;
-                        @flushing = false
+                    # Only use `appendFile` on new versions of Node.
+                    if fs.appendFile?
+                        fs.appendFile filePath, &quot;\n&quot; + writeData, (err) =&gt;
+                            @flushing = false
 
-                        if err?
-                            console.error &quot;LoggerFile.flush&quot;, err
-                            @onLogError? err
-                        else
-                            @onLogSuccess? successMsg
+                            if err?
+                                console.error &quot;LoggerFile.flush&quot;, err
+                                @onLogError? err
+                            else
+                                @onLogSuccess? successMsg
 
-                        events.emit &quot;LoggerFile.on.flush&quot;, this
+                            events.emit &quot;LoggerFile.on.flush&quot;, this
+        catch ex
+            console.error &quot;LoggerFile.flush&quot;, ex
 
     ###
     # Delete old log files from disk.
@@ -170,16 +173,19 @@ class LoggerFile
         maxAge = settings.logger.file.maxAge if not maxAge?
         maxDate = moment().subtract maxAge, &quot;d&quot;
 
-        fs.readdir settings.logger.file.path, (err, files) =&gt;
-            if err?
-                console.error &quot;LoggerFile.clean&quot;, err
-            else
-                for f in files
-                    date = moment f.split(&quot;.&quot;)[0], settings.logger.file.dateFormat
-                    if date.isSameOrBefore maxDate
-                        fs.unlinkSync path.join(settings.logger.file.path, f)
+        try
+            fs.readdir settings.logger.file.path, (err, files) =&gt;
+                if err?
+                    console.error &quot;LoggerFile.clean&quot;, err
+                else
+                    for f in files
+                        date = moment f.split(&quot;.&quot;)[0], settings.logger.file.dateFormat
+                        if date.isSameOrBefore maxDate
+                            fs.unlinkSync path.join(settings.logger.file.path, f)
 
-                events.emit &quot;LoggerFile.on.clean&quot;, this, maxAge
+                    events.emit &quot;LoggerFile.on.clean&quot;, this, maxAge
+        catch ex
+            console.error &quot;LoggerFile.clean&quot;, ex
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

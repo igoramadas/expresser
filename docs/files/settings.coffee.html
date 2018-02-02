@@ -14,6 +14,9 @@ lodash = require &quot;lodash&quot;
 path = require &quot;path&quot;
 utils = require &quot;./utils.coffee&quot;
 
+# Current environment
+env = null
+
 ###
 # All main settings for an Expresser apps are set and described on the
 # settings.default.json file. Do not edit it!!! To change settings please
@@ -55,8 +58,6 @@ class Settings
     # environment specific settings.
     ###
     load: =&gt;
-        env = process.env.NODE_ENV or &quot;development&quot;
-
         @loadFromJson &quot;settings.default.json&quot;
         @loadFromJson &quot;settings.json&quot;
         @loadFromJson &quot;settings.#{env.toString().toLowerCase()}.json&quot;
@@ -70,6 +71,8 @@ class Settings
     # @return {Object} Returns the JSON representation of the loaded file, or null if error / empty.
     ###
     loadFromJson: (filename, extend = false) =&gt;
+        env = process.env.NODE_ENV or &quot;development&quot;
+
         filename = utils.io.getFilePath filename
         settingsJson = null
 
@@ -100,7 +103,7 @@ class Settings
         # Add file to the `files` list.
         @files.push {filename: filename, watching: false} if settingsJson?
 
-        if @general.debug and @logger.console
+        if @general.debug and @logger.console and env isnt &quot;test&quot;
             console.log &quot;Settings.loadFromJson&quot;, filename
 
         events.emit &quot;Settings.on.loadFromJson&quot;, filename
@@ -241,6 +244,8 @@ class Settings
     # @param {Function} callback Optional function (event, filename) triggered when a settings file gets updated.
     ###
     watch: (callback) =&gt;
+        env = process.env.NODE_ENV or &quot;development&quot;
+
         if lodash.isBoolean callback
             console.warn &quot;Settings.watch(boolean)&quot;, &quot;DEPRECATED! Please use watch(callback) and unwatch(callback).&quot;
 
@@ -257,12 +262,12 @@ class Settings
                 if filename? and not f.watching
                     fs.watchFile filename, {persistent: true}, (evt, filename) =&gt;
                         @loadFromJson filename
-                        console.log &quot;Settings.watch&quot;, f, &quot;Reloaded!&quot;
+                        console.log &quot;Settings.watch&quot;, f, &quot;Reloaded!&quot; if env isnt &quot;test&quot;
                         callback? evt, filename
 
                 f.watching = true
 
-        if @general.debug
+        if @general.debug and env isnt &quot;test&quot;
             console.log &quot;Settings.watch&quot;, (if callback? then &quot;With callback&quot; else &quot;No callback&quot;)
 
     ###
@@ -271,18 +276,23 @@ class Settings
     # @param {Function} callback Optional function to be removed from the file watchers.
     ###
     unwatch: (callback) =&gt;
-        for f in @files
-            filename = utils.io.getFilePath f.filename
+        env = process.env.NODE_ENV or &quot;development&quot;
 
-            if filename?
-                if callback?
-                    fs.unwatchFile filename, callback
-                else
-                    fs.unwatchFile filename
+        try
+            for f in @files
+                filename = utils.io.getFilePath f.filename
 
-            f.watching = false
+                if filename?
+                    if callback?
+                        fs.unwatchFile filename, callback
+                    else
+                        fs.unwatchFile filename
 
-        if @general.debug
+                f.watching = false
+        catch ex
+            console.error &quot;Settings.unwatch&quot;, ex
+
+        if @general.debug and env isnt &quot;test&quot;
             console.log &quot;Settings.unwatch&quot;, (if callback? then &quot;With callback&quot; else &quot;No callback&quot;)
 
 # Singleton implementation

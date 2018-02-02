@@ -280,9 +280,7 @@ A platform for Node.js web apps, built on top of Express. This is the main wrapp
 
         <span class="hljs-keyword">for</span> id, m <span class="hljs-keyword">of</span> <span class="hljs-keyword">this</span>
             <span class="hljs-keyword">if</span> id <span class="hljs-keyword">isnt</span> <span class="hljs-string">"app"</span> <span class="hljs-keyword">and</span> modules.indexOf(id) &gt;= <span class="hljs-number">0</span>
-                @[id].init?()
-
-        @events.emitter.setMaxListeners @settings.events.maxListeners</pre></div>
+                @[id].init?()</pre></div>
         
       
         
@@ -304,7 +302,7 @@ for plugins installed via NPM (most production scenarios).</p>
         
       
         
-        <p>Iterate plugins and get it’s ID by removing the “expresser-“ prefix.</p>
+        <p>Iterate and set up plugins.</p>
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> isTest
@@ -365,26 +363,31 @@ for plugins installed via NPM (most production scenarios).</p>
           <div class='highlight'><pre>                            @plugins[pluginName].expresser = <span class="hljs-keyword">this</span>
                             initializers.push {priority: @plugins[pluginName].priority, plugin: @plugins[pluginName]}
 
-        sortedInit = @libs.lodash.sortBy initializers, [<span class="hljs-string">"priority"</span>]</pre></div>
+            sortedInit = @libs.lodash.sortBy initializers, [<span class="hljs-string">"priority"</span>]</pre></div>
         
       
         
-        <p>Init all loaded plugins on the correct order, by checking their ‘priority’ value.</p>
+        <p>Init all loaded plugins on the correct order.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> sortedInit
-            i.plugin.init?()</pre></div>
+          <div class='highlight'><pre>            <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> sortedInit
+                i.plugin.init?()</pre></div>
         
       
         
         <p>##
 Helper to init all modules. Load settings first, then Logger, then general
-modules, and finally the App.
-@param {Boolean} forceTest Used for testing the module init.</p>
+modules, and finally the App.</p>
 <p>##</p>
 
         
-          <div class='highlight'><pre>    init: <span class="hljs-function"><span class="hljs-params">(forceTest = <span class="hljs-literal">false</span>)</span> =&gt;</span></pre></div>
+          <div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
+        process.<span class="hljs-literal">on</span> <span class="hljs-string">"exit"</span>, <span class="hljs-function"><span class="hljs-params">(code)</span> =&gt;</span>
+            appTitle = @settings.app?.title <span class="hljs-keyword">or</span> <span class="hljs-string">"app"</span>
+            <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Quitting <span class="hljs-subst">#{appTitle}</span>..."</span>, code
+
+        @initDefaultModules()
+        @loadPlugins()</pre></div>
         
       
         
@@ -392,10 +395,7 @@ modules, and finally the App.
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @settings.app.ssl.rejectUnauthorized
-            process.env.NODE_TLS_REJECT_UNAUTHORIZED = <span class="hljs-string">"0"</span>
-
-        @initDefaultModules()
-        @loadPlugins()</pre></div>
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = <span class="hljs-string">"0"</span></pre></div>
         
       
         
@@ -403,7 +403,7 @@ modules, and finally the App.
 
         
           <div class='highlight'><pre>        @app.expresser = <span class="hljs-keyword">this</span>
-        @app.init() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> isTest <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> forceTest</pre></div>
+        @app.init() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> isTest</pre></div>
         
       
         

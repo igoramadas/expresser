@@ -289,7 +289,7 @@ Download a file from S3 and optionally save to the specified destination.
         
       
         
-        <p>DEPRECATED! Please use a single <code>options</code> with named parameters.</p>
+        <p>DEPRECATED! Please use a single <code>options</code> with named parameters {bucket, key, destination}.</p>
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">1</span>
@@ -333,20 +333,20 @@ Download a file from S3 and optionally save to the specified destination.
                 logger.error <span class="hljs-string">"AWS.S3.download"</span>, err
                 <span class="hljs-keyword">return</span> reject err
 
-            s3 = <span class="hljs-keyword">new</span> aws.S3 {region: options.region <span class="hljs-keyword">or</span> settings.aws.s3.region}
+            <span class="hljs-keyword">try</span>
+                s3 = <span class="hljs-keyword">new</span> aws.S3 {region: options.region <span class="hljs-keyword">or</span> settings.aws.s3.region}
 
-            params = {
-                Bucket: options.bucket
-                Key: options.key
-            }</pre></div>
+                params = {
+                    Bucket: options.bucket
+                    Key: options.key
+                }</pre></div>
         
       
         
         <p>First make sure the file exists in the S3 bucket, then fetch it.</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-keyword">try</span>
-                s3.headObject params, <span class="hljs-function"><span class="hljs-params">(err, meta)</span> -&gt;</span>
+          <div class='highlight'><pre>                s3.headObject params, <span class="hljs-function"><span class="hljs-params">(err, meta)</span> -&gt;</span>
                     <span class="hljs-keyword">if</span> err?
                         logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, options.bucket, options.key, err</pre></div>
         
@@ -368,7 +368,9 @@ Download a file from S3 and optionally save to the specified destination.
           <div class='highlight'><pre>                    s3.getObject params, <span class="hljs-function"><span class="hljs-params">(err, data)</span> -&gt;</span>
                         <span class="hljs-keyword">if</span> err?
                             logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"getObject"</span>, options.bucket, options.key, err
-                            <span class="hljs-keyword">return</span> reject err</pre></div>
+                            <span class="hljs-keyword">return</span> reject err
+
+                        logger.debug <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"getObject"</span>, options.key, data.ContentType, <span class="hljs-string">"<span class="hljs-subst">#{data.ContentLength}</span> bytes"</span></pre></div>
         
       
         
@@ -393,7 +395,7 @@ Download a file from S3 and optionally save to the specified destination.
           <div class='highlight'><pre>                        <span class="hljs-keyword">else</span>
                             <span class="hljs-keyword">return</span> resolve data.Body
             <span class="hljs-keyword">catch</span> ex
-                logger.error <span class="hljs-string">"AWS.S3.download"</span>, <span class="hljs-string">"headObject"</span>, options, ex
+                logger.error <span class="hljs-string">"AWS.S3.download"</span>, options, ex
                 reject ex</pre></div>
         
       
@@ -417,7 +419,7 @@ Upload a file to S3.
         
       
         
-        <p>DEPRECATED! Please use a single <code>options</code> with named parameters.</p>
+        <p>DEPRECATED! Please use a single <code>options</code> with named parameters {bucket, key, body}.</p>
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">1</span>
@@ -463,43 +465,47 @@ Upload a file to S3.
                 logger.error <span class="hljs-string">"AWS.S3.upload"</span>, err
                 <span class="hljs-keyword">return</span> reject err
 
-            s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: options.region <span class="hljs-keyword">or</span> settings.aws.s3.region, params: {Bucket: options.bucket}}</pre></div>
+            <span class="hljs-keyword">try</span>
+                s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: options.region <span class="hljs-keyword">or</span> settings.aws.s3.region, params: {Bucket: options.bucket}}</pre></div>
         
       
         
         <p>Automagically discover the content type, if not set.</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.contentType?
-                ext = path.extname options.key
-                options.contentType = <span class="hljs-string">"image/jpeg"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".jpg"</span>
-                options.contentType = <span class="hljs-string">"image/gif"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".gif"</span>
-                options.contentType = <span class="hljs-string">"image/png"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".png"</span>
-                options.contentType = <span class="hljs-string">"image/bmp"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".bmp"</span>
-                options.contentType = <span class="hljs-string">"application/json"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".json"</span>
-                options.contentType = <span class="hljs-string">"text/css"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".css"</span>
-                options.contentType = <span class="hljs-string">"text/html"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".htm"</span> <span class="hljs-keyword">or</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".html"</span>
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.contentType?
+                    ext = path.extname options.key
+                    options.contentType = <span class="hljs-string">"image/jpeg"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".jpg"</span>
+                    options.contentType = <span class="hljs-string">"image/gif"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".gif"</span>
+                    options.contentType = <span class="hljs-string">"image/png"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".png"</span>
+                    options.contentType = <span class="hljs-string">"image/bmp"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".bmp"</span>
+                    options.contentType = <span class="hljs-string">"application/json"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".json"</span>
+                    options.contentType = <span class="hljs-string">"text/css"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".css"</span>
+                    options.contentType = <span class="hljs-string">"text/html"</span> <span class="hljs-keyword">if</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".htm"</span> <span class="hljs-keyword">or</span> ext <span class="hljs-keyword">is</span> <span class="hljs-string">".html"</span>
 
-            s3upload = s3Bucket.upload {
-                ACL: options.acl,
-                Body: options.body,
-                Key: options.key,
-                ContentType: options.contentType
-            }</pre></div>
+                s3upload = s3Bucket.upload {
+                    ACL: options.acl,
+                    Body: options.body,
+                    Key: options.key,
+                    ContentType: options.contentType
+                }</pre></div>
         
       
         
         <p>Upload the specified files!</p>
 
         
-          <div class='highlight'><pre>            s3upload.send (err, result) -&gt;
-                <span class="hljs-keyword">if</span> err?
-                    err = errors.reject <span class="hljs-string">"cantUploadFile"</span>, err
-                    logger.error <span class="hljs-string">"AWS.S3.upload"</span>, options.bucket, options.key, options.contentType, err
-                    reject err
-                <span class="hljs-keyword">else</span>
-                    logger.info <span class="hljs-string">"AWS.S3.upload"</span>, options.bucket, options.key, options.contentType
-                    resolve result</pre></div>
+          <div class='highlight'><pre>                s3upload.send (err, result) -&gt;
+                    <span class="hljs-keyword">if</span> err?
+                        err = errors.reject <span class="hljs-string">"cantUploadFile"</span>, err
+                        logger.error <span class="hljs-string">"AWS.S3.upload"</span>, options.bucket, options.key, options.contentType, err
+                        reject err
+                    <span class="hljs-keyword">else</span>
+                        logger.info <span class="hljs-string">"AWS.S3.upload"</span>, options.bucket, options.key, options.contentType
+                        resolve result
+            <span class="hljs-keyword">catch</span> ex
+                logger.error <span class="hljs-string">"AWS.S3.upload"</span>, options.bucket, options.key, options.contentType, ex
+                reject ex</pre></div>
         
       
         
@@ -519,7 +525,7 @@ Delete object(s) from S3.
         
       
         
-        <p>DEPRECATED! Please use a single <code>options</code> with named parameters.</p>
+        <p>DEPRECATED! Please use a single <code>options</code> with named parameters {bucket, keys}.</p>
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">1</span>
@@ -570,30 +576,34 @@ Delete object(s) from S3.
                 logger.error <span class="hljs-string">"AWS.S3.delete"</span>, err
                 <span class="hljs-keyword">return</span> reject err
 
-            s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: options.region <span class="hljs-keyword">or</span> settings.aws.s3.region, params: {Bucket: options.bucket}}
+            <span class="hljs-keyword">try</span>
+                s3Bucket = <span class="hljs-keyword">new</span> aws.S3 {region: options.region <span class="hljs-keyword">or</span> settings.aws.s3.region, params: {Bucket: options.bucket}}
 
-            objects = []
-            objects.push {Key: value} <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> options.keys
+                objects = []
+                objects.push {Key: value} <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> options.keys
 
-            params = {
-                Delete: {
-                    Objects: objects
-                }
-            }</pre></div>
+                params = {
+                    Delete: {
+                        Objects: objects
+                    }
+                }</pre></div>
         
       
         
         <p>Delete the specified files!</p>
 
         
-          <div class='highlight'><pre>            s3Bucket.deleteObjects params, <span class="hljs-function"><span class="hljs-params">(err, result)</span> =&gt;</span>
-                <span class="hljs-keyword">if</span> err?
-                    err = errors.reject <span class="hljs-string">"cantDeleteFile"</span>, err
-                    logger.error <span class="hljs-string">"AWS.S3.delete"</span>, options.bucket, options.keys, err
-                    reject err
-                <span class="hljs-keyword">else</span>
-                    logger.info <span class="hljs-string">"AWS.S3.delete"</span>, options.bucket, options.keys
-                    resolve result</pre></div>
+          <div class='highlight'><pre>                s3Bucket.deleteObjects params, <span class="hljs-function"><span class="hljs-params">(err, result)</span> =&gt;</span>
+                    <span class="hljs-keyword">if</span> err?
+                        err = errors.reject <span class="hljs-string">"cantDeleteFile"</span>, err
+                        logger.error <span class="hljs-string">"AWS.S3.delete"</span>, options.bucket, options.keys, err
+                        reject err
+                    <span class="hljs-keyword">else</span>
+                        logger.info <span class="hljs-string">"AWS.S3.delete"</span>, options.bucket, options.keys
+                        resolve result
+            <span class="hljs-keyword">catch</span> ex
+                logger.error <span class="hljs-string">"AWS.S3.delete"</span>, options.bucket, options.keys, ex
+                reject ex</pre></div>
         
       
         

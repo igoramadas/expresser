@@ -24,7 +24,7 @@ gtag('config', 'UA-9331973-3');
     options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
     options.onLogError = logger.onLogError if not options.onLogError?
 
-    transport = {client: logentries.logger {token: options.token, timestamp: options.sendTimestamp}}
+    transport = {client: new logentries {token: options.token, timestamp: options.sendTimestamp}}
     transport.client.on(&quot;log&quot;, options.onLogSuccess) if lodash.isFunction options.onLogSuccess
     transport.client.on(&quot;error&quot;, options.onLogError) if lodash.isFunction options.onLogError
 

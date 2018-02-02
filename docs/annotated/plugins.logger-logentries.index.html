@@ -218,7 +218,7 @@
         
         
           <div class='highlight'><pre>fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
-logentries = <span class="hljs-built_in">require</span> <span class="hljs-string">"node-logentries"</span>
+logentries = <span class="hljs-built_in">require</span> <span class="hljs-string">"le_node"</span>
 path = <span class="hljs-built_in">require</span> <span class="hljs-string">"path"</span>
 
 lodash = <span class="hljs-literal">null</span>
@@ -302,7 +302,7 @@ Get the Logentries transport object.
         options.onLogSuccess = logger.onLogSuccess <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.onLogSuccess?
         options.onLogError = logger.onLogError <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.onLogError?
 
-        transport = {client: logentries.logger {token: options.token, timestamp: options.sendTimestamp}}
+        transport = {client: <span class="hljs-keyword">new</span> logentries {token: options.token, timestamp: options.sendTimestamp}}
         transport.client.<span class="hljs-literal">on</span>(<span class="hljs-string">"log"</span>, options.onLogSuccess) <span class="hljs-keyword">if</span> lodash.isFunction options.onLogSuccess
         transport.client.<span class="hljs-literal">on</span>(<span class="hljs-string">"error"</span>, options.onLogError) <span class="hljs-keyword">if</span> lodash.isFunction options.onLogError
 

@@ -72,6 +72,12 @@ class Sockets
             for listener in @currentListeners
                 socket.on listener.key, listener.callback if listener?.callback?
 
+    ###
+    # Close the Socket server.
+    ###
+    close: =&gt;
+        @io?.close () -&gt; logger.info &quot;Sockets.close&quot;
+
     # EVENTS
     # ----------------------------------------------------------------------
 
