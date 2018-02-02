@@ -39,7 +39,7 @@ describe("AWS DynamoDB Tests", function() {
 
     if (hasKeys) {
         it("Create a table on DynamoDB", async function() {
-            this.timeout(40000)
+            this.timeout(50000)
 
             var params = {
                 TableName: tableName,
@@ -76,7 +76,7 @@ describe("AWS DynamoDB Tests", function() {
         })
 
         it("Create a new single item with empty details", async function() {
-            this.timeout(5000)
+            this.timeout(6000)
 
             var params = {
                 TableName: tableName,
@@ -90,7 +90,7 @@ describe("AWS DynamoDB Tests", function() {
         })
 
         it("Create 2 new items on DynamoDB", async function() {
-            this.timeout(10000)
+            this.timeout(12000)
 
             var i, params
 
@@ -111,7 +111,7 @@ describe("AWS DynamoDB Tests", function() {
         })
 
         it("Scan non empty items from DynamoDB", async function() {
-            this.timeout(5000)
+            this.timeout(6000)
 
             var params = {
                 TableName: tableName,
@@ -135,7 +135,7 @@ describe("AWS DynamoDB Tests", function() {
         })
 
         it("Query empty items from DynamoDB", async function() {
-            this.timeout(5000)
+            this.timeout(6000)
 
             var params = {
                 TableName: tableName,
@@ -159,7 +159,7 @@ describe("AWS DynamoDB Tests", function() {
         })
 
         it("Get the empty item created on previous test", async function() {
-            this.timeout(5000)
+            this.timeout(6000)
 
             var params = {
                 TableName: tableName,
@@ -179,7 +179,7 @@ describe("AWS DynamoDB Tests", function() {
         })
 
         it("Deletes the empty item created on previous test", async function() {
-            this.timeout(5000)
+            this.timeout(6000)
 
             var params = {
                 TableName: tableName,

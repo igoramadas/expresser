@@ -74,9 +74,9 @@ class SNS
                     else
                         logger.info "AWS.SNS.publish", "#{options.message.length} chars published to #{digits}"
                         resolve data
-        catch ex
-            logger.error "AWS.SNS.publish", options, ex
-            reject ex
+            catch ex
+                logger.error "AWS.SNS.publish", options, ex
+                reject ex
 
 # Singleton implementation
 # -----------------------------------------------------------------------------
