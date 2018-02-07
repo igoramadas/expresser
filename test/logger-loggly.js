@@ -65,7 +65,7 @@ describe("Logger Loggly Tests", function() {
         })
 
         it("Send log to Loggly", function(done) {
-            this.timeout(10000)
+            this.timeout(12000)
 
             try {
                 transport.onLogSuccess = helperLogOnSuccess(done)
