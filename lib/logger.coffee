@@ -305,7 +305,9 @@ class Logger
                         else
                             result.push a
                 else
-                    result.push a
+                    cloned = lodash.cloneDeep arg
+                    cleaner cloned, 0
+                    result.push cloned
 
             catch ex
                 console.warn "Logger.argsCleaner", argKey, ex

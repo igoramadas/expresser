@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.2.3
+=====
+* Fixed "argsCleaner" on Logger when not passing an array.
+
 3.2.2
 =====
 * Added console style for deprecated messages on Logger.
