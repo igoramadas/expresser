@@ -68,7 +68,6 @@ common.loggly = function() {
         headers,
         method,
         auth,
-        proxy,
         uri
 
     //
@@ -88,7 +87,6 @@ common.loggly = function() {
             requestBody = args[0].body
             auth = args[0].auth
             headers = args[0].headers
-            proxy = args[0].proxy
         }
     } else if (args.length === 2) {
         method = "GET"
@@ -109,11 +107,13 @@ common.loggly = function() {
         }
     }
 
+    var nodeEnv = process.env.NODE_ENV || "development"
+
     var requestOptions = {
         uri: uri,
         method: method,
         headers: headers || {},
-        proxy: proxy
+        rejectUnauthorized: nodeEnv == "production" ? true : false
     }
 
     if (auth) {
@@ -127,6 +127,7 @@ common.loggly = function() {
     try {
         request(requestOptions, function(err, res, body) {
             if (err) {
+                console.error("Loggly", err)
                 return onError(err)
             }
 
@@ -138,6 +139,7 @@ common.loggly = function() {
             success(res, body)
         })
     } catch (ex) {
+        console.error("Loggly", ex)
         onError(ex)
     }
 }

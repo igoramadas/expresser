@@ -52,8 +52,7 @@ var Loggly = (exports.Loggly = function(options) {
     this.host = options.host || "logs-01.loggly.com"
     this.json = options.json || null
     this.auth = options.auth || null
-    this.proxy = options.proxy || null
-    this.userAgent = "node-loggly " + loggly.version
+    this.userAgent = "Expresser Loggly " + loggly.version
     this.useTagHeader = "useTagHeader" in options ? options.useTagHeader : true
 
     //
@@ -111,14 +110,13 @@ Loggly.prototype.log = function(msg, tags, callback) {
 
     msg = isBulk ? msg.map(serialize).join("\n") : serialize(msg)
 
+    var nodeEnv = process.env.NODE_ENV || "development"
+
     logOptions = {
         uri: isBulk ? this.urls.bulk : this.urls.log,
         method: "POST",
         body: msg,
-        proxy: this.proxy,
         headers: {
-            host: this.host,
-            accept: "*/*",
             "user-agent": this.userAgent,
             "content-type": this.json ? "application/json" : "text/plain",
             "content-length": Buffer.byteLength(msg)
@@ -143,19 +141,24 @@ Loggly.prototype.log = function(msg, tags, callback) {
         }
     }
 
-    common.loggly(logOptions, callback, function(res, body) {
-        try {
-            var result = JSON.parse(body)
-            self.emit("log", result)
-            if (callback) {
-                callback(null, result)
+    try {
+        common.loggly(logOptions, callback, function(res, body) {
+            try {
+                var result = JSON.parse(body)
+                self.emit("log", result)
+
+                if (callback) {
+                    callback(null, result)
+                }
+            } catch (ex) {
+                if (callback) {
+                    callback(new Error("Unspecified error from Loggly: " + ex))
+                }
             }
-        } catch (ex) {
-            if (callback) {
-                callback(new Error("Unspecified error from Loggly: " + ex))
-            }
-        }
-    })
+        })
+    } catch (ex) {
+        console.error("Loggly", ex)
+    }
 
     return this
 }

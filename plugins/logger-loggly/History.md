@@ -1,5 +1,9 @@
 # Changelog for expresser-loggly
 
+3.1.1
+=====
+* Improved TLS connection handling.
+
 3.1.0
 =====
 * Removed dependency, Loggly implementation now part of the module.
