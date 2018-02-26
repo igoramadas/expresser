@@ -650,7 +650,9 @@ is defined by the <code>maxDepth</code> setting.
                         <span class="hljs-keyword">else</span>
                             result.push a
                 <span class="hljs-keyword">else</span>
-                    result.push a
+                    cloned = lodash.cloneDeep arg
+                    cleaner cloned, <span class="hljs-number">0</span>
+                    result.push cloned
 
             <span class="hljs-keyword">catch</span> ex
                 <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Logger.argsCleaner"</span>, argKey, ex

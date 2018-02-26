@@ -21,6 +21,7 @@ cover:
 docs:
 	coffeejsdoc
 	$(DOCCO) -o docs/annotated lib/*.coffee plugins/**/*.coffee
+	cp CNAME docs/
 
 clean:
 	rm -rf ./node_modules

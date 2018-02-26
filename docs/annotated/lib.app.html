@@ -385,6 +385,15 @@ to call <code>configure()</code> on your own.
         
       
         
+        <p>BRAKING! Alert if user is still using old ./views default path for views.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> fs.existsSync(settings.app.viewPath)
+            logger.warn <span class="hljs-string">"Attention!"</span>, <span class="hljs-string">"Views path not found: <span class="hljs-subst">#{settings.app.viewPath}</span>"</span>, <span class="hljs-string">"Note that the default path has changed from ./views/ to ./assets/views/"</span>
+            process.exit()</pre></div>
+        
+      
+        
         <p>Set view options, use Pug for HTML templates.</p>
 
         

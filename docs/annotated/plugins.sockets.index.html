@@ -254,6 +254,16 @@ Exposes Socket.IO object to external modules.
         
       
         
+        <p>#
+Sockets initialized and ready to use?
+@property
+@type Boolean</p>
+
+        
+          <div class='highlight'><pre>    ready: <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
         <h2 id="init">INIT</h2>
 
         
@@ -298,9 +308,15 @@ to increase / decrease when users connects or disconnects from the app.
         
           <div class='highlight'><pre>    bind: <span class="hljs-function"><span class="hljs-params">(server)</span> =&gt;</span>
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.sockets.enabled
-            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Sockets"</span>
+            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Sockets"</span></pre></div>
+        
+      
+        
+        <p>Ready to go!</p>
 
-        @io = <span class="hljs-built_in">require</span>(<span class="hljs-string">"socket.io"</span>) server</pre></div>
+        
+          <div class='highlight'><pre>        @io = <span class="hljs-built_in">require</span>(<span class="hljs-string">"socket.io"</span>) server
+        @ready = <span class="hljs-literal">true</span></pre></div>
         
       
         
@@ -350,12 +366,10 @@ Emit the specified key and data to clients.
 
         
           <div class='highlight'><pre>    emit: <span class="hljs-function"><span class="hljs-params">(key, data)</span> =&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.sockets.enabled
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings?.sockets.enabled
             <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Sockets"</span>
-
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @io?
-            logger.error <span class="hljs-string">"Sockets.emit"</span>, key, JSON.stringify(data).length + <span class="hljs-string">" bytes"</span>, <span class="hljs-string">"Sockets not initiated yet, abort!"</span>
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Sockets not initiated (@io is not set)."</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @ready
+            <span class="hljs-keyword">return</span>
 
         logger.debug <span class="hljs-string">"Sockets.emit"</span>, key, data
 
@@ -373,12 +387,10 @@ event from currently connected clients.
 
         
           <div class='highlight'><pre>    listenTo: <span class="hljs-function"><span class="hljs-params">(key, callback, onlyNewClients)</span> =&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.sockets.enabled
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings?.sockets.enabled
             <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Sockets"</span>
-
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @io?.sockets?
-            logger.error <span class="hljs-string">"Sockets.listenTo"</span>, key, <span class="hljs-string">"Sockets not initiated yet, abort!"</span>
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Sockets not initiated (@io is not set)."</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @ready
+            <span class="hljs-keyword">return</span>
 
         onlyNewClients = <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> onlyNewClients?
         @currentListeners.push {key: key, callback: callback}
@@ -399,6 +411,11 @@ Stops listening to the specified event key.
 
         
           <div class='highlight'><pre>    stopListening: <span class="hljs-function"><span class="hljs-params">(key, callback)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings?.sockets.enabled
+            <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Sockets"</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @ready
+            <span class="hljs-keyword">return</span>
+
         <span class="hljs-keyword">for</span> socketKey, socket <span class="hljs-keyword">of</span> @io.sockets.connected
             <span class="hljs-keyword">if</span> callback?
                 socket.removeListener key, callback
@@ -444,7 +461,7 @@ Get how many users are currenly connected to the app.
 
         
           <div class='highlight'><pre>    getConnectionCount: <span class="hljs-function">=&gt;</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @io?.sockets?
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @ready <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> @io?.sockets?
         <span class="hljs-keyword">return</span> Object.keys(@io.sockets.connected).length</pre></div>
         
       

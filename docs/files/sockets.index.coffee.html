@@ -29,6 +29,12 @@ class Sockets
     # @type SocketIO
     io: null
 
+    ##
+    # Sockets initialized and ready to use?
+    # @property
+    # @type Boolean
+    ready: false
+
     # INIT
     # --------------------------------------------------------------------------
 
@@ -59,7 +65,9 @@ class Sockets
         if not settings.sockets.enabled
             return logger.notEnabled &quot;Sockets&quot;
 
+        # Ready to go!
         @io = require(&quot;socket.io&quot;) server
+        @ready = true
 
         # Listen to user connection count updates.
         @io.sockets.on &quot;connection&quot;, (socket) =&gt;
@@ -87,12 +95,10 @@ class Sockets
     # @param {Object} data The JSON data to be sent out to clients.
     ###
     emit: (key, data) =&gt;
-        if not settings.sockets.enabled
+        if not settings?.sockets.enabled
             return logger.notEnabled &quot;Sockets&quot;
-
-        if not @io?
-            logger.error &quot;Sockets.emit&quot;, key, JSON.stringify(data).length + &quot; bytes&quot;, &quot;Sockets not initiated yet, abort!&quot;
-            throw new Error &quot;Sockets not initiated (@io is not set).&quot;
+        else if not @ready
+            return
 
         logger.debug &quot;Sockets.emit&quot;, key, data
 
@@ -106,12 +112,10 @@ class Sockets
     # @param {Boolean} onlyNewClients Optional, if true, listen to event only from new clients.
     ###
     listenTo: (key, callback, onlyNewClients) =&gt;
-        if not settings.sockets.enabled
+        if not settings?.sockets.enabled
             return logger.notEnabled &quot;Sockets&quot;
-
-        if not @io?.sockets?
-            logger.error &quot;Sockets.listenTo&quot;, key, &quot;Sockets not initiated yet, abort!&quot;
-            throw new Error &quot;Sockets not initiated (@io is not set).&quot;
+        else if not @ready
+            return
 
         onlyNewClients = false if not onlyNewClients?
         @currentListeners.push {key: key, callback: callback}
@@ -128,6 +132,11 @@ class Sockets
     # @param {Object} callback The callback to stop triggering.
     ###
     stopListening: (key, callback) =&gt;
+        if not settings?.sockets.enabled
+            return logger.notEnabled &quot;Sockets&quot;
+        else if not @ready
+            return
+
         for socketKey, socket of @io.sockets.connected
             if callback?
                 socket.removeListener key, callback
@@ -155,7 +164,7 @@ class Sockets
     # @return {Number} Number of active connections to the server.
     ###
     getConnectionCount: =&gt;
-        return 0 if not @io?.sockets?
+        return 0 if not @ready or not @io?.sockets?
         return Object.keys(@io.sockets.connected).length
 
     ###

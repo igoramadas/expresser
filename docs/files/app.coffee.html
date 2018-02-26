@@ -114,6 +114,11 @@ class App
         # DEPRECATED! The &quot;server&quot; was renamed to &quot;expressApp&quot;.
         @server = @expressApp
 
+        # BRAKING! Alert if user is still using old ./views default path for views.
+        if not fs.existsSync(settings.app.viewPath)
+            logger.warn &quot;Attention!&quot;, &quot;Views path not found: #{settings.app.viewPath}&quot;, &quot;Note that the default path has changed from ./views/ to ./assets/views/&quot;
+            process.exit()
+
         # Set view options, use Pug for HTML templates.
         @expressApp.set &quot;views&quot;, settings.app.viewPath
         @expressApp.set &quot;view engine&quot;, settings.app.viewEngine
