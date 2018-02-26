@@ -38,6 +38,7 @@ describe("App Sockets Tests", function() {
     })
 
     after(function() {
+        sockets.close()
         app.kill()
     })
 
