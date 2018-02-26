@@ -12,8 +12,8 @@
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.2.1",
-        "nodemailer": "^4.4.2"
+        "coffeescript": "^2.2.2",
+        "nodemailer": "^4.6.0"
     },
     "repository": {
         "type": "git",

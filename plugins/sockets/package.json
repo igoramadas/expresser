@@ -12,7 +12,7 @@
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.2.1",
+        "coffeescript": "^2.2.2",
         "socket.io": "^2.0.4"
     },
     "repository": {
