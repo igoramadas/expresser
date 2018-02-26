@@ -1,5 +1,10 @@
 # Changelog for expresser-sockets
 
+3.0.5
+=====
+* NEW! Property "ready" tells if socket server is ready to use.
+* The library is now a bit more relaxed and won't throw exceptions if called before ready.
+
 3.0.4
 =====
 * NEW! Helper close() method to close the Socket.IO server.

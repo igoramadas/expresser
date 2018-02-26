@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.3.0
+=====
+* BREAKING! Default views path moved from /views to /assets/views.
+
 3.2.3
 =====
 * Fixed "argsCleaner" on Logger when not passing an array.
