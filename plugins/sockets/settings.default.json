@@ -4,6 +4,8 @@
         // Enable the Sockets module?
         "enabled": true,
         // Emit connection count to other modules?
-        "emitConnectionCount": false
+        "emitConnectionCount": false,
+        // Emit a clone of the passed objects instead of the actual objects?
+        "clone": true
     }
 }

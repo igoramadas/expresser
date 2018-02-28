@@ -94,9 +94,15 @@ class Sockets
         else if not @ready
             return
 
-        logger.debug "Sockets.emit", key, data
+        # Emit clone or actual object?
+        if settings.sockets.clone
+            obj = lodash.cloneDeep data
+        else
+            obj = data
 
-        @io.emit key, data
+        logger.debug "Sockets.emit", key, obj
+
+        @io.emit key, obj
 
     ###
     # Listen to a specific event. If `onlyNewClients` is true then it won't listen to that particular
