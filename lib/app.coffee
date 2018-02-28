@@ -372,17 +372,21 @@ class App
                 return @renderError req, res, ex, 500
 
         # Remove methods from JSON before rendering.
-        cleanJson = (obj) ->
+        cleanJson = (obj, depth) ->
+            if depth > settings.logger.maxDepth
+                return
+
             if lodash.isArray obj
-                cleanJson i for i in obj
+                for i in obj
+                    cleanJson i, depth + 1
             else if lodash.isObject obj
                 for k, v of obj
                     if lodash.isFunction v
                         delete obj[k]
                     else
-                        cleanJson v
+                        cleanJson v, depth + 1
 
-        cleanJson data
+        cleanJson data, 0
 
         # Add Access-Control-Allow-Origin to all when debug is true.
         if settings.general.debug
@@ -431,16 +435,40 @@ class App
         status = error?.statusCode or 500 if not status?
         status = 408 if status is "ETIMEDOUT"
 
+        # Helper to build message out of the error object.
+        getMessage = (obj) ->
+            msg = {}
+
+            if lodash.isString obj
+                msg.message = obj
+            else
+                msg.message = obj.message if obj.message?
+                msg.friendlyMessage = obj.friendlyMessage if obj.friendlyMessage?
+                msg.reason = obj.reason if obj.reason?
+                msg.code = obj.code if obj.code?
+
+            # Nothing taken out of error objec? Return null then.
+            if lodash.keys(msg).length is 0
+                return null
+
+            return msg
+
         try
-            if lodash.isError error
-                error = error.message + " " + error.stack
-            else if not lodash.isString error
-                error = JSON.stringify error, null, 0
+            message = getMessage error
+
+            # Error might be encapsulated inside another "error" property.
+            if not mesage? and error.error?
+                message = getMessage error.error
+
         catch ex
-            error = error.toString()
+            logger.error "App.renderError", ex
+
+        # Can't figure it out? Just pass error as string then.
+        if not message?
+            message = error.toString()
 
         # Send error JSON to client.
-        res.status(status).json {error: error, url: req.originalUrl}
+        res.status(status).json {error: message, url: req.originalUrl}
 
         events.emit "App.on.renderError", req, res, error, status
 
