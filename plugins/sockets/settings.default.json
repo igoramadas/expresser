@@ -5,7 +5,7 @@
         "enabled": true,
         // Emit connection count to other modules?
         "emitConnectionCount": false,
-        // Emit a clone of the passed objects instead of the actual objects?
-        "clone": true
+        // Emit a clone of the passed objects instead of the actual objects? Default is false.
+        "clone": false
     }
 }

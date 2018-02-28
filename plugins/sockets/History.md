@@ -3,7 +3,7 @@
 3.1.0
 =====
 * NEW! Property "ready" tells if socket server is ready to use.
-* NEW! Emits clone of passed object by default, configurable via settings.sockets.clone.
+* NEW! Option to emit a clone instead of the actual objects, defined on settings.sockets.clone.
 * The library is now a bit more relaxed and won't throw exceptions if called before ready.
 
 3.0.4
