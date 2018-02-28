@@ -425,7 +425,7 @@ class App
     # @param {Number} status The response status code, optional, default is 500.
     ###
     renderError: (req, res, error, status) ->
-        logger.error "App.renderError", req.originalUrl, status, error
+        logger.debug "App.renderError", req.originalUrl, status, error
 
         # Status defaults to 500.
         status = error?.statusCode or 500 if not status?

@@ -321,6 +321,7 @@ class Logger
     # @private
     ###
     getMessage: (params) ->
+        separator = settings.logger.separator
         separated = []
         args = []
 
@@ -344,7 +345,13 @@ class Logger
                         for value in arg
                             stringified += JSON.stringify value, null, 2
                     else if lodash.isError arg
-                        stringified = arg.message + " " + arg.stack
+                        arrError = []
+                        arrError.push arg.friendlyMessage if arg.friendlyMessage?
+                        arrError.push arg.reason if arg.reason?
+                        arrError.push arg.code if arg.code?
+                        arrError.push arg.message
+                        arrError.push arg.stack
+                        stringified = arrError.join separator
                     else if lodash.isObject arg
                         stringified = JSON.stringify arg, null, 2
                     else
@@ -367,7 +374,6 @@ class Logger
                 serverIP = null
 
         separated.push "IP #{serverIP}" if serverIP?
-        separator = settings.logger.separator
 
         # Return single string log message.
         return separated.join separator

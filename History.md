@@ -3,6 +3,8 @@
 3.3.0
 =====
 * BREAKING! Default views path moved from /views to /assets/views.
+* App.renderError will NOT log an error automatically now.
+* Improved exception logging when using the Logger.
 
 3.2.3
 =====
