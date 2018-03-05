@@ -126,6 +126,7 @@ is defined by the <code>maxDepth</code> setting.</p>
     args.unshift &quot;ERROR&quot;
     @log &quot;error&quot;, args</pre></div></div></div></section><span class="fix-anchor" id="Logger__getMessage"></span><section class="private"><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Logger__getMessage_body"><h3 class="panel-title">Logger::getMessage(params)<span class="label label-private">private</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Parses arguments and returns a human readable message to be used for logging.</p>
 </div></div><div class="panel-collapse collapse" id="Logger__getMessage_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>params</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array'>Array</a></span></td><td><span> Arguments or array of parameters to be parsed.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span>The human readable, parsed JSON message.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/logger.coffee#L323">/lib/logger.coffee:323</a>)</span></div><pre class="sourcecode prettyprint .linenums:323">getMessage: (params) -&gt;
+    separator = settings.logger.separator
     separated = []
     args = []
 
@@ -149,7 +150,13 @@ is defined by the <code>maxDepth</code> setting.</p>
                     for value in arg
                         stringified += JSON.stringify value, null, 2
                 else if lodash.isError arg
-                    stringified = arg.message + &quot; &quot; + arg.stack
+                    arrError = []
+                    arrError.push arg.friendlyMessage if arg.friendlyMessage?
+                    arrError.push arg.reason if arg.reason?
+                    arrError.push arg.code if arg.code?
+                    arrError.push arg.message
+                    arrError.push arg.stack
+                    stringified = arrError.join separator
                 else if lodash.isObject arg
                     stringified = JSON.stringify arg, null, 2
                 else
@@ -172,7 +179,6 @@ is defined by the <code>maxDepth</code> setting.</p>
             serverIP = null
 
     separated.push &quot;IP #{serverIP}&quot; if serverIP?
-    separator = settings.logger.separator
 
     # Return single string log message.
     return separated.join separator</pre></div></div></div></section><span class="fix-anchor" id="Logger__info"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Logger__info_body"><h3 class="panel-title">Logger::info(args)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Log to the active transports as <code>info</code>.</p>

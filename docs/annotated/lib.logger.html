@@ -670,6 +670,7 @@ Parses arguments and returns a human readable message to be used for logging.
 
         
           <div class='highlight'><pre>    getMessage: <span class="hljs-function"><span class="hljs-params">(params)</span> -&gt;</span>
+        separator = settings.logger.separator
         separated = []
         args = []
 
@@ -697,7 +698,13 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
                         <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> arg
                             stringified += JSON.stringify value, <span class="hljs-literal">null</span>, <span class="hljs-number">2</span>
                     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isError arg
-                        stringified = arg.message + <span class="hljs-string">" "</span> + arg.stack
+                        arrError = []
+                        arrError.push arg.friendlyMessage <span class="hljs-keyword">if</span> arg.friendlyMessage?
+                        arrError.push arg.reason <span class="hljs-keyword">if</span> arg.reason?
+                        arrError.push arg.code <span class="hljs-keyword">if</span> arg.code?
+                        arrError.push arg.message
+                        arrError.push arg.stack
+                        stringified = arrError.join separator
                     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject arg
                         stringified = JSON.stringify arg, <span class="hljs-literal">null</span>, <span class="hljs-number">2</span>
                     <span class="hljs-keyword">else</span>
@@ -727,8 +734,7 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
             <span class="hljs-keyword">catch</span> ex
                 serverIP = <span class="hljs-literal">null</span>
 
-        separated.push <span class="hljs-string">"IP <span class="hljs-subst">#{serverIP}</span>"</span> <span class="hljs-keyword">if</span> serverIP?
-        separator = settings.logger.separator</pre></div>
+        separated.push <span class="hljs-string">"IP <span class="hljs-subst">#{serverIP}</span>"</span> <span class="hljs-keyword">if</span> serverIP?</pre></div>
         
       
         

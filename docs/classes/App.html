@@ -162,26 +162,50 @@ you call the main <code>expresser.init()</code>.</p>
     return errors.throw &quot;expressNotInit&quot; if not @expressApp?
     logger.debug &quot;App.put&quot;, util.inspect(arguments[0]), util.inspect(arguments[1])
     @expressApp.put.apply @expressApp, arguments</pre></div></div></div></section><span class="fix-anchor" id="App__renderError"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#App__renderError_body"><h3 class="panel-title">App::renderError(req, res, error, status)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Sends error response as JSON.</p>
-</div></div><div class="panel-collapse collapse" id="App__renderError_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>req</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The Express request object, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>res</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The Express response object, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>error</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The error object or message to be sent to the client, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>status</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number'>Number</a></span></td><td><span> The response status code, optional, default is 500.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/app.coffee#L427">/lib/app.coffee:427</a>)</span></div><pre class="sourcecode prettyprint .linenums:427">renderError: (req, res, error, status) -&gt;
-    logger.error &quot;App.renderError&quot;, req.originalUrl, status, error
+</div></div><div class="panel-collapse collapse" id="App__renderError_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>req</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The Express request object, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>res</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The Express response object, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>error</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The error object or message to be sent to the client, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>status</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number'>Number</a></span></td><td><span> The response status code, optional, default is 500.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/app.coffee#L431">/lib/app.coffee:431</a>)</span></div><pre class="sourcecode prettyprint .linenums:431">renderError: (req, res, error, status) -&gt;
+    logger.debug &quot;App.renderError&quot;, req.originalUrl, status, error
 
     # Status defaults to 500.
     status = error?.statusCode or 500 if not status?
     status = 408 if status is &quot;ETIMEDOUT&quot;
 
+    # Helper to build message out of the error object.
+    getMessage = (obj) -&gt;
+        msg = {}
+
+        if lodash.isString obj
+            msg.message = obj
+        else
+            msg.message = obj.message if obj.message?
+            msg.friendlyMessage = obj.friendlyMessage if obj.friendlyMessage?
+            msg.reason = obj.reason if obj.reason?
+            msg.code = obj.code if obj.code?
+
+        # Nothing taken out of error objec? Return null then.
+        if lodash.keys(msg).length is 0
+            return null
+
+        return msg
+
     try
-        if lodash.isError error
-            error = error.message + &quot; &quot; + error.stack
-        else if not lodash.isString error
-            error = JSON.stringify error, null, 0
+        message = getMessage error
+
+        # Error might be encapsulated inside another &quot;error&quot; property.
+        if not mesage? and error.error?
+            message = getMessage error.error
+
     catch ex
-        error = error.toString()
+        logger.error &quot;App.renderError&quot;, ex
+
+    # Can't figure it out? Just pass error as string then.
+    if not message?
+        message = error.toString()
 
     # Send error JSON to client.
-    res.status(status).json {error: error, url: req.originalUrl}
+    res.status(status).json {error: message, url: req.originalUrl}
 
     events.emit &quot;App.on.renderError&quot;, req, res, error, status</pre></div></div></div></section><span class="fix-anchor" id="App__renderImage"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#App__renderImage_body"><h3 class="panel-title">App::renderImage(req, res, filename, options)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Render an image from the speficied file, and send to the client.</p>
-</div></div><div class="panel-collapse collapse" id="App__renderImage_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>req</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The Express request object, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>res</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The Express response object, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>filename</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The full path to the image file, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Options passed to the image renderer, for example the "mimetype".</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/app.coffee#L403">/lib/app.coffee:403</a>)</span></div><pre class="sourcecode prettyprint .linenums:403">renderImage: (req, res, filename, options) -&gt;
+</div></div><div class="panel-collapse collapse" id="App__renderImage_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>req</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The Express request object, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>res</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The Express response object, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>filename</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The full path to the image file, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Options passed to the image renderer, for example the "mimetype".</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/app.coffee#L407">/lib/app.coffee:407</a>)</span></div><pre class="sourcecode prettyprint .linenums:407">renderImage: (req, res, filename, options) -&gt;
     logger.debug &quot;App.renderImage&quot;, req.originalUrl, filename, options
 
     mimetype = options?.mimetype
@@ -207,17 +231,21 @@ you call the main <code>expresser.init()</code>.</p>
             return @renderError req, res, ex, 500
 
     # Remove methods from JSON before rendering.
-    cleanJson = (obj) -&gt;
+    cleanJson = (obj, depth) -&gt;
+        if depth &gt; settings.logger.maxDepth
+            return
+
         if lodash.isArray obj
-            cleanJson i for i in obj
+            for i in obj
+                cleanJson i, depth + 1
         else if lodash.isObject obj
             for k, v of obj
                 if lodash.isFunction v
                     delete obj[k]
                 else
-                    cleanJson v
+                    cleanJson v, depth + 1
 
-    cleanJson data
+    cleanJson data, 0
 
     # Add Access-Control-Allow-Origin to all when debug is true.
     if settings.general.debug

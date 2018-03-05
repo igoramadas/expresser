@@ -369,11 +369,21 @@ Emit the specified key and data to clients.
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings?.sockets.enabled
             <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Sockets"</span>
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @ready
-            <span class="hljs-keyword">return</span>
+            <span class="hljs-keyword">return</span></pre></div>
+        
+      
+        
+        <p>Emit clone or actual object?</p>
 
-        logger.debug <span class="hljs-string">"Sockets.emit"</span>, key, data
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.sockets.clone
+            obj = lodash.cloneDeep data
+        <span class="hljs-keyword">else</span>
+            obj = data
 
-        @io.emit key, data</pre></div>
+        logger.debug <span class="hljs-string">"Sockets.emit"</span>, key, obj
+
+        @io.emit key, obj</pre></div>
         
       
         
