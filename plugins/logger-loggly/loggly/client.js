@@ -18,7 +18,7 @@ function stringify(msg) {
     try {
         payload = JSON.stringify(msg)
     } catch (ex) {
-        payload = msg
+        payload = msg.toString()
     }
 
     return payload
@@ -36,7 +36,6 @@ exports.createClient = function(options) {
 // #### @options {Object} Options for this Loggly client
 // ####   @subdomain
 // ####   @token
-// ####   @json
 // ####   @auth
 // ####   @tags
 // Constructor for the Loggly object
@@ -50,10 +49,9 @@ var Loggly = (exports.Loggly = function(options) {
     this.subdomain = options.subdomain
     this.token = options.token
     this.host = options.host || "logs-01.loggly.com"
-    this.json = options.json || null
     this.auth = options.auth || null
     this.proxy = options.proxy || null
-    this.userAgent = "node-loggly " + loggly.version
+    this.userAgent = "Expresser Loggly " + loggly.version
     this.useTagHeader = "useTagHeader" in options ? options.useTagHeader : true
 
     //
@@ -67,7 +65,6 @@ var Loggly = (exports.Loggly = function(options) {
     this.urls = {
         default: url,
         log: [url, "inputs", this.token].join("/"),
-        bulk: [url, "bulk", this.token].join("/"),
         api: "https://" + [this.subdomain, "loggly", "com"].join(".") + "/" + api
     }
 })
@@ -82,8 +79,7 @@ util.inherits(Loggly, events.EventEmitter)
 // #### @msg {string|Object} Data to log
 // #### @tags {Array} **Optional** Tags to send with this msg
 // #### @callback {function} Continuation to respond to when complete.
-// Logs the message to the token associated with this instance. If
-// the message is an Object we will attempt to serialize it. If any
+// Logs the message to the token associated with this instance. If any
 // `tags` are supplied they will be passed via the `X-LOGGLY-TAG` header.
 //  - http://www.loggly.com/docs/api-sending-data/
 //
@@ -96,32 +92,15 @@ Loggly.prototype.log = function(msg, tags, callback) {
     var self = this,
         logOptions
 
-    //
-    // Remark: Have some extra logic for detecting if we want to make a bulk
-    // request to loggly
-    //
-    var isBulk = Array.isArray(msg)
-    function serialize(msg) {
-        if (msg instanceof Object) {
-            return self.json ? stringify(msg) : common.serialize(msg)
-        } else {
-            return self.json ? stringify({ message: msg }) : msg
-        }
-    }
-
-    msg = isBulk ? msg.map(serialize).join("\n") : serialize(msg)
-
     logOptions = {
-        uri: isBulk ? this.urls.bulk : this.urls.log,
+        uri: this.urls.log,
         method: "POST",
         body: msg,
         proxy: this.proxy,
         headers: {
-            host: this.host,
             accept: "*/*",
             "user-agent": this.userAgent,
-            "content-type": this.json ? "application/json" : "text/plain",
-            "content-length": Buffer.byteLength(msg)
+            "content-type": "text/plain"
         }
     }
 
@@ -181,31 +160,6 @@ Loggly.prototype.tagFilter = function(tags) {
         //
         return isSolid.test(tag) && tag.length <= 64
     })
-}
-
-//
-// ### function customer (callback)
-// ### @callback {function} Continuation to respond to.
-// Retrieves the customer information from the Loggly API:
-//   - http://www.loggly.com/docs/api-account-info/
-//
-Loggly.prototype.customer = function(callback) {
-    common.loggly(
-        {
-            uri: this.logglyUrl("customer"),
-            auth: this.auth
-        },
-        callback,
-        function(res, body) {
-            var customer
-            try {
-                customer = JSON.parse(body)
-            } catch (ex) {
-                return callback(ex)
-            }
-            callback(null, customer)
-        }
-    )
 }
 
 //

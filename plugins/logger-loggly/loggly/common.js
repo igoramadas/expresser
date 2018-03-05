@@ -71,34 +71,12 @@ common.loggly = function() {
         proxy,
         uri
 
-    //
-    // Now that we've popped off the two callbacks
-    // We can make decisions about other arguments
-    //
-    if (args.length === 1) {
-        if (typeof args[0] === "string") {
-            //
-            // If we got a string assume that it's the URI
-            //
-            method = "GET"
-            uri = args[0]
-        } else {
-            method = args[0].method || "GET"
-            uri = args[0].uri
-            requestBody = args[0].body
-            auth = args[0].auth
-            headers = args[0].headers
-            proxy = args[0].proxy
-        }
-    } else if (args.length === 2) {
-        method = "GET"
-        uri = args[0]
-        auth = args[1]
-    } else {
-        method = args[0]
-        uri = args[1]
-        auth = args[2]
-    }
+    method = args[0].method || "GET"
+    uri = args[0].uri
+    requestBody = args[0].body
+    auth = args[0].auth
+    headers = args[0].headers
+    proxy = args[0].proxy
 
     function onError(err) {
         if (!responded) {
@@ -140,66 +118,4 @@ common.loggly = function() {
     } catch (ex) {
         onError(ex)
     }
-}
-
-//
-// ### function serialize (obj, key)
-// #### @obj {Object|literal} Object to serialize
-// #### @key {string} **Optional** Optional key represented by obj in a larger object
-// Performs simple comma-separated, `key=value` serialization for Loggly when
-// logging for non-JSON values.
-//
-common.serialize = function(obj, key) {
-    if (obj === null) {
-        obj = "null"
-    } else if (obj === undefined) {
-        obj = "undefined"
-    } else if (obj === false) {
-        obj = "false"
-    }
-
-    if (typeof obj !== "object") {
-        return key ? key + "=" + obj : obj
-    }
-
-    var msg = "",
-        keys = Object.keys(obj),
-        length = keys.length
-
-    for (var i = 0; i < length; i++) {
-        if (Array.isArray(obj[keys[i]])) {
-            msg += keys[i] + "=["
-
-            for (var j = 0, l = obj[keys[i]].length; j < l; j++) {
-                msg += common.serialize(obj[keys[i]][j])
-                if (j < l - 1) {
-                    msg += ", "
-                }
-            }
-
-            msg += "]"
-        } else {
-            msg += common.serialize(obj[keys[i]], keys[i])
-        }
-
-        if (i < length - 1) {
-            msg += ", "
-        }
-    }
-
-    return msg
-}
-
-//
-// function clone (obj)
-//   Helper method for deep cloning pure JSON objects
-//   i.e. JSON objects that are either literals or objects (no Arrays, etc)
-//
-common.clone = function(obj) {
-    var clone = {}
-    for (var i in obj) {
-        clone[i] = obj[i] instanceof Object ? common.clone(obj[i]) : obj[i]
-    }
-
-    return clone
 }

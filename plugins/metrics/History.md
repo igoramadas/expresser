@@ -1,5 +1,9 @@
 # Changelog for expresser-metrics
 
+3.1.4
+=====
+* HTTP server start / kill returns false if already / not running.
+
 3.1.3
 =====
 * General improvements and updated documentation.

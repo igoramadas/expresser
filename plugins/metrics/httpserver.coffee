@@ -37,18 +37,18 @@ class HttpServer
         if not settings.metrics.enabled
             return logger.notEnabled "Metrics"
 
-        return if webServer?
-
-        @server = express()
-        @server.get settings.metrics.httpServer.path, (req, res) -> res.json metrics.output()
+        return false if webServer?
 
         try
+            @server = express()
+            @server.get settings.metrics.httpServer.path, (req, res) -> res.json metrics.output()
             webServer = @server.listen settings.metrics.httpServer.port
         catch ex
             logger.error "Metrics.httpServer.start", ex
             return {error: ex}
 
         logger.info "Metrics.httpServer.start", settings.metrics.httpServer.port
+        return true
 
     ###
     # Kill the Express / HTTP server.
@@ -56,7 +56,7 @@ class HttpServer
     kill: ->
         logger.debug "Metrics.httpServer.kill"
 
-        return if not webServer?
+        return false if not webServer?
 
         try
             webServer.close()
@@ -66,6 +66,7 @@ class HttpServer
             return {error: ex}
 
         logger.info "Metrics.httpServer.kill"
+        return true
 
 # Singleton implementation
 # -----------------------------------------------------------------------------

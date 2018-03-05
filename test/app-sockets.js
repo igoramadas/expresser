@@ -61,12 +61,12 @@ describe("App Sockets Tests", function() {
         var clientToServer = function(value) {
             sockets.stopListening("client-to-server")
 
-            if (shadowClient && shadowClient.connected) {
-                shadowClient.disconnect()
+            if (shadowClient) {
+                shadowClient.close()
             }
 
-            if (client && client.connected) {
-                client.disconnect()
+            if (client) {
+                client.close()
             }
 
             if (value == "test123") {
@@ -91,6 +91,7 @@ describe("App Sockets Tests", function() {
         client.on("connect", clientConnected)
         client.on("connect_error", function(err) {
             socketError(err, done)
+            client.close()
         })
     })
 
@@ -100,8 +101,8 @@ describe("App Sockets Tests", function() {
         var client
 
         var serverToClient = function(value) {
-            if (client && client.connected) {
-                client.disconnect()
+            if (client) {
+                client.close()
             }
 
             if (value == "test123") {
@@ -129,6 +130,7 @@ describe("App Sockets Tests", function() {
         client.on("connect", clientConnected)
         client.on("connect_error", function(err) {
             socketError(err, done)
+            client.close()
         })
     })
 
