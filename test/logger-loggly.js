@@ -61,7 +61,7 @@ describe("Logger Loggly Tests", function() {
         settings.logger.should.have.property("loggly")
     })
 
-    if (false && hasEnv) {
+    if (hasEnv) {
         it("Creates transport object", function() {
             logger.init()
             loggerLoggly.init()

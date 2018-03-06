@@ -96,8 +96,9 @@ class App
     configure: ->
         midBodyParser = require "body-parser"
         midCookieParser = require "cookie-parser"
-        midSession = require "cookie-session"
         midCompression = require "compression"
+        midSession = require "express-session"
+        memoryStore = require("memorystore") midSession
 
         if settings.general.debug or nodeEnv is "test"
             midErrorHandler = require "errorhandler"
@@ -130,7 +131,7 @@ class App
             @expressApp.use midCookieParser settings.app.cookie.secret
 
         if settings.app.session.enabled
-            @expressApp.use midSession {secret: settings.app.session.secret, cookie: {maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))}}
+            @expressApp.use midSession {store: new memoryStore(), secret: settings.app.session.secret, cookie: {httpOnly: settings.app.session.httpOnly, maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))}}
 
         # Use HTTP compression only if enabled on settings.
         if settings.app.compressionEnabled

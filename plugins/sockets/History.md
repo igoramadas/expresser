@@ -2,6 +2,7 @@
 
 3.1.0
 =====
+* NEW! Events onConnect to validate and handle socket connections.
 * NEW! Property "ready" tells if socket server is ready to use.
 * NEW! Option to emit a clone instead of the actual objects, defined on settings.sockets.clone.
 * The library is now a bit more relaxed and won't throw exceptions if called before ready.

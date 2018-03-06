@@ -4,6 +4,7 @@ events = null
 lodash =  null
 logger = null
 settings = null
+utils = null
 
 ###
 # Handles sockets communication using the module Socket.IO.
@@ -16,6 +17,15 @@ class Sockets
     # @property
     # @type Array
     currentListeners: []
+
+    ##
+    # Promise function(socket) called on each client connection.
+    # Result of this function must return a Boolean, and if
+    # false, it will force close the connection and skip event bindings.
+    # @property
+    # @promise
+    # @type Function
+    onConnect: null
 
     ##
     # Exposes Socket.IO object to external modules.
@@ -40,6 +50,7 @@ class Sockets
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
+        utils = @expresser.utils
 
         logger.debug "Sockets.init"
 
@@ -65,6 +76,21 @@ class Sockets
 
         # Listen to user connection count updates.
         @io.sockets.on "connection", (socket) =>
+            ip = utils.browser.getClientIP socket
+            logger.debug "Sockets.connection", "Connected", ip
+
+            if @onConnect?
+                try
+                    valid = await @onConnect socket
+                catch ex
+                    logger.error "Sockets.connection", "onConnect", ip, ex
+                    valid = false
+
+                # Force disconnection if socket has not passed the onConnect() validation.
+                if not valid
+                    logger.warn "Sockets.connection", "Did not validate onConnect, will force disconnect"
+                    return socket.disconnect()
+
             socket.on "disconnect", @onDisconnect
 
             if settings.sockets.emitConnectionCount

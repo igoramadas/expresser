@@ -23,10 +23,12 @@ class BrowserUtils
                 return xfor.split(",")[0]
 
         # Get remote address.
-        if reqOrSocket.connection?
-            return reqOrSocket.connection.remoteAddress
-        else
-            return reqOrSocket.remoteAddress
+        if reqOrSocket.handshake?.address
+            return reqOrSocket.handshake.address
+        else if reqOrSocket.request?.connection?.remoteAddress
+            return reqOrSocket.request.connection.remoteAddress
+
+        return null
 
     ###
     # Get the client's device details. This is a very basic helper to identify device and browser.

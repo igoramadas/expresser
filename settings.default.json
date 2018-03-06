@@ -46,6 +46,8 @@
         "session": {
             // Enable session store? This will use the cookieSession implementation of Express.
             "enabled": true,
+            // Set HttpOnly flag on session cookies?
+            "httpOnly": true,
             // Max age of session cookies, in seconds, default is 20min.
             "maxAge": 1200,
             // Secret key used for session encryption.

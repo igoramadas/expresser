@@ -2,6 +2,7 @@
 
 3.3.0
 =====
+* NEW / BREAKING! Now using express-session with memory store instead of cookie based.
 * BREAKING! Default views path moved from /views to /assets/views.
 * App.renderError will NOT log an error automatically now.
 * Improved exception logging when using the Logger.
