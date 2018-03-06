@@ -4,6 +4,7 @@
 =====
 * NEW / BREAKING! Now using express-session with memory store instead of cookie based.
 * BREAKING! Default views path moved from /views to /assets/views.
+* Updated utils.browser.getClientIP() to better support Socket.IO.
 * App.renderError will NOT log an error automatically now.
 * Improved exception logging when using the Logger.
 * Updated dependencies.
