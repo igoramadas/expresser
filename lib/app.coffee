@@ -130,7 +130,7 @@ class App
             @expressApp.use midCookieParser settings.app.cookie.secret
 
         if settings.app.session.enabled
-            @expressApp.use midSession {store: new memoryStore(), secret: settings.app.session.secret, cookie: {httpOnly: settings.app.session.httpOnly, maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))}}
+            @expressApp.use midSession {store: new memoryStore(), secret: settings.app.session.secret, resave: false, saveUninitialized: false, cookie: {httpOnly: settings.app.session.httpOnly, maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))}}
 
         # Use HTTP compression only if enabled on settings.
         if settings.app.compressionEnabled
