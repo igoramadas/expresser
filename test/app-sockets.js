@@ -26,7 +26,7 @@ describe("App Sockets Tests", function() {
     before(function() {
         settings.loadFromJson("../plugins/sockets/settings.default.json")
         settings.loadFromJson("settings.test.json")
-        settings.app.port = 8080
+        settings.app.port = 18020
         settings.app.ssl.enabled = false
 
         app = require("../lib/app.coffee").newInstance()
@@ -46,7 +46,7 @@ describe("App Sockets Tests", function() {
         settings.should.have.property("sockets")
     })
 
-    it("Init app server with sockets, port 8080", function() {
+    it("Init app server with sockets, port 18020", function() {
         this.timeout(5000)
 
         sockets.init()
@@ -84,9 +84,9 @@ describe("App Sockets Tests", function() {
             client.emit("client-to-server", "test123")
         }
 
-        shadowClient = socketClient("http://localhost:8080/", socketClientOptions)
+        shadowClient = socketClient("http://localhost:18020/", socketClientOptions)
         sockets.listenTo("client-to-server", clientToServer, false)
-        client = socketClient("http://localhost:8080/", socketClientOptions)
+        client = socketClient("http://localhost:18020/", socketClientOptions)
 
         client.on("connect", clientConnected)
         client.on("connect_error", function(err) {
@@ -124,7 +124,7 @@ describe("App Sockets Tests", function() {
             setTimeout(emitter, 500)
         }
 
-        client = socketClient("http://localhost:8080/", socketClientOptions)
+        client = socketClient("http://localhost:18020/", socketClientOptions)
 
         client.on("welcome", serverToClient)
         client.on("connect", clientConnected)

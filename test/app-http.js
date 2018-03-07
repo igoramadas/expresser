@@ -11,7 +11,7 @@ describe("App HTTP Tests", function() {
 
     var settings = require("../lib/settings.coffee")
     var app = null
-    var supertest = require("supertest")
+    var supertest = null
 
     before(function() {
         settings.loadFromJson("settings.test.json")
@@ -44,6 +44,8 @@ describe("App HTTP Tests", function() {
 
         app.appendMiddlewares.push(middleware)
         app.init()
+
+        supertest = require("supertest").agent(app.expressApp)
     })
 
     it("Renders a test view", function(done) {
@@ -53,9 +55,7 @@ describe("App HTTP Tests", function() {
             app.renderView(req, res, "testview.pug")
         })
 
-        supertest(app.expressApp)
-            .get("/testview")
-            .expect(200, done)
+        supertest.get("/testview").expect(200, done)
     })
 
     it("Renders a JSON object", function(done) {
@@ -72,7 +72,7 @@ describe("App HTTP Tests", function() {
             app.renderJson(req, res, j)
         })
 
-        supertest(app.expressApp)
+        supertest
             .get("/testjson")
             .expect("Content-Type", /json/)
             .expect(200, done)
@@ -90,7 +90,7 @@ describe("App HTTP Tests", function() {
             app.renderError(req, res, e, 500)
         })
 
-        supertest(app.expressApp)
+        supertest
             .get("/testerror")
             .expect("Content-Type", /json/)
             .expect(500, done)
@@ -103,16 +103,46 @@ describe("App HTTP Tests", function() {
             app.renderImage(req, res, __dirname + "/testimage.jpg")
         })
 
-        supertest(app.expressApp)
+        supertest
             .get("/testjpg")
             .expect("Content-Type", /image/)
             .expect(200, done)
     })
 
+    it("Set and read request session", function(done) {
+        this.timeout(5000)
+
+        app.get("/setsession", function(req, res) {
+            req.session.something = "ABC"
+            app.renderJson(req, res, { session: true })
+        })
+
+        app.get("/getsession", function(req, res) {
+            if (req.session.something == "ABC") {
+                app.renderJson(req, res, { session: true })
+            } else {
+                app.renderError(req, res, { session: false }, 500)
+            }
+        })
+
+        var setCallback = async function(err) {
+            if (err) {
+                done(err)
+            } else {
+                var getSession = function() {
+                    supertest.get("/getsession").expect(200, done)
+                }
+                setTimeout(getSession, 200)
+            }
+        }
+
+        supertest.get("/setsession").expect(200, setCallback)
+    })
+
     it("Test custom middleware on route /middleware", function(done) {
         this.timeout(5000)
 
-        supertest(app.expressApp)
+        supertest
             .get("/middleware")
             .expect("Content-Type", /json/)
             .expect(200, done)

@@ -6,6 +6,7 @@ var chai = require("chai")
 chai.should()
 
 describe("App HTTPS Tests", function() {
+    return
     env.NODE_ENV = "test"
     process.setMaxListeners(20)
 
@@ -53,12 +54,14 @@ describe("App HTTPS Tests", function() {
         app.appendMiddlewares.push(middleware1)
         app.appendMiddlewares.push(middleware2)
         app.init()
+
+        supertest = require("supertest").agent(app.expressApp)
     })
 
     it("Renders test middleware 1", function(done) {
         this.timeout(5000)
 
-        supertest(app.expressApp)
+        supertest
             .get("/middleware1")
             .expect("Content-Type", /json/)
             .expect(200, done)
@@ -67,7 +70,7 @@ describe("App HTTPS Tests", function() {
     it("Renders test middleware 2", function(done) {
         this.timeout(5000)
 
-        supertest(app.expressApp)
+        supertest
             .get("/middleware2")
             .expect("Content-Type", /json/)
             .expect(200, done)
