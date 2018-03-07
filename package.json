@@ -1,15 +1,8 @@
 {
     "name": "expresser",
-    "version": "3.2.2",
+    "version": "3.3.0",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
-    "keywords": [
-        "expresser",
-        "express",
-        "app",
-        "framework",
-        "node",
-        "webapp"
-    ],
+    "keywords": ["expresser", "express", "app", "framework", "node", "webapp"],
     "author": "Igor Ramadas <igor@devv.com>",
     "homepage": "https://expresser.devv.com",
     "subdomain": "expresser",
@@ -49,7 +42,7 @@
         "moment": "^2.21.0",
         "pako": "^1.0.6",
         "postcss": "^6.0.19",
-        "pug": "^2.0.0-rc.4",
+        "pug": "^2.0.0",
         "stylus": "^0.54.5",
         "uglify-es": "^3.3.10"
     },
@@ -67,7 +60,7 @@
         "istanbul": "^0.4.5",
         "le_node": "^1.7.1",
         "loggly": "^1.1.1",
-        "mocha": "^5.0.2",
+        "mocha": "^5.0.3",
         "mocha-lcov-reporter": "^1.3.0",
         "mongodb": "^3.0.4",
         "nodemailer": "^4.6.2",
