@@ -19,5 +19,5 @@
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": ["ajax", "expresser", "sockets", "web sockets"]
+    "keywords": ["ajax", "expresser", "pooling", "sockets", "web sockets"]
 }
