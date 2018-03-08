@@ -3,6 +3,7 @@
 3.3.0
 =====
 * NEW / BREAKING! Now using express-session with memory store instead of cookie based.
+* NEW! Logger now emit logging events (ex. Logger.on.info, Logger.on.error, etc...)
 * BREAKING! Default views path moved from /views to /assets/views.
 * Updated utils.browser.getClientIP() to better support Socket.IO.
 * App.renderError will NOT log an error automatically now.
