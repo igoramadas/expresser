@@ -1,7 +1,8 @@
 # Changelog for expresser-aws
 
-3.2.3
+3.2.4
 =====
+* Methods now check for proper initialization before calls.
 * Updated dependencies.
 
 3.2.2

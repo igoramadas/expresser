@@ -44,23 +44,28 @@ class S3
     # @promise
     ###
     download: (options) =>
-        logger.debug "AWS.S3.download", options
-
-        # DEPRECATED! Please use a single `options` with named parameters {bucket, key, destination}.
-        if arguments.length > 1
-            logger.deprecated "AWS.S3.download(bucket, key, destination)", "Please use download(options) passing the named parameters."
-
-            options = {
-                bucket: arguments[0]
-                key: arguments[1]
-                destination: arguments[2]
-            }
-
-        # Accept uppercased parameters as well, like in the AWS SDK.
-        options.bucket = options.Bucket if not options.bucket?
-        options.key = options.Key if not options.key?
-
         return new Promise (resolve, reject) ->
+            if not logger?
+                err = "Module not initialized yet, please init() Expresser or the module directly first, will NOT download"
+                console.error "AWS.S3.download", err
+                return reject err
+
+            logger.debug "AWS.S3.download", options
+
+            # DEPRECATED! Please use a single `options` with named parameters {bucket, key, destination}.
+            if arguments.length > 1
+                logger.deprecated "AWS.S3.download(bucket, key, destination)", "Please use download(options) passing the named parameters."
+
+                options = {
+                    bucket: arguments[0]
+                    key: arguments[1]
+                    destination: arguments[2]
+                }
+
+            # Accept uppercased parameters as well, like in the AWS SDK.
+            options.bucket = options.Bucket if not options.bucket?
+            options.key = options.Key if not options.key?
+
             if not settings.aws.enabled
                 return reject logger.notEnabled "AWS"
 
@@ -134,25 +139,28 @@ class S3
     # @promise
     ###
     upload: (options) =>
-        logger.debug "AWS.S3.upload", options
-
-        # DEPRECATED! Please use a single `options` with named parameters {bucket, key, body}.
-        if arguments.length > 1
-            logger.deprecated "AWS.S3.upload(bucket, key, body, options)", "Please use upload(options) passing the named parameters."
-
-            options = if arguments.length > 2 then arguments[3] else {}
-            options.bucket = arguments[0]
-            options.key = arguments[1]
-            options.body = arguments[2]
-
-        # Accept uppercased parameters as well, like in the AWS SDK.
-        options.bucket = options.Bucket if not options.bucket?
-        options.key = options.Key if not options.key?
-        options.body = options.Body if not options.body?
-        options.contentType = options.ContentType if not options.contentType?
-        options.acl = options.ACL or "public-read" if not options.acl?
-
         return new Promise (resolve, reject) ->
+            if not logger?
+                err = "Module not initialized yet, please init() Expresser or the module directly first, will NOT upload"
+                console.error "AWS.S3.upload", err
+                return reject err
+
+            # DEPRECATED! Please use a single `options` with named parameters {bucket, key, body}.
+            if arguments.length > 1
+                logger.deprecated "AWS.S3.upload(bucket, key, body, options)", "Please use upload(options) passing the named parameters."
+
+                options = if arguments.length > 2 then arguments[3] else {}
+                options.bucket = arguments[0]
+                options.key = arguments[1]
+                options.body = arguments[2]
+
+            # Accept uppercased parameters as well, like in the AWS SDK.
+            options.bucket = options.Bucket if not options.bucket?
+            options.key = options.Key if not options.key?
+            options.body = options.Body if not options.body?
+            options.contentType = options.ContentType if not options.contentType?
+            options.acl = options.ACL or "public-read" if not options.acl?
+
             if not settings.aws.enabled
                 return reject logger.notEnabled "AWS"
 
@@ -212,26 +220,31 @@ class S3
     # @promise
     ###
     delete: (options) ->
-        logger.debug "AWS.S3.delete", options
-
-        # DEPRECATED! Please use a single `options` with named parameters {bucket, keys}.
-        if arguments.length > 1
-            logger.deprecated "AWS.S3.delete(bucket, keys)", "Please use download(options) passing the named parameters."
-
-            options = {
-                bucket: arguments[0]
-                keys: arguments[1]
-            }
-
-        # Accept uppercased parameters as well, like in the AWS SDK.
-        options.bucket = options.Bucket if not options.bucket?
-        options.keys = options.Keys if not options.keys?
-
-        # Accept a single key as well.
-        options.keys = [options.key] if not options.keys? and options.key?
-        options.keys = [options.keys] if lodash.isString options.keys
-
         return new Promise (resolve, reject) ->
+            if not logger?
+                err = "Module not initialized yet, please init() Expresser or the module directly first, will NOT delete"
+                console.error "AWS.S3.delete", err
+                return reject err
+
+            logger.debug "AWS.S3.delete", options
+
+            # DEPRECATED! Please use a single `options` with named parameters {bucket, keys}.
+            if arguments.length > 1
+                logger.deprecated "AWS.S3.delete(bucket, keys)", "Please use download(options) passing the named parameters."
+
+                options = {
+                    bucket: arguments[0]
+                    keys: arguments[1]
+                }
+
+            # Accept uppercased parameters as well, like in the AWS SDK.
+            options.bucket = options.Bucket if not options.bucket?
+            options.keys = options.Keys if not options.keys?
+
+            # Accept a single key as well.
+            options.keys = [options.key] if not options.keys? and options.key?
+            options.keys = [options.keys] if lodash.isString options.keys
+
             if not settings.aws.enabled
                 return reject logger.notEnabled "AWS"
 
