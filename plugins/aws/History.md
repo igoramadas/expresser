@@ -1,5 +1,9 @@
 # Changelog for expresser-aws
 
+3.2.3
+=====
+* Updated dependencies.
+
 3.2.2
 =====
 * Minor improvements on S3 and SNS calls.
