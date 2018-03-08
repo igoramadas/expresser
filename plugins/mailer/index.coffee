@@ -106,8 +106,8 @@ class Mailer
             else
                 toName = options.to.substring 0, options.to.indexOf("<") - 1
 
-            # Load template if a `template` was passed.
-            if options.template? and options.template isnt ""
+            # Load template if a `template` was passed. If true or empty value, load base template only.
+            if options.template?
                 template = @templates.get options.template
                 html = @templates.parse template, {contents: html}
 

@@ -37,39 +37,54 @@ class EmailTemplates
     # @return {String} The template HTML.
     ###
     get: (name) ->
-        name = name.toString()
-        name = name.replace(".html", "") if name.indexOf(".html")
+        readOptions = {encoding: settings.general.encoding}
 
-        cached = cache[name]
-
-        # Is it already cached? If so do not hit the disk.
-        if cached? and cached.expires > moment()
-            logger.debug "Mailer.templates.get", name, "Loaded from cache."
-            return cache[name].template
+        # Load base template only?
+        if name is true or name is "" or name is "base"
+            baseOnly = true
         else
-            logger.debug "Mailer.templates.get", name
+            baseOnly = false
+            name = name.toString()
+            name = name.replace(".html", "") if name.indexOf(".html")
+
+            cached = cache[name]
+
+            # Is it already cached? If so do not hit the disk.
+            if cached? and cached.expires > moment()
+                logger.debug "Mailer.templates.get", name, "Loaded from cache."
+                return cache[name].template
+            else
+                logger.debug "Mailer.templates.get", name
 
         # Set file system reading options.
-        readOptions = {encoding: settings.general.encoding}
         baseFile = utils.io.getFilePath path.join(settings.mailer.templates.path, settings.mailer.templates.baseFile)
-        templateFile = utils.io.getFilePath path.join(settings.mailer.templates.path, "#{name}.html")
 
-        logger.debug "Mailer.templates.get", "Templates from", baseFile, templateFile
-
-        # Read base and `name` template and merge them together.
+        # Read base template first.
         try
             base = fs.readFileSync baseFile, readOptions
         catch ex
-            logger.warn "Mailer.templates.get", ex, "Could not read base.html file, will use template content as body."
+            logger.warn "Mailer.templates.get", "Could not read base.html file, will use contents as body", ex
             base = "{contents}"
 
-        template = fs.readFileSync templateFile, readOptions
-        result = @parse base, {contents: template}
+        # Load base only?
+        if baseOnly
+            result = base
+        else
+            templateFile = utils.io.getFilePath path.join(settings.mailer.templates.path, "#{name}.html")
 
-        # Save to cache.
-        cache[name] = {}
-        cache[name].template = result
-        cache[name].expires = moment().add settings.general.ioCacheTimeout, "s"
+            logger.debug "Mailer.templates.get", "Templates from", baseFile, templateFile
+
+            # Read the actual template file.
+            try
+                template = fs.readFileSync templateFile, readOptions
+                result = @parse base, {contents: template}
+            catch ex
+                logger.error "Mailer.templates.get", "Could not read #{templateFile}", ex
+
+            # Save to cache.
+            cache[name] = {}
+            cache[name].template = result
+            cache[name].expires = moment().add settings.general.ioCacheTimeout, "s"
 
         return result
 

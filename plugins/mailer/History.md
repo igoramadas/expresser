@@ -1,5 +1,10 @@
 # Changelog for expresser-mailer
 
+3.0.6
+=====
+* Now possible to load base template only by passing template: true on send.
+* Updated nodemailer.
+
 3.0.5
 =====
 * General improvements and updated documentation.
