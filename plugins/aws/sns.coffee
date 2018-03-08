@@ -39,13 +39,18 @@ class SNS
     # @promise
     ###
     publish: (options) =>
-        logger.debug "AWS.SNS.publish", options
-
-        # Accept uppercased parameters as well, like in the AWS SDK.
-        options.phoneNumber = options.PhoneNumber if not options.phoneNumber?
-        options.message = options.Message if not options.message?
-
         return new Promise (resolve, reject) ->
+            if not logger?
+                err = "Module not initialized yet, please init() Expresser or the module directly first, will NOT publish"
+                console.error "AWS.SNS.publish", err
+                return reject err
+
+            logger.debug "AWS.SNS.publish", options
+
+            # Accept uppercased parameters as well, like in the AWS SDK.
+            options.phoneNumber = options.PhoneNumber if not options.phoneNumber?
+            options.message = options.Message if not options.message?
+
             if not settings.aws.enabled
                 return reject logger.notEnabled "AWS"
 
