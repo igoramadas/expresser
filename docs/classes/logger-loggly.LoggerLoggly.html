@@ -28,7 +28,7 @@ gtag('config', 'UA-9331973-3');
     options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
     options.onLogError = logger.onLogError if not options.onLogError?
 
-    transport = {client: loggly.createClient {token: options.token, subdomain: options.subdomain, json: options.json}}
+    transport = {client: loggly.createClient {token: options.token, subdomain: options.subdomain}}
     transport.onLogSuccess = options.onLogSuccess
     transport.onLogError = options.onLogError
 

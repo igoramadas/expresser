@@ -309,7 +309,7 @@ Get the Loggly transport object.
         options.onLogSuccess = logger.onLogSuccess <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.onLogSuccess?
         options.onLogError = logger.onLogError <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.onLogError?
 
-        transport = {client: loggly.createClient {token: options.token, subdomain: options.subdomain, json: options.json}}
+        transport = {client: loggly.createClient {token: options.token, subdomain: options.subdomain}}
         transport.onLogSuccess = options.onLogSuccess
         transport.onLogError = options.onLogError
 

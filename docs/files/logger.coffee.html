@@ -174,7 +174,8 @@ class Logger
     debug: -&gt;
         args = Array.prototype.slice.call arguments
         args.unshift &quot;DEBUG&quot;
-        @log &quot;debug&quot;, args
+        msg = @log &quot;debug&quot;, args
+        return msg
 
     ###
     # Log to the active transports as `info`.
@@ -183,7 +184,9 @@ class Logger
     info: -&gt;
         args = Array.prototype.slice.call arguments
         args.unshift &quot;INFO&quot;
-        @log &quot;info&quot;, args
+        msg = @log &quot;info&quot;, args
+        events.emit &quot;Logger.on.info&quot;, msg
+        return msg
 
     ###
     # Log to the active transports as `warn`.
@@ -192,7 +195,9 @@ class Logger
     warn: -&gt;
         args = Array.prototype.slice.call arguments
         args.unshift &quot;WARN&quot;
-        @log &quot;warn&quot;, args
+        msg = @log &quot;warn&quot;, args
+        events.emit &quot;Logger.on.warn&quot;, msg
+        return msg
 
     ###
     # Log to the active transports as `error`.
@@ -201,7 +206,9 @@ class Logger
     error: -&gt;
         args = Array.prototype.slice.call arguments
         args.unshift &quot;ERROR&quot;
-        @log &quot;error&quot;, args
+        msg = @log &quot;error&quot;, args
+        events.emit &quot;Logger.on.error&quot;, msg
+        return msg
 
     ###
     # Log to the active transports as `critical`.
@@ -210,7 +217,9 @@ class Logger
     critical: -&gt;
         args = Array.prototype.slice.call arguments
         args.unshift &quot;CRITICAL&quot;
-        @log &quot;critical&quot;, args
+        msg = @log &quot;critical&quot;, args
+        events.emit &quot;Logger.on.critical&quot;, msg
+        return msg
 
     # HELPER METHODS
     # --------------------------------------------------------------------------

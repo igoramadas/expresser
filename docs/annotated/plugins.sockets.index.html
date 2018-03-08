@@ -220,7 +220,8 @@
           <div class='highlight'><pre>events = <span class="hljs-literal">null</span>
 lodash =  <span class="hljs-literal">null</span>
 logger = <span class="hljs-literal">null</span>
-settings = <span class="hljs-literal">null</span></pre></div>
+settings = <span class="hljs-literal">null</span>
+utils = <span class="hljs-literal">null</span></pre></div>
         
       
         
@@ -241,6 +242,19 @@ List of current event listeners.
 
         
           <div class='highlight'><pre>    currentListeners: []</pre></div>
+        
+      
+        
+        <p>#
+Promise function(socket) called on each client connection.
+Result of this function must return a Boolean, and if
+false, it will force close the connection and skip event bindings.
+@property
+@promise
+@type Function</p>
+
+        
+          <div class='highlight'><pre>    onConnect: <span class="hljs-literal">null</span></pre></div>
         
       
         
@@ -283,6 +297,7 @@ Init the Sockets plugin.</p>
         lodash = @expresser.libs.lodash
         logger = @expresser.logger
         settings = @expresser.settings
+        utils = @expresser.utils
 
         logger.debug <span class="hljs-string">"Sockets.init"</span></pre></div>
         
@@ -324,6 +339,25 @@ to increase / decrease when users connects or disconnects from the app.
 
         
           <div class='highlight'><pre>        @io.sockets.<span class="hljs-literal">on</span> <span class="hljs-string">"connection"</span>, <span class="hljs-function"><span class="hljs-params">(socket)</span> =&gt;</span>
+            ip = utils.browser.getClientIP socket
+            logger.debug <span class="hljs-string">"Sockets.connection"</span>, <span class="hljs-string">"Connected"</span>, ip
+
+            <span class="hljs-keyword">if</span> @onConnect?
+                <span class="hljs-keyword">try</span>
+                    valid = <span class="hljs-keyword">await</span> @onConnect socket
+                <span class="hljs-keyword">catch</span> ex
+                    logger.error <span class="hljs-string">"Sockets.connection"</span>, <span class="hljs-string">"onConnect"</span>, ip, ex
+                    valid = <span class="hljs-literal">false</span></pre></div>
+        
+      
+        
+        <p>Force disconnection if socket has not passed the onConnect() validation.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> valid
+                    logger.warn <span class="hljs-string">"Sockets.connection"</span>, <span class="hljs-string">"Did not validate onConnect, will force disconnect"</span>
+                    <span class="hljs-keyword">return</span> socket.disconnect()
+
             socket.<span class="hljs-literal">on</span> <span class="hljs-string">"disconnect"</span>, @onDisconnect
 
             <span class="hljs-keyword">if</span> settings.sockets.emitConnectionCount

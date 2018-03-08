@@ -17,13 +17,15 @@ gtag('config', 'UA-9331973-3');
             return xfor.split(&quot;,&quot;)[0]
 
     # Get remote address.
-    if reqOrSocket.connection?
-        return reqOrSocket.connection.remoteAddress
-    else
-        return reqOrSocket.remoteAddress</pre></div></div></div></section><span class="fix-anchor" id="utils_BrowserUtils__getDeviceDetails"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#utils_BrowserUtils__getDeviceDetails_body"><h3 class="panel-title">BrowserUtils::getDeviceDetails(req)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Get the client&#39;s device details. This is a very basic helper to identify device and browser.
+    if reqOrSocket.handshake?.address
+        return reqOrSocket.handshake.address
+    else if reqOrSocket.request?.connection?.remoteAddress
+        return reqOrSocket.request.connection.remoteAddress
+
+    return null</pre></div></div></div></section><span class="fix-anchor" id="utils_BrowserUtils__getDeviceDetails"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#utils_BrowserUtils__getDeviceDetails_body"><h3 class="panel-title">BrowserUtils::getDeviceDetails(req)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Get the client&#39;s device details. This is a very basic helper to identify device and browser.
 If you&#39;re looking into a more advanced detection, supporting more browsers and user agents,
 please check the <code>useragent</code> NPM module.</p>
-</div></div><div class="panel-collapse collapse" id="utils_BrowserUtils__getDeviceDetails_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>req</code></td><td><span><a href='https://expressjs.com/en/4x/api.html#req'>express-Request</a></span></td><td><span> The request object, mandatory.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The client's device details.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/utils/browser.coffee#L38">/lib/utils/browser.coffee:38</a>)</span></div><pre class="sourcecode prettyprint .linenums:38">getDeviceDetails: (req) -&gt;
+</div></div><div class="panel-collapse collapse" id="utils_BrowserUtils__getDeviceDetails_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>req</code></td><td><span><a href='https://expressjs.com/en/4x/api.html#req'>express-Request</a></span></td><td><span> The request object, mandatory.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The client's device details.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/utils/browser.coffee#L40">/lib/utils/browser.coffee:40</a>)</span></div><pre class="sourcecode prettyprint .linenums:40">getDeviceDetails: (req) -&gt;
     result = {
         device: &quot;Unkknown&quot;
         browser: &quot;Unknown&quot;

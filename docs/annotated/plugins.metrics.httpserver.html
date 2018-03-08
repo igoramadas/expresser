@@ -269,18 +269,18 @@ Start the Express / HTTP server.</p>
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
             <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>
 
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> webServer?
-
-        @server = express()
-        @server.get settings.metrics.httpServer.path, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span> res.json metrics.output()
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> webServer?
 
         <span class="hljs-keyword">try</span>
+            @server = express()
+            @server.get settings.metrics.httpServer.path, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span> res.json metrics.output()
             webServer = @server.listen settings.metrics.httpServer.port
         <span class="hljs-keyword">catch</span> ex
             logger.error <span class="hljs-string">"Metrics.httpServer.start"</span>, ex
             <span class="hljs-keyword">return</span> {error: ex}
 
-        logger.info <span class="hljs-string">"Metrics.httpServer.start"</span>, settings.metrics.httpServer.port</pre></div>
+        logger.info <span class="hljs-string">"Metrics.httpServer.start"</span>, settings.metrics.httpServer.port
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span></pre></div>
         
       
         
@@ -292,7 +292,7 @@ Kill the Express / HTTP server.</p>
           <div class='highlight'><pre>    kill: <span class="hljs-function">-&gt;</span>
         logger.debug <span class="hljs-string">"Metrics.httpServer.kill"</span>
 
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> webServer?
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> webServer?
 
         <span class="hljs-keyword">try</span>
             webServer.close()
@@ -301,7 +301,8 @@ Kill the Express / HTTP server.</p>
             logger.error <span class="hljs-string">"Metrics.httpServer.kill"</span>, ex
             <span class="hljs-keyword">return</span> {error: ex}
 
-        logger.info <span class="hljs-string">"Metrics.httpServer.kill"</span></pre></div>
+        logger.info <span class="hljs-string">"Metrics.httpServer.kill"</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span></pre></div>
         
       
         

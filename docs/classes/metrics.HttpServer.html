@@ -22,7 +22,7 @@ gtag('config', 'UA-9331973-3');
 </div></div><div class="panel-collapse collapse" id="metrics_HttpServer__kill_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/httpserver.coffee#L56">/plugins/metrics/httpserver.coffee:56</a>)</span></div><pre class="sourcecode prettyprint .linenums:56">kill: -&gt;
     logger.debug &quot;Metrics.httpServer.kill&quot;
 
-    return if not webServer?
+    return false if not webServer?
 
     try
         webServer.close()
@@ -31,23 +31,24 @@ gtag('config', 'UA-9331973-3');
         logger.error &quot;Metrics.httpServer.kill&quot;, ex
         return {error: ex}
 
-    logger.info &quot;Metrics.httpServer.kill&quot;</pre></div></div></div></section><span class="fix-anchor" id="metrics_HttpServer__start"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_HttpServer__start_body"><h3 class="panel-title">HttpServer::start()<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Start the Express / HTTP server.</p>
+    logger.info &quot;Metrics.httpServer.kill&quot;
+    return true</pre></div></div></div></section><span class="fix-anchor" id="metrics_HttpServer__start"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_HttpServer__start_body"><h3 class="panel-title">HttpServer::start()<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Start the Express / HTTP server.</p>
 </div></div><div class="panel-collapse collapse" id="metrics_HttpServer__start_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/httpserver.coffee#L34">/plugins/metrics/httpserver.coffee:34</a>)</span></div><pre class="sourcecode prettyprint .linenums:34">start: -&gt;
     logger.debug &quot;Metrics.httpServer.start&quot;
 
     if not settings.metrics.enabled
         return logger.notEnabled &quot;Metrics&quot;
 
-    return if webServer?
-
-    @server = express()
-    @server.get settings.metrics.httpServer.path, (req, res) -&gt; res.json metrics.output()
+    return false if webServer?
 
     try
+        @server = express()
+        @server.get settings.metrics.httpServer.path, (req, res) -&gt; res.json metrics.output()
         webServer = @server.listen settings.metrics.httpServer.port
     catch ex
         logger.error &quot;Metrics.httpServer.start&quot;, ex
         return {error: ex}
 
-    logger.info &quot;Metrics.httpServer.start&quot;, settings.metrics.httpServer.port</pre></div></div></div></section><span class="fix-anchor" id="metrics_HttpServer__server"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_HttpServer__server_body"><h3 class="panel-title">HttpServer::server<span class="label label-property">property</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Express server used to expose the reports via HTTP.</p>
+    logger.info &quot;Metrics.httpServer.start&quot;, settings.metrics.httpServer.port
+    return true</pre></div></div></div></section><span class="fix-anchor" id="metrics_HttpServer__server"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_HttpServer__server_body"><h3 class="panel-title">HttpServer::server<span class="label label-property">property</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Express server used to expose the reports via HTTP.</p>
 </div></div><div class="panel-collapse collapse" id="metrics_HttpServer__server_body"><div class="panel-body"><div></div><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/httpserver.coffee#L18">/plugins/metrics/httpserver.coffee:18</a>)</span></div><pre class="sourcecode prettyprint .linenums:18">server: null</pre></div></div></div></section></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>

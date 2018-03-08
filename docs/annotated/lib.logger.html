@@ -471,7 +471,8 @@ Log to the active transports as <code>debug</code>, only if <code>settings.gener
           <div class='highlight'><pre>    debug: <span class="hljs-function">-&gt;</span>
         args = Array.prototype.slice.call arguments
         args.unshift <span class="hljs-string">"DEBUG"</span>
-        @log <span class="hljs-string">"debug"</span>, args</pre></div>
+        msg = @log <span class="hljs-string">"debug"</span>, args
+        <span class="hljs-keyword">return</span> msg</pre></div>
         
       
         
@@ -484,7 +485,9 @@ Log to the active transports as <code>info</code>.
           <div class='highlight'><pre>    info: <span class="hljs-function">-&gt;</span>
         args = Array.prototype.slice.call arguments
         args.unshift <span class="hljs-string">"INFO"</span>
-        @log <span class="hljs-string">"info"</span>, args</pre></div>
+        msg = @log <span class="hljs-string">"info"</span>, args
+        events.emit <span class="hljs-string">"Logger.on.info"</span>, msg
+        <span class="hljs-keyword">return</span> msg</pre></div>
         
       
         
@@ -497,7 +500,9 @@ Log to the active transports as <code>warn</code>.
           <div class='highlight'><pre>    warn: <span class="hljs-function">-&gt;</span>
         args = Array.prototype.slice.call arguments
         args.unshift <span class="hljs-string">"WARN"</span>
-        @log <span class="hljs-string">"warn"</span>, args</pre></div>
+        msg = @log <span class="hljs-string">"warn"</span>, args
+        events.emit <span class="hljs-string">"Logger.on.warn"</span>, msg
+        <span class="hljs-keyword">return</span> msg</pre></div>
         
       
         
@@ -510,7 +515,9 @@ Log to the active transports as <code>error</code>.
           <div class='highlight'><pre>    error: <span class="hljs-function">-&gt;</span>
         args = Array.prototype.slice.call arguments
         args.unshift <span class="hljs-string">"ERROR"</span>
-        @log <span class="hljs-string">"error"</span>, args</pre></div>
+        msg = @log <span class="hljs-string">"error"</span>, args
+        events.emit <span class="hljs-string">"Logger.on.error"</span>, msg
+        <span class="hljs-keyword">return</span> msg</pre></div>
         
       
         
@@ -523,7 +530,9 @@ Log to the active transports as <code>critical</code>.
           <div class='highlight'><pre>    critical: <span class="hljs-function">-&gt;</span>
         args = Array.prototype.slice.call arguments
         args.unshift <span class="hljs-string">"CRITICAL"</span>
-        @log <span class="hljs-string">"critical"</span>, args</pre></div>
+        msg = @log <span class="hljs-string">"critical"</span>, args
+        events.emit <span class="hljs-string">"Logger.on.critical"</span>, msg
+        <span class="hljs-keyword">return</span> msg</pre></div>
         
       
         
