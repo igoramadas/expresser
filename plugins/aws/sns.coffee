@@ -39,7 +39,7 @@ class SNS
     # @promise
     ###
     publish: (options) =>
-        return new Promise (resolve, reject) ->
+        return new Promise (resolve, reject) =>
             logger.debug "AWS.SNS.publish", options
 
             # Accept uppercased parameters as well, like in the AWS SDK.

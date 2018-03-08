@@ -1,7 +1,8 @@
 # Changelog for expresser-aws
 
-3.2.3
+3.2.4
 =====
+* Fixed Promises with latest version of CoffeeScript.
 * Updated dependencies.
 
 3.2.2

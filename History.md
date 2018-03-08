@@ -5,6 +5,7 @@
 * NEW / BREAKING! Now using express-session with memory store instead of cookie based.
 * NEW! Logger now emit important logging events: Logger.on.warn, Logger.on.error, Logger.on.critical
 * BREAKING! Default views path moved from /views to /assets/views.
+* Fixed chalk styles for deprecated Logger messages.
 * Updated utils.browser.getClientIP() to better support Socket.IO.
 * App.renderError will NOT log an error automatically now.
 * Improved exception logging when using the Logger.
