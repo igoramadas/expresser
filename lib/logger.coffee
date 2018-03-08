@@ -179,7 +179,6 @@ class Logger
         args = Array.prototype.slice.call arguments
         args.unshift "INFO"
         msg = @log "info", args
-        events.emit "Logger.on.info", msg
         return msg
 
     ###

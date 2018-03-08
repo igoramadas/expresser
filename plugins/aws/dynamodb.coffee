@@ -68,11 +68,6 @@ class DynamoDB
     ###
     sdkCall: (obj, method, params) ->
         return new Promise (resolve, reject) ->
-            if not logger?
-                err = "Module not initialized yet, please init() Expresser or the module directly first, will NOT call SDK"
-                console.error "AWS.DynamoDB.sdkCall", err
-                return reject err
-
             logger.debug "AWS.DynamoDB.#{method}", params
 
             if not settings.aws.enabled

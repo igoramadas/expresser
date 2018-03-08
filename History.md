@@ -1,9 +1,9 @@
 # Changelog for expresser
 
-3.3.0
+3.3.1
 =====
 * NEW / BREAKING! Now using express-session with memory store instead of cookie based.
-* NEW! Logger now emit logging events (ex. Logger.on.info, Logger.on.error, etc...)
+* NEW! Logger now emit important logging events: Logger.on.warn, Logger.on.error, Logger.on.critical
 * BREAKING! Default views path moved from /views to /assets/views.
 * Updated utils.browser.getClientIP() to better support Socket.IO.
 * App.renderError will NOT log an error automatically now.

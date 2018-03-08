@@ -40,11 +40,6 @@ class SNS
     ###
     publish: (options) =>
         return new Promise (resolve, reject) ->
-            if not logger?
-                err = "Module not initialized yet, please init() Expresser or the module directly first, will NOT publish"
-                console.error "AWS.SNS.publish", err
-                return reject err
-
             logger.debug "AWS.SNS.publish", options
 
             # Accept uppercased parameters as well, like in the AWS SDK.

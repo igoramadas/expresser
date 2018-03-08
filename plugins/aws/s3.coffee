@@ -45,11 +45,6 @@ class S3
     ###
     download: (options) =>
         return new Promise (resolve, reject) ->
-            if not logger?
-                err = "Module not initialized yet, please init() Expresser or the module directly first, will NOT download"
-                console.error "AWS.S3.download", err
-                return reject err
-
             logger.debug "AWS.S3.download", options
 
             # DEPRECATED! Please use a single `options` with named parameters {bucket, key, destination}.
@@ -140,12 +135,8 @@ class S3
     ###
     upload: (options) =>
         return new Promise (resolve, reject) ->
-            if not logger?
-                err = "Module not initialized yet, please init() Expresser or the module directly first, will NOT upload"
-                console.error "AWS.S3.upload", err
-                return reject err
+            logger.debug "AWS.S3.upload", options
 
-            # DEPRECATED! Please use a single `options` with named parameters {bucket, key, body}.
             if arguments.length > 1
                 logger.deprecated "AWS.S3.upload(bucket, key, body, options)", "Please use upload(options) passing the named parameters."
 
@@ -221,11 +212,6 @@ class S3
     ###
     delete: (options) ->
         return new Promise (resolve, reject) ->
-            if not logger?
-                err = "Module not initialized yet, please init() Expresser or the module directly first, will NOT delete"
-                console.error "AWS.S3.delete", err
-                return reject err
-
             logger.debug "AWS.S3.delete", options
 
             # DEPRECATED! Please use a single `options` with named parameters {bucket, keys}.
