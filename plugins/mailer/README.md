@@ -30,6 +30,6 @@ Please note that you can also use a different SMTP transport server if needed, b
 
     expresser.mailer.send({subject: "Login confirmation", to: "mailto@igor.com", smtp: customSmtp});
 
-The Mailer module is a wrapper around Nodemailer, so some of its features can be used directly. The default SMTP transport objects are exposed as "smtp" and "smtp2". More info at [url:http://www.nodemailer.com].
+The Mailer module is a wrapper around Nodemailer, so some of its features can be used directly. The default SMTP transport objects are exposed as "smtp" and "smtp2". More info at [http://www.nodemailer.com].
 
 For detailed info on specific features, check the annotated source on /docs folder.

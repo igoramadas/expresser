@@ -113,7 +113,7 @@ class Mailer
 
                 # Parse template keywords if a `keywords` was passed.
                 if lodash.isObject options.keywords
-                    html = @templates.parse html, options.keywords
+                    html = @templates.parse html, options.keywords, options.circular
 
             # Parse final template and set it on the `options`.
             html = @templates.parse html, {to: toName, appTitle: settings.app.title, appUrl: settings.app.url}

@@ -1,7 +1,8 @@
 # Changelog for expresser-mailer
 
-3.0.6
+3.1.0
 =====
+* NEW! Templates.parse now can also do circular parsing to change keywords inside keywords.
 * Now possible to load base template only by passing template: true on send.
 * Updated nodemailer.
 

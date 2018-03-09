@@ -3,6 +3,7 @@
 fs = require "fs"
 path = require "path"
 
+lodash = null
 logger = null
 moment = null
 settings = null
@@ -20,6 +21,7 @@ class EmailTemplates
     # Init the Templates class.
     ###
     init: (parent) =>
+        lodash = parent.expresser.libs.lodash
         logger = parent.expresser.logger
         moment = parent.expresser.libs.moment
         settings = parent.expresser.settings
@@ -92,14 +94,27 @@ class EmailTemplates
     # Parse the specified template to replace keywords. The `keywords` is a set of key-values
     # to be replaced. For example if keywords is `{id: 1, friendlyUrl: "abc"}` then the tags
     # `{id}` and `{friendlyUrl}` will be replaced with the values 1 and abc.
+    # Set circular to true to parse keywords inside other keywords as well.
     # @param {String} template The template (its value, not its name!) to be parsed.
     # @param {Object} keywords Object with keys to be replaced with its values.
+    # @param {Boolean} circular If true, keywords will be parsed against themselves as well.
     # @return {String} The parsed template, keywords replaced with values.
     ###
-    parse: (template, keywords) ->
-        logger.debug "Mailer.templates.parse", template.replace(/(\r\n|\n|\r)/gm,""), keywords
+    parse: (template, keywords, circular = false) =>
+        if not template? or template is ""
+            logger.debug "Mailer.templates.parse", "Empty template", keywords
+            return ""
 
         template = template.toString()
+
+        logger.debug "Mailer.templates.parse", template.replace(/(\r\n|\n|\r)/gm,""), keywords
+
+        # Parse keywords inside other keywords?
+        if circular
+            keywords = lodash.cloneDeep keywords
+
+            for key, value of keywords
+                keywords[key] = @parse keywords[key], keywords
 
         for key, value of keywords
             template = template.replace new RegExp("\\{#{key}\\}", "gi"), value
