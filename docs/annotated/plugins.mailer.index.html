@@ -389,10 +389,10 @@ Sends an email to the specified address.
         
       
         
-        <p>Load template if a <code>template</code> was passed.</p>
+        <p>Load template if a <code>template</code> was passed. If true or empty value, load base template only.</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.template? <span class="hljs-keyword">and</span> options.template <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.template?
                 template = @templates.get options.template
                 html = @templates.parse template, {contents: html}</pre></div>
         
@@ -402,7 +402,7 @@ Sends an email to the specified address.
 
         
           <div class='highlight'><pre>                <span class="hljs-keyword">if</span> lodash.isObject options.keywords
-                    html = @templates.parse html, options.keywords</pre></div>
+                    html = @templates.parse html, options.keywords, options.circular</pre></div>
         
       
         

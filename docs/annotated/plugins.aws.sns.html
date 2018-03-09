@@ -280,17 +280,17 @@ Publish a message to AWS SNS with the specified options.
 
         
           <div class='highlight'><pre>    publish: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"AWS.SNS.publish"</span>, options</pre></div>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) =&gt;
+            logger.debug <span class="hljs-string">"AWS.SNS.publish"</span>, options</pre></div>
         
       
         
         <p>Accept uppercased parameters as well, like in the AWS SDK.</p>
 
         
-          <div class='highlight'><pre>        options.phoneNumber = options.PhoneNumber <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.phoneNumber?
-        options.message = options.Message <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.message?
+          <div class='highlight'><pre>            options.phoneNumber = options.PhoneNumber <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.phoneNumber?
+            options.message = options.Message <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.message?
 
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
             <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
                 <span class="hljs-keyword">return</span> reject logger.notEnabled <span class="hljs-string">"AWS"</span>
 

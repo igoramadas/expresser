@@ -112,14 +112,14 @@ class Mailer
             else
                 toName = options.to.substring 0, options.to.indexOf(&quot;&lt;&quot;) - 1
 
-            # Load template if a `template` was passed.
-            if options.template? and options.template isnt &quot;&quot;
+            # Load template if a `template` was passed. If true or empty value, load base template only.
+            if options.template?
                 template = @templates.get options.template
                 html = @templates.parse template, {contents: html}
 
                 # Parse template keywords if a `keywords` was passed.
                 if lodash.isObject options.keywords
-                    html = @templates.parse html, options.keywords
+                    html = @templates.parse html, options.keywords, options.circular
 
             # Parse final template and set it on the `options`.
             html = @templates.parse html, {to: toName, appTitle: settings.app.title, appUrl: settings.app.url}

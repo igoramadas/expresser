@@ -62,11 +62,11 @@ class S3
                 destination: arguments[2]
             }
 
-        # Accept uppercased parameters as well, like in the AWS SDK.
-        options.bucket = options.Bucket if not options.bucket?
-        options.key = options.Key if not options.key?
+        return new Promise (resolve, reject) =&gt;
+            # Accept uppercased parameters as well, like in the AWS SDK.
+            options.bucket = options.Bucket if not options.bucket?
+            options.key = options.Key if not options.key?
 
-        return new Promise (resolve, reject) -&gt;
             if not settings.aws.enabled
                 return reject logger.notEnabled &quot;AWS&quot;
 
@@ -142,7 +142,6 @@ class S3
     upload: (options) =&gt;
         logger.debug &quot;AWS.S3.upload&quot;, options
 
-        # DEPRECATED! Please use a single `options` with named parameters {bucket, key, body}.
         if arguments.length &gt; 1
             logger.deprecated &quot;AWS.S3.upload(bucket, key, body, options)&quot;, &quot;Please use upload(options) passing the named parameters.&quot;
 
@@ -151,14 +150,14 @@ class S3
             options.key = arguments[1]
             options.body = arguments[2]
 
-        # Accept uppercased parameters as well, like in the AWS SDK.
-        options.bucket = options.Bucket if not options.bucket?
-        options.key = options.Key if not options.key?
-        options.body = options.Body if not options.body?
-        options.contentType = options.ContentType if not options.contentType?
-        options.acl = options.ACL or &quot;public-read&quot; if not options.acl?
+        return new Promise (resolve, reject) =&gt;
+            # Accept uppercased parameters as well, like in the AWS SDK.
+            options.bucket = options.Bucket if not options.bucket?
+            options.key = options.Key if not options.key?
+            options.body = options.Body if not options.body?
+            options.contentType = options.ContentType if not options.contentType?
+            options.acl = options.ACL or &quot;public-read&quot; if not options.acl?
 
-        return new Promise (resolve, reject) -&gt;
             if not settings.aws.enabled
                 return reject logger.notEnabled &quot;AWS&quot;
 
@@ -229,15 +228,15 @@ class S3
                 keys: arguments[1]
             }
 
-        # Accept uppercased parameters as well, like in the AWS SDK.
-        options.bucket = options.Bucket if not options.bucket?
-        options.keys = options.Keys if not options.keys?
+        return new Promise (resolve, reject) =&gt;
+            # Accept uppercased parameters as well, like in the AWS SDK.
+            options.bucket = options.Bucket if not options.bucket?
+            options.keys = options.Keys if not options.keys?
 
-        # Accept a single key as well.
-        options.keys = [options.key] if not options.keys? and options.key?
-        options.keys = [options.keys] if lodash.isString options.keys
+            # Accept a single key as well.
+            options.keys = [options.key] if not options.keys? and options.key?
+            options.keys = [options.keys] if lodash.isString options.keys
 
-        return new Promise (resolve, reject) -&gt;
             if not settings.aws.enabled
                 return reject logger.notEnabled &quot;AWS&quot;
 

@@ -299,17 +299,18 @@ Download a file from S3 and optionally save to the specified destination.
                 bucket: arguments[<span class="hljs-number">0</span>]
                 key: arguments[<span class="hljs-number">1</span>]
                 destination: arguments[<span class="hljs-number">2</span>]
-            }</pre></div>
+            }
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) =&gt;</pre></div>
         
       
         
         <p>Accept uppercased parameters as well, like in the AWS SDK.</p>
 
         
-          <div class='highlight'><pre>        options.bucket = options.Bucket <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.bucket?
-        options.key = options.Key <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.key?
+          <div class='highlight'><pre>            options.bucket = options.Bucket <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.bucket?
+            options.key = options.Key <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.key?
 
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
             <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
                 <span class="hljs-keyword">return</span> reject logger.notEnabled <span class="hljs-string">"AWS"</span></pre></div>
         
@@ -415,33 +416,29 @@ Upload a file to S3.
 
         
           <div class='highlight'><pre>    upload: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"AWS.S3.upload"</span>, options</pre></div>
-        
-      
-        
-        <p>DEPRECATED! Please use a single <code>options</code> with named parameters {bucket, key, body}.</p>
+        logger.debug <span class="hljs-string">"AWS.S3.upload"</span>, options
 
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">1</span>
+        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">1</span>
             logger.deprecated <span class="hljs-string">"AWS.S3.upload(bucket, key, body, options)"</span>, <span class="hljs-string">"Please use upload(options) passing the named parameters."</span>
 
             options = <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">2</span> <span class="hljs-keyword">then</span> arguments[<span class="hljs-number">3</span>] <span class="hljs-keyword">else</span> {}
             options.bucket = arguments[<span class="hljs-number">0</span>]
             options.key = arguments[<span class="hljs-number">1</span>]
-            options.body = arguments[<span class="hljs-number">2</span>]</pre></div>
+            options.body = arguments[<span class="hljs-number">2</span>]
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) =&gt;</pre></div>
         
       
         
         <p>Accept uppercased parameters as well, like in the AWS SDK.</p>
 
         
-          <div class='highlight'><pre>        options.bucket = options.Bucket <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.bucket?
-        options.key = options.Key <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.key?
-        options.body = options.Body <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.body?
-        options.contentType = options.ContentType <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.contentType?
-        options.acl = options.ACL <span class="hljs-keyword">or</span> <span class="hljs-string">"public-read"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.acl?
+          <div class='highlight'><pre>            options.bucket = options.Bucket <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.bucket?
+            options.key = options.Key <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.key?
+            options.body = options.Body <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.body?
+            options.contentType = options.ContentType <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.contentType?
+            options.acl = options.ACL <span class="hljs-keyword">or</span> <span class="hljs-string">"public-read"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.acl?
 
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
             <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
                 <span class="hljs-keyword">return</span> reject logger.notEnabled <span class="hljs-string">"AWS"</span></pre></div>
         
@@ -534,25 +531,26 @@ Delete object(s) from S3.
             options = {
                 bucket: arguments[<span class="hljs-number">0</span>]
                 keys: arguments[<span class="hljs-number">1</span>]
-            }</pre></div>
+            }
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) =&gt;</pre></div>
         
       
         
         <p>Accept uppercased parameters as well, like in the AWS SDK.</p>
 
         
-          <div class='highlight'><pre>        options.bucket = options.Bucket <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.bucket?
-        options.keys = options.Keys <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.keys?</pre></div>
+          <div class='highlight'><pre>            options.bucket = options.Bucket <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.bucket?
+            options.keys = options.Keys <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.keys?</pre></div>
         
       
         
         <p>Accept a single key as well.</p>
 
         
-          <div class='highlight'><pre>        options.keys = [options.key] <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.keys? <span class="hljs-keyword">and</span> options.key?
-        options.keys = [options.keys] <span class="hljs-keyword">if</span> lodash.isString options.keys
+          <div class='highlight'><pre>            options.keys = [options.key] <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.keys? <span class="hljs-keyword">and</span> options.key?
+            options.keys = [options.keys] <span class="hljs-keyword">if</span> lodash.isString options.keys
 
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
             <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
                 <span class="hljs-keyword">return</span> reject logger.notEnabled <span class="hljs-string">"AWS"</span></pre></div>
         

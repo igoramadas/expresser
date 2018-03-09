@@ -45,13 +45,13 @@ class SNS
     # @promise
     ###
     publish: (options) =&gt;
-        logger.debug &quot;AWS.SNS.publish&quot;, options
+        return new Promise (resolve, reject) =&gt;
+            logger.debug &quot;AWS.SNS.publish&quot;, options
 
-        # Accept uppercased parameters as well, like in the AWS SDK.
-        options.phoneNumber = options.PhoneNumber if not options.phoneNumber?
-        options.message = options.Message if not options.message?
+            # Accept uppercased parameters as well, like in the AWS SDK.
+            options.phoneNumber = options.PhoneNumber if not options.phoneNumber?
+            options.message = options.Message if not options.message?
 
-        return new Promise (resolve, reject) -&gt;
             if not settings.aws.enabled
                 return reject logger.notEnabled &quot;AWS&quot;
 

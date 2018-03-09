@@ -73,9 +73,9 @@ class DynamoDB
     # @promise
     ###
     sdkCall: (obj, method, params) -&gt;
-        logger.debug &quot;AWS.DynamoDB.#{method}&quot;, params
-
         return new Promise (resolve, reject) -&gt;
+            logger.debug &quot;AWS.DynamoDB.#{method}&quot;, params
+
             if not settings.aws.enabled
                 return reject logger.notEnabled &quot;AWS&quot;
 

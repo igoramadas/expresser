@@ -16,13 +16,13 @@ gtag('config', 'UA-9331973-3');
 
     delete @init</pre></div></div></div></section><span class="fix-anchor" id="aws_SNS__publish"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#aws_SNS__publish_body"><h3 class="panel-title">SNS::publish(options)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Publish a message to AWS SNS with the specified options.</p>
 </div></div><div class="panel-collapse collapse" id="aws_SNS__publish_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The SNS message options.</span></td></tr><tr><td><span class="method-depth1"></span><code>phoneNumber</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The target phone number.</span></td></tr><tr><td><span class="method-depth1"></span><code>message</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The SMS message to be sent.</span></td></tr><tr><td><span class="method-depth1"></span><code>region</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The AWS region, if not passed will use default from settings.</span></td></tr></table><h4>Returns<small><span> as</span><span class="label label-info">Promise</span></small></h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>AWS SDK SNS publish results.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/aws/sns.coffee#L41">/plugins/aws/sns.coffee:41</a>)</span></div><pre class="sourcecode prettyprint .linenums:41">publish: (options) =&gt;
-    logger.debug &quot;AWS.SNS.publish&quot;, options
+    return new Promise (resolve, reject) =&gt;
+        logger.debug &quot;AWS.SNS.publish&quot;, options
 
-    # Accept uppercased parameters as well, like in the AWS SDK.
-    options.phoneNumber = options.PhoneNumber if not options.phoneNumber?
-    options.message = options.Message if not options.message?
+        # Accept uppercased parameters as well, like in the AWS SDK.
+        options.phoneNumber = options.PhoneNumber if not options.phoneNumber?
+        options.message = options.Message if not options.message?
 
-    return new Promise (resolve, reject) -&gt;
         if not settings.aws.enabled
             return reject logger.notEnabled &quot;AWS&quot;
 

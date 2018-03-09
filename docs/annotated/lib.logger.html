@@ -486,7 +486,6 @@ Log to the active transports as <code>info</code>.
         args = Array.prototype.slice.call arguments
         args.unshift <span class="hljs-string">"INFO"</span>
         msg = @log <span class="hljs-string">"info"</span>, args
-        events.emit <span class="hljs-string">"Logger.on.info"</span>, msg
         <span class="hljs-keyword">return</span> msg</pre></div>
         
       

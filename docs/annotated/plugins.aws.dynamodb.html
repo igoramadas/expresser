@@ -320,9 +320,9 @@ Helper to call the SDK method with the specified parameters.
 
         
           <div class='highlight'><pre>    sdkCall: <span class="hljs-function"><span class="hljs-params">(obj, method, params)</span> -&gt;</span>
-        logger.debug <span class="hljs-string">"AWS.DynamoDB.<span class="hljs-subst">#{method}</span>"</span>, params
-
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+            logger.debug <span class="hljs-string">"AWS.DynamoDB.<span class="hljs-subst">#{method}</span>"</span>, params
+
             <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.aws.enabled
                 <span class="hljs-keyword">return</span> reject logger.notEnabled <span class="hljs-string">"AWS"</span>
 

@@ -9,7 +9,7 @@ gtag('config', 'UA-9331973-3');
 
     # INIT
     # -------------------------------------------------------------------------</pre><div class="panel panel-info"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#aws_S3_ctor_body"><h3 class="panel-title">Constructor<span class="pull-right glyphicon"></span></h3></div><div class="panel-collapse collapse" id="aws_S3_ctor_body"><div class="panel-body"><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table></div></div></div></section><span class="fix-anchor" id="aws_S3__delete"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#aws_S3__delete_body"><h3 class="panel-title">S3::delete(options)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Delete object(s) from S3.</p>
-</div></div><div class="panel-collapse collapse" id="aws_S3__delete_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Delete options.</span></td></tr><tr><td><span class="method-depth1"></span><code>bucket</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Name of the S3 bucket to upload to.</span></td></tr><tr><td><span class="method-depth1"></span><code>keys</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array'>Array</a>, <a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Keys of items to be deleted from the bucket.</span></td></tr><tr><td><span class="method-depth1"></span><code>region</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The AWS region, if not passed will use default from settings.</span></td></tr></table><h4>Returns<small><span> as</span><span class="label label-info">Promise</span></small></h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The delete result.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/aws/s3.coffee#L214">/plugins/aws/s3.coffee:214</a>)</span></div><pre class="sourcecode prettyprint .linenums:214">delete: (options) -&gt;
+</div></div><div class="panel-collapse collapse" id="aws_S3__delete_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Delete options.</span></td></tr><tr><td><span class="method-depth1"></span><code>bucket</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Name of the S3 bucket to upload to.</span></td></tr><tr><td><span class="method-depth1"></span><code>keys</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array'>Array</a>, <a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Keys of items to be deleted from the bucket.</span></td></tr><tr><td><span class="method-depth1"></span><code>region</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The AWS region, if not passed will use default from settings.</span></td></tr></table><h4>Returns<small><span> as</span><span class="label label-info">Promise</span></small></h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The delete result.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/aws/s3.coffee#L213">/plugins/aws/s3.coffee:213</a>)</span></div><pre class="sourcecode prettyprint .linenums:213">delete: (options) -&gt;
     logger.debug &quot;AWS.S3.delete&quot;, options
 
     # DEPRECATED! Please use a single `options` with named parameters {bucket, keys}.
@@ -21,15 +21,15 @@ gtag('config', 'UA-9331973-3');
             keys: arguments[1]
         }
 
-    # Accept uppercased parameters as well, like in the AWS SDK.
-    options.bucket = options.Bucket if not options.bucket?
-    options.keys = options.Keys if not options.keys?
+    return new Promise (resolve, reject) =&gt;
+        # Accept uppercased parameters as well, like in the AWS SDK.
+        options.bucket = options.Bucket if not options.bucket?
+        options.keys = options.Keys if not options.keys?
 
-    # Accept a single key as well.
-    options.keys = [options.key] if not options.keys? and options.key?
-    options.keys = [options.keys] if lodash.isString options.keys
+        # Accept a single key as well.
+        options.keys = [options.key] if not options.keys? and options.key?
+        options.keys = [options.keys] if lodash.isString options.keys
 
-    return new Promise (resolve, reject) -&gt;
         if not settings.aws.enabled
             return reject logger.notEnabled &quot;AWS&quot;
 
@@ -82,11 +82,11 @@ gtag('config', 'UA-9331973-3');
             destination: arguments[2]
         }
 
-    # Accept uppercased parameters as well, like in the AWS SDK.
-    options.bucket = options.Bucket if not options.bucket?
-    options.key = options.Key if not options.key?
+    return new Promise (resolve, reject) =&gt;
+        # Accept uppercased parameters as well, like in the AWS SDK.
+        options.bucket = options.Bucket if not options.bucket?
+        options.key = options.Key if not options.key?
 
-    return new Promise (resolve, reject) -&gt;
         if not settings.aws.enabled
             return reject logger.notEnabled &quot;AWS&quot;
 
@@ -156,7 +156,6 @@ gtag('config', 'UA-9331973-3');
 </div></div><div class="panel-collapse collapse" id="aws_S3__upload_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Upload options.</span></td></tr><tr><td><span class="method-depth1"></span><code>bucket</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Name of the S3 bucket to upload to.</span></td></tr><tr><td><span class="method-depth1"></span><code>key</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Key of the target S3 bucket resource (usually a filename).</span></td></tr><tr><td><span class="method-depth1"></span><code>body</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Contents of the file to be uploaded.</span></td></tr><tr><td><span class="method-depth1"></span><code>contentType</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> Content type of the file.</span></td></tr><tr><td><span class="method-depth1"></span><code>acl</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> ACL to be used, default is "public-read".</span></td></tr><tr><td><span class="method-depth1"></span><code>region</code><span class="pull-right label label-optional">optional</span></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The AWS region, if not passed will use default from settings.</span></td></tr></table><h4>Returns<small><span> as</span><span class="label label-info">Promise</span></small></h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The upload result.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/aws/s3.coffee#L136">/plugins/aws/s3.coffee:136</a>)</span></div><pre class="sourcecode prettyprint .linenums:136">upload: (options) =&gt;
     logger.debug &quot;AWS.S3.upload&quot;, options
 
-    # DEPRECATED! Please use a single `options` with named parameters {bucket, key, body}.
     if arguments.length &gt; 1
         logger.deprecated &quot;AWS.S3.upload(bucket, key, body, options)&quot;, &quot;Please use upload(options) passing the named parameters.&quot;
 
@@ -165,14 +164,14 @@ gtag('config', 'UA-9331973-3');
         options.key = arguments[1]
         options.body = arguments[2]
 
-    # Accept uppercased parameters as well, like in the AWS SDK.
-    options.bucket = options.Bucket if not options.bucket?
-    options.key = options.Key if not options.key?
-    options.body = options.Body if not options.body?
-    options.contentType = options.ContentType if not options.contentType?
-    options.acl = options.ACL or &quot;public-read&quot; if not options.acl?
+    return new Promise (resolve, reject) =&gt;
+        # Accept uppercased parameters as well, like in the AWS SDK.
+        options.bucket = options.Bucket if not options.bucket?
+        options.key = options.Key if not options.key?
+        options.body = options.Body if not options.body?
+        options.contentType = options.ContentType if not options.contentType?
+        options.acl = options.ACL or &quot;public-read&quot; if not options.acl?
 
-    return new Promise (resolve, reject) -&gt;
         if not settings.aws.enabled
             return reject logger.notEnabled &quot;AWS&quot;
 

@@ -596,11 +596,14 @@ Kill the underlying HTTP(S) server(s).</p>
           <div class='highlight'><pre>    kill: <span class="hljs-function">-&gt;</span>
         events.emit <span class="hljs-string">"App.before.kill"</span>
 
-        @redirectorServer?.close()
-        @redirectorServer = <span class="hljs-literal">null</span>
+        <span class="hljs-keyword">try</span>
+            @webServer?.close()
+            @redirectorServer?.close()
+        <span class="hljs-keyword">catch</span> ex
+            logger.error <span class="hljs-string">"App.kill"</span>, ex
 
-        @webServer?.close()
         webServer = <span class="hljs-literal">null</span>
+        @redirectorServer = <span class="hljs-literal">null</span>
 
         events.emit <span class="hljs-string">"App.on.kill"</span></pre></div>
         

@@ -9,6 +9,7 @@ gtag('config', 'UA-9331973-3');
 fs = require &quot;fs&quot;
 path = require &quot;path&quot;
 
+lodash = null
 logger = null
 moment = null
 settings = null
@@ -26,6 +27,7 @@ class EmailTemplates
     # Init the Templates class.
     ###
     init: (parent) =&gt;
+        lodash = parent.expresser.libs.lodash
         logger = parent.expresser.logger
         moment = parent.expresser.libs.moment
         settings = parent.expresser.settings
@@ -43,39 +45,54 @@ class EmailTemplates
     # @return {String} The template HTML.
     ###
     get: (name) -&gt;
-        name = name.toString()
-        name = name.replace(&quot;.html&quot;, &quot;&quot;) if name.indexOf(&quot;.html&quot;)
+        readOptions = {encoding: settings.general.encoding}
 
-        cached = cache[name]
-
-        # Is it already cached? If so do not hit the disk.
-        if cached? and cached.expires &gt; moment()
-            logger.debug &quot;Mailer.templates.get&quot;, name, &quot;Loaded from cache.&quot;
-            return cache[name].template
+        # Load base template only?
+        if name is true or name is &quot;&quot; or name is &quot;base&quot;
+            baseOnly = true
         else
-            logger.debug &quot;Mailer.templates.get&quot;, name
+            baseOnly = false
+            name = name.toString()
+            name = name.replace(&quot;.html&quot;, &quot;&quot;) if name.indexOf(&quot;.html&quot;)
+
+            cached = cache[name]
+
+            # Is it already cached? If so do not hit the disk.
+            if cached? and cached.expires &gt; moment()
+                logger.debug &quot;Mailer.templates.get&quot;, name, &quot;Loaded from cache.&quot;
+                return cache[name].template
+            else
+                logger.debug &quot;Mailer.templates.get&quot;, name
 
         # Set file system reading options.
-        readOptions = {encoding: settings.general.encoding}
         baseFile = utils.io.getFilePath path.join(settings.mailer.templates.path, settings.mailer.templates.baseFile)
-        templateFile = utils.io.getFilePath path.join(settings.mailer.templates.path, &quot;#{name}.html&quot;)
 
-        logger.debug &quot;Mailer.templates.get&quot;, &quot;Templates from&quot;, baseFile, templateFile
-
-        # Read base and `name` template and merge them together.
+        # Read base template first.
         try
             base = fs.readFileSync baseFile, readOptions
         catch ex
-            logger.warn &quot;Mailer.templates.get&quot;, ex, &quot;Could not read base.html file, will use template content as body.&quot;
+            logger.warn &quot;Mailer.templates.get&quot;, &quot;Could not read base.html file, will use contents as body&quot;, ex
             base = &quot;{contents}&quot;
 
-        template = fs.readFileSync templateFile, readOptions
-        result = @parse base, {contents: template}
+        # Load base only?
+        if baseOnly
+            result = base
+        else
+            templateFile = utils.io.getFilePath path.join(settings.mailer.templates.path, &quot;#{name}.html&quot;)
 
-        # Save to cache.
-        cache[name] = {}
-        cache[name].template = result
-        cache[name].expires = moment().add settings.general.ioCacheTimeout, &quot;s&quot;
+            logger.debug &quot;Mailer.templates.get&quot;, &quot;Templates from&quot;, baseFile, templateFile
+
+            # Read the actual template file.
+            try
+                template = fs.readFileSync templateFile, readOptions
+                result = @parse base, {contents: template}
+            catch ex
+                logger.error &quot;Mailer.templates.get&quot;, &quot;Could not read #{templateFile}&quot;, ex
+
+            # Save to cache.
+            cache[name] = {}
+            cache[name].template = result
+            cache[name].expires = moment().add settings.general.ioCacheTimeout, &quot;s&quot;
 
         return result
 
@@ -83,14 +100,27 @@ class EmailTemplates
     # Parse the specified template to replace keywords. The `keywords` is a set of key-values
     # to be replaced. For example if keywords is `{id: 1, friendlyUrl: &quot;abc&quot;}` then the tags
     # `{id}` and `{friendlyUrl}` will be replaced with the values 1 and abc.
+    # Set circular to true to parse keywords inside other keywords as well.
     # @param {String} template The template (its value, not its name!) to be parsed.
     # @param {Object} keywords Object with keys to be replaced with its values.
+    # @param {Boolean} circular If true, keywords will be parsed against themselves as well.
     # @return {String} The parsed template, keywords replaced with values.
     ###
-    parse: (template, keywords) -&gt;
-        logger.debug &quot;Mailer.templates.parse&quot;, template.replace(/(\r\n|\n|\r)/gm,&quot;&quot;), keywords
+    parse: (template, keywords, circular = false) =&gt;
+        if not template? or template is &quot;&quot;
+            logger.debug &quot;Mailer.templates.parse&quot;, &quot;Empty template&quot;, keywords
+            return &quot;&quot;
 
         template = template.toString()
+
+        logger.debug &quot;Mailer.templates.parse&quot;, template.replace(/(\r\n|\n|\r)/gm,&quot;&quot;), keywords
+
+        # Parse keywords inside other keywords?
+        if circular
+            keywords = lodash.cloneDeep keywords
+
+            for key, value of keywords
+                keywords[key] = @parse keywords[key], keywords
 
         for key, value of keywords
             template = template.replace new RegExp(&quot;\\{#{key}\\}&quot;, &quot;gi&quot;), value
