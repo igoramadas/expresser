@@ -11,7 +11,7 @@ describe("App HTTP(s) Error Tests", function() {
 
     var settings = require("../lib/settings.coffee")
     var app = null
-    var supertest = require("supertest")
+    var supertest = null
 
     before(function() {
         settings.loadFromJson("settings.test.json")
@@ -48,6 +48,8 @@ describe("App HTTP(s) Error Tests", function() {
         this.timeout(10000)
 
         app.init()
+
+        supertest = require("supertest").agent(app.expressApp)
     })
 
     it("Try rendering an invalid JSON", function(done) {
@@ -59,9 +61,6 @@ describe("App HTTP(s) Error Tests", function() {
             app.renderJson(req, res, invalidJson)
         })
 
-        supertest(app.expressApp)
-            .get("/invalidjson")
-            .expect("Content-Type", /json/)
-            .expect(500, done)
+        supertest.get("/invalidjson").expect(500, done)
     })
 })

@@ -235,11 +235,14 @@ class App
     kill: ->
         events.emit "App.before.kill"
 
-        @redirectorServer?.close()
-        @redirectorServer = null
+        try
+            @webServer?.close()
+            @redirectorServer?.close()
+        catch ex
+            logger.error "App.kill", ex
 
-        @webServer?.close()
         webServer = null
+        @redirectorServer = null
 
         events.emit "App.on.kill"
 

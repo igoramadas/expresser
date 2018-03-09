@@ -6,13 +6,12 @@ var chai = require("chai")
 chai.should()
 
 describe("App HTTPS Tests", function() {
-    return
     env.NODE_ENV = "test"
     process.setMaxListeners(20)
 
     var settings = require("../lib/settings.coffee")
     var app = null
-    var supertest = require("supertest")
+    var supertest = null
 
     before(function() {
         settings.loadFromJson("settings.test.json")
@@ -41,18 +40,7 @@ describe("App HTTPS Tests", function() {
             next()
         }
 
-        var middleware2 = function(req, res, next) {
-            if (req.path == "/middleware2") {
-                res.json({
-                    middleware: 2
-                })
-            }
-
-            next()
-        }
-
         app.appendMiddlewares.push(middleware1)
-        app.appendMiddlewares.push(middleware2)
         app.init()
 
         supertest = require("supertest").agent(app.expressApp)
@@ -63,15 +51,6 @@ describe("App HTTPS Tests", function() {
 
         supertest
             .get("/middleware1")
-            .expect("Content-Type", /json/)
-            .expect(200, done)
-    })
-
-    it("Renders test middleware 2", function(done) {
-        this.timeout(5000)
-
-        supertest
-            .get("/middleware2")
             .expect("Content-Type", /json/)
             .expect(200, done)
     })
