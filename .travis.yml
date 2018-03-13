@@ -12,8 +12,9 @@ before_script:
   - npm install node-logentries
   - npm install nodemailer
   - npm install socket.io
-after_script:
-  - NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --exit --report lcovonly -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+  - npm install coffee-coverage istanbul coveralls
+after_success:
+  - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'
 env:
   - CXX=g++-4.8
 addons:
