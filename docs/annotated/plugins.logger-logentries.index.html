@@ -298,11 +298,11 @@ Get the Logentries transport object.
             <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> tokenRequired, <span class="hljs-string">"Please set a valid options.token."</span>
 
         options = lodash.defaultsDeep options, settings.logger.logentries
-        options.sendTimestamp = settings.logger.sendTimestamp <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.sendTimestamp?
+        options.timestamp = settings.logger.sendTimestamp <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.timestamp?
         options.onLogSuccess = logger.onLogSuccess <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.onLogSuccess?
         options.onLogError = logger.onLogError <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.onLogError?
 
-        transport = {client: <span class="hljs-keyword">new</span> logentries {token: options.token, timestamp: options.sendTimestamp}}
+        transport = {client: <span class="hljs-keyword">new</span> logentries options}
         transport.client.<span class="hljs-literal">on</span>(<span class="hljs-string">"log"</span>, options.onLogSuccess) <span class="hljs-keyword">if</span> lodash.isFunction options.onLogSuccess
         transport.client.<span class="hljs-literal">on</span>(<span class="hljs-string">"error"</span>, options.onLogError) <span class="hljs-keyword">if</span> lodash.isFunction options.onLogError
 
