@@ -59,11 +59,11 @@ class LoggerLogentries
             return errors.throw tokenRequired, "Please set a valid options.token."
 
         options = lodash.defaultsDeep options, settings.logger.logentries
-        options.sendTimestamp = settings.logger.sendTimestamp if not options.sendTimestamp?
+        options.timestamp = settings.logger.sendTimestamp if not options.timestamp?
         options.onLogSuccess = logger.onLogSuccess if not options.onLogSuccess?
         options.onLogError = logger.onLogError if not options.onLogError?
 
-        transport = {client: new logentries {token: options.token, timestamp: options.sendTimestamp}}
+        transport = {client: new logentries options}
         transport.client.on("log", options.onLogSuccess) if lodash.isFunction options.onLogSuccess
         transport.client.on("error", options.onLogError) if lodash.isFunction options.onLogError
 

@@ -9,6 +9,9 @@ describe("App HTTPS Tests", function() {
     env.NODE_ENV = "test"
     process.setMaxListeners(20)
 
+    var https = require("http")
+    https.globalAgent.maxSockets = 20
+
     var settings = require("../lib/settings.coffee")
     var app = null
     var supertest = null

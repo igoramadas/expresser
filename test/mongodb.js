@@ -337,7 +337,5 @@ describe("MongoDB Tests", function() {
                 done(err)
             }
         })
-    } else {
-        it.skip("Database MongoDB tests skipped, no connection available")
     }
 })

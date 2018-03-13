@@ -80,8 +80,6 @@ describe("Logger Loggly Tests", function() {
                 helperLogOnError(done, ex)
             }
         })
-    } else {
-        it.skip("Send log to Loggly (skipped, no token or subdomain set)")
     }
 
     it("Fails to create transport with missing options", function(done) {

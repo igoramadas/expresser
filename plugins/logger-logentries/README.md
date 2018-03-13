@@ -13,9 +13,5 @@ Create an account on Logentries. Then register your host, and create a default l
         }
     }
 
-
-        }
-    }
-
 This module is a wrapper to the le_node module.
-Please check https://www.npmjs.com/package/le_node for more details.
+Please check https://www.npmjs.com/package/le_node for more details and available options.

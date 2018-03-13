@@ -51,7 +51,10 @@ describe("Logger Logentries Tests", function() {
     after(function() {
         if (transport && transport.client) {
             try {
-                transport.client.closeConnection()
+                var close = function() {
+                    transport.client.closeConnection()
+                }
+                setTimeout(close, 2000)
             } catch (ex) {}
         }
     })
@@ -75,8 +78,6 @@ describe("Logger Logentries Tests", function() {
 
             transport.info("Expresser Logentries log test.", new Date())
         })
-    } else {
-        it.skip("Send log to Logentries (skipped, no token set)")
     }
 
     it("Fails to create transport with missing options", function(done) {

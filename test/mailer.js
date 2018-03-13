@@ -27,14 +27,6 @@ describe("Mailer Tests", function() {
             settings.mailer.smtp.password = env["SMTP_PASSWORD"]
         }
 
-        if (env["SMTP2_USER"]) {
-            settings.mailer.smtp2.user = env["SMTP2_USER"]
-        }
-
-        if (env["SMTP2_PASSWORD"]) {
-            settings.mailer.smtp2.password = env["SMTP2_PASSWORD"]
-        }
-
         utils = require("../lib/utils.coffee")
 
         mailer = require("../plugins/mailer/index.coffee")
@@ -93,26 +85,10 @@ describe("Mailer Tests", function() {
             return await mailer.send(msgOptions)
         })
 
-        it("Sends a test email using Debug Mail (SMTP2)", async function() {
-            this.timeout(12000)
-
-            var smtp = mailer.createSmtp(settings.mailer.smtp2)
-
-            var msgOptions = {
-                smtp: smtp,
-                body: "SMTP2 testing: app {appTitle}, to {to}, using Debug Mail.",
-                subject: "Test mail",
-                to: ["expresser@mailinator.com", "expresser-mailer@mailinator.com"],
-                from: "devv@devv.com"
-            }
-
-            return await mailer.send(msgOptions)
-        })
-
         it("Dummy send an email (doNotSend option is true)", async function() {
             settings.mailer.doNotSend = true
 
-            var smtp = mailer.createSmtp(settings.mailer.smtp2)
+            var smtp = mailer.createSmtp(settings.mailer.smtp)
 
             var msgOptions = {
                 smtp: smtp,
@@ -124,8 +100,6 @@ describe("Mailer Tests", function() {
 
             return await mailer.send(msgOptions)
         })
-    } else {
-        it.skip("Sends a test email (skipped, no user or password set)")
     }
 
     it("Try sending email without a valid to address", async function() {
