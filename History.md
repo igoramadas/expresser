@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.3.2
+=====
+* NEW! Possible to disable Logger console styles by using settings.logger.styles = false.
+
 3.3.1
 =====
 * NEW / BREAKING! Now using express-session with memory store instead of cookie based.

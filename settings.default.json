@@ -150,6 +150,7 @@
         "separator": " | ",
         // Colours and styles of logs sent to the console (using the Chalk module).
         // For more info see https://github.com/chalk/chalk
+        // To disable, please set to false.
         "styles": {
             "debug": ["gray"],
             "info": ["white"],
