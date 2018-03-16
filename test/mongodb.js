@@ -52,10 +52,10 @@ describe("MongoDB Tests", function() {
         return dbMongo
     })
 
-    it("Add 100 records to the database", function(done) {
-        this.timeout(12000)
+    it("Add 20 records to the database", function(done) {
+        this.timeout(10000)
 
-        var counter = 100
+        var counter = 20
         var current = 1
 
         var callback = function(err, result) {
