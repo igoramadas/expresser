@@ -13,6 +13,7 @@ before_script:
   - npm install nodemailer
   - npm install socket.io
   - npm install coffee-coverage istanbul coveralls
+  - mongo expresser --eval 'db.createUser({user:"travis", pwd:"test", roles:["readWrite"]});'
 after_success:
   - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'
 env:
