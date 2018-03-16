@@ -399,18 +399,29 @@ Log to the console.
         
       
         
-        <p>Get styles (text colour, bold, italic etc…) for the correlated log type.</p>
+        <p>Only proceed here if styles are not disabled on settings.
+Get styles (text colour, bold, italic etc…) for the correlated log type.</p>
 
         
-          <div class='highlight'><pre>        styles = settings.logger.styles[logType]
-
-        <span class="hljs-keyword">if</span> styles?
-            chalkStyle = chalk
-            chalkStyle = chalkStyle[s] <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> styles
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.logger.styles
+            styledMsg = msg
         <span class="hljs-keyword">else</span>
-            chalkStyle = chalk.white
+            styles = settings.logger.styles[logType]
 
-        method timestamp, chalkStyle msg
+            <span class="hljs-keyword">if</span> styles?
+                chalkStyle = chalk
+                chalkStyle = chalkStyle[s] <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> styles
+            <span class="hljs-keyword">else</span>
+                chalkStyle = chalk.white
+
+            styledMsg = chalkStyle msg</pre></div>
+        
+      
+        
+        <p>Log to console and return message.</p>
+
+        
+          <div class='highlight'><pre>        method timestamp, styledMsg
 
         <span class="hljs-keyword">return</span> msg</pre></div>
         

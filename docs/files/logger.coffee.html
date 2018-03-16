@@ -128,16 +128,23 @@ class Logger
         else
             method = console.log
 
+        # Only proceed here if styles are not disabled on settings.
         # Get styles (text colour, bold, italic etc...) for the correlated log type.
-        styles = settings.logger.styles[logType]
-
-        if styles?
-            chalkStyle = chalk
-            chalkStyle = chalkStyle[s] for s in styles
+        if not settings.logger.styles
+            styledMsg = msg
         else
-            chalkStyle = chalk.white
+            styles = settings.logger.styles[logType]
 
-        method timestamp, chalkStyle msg
+            if styles?
+                chalkStyle = chalk
+                chalkStyle = chalkStyle[s] for s in styles
+            else
+                chalkStyle = chalk.white
+
+            styledMsg = chalkStyle msg
+
+        # Log to console and return message.
+        method timestamp, styledMsg
 
         return msg
 

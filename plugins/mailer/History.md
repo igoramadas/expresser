@@ -3,7 +3,8 @@
 3.1.0
 =====
 * NEW! Templates.parse now can also do circular parsing to change keywords inside keywords.
-* Now possible to load base template only by passing template: true on send.
+* NEW! Possible to load base template only by passing template: true on send.
+* Some bits of code refactored.
 * Updated nodemailer.
 
 3.0.5

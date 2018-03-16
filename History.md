@@ -3,6 +3,7 @@
 3.3.2
 =====
 * NEW! Possible to disable Logger console styles by using settings.logger.styles = false.
+* Updated dependencies.
 
 3.3.1
 =====
