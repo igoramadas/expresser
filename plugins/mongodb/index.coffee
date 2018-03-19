@@ -50,17 +50,17 @@ class MongoDb
     connect: (connString, options) =>
         logger.debug "MongoDb.connect", connString
 
-        connStringSafe = connString
-        sep = connString.indexOf "@"
-        connStringSafe = connStringSafe.substring sep if sep > 0
-        sep = connString.indexOf "/"
-        connStringSafe = connStringSafe.substring 0, sep if sep > 0
-
         # Tries to connect to the specified database.
         return new Promise (resolve, reject) =>
             if not settings.mongodb.enabled
                 notEnabled = logger.notEnabled "MongoDb"
                 return reject notEnabled
+
+            connStringSafe = connString
+            sep = connString.indexOf "@"
+            connStringSafe = connStringSafe.substring sep if sep > 0
+            sep = connString.indexOf "/"
+            connStringSafe = connStringSafe.substring 0, sep if sep > 0
 
             result = {connString: connString, connection: null}
 
