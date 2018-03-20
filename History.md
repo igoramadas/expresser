@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.3.3
+=====
+* Sessions now properly expire / clear old data.
+
 3.3.2
 =====
 * NEW! Possible to disable Logger console styles by using settings.logger.styles = false.

@@ -40,18 +40,20 @@
             // Enable cookies on Express?
             "enabled": true,
             // Secret key used for cookie encryption.
-            "secret": "ExpresserCookie"
+            "secret": "ExpresserSecret"
         },
         // Session options.
         "session": {
             // Enable session store? This will use the cookieSession implementation of Express.
             "enabled": true,
+            // Interval in milliseconds to check for expired sessions, default is 5 minutes.
+            "checkPeriod": 300000,
             // Set HttpOnly flag on session cookies?
             "httpOnly": true,
             // Max age of session cookies, in seconds, default is 20min.
             "maxAge": 1200,
             // Secret key used for session encryption.
-            "secret": "ExpresserSession"
+            "secret": "ExpresserSecret"
         },
         // SSL options to bind server to HTTPS.
         "ssl": {

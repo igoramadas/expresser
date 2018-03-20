@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "3.3.2",
+    "version": "3.3.3",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "keywords": ["expresser", "express", "app", "framework", "node", "webapp"],
     "author": "Igor Ramadas <igor@devv.com>",
