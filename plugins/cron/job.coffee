@@ -98,10 +98,6 @@ class CronJob
         # If `schedule` is not an array, parse it as integer / seconds.
         if lodash.isNumber @schedule or lodash.isString @schedule
             timeout = moment().add(@schedule, "ms").valueOf() - now.valueOf()
-
-            # DEPRECATED! Schedule must be defined now in milliseconds.
-            if @schedule < 1000
-                logger.warn "CronJob.getTimeout", @id, "Schedule: #{@schedule}", "Notice: job schedules should now be defined in milliseconds."
         else
             minTime = "99:99:99"
             nextTime = "99:99:99"

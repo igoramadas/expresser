@@ -240,9 +240,6 @@ class Settings
     watch: (callback) =>
         env = process.env.NODE_ENV or "development"
 
-        if lodash.isBoolean callback
-            console.warn "Settings.watch(boolean)", "DEPRECATED! Please use watch(callback) and unwatch(callback)."
-
         if callback? and not lodash.isFunction callback
             return errors.throw "callbackMustBeFunction", "Pass null if you don't need a callback for the file watchers."
 

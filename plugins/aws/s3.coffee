@@ -46,16 +46,6 @@ class S3
     download: (options) =>
         logger.debug "AWS.S3.download", options
 
-        # DEPRECATED! Please use a single `options` with named parameters {bucket, key, destination}.
-        if arguments.length > 1
-            logger.deprecated "AWS.S3.download(bucket, key, destination)", "Please use download(options) passing the named parameters."
-
-            options = {
-                bucket: arguments[0]
-                key: arguments[1]
-                destination: arguments[2]
-            }
-
         return new Promise (resolve, reject) =>
             # Accept uppercased parameters as well, like in the AWS SDK.
             options.bucket = options.Bucket if not options.bucket?
@@ -136,14 +126,6 @@ class S3
     upload: (options) =>
         logger.debug "AWS.S3.upload", options
 
-        if arguments.length > 1
-            logger.deprecated "AWS.S3.upload(bucket, key, body, options)", "Please use upload(options) passing the named parameters."
-
-            options = if arguments.length > 2 then arguments[3] else {}
-            options.bucket = arguments[0]
-            options.key = arguments[1]
-            options.body = arguments[2]
-
         return new Promise (resolve, reject) =>
             # Accept uppercased parameters as well, like in the AWS SDK.
             options.bucket = options.Bucket if not options.bucket?
@@ -212,15 +194,6 @@ class S3
     ###
     delete: (options) ->
         logger.debug "AWS.S3.delete", options
-
-        # DEPRECATED! Please use a single `options` with named parameters {bucket, keys}.
-        if arguments.length > 1
-            logger.deprecated "AWS.S3.delete(bucket, keys)", "Please use download(options) passing the named parameters."
-
-            options = {
-                bucket: arguments[0]
-                keys: arguments[1]
-            }
 
         return new Promise (resolve, reject) =>
             # Accept uppercased parameters as well, like in the AWS SDK.

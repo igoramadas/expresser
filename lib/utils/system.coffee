@@ -14,11 +14,6 @@ lastCpuLoad = null
 class SystemUtils
     newInstance: -> return new SystemUtils()
 
-    # DEPRECATED! The getIP has moved to the NetworkUtils as GetIPv4.
-    getIP: (firstOnly) ->
-        console.warn "SystemUtils.getIP(firstOnly)", "DEPRECATED! Use NetworkUtils.getIP() or NetworkUtils.getSingleIPv4() instead."
-        return require("./network.coffee").getSingleIPv4()
-
     ###
     # Return an object with general and health information about the system.
     # @return {Object} System uptime, hostname, title, platform, memoryTotal, memoryUsage, process, cpuCores and loadAvg.
