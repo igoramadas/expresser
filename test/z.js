@@ -1,4 +1,4 @@
-// TEST: MAIN
+// TEST: KILL AND CLEANUP
 
 require("coffeescript/register")
 var env = process.env
@@ -22,7 +22,7 @@ describe("Expresser (Main) Tests", function() {
             process.exit()
         }
 
-        setTimeout(quit, 2000)
+        setTimeout(quit, 3000)
     })
 
     it("Inits", function() {

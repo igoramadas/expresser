@@ -12,6 +12,7 @@ test/
 .istanbul.yml
 .travis.yml
 coffeecoverage.js
+coffeejsdoc.yaml
 localhost.crt
 localhost.key
 Makefile

@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.3.4
+=====
+* Removed deprecated code.
+
 3.3.3
 =====
 * Sessions now properly expire / clear old data.

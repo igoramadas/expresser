@@ -1,6 +1,5 @@
 .history/
 .idea/
-.openshift/
 .vscode/
 .coveralls.yml
 .DS_Store
