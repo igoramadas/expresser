@@ -1,13 +1,9 @@
 # Changelog for expresser
 
-3.3.4
+3.3.3
 =====
 * Session now gets instantiated with a proper "checkPeriod".
 * Removed deprecated code.
-
-3.3.3
-=====
-* Sessions now properly expire / clear old data.
 
 3.3.2
 =====
