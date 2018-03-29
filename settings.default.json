@@ -53,7 +53,9 @@
             // Max age of session cookies, in seconds, default is 20min.
             "maxAge": 1200,
             // Secret key used for session encryption.
-            "secret": "ExpresserSecret"
+            "secret": "ExpresserSecret",
+            // Use secure cookies for session management? Needs HTTPS to work!
+            "secure": false
         },
         // SSL options to bind server to HTTPS.
         "ssl": {

@@ -2,6 +2,7 @@
 
 3.3.4
 =====
+* Session now gets instantiated with a proper "checkPeriod".
 * Removed deprecated code.
 
 3.3.3
