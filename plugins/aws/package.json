@@ -12,8 +12,8 @@
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.2.3",
-        "aws-sdk": "^2.216.1"
+        "aws-sdk": "^2.249.1",
+        "coffeescript": "^2.3.1"
     },
     "repository": {
         "type": "git",
