@@ -63,7 +63,7 @@ class App
     # configuration, etc. Please note that this will be called automatically if
     # you call the main `expresser.init()`.
     ###
-    init: ->
+    init: =>
         logger.debug "App.init"
         events.emit "App.before.init"
 
@@ -93,7 +93,7 @@ class App
     # to call `configure()` on your own.
     # @private
     ###
-    configure: ->
+    configure: =>
         midBodyParser = require "body-parser"
         midCookieParser = require "cookie-parser"
         midCompression = require "compression"
