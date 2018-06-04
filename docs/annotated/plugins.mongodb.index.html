@@ -291,13 +291,7 @@ Get the DB connection object.
 
         
           <div class='highlight'><pre>    connect: <span class="hljs-function"><span class="hljs-params">(connString, options)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"MongoDb.connect"</span>, connString
-
-        connStringSafe = connString
-        sep = connString.indexOf <span class="hljs-string">"@"</span>
-        connStringSafe = connStringSafe.substring sep <span class="hljs-keyword">if</span> sep &gt; <span class="hljs-number">0</span>
-        sep = connString.indexOf <span class="hljs-string">"/"</span>
-        connStringSafe = connStringSafe.substring <span class="hljs-number">0</span>, sep <span class="hljs-keyword">if</span> sep &gt; <span class="hljs-number">0</span></pre></div>
+        logger.debug <span class="hljs-string">"MongoDb.connect"</span>, connString</pre></div>
         
       
         
@@ -308,6 +302,12 @@ Get the DB connection object.
             <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.mongodb.enabled
                 notEnabled = logger.notEnabled <span class="hljs-string">"MongoDb"</span>
                 <span class="hljs-keyword">return</span> reject notEnabled
+
+            connStringSafe = connString
+            sep = connString.indexOf <span class="hljs-string">"@"</span>
+            connStringSafe = connStringSafe.substring sep <span class="hljs-keyword">if</span> sep &gt; <span class="hljs-number">0</span>
+            sep = connString.indexOf <span class="hljs-string">"/"</span>
+            connStringSafe = connStringSafe.substring <span class="hljs-number">0</span>, sep <span class="hljs-keyword">if</span> sep &gt; <span class="hljs-number">0</span>
 
             result = {connString: connString, connection: <span class="hljs-literal">null</span>}</pre></div>
         

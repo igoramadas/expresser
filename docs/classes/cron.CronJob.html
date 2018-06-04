@@ -50,10 +50,6 @@ gtag('config', 'UA-9331973-3');
     # If `schedule` is not an array, parse it as integer / seconds.
     if lodash.isNumber @schedule or lodash.isString @schedule
         timeout = moment().add(@schedule, &quot;ms&quot;).valueOf() - now.valueOf()
-
-        # DEPRECATED! Schedule must be defined now in milliseconds.
-        if @schedule &lt; 1000
-            logger.warn &quot;CronJob.getTimeout&quot;, @id, &quot;Schedule: #{@schedule}&quot;, &quot;Notice: job schedules should now be defined in milliseconds.&quot;
     else
         minTime = &quot;99:99:99&quot;
         nextTime = &quot;99:99:99&quot;

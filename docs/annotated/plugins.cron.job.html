@@ -379,15 +379,7 @@ Helper to get the timeout value in milliseconds till the next job callback.
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> lodash.isNumber @schedule <span class="hljs-keyword">or</span> lodash.isString @schedule
-            timeout = moment().add(@schedule, <span class="hljs-string">"ms"</span>).valueOf() - now.valueOf()</pre></div>
-        
-      
-        
-        <p>DEPRECATED! Schedule must be defined now in milliseconds.</p>
-
-        
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> @schedule &lt; <span class="hljs-number">1000</span>
-                logger.warn <span class="hljs-string">"CronJob.getTimeout"</span>, @id, <span class="hljs-string">"Schedule: <span class="hljs-subst">#{@schedule}</span>"</span>, <span class="hljs-string">"Notice: job schedules should now be defined in milliseconds."</span>
+            timeout = moment().add(@schedule, <span class="hljs-string">"ms"</span>).valueOf() - now.valueOf()
         <span class="hljs-keyword">else</span>
             minTime = <span class="hljs-string">"99:99:99"</span>
             nextTime = <span class="hljs-string">"99:99:99"</span></pre></div>

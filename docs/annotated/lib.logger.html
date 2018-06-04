@@ -294,16 +294,7 @@ Init the Logger module and set default settings.</p>
                 <span class="hljs-keyword">try</span>
                     @error <span class="hljs-string">"Unhandled exception!"</span>, err.message, err.stack
                 <span class="hljs-keyword">catch</span> ex
-                    <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Unhandled exception!"</span>, err.message, err.stack, ex</pre></div>
-        
-      
-        
-        <p>DEPRECATED! Use settings.logger.maxDepth instead of maxDeepLevel.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.logger.maxDeepLevel?
-            @deprecated <span class="hljs-string">"settings.logger.maxDeepLevel"</span>, <span class="hljs-string">"Please use settings.logger.maxDepth instead."</span>
-            settings.logger.maxDepth = settings.logger.maxDeepLevel
+                    <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Unhandled exception!"</span>, err.message, err.stack, ex
 
         events.emit <span class="hljs-string">"Logger.on.init"</span>
         <span class="hljs-keyword">delete</span> @init</pre></div>

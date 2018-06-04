@@ -59,11 +59,6 @@ class Logger
                 catch ex
                     console.error &quot;Unhandled exception!&quot;, err.message, err.stack, ex
 
-        # DEPRECATED! Use settings.logger.maxDepth instead of maxDeepLevel.
-        if settings.logger.maxDeepLevel?
-            @deprecated &quot;settings.logger.maxDeepLevel&quot;, &quot;Please use settings.logger.maxDepth instead.&quot;
-            settings.logger.maxDepth = settings.logger.maxDeepLevel
-
         events.emit &quot;Logger.on.init&quot;
         delete @init
 

@@ -125,11 +125,6 @@ class BrowserUtils
 
         return result
 
-    # DEPRECATED! Please use `getDeviceDetails` instead.
-    getDeviceString: (req) =&gt;
-        console.warn &quot;BrowserUtils.getDeviceString()&quot;, &quot;DEPRECATED! Please use getDeviceDetails() instead.&quot;
-        return @getDeviceDetails(req).toString()
-
 # Singleton implementation
 # --------------------------------------------------------------------------
 BrowserUtils.getInstance = -&gt;

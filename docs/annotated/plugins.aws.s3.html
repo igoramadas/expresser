@@ -285,21 +285,7 @@ Download a file from S3 and optionally save to the specified destination.
 
         
           <div class='highlight'><pre>    download: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"AWS.S3.download"</span>, options</pre></div>
-        
-      
-        
-        <p>DEPRECATED! Please use a single <code>options</code> with named parameters {bucket, key, destination}.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">1</span>
-            logger.deprecated <span class="hljs-string">"AWS.S3.download(bucket, key, destination)"</span>, <span class="hljs-string">"Please use download(options) passing the named parameters."</span>
-
-            options = {
-                bucket: arguments[<span class="hljs-number">0</span>]
-                key: arguments[<span class="hljs-number">1</span>]
-                destination: arguments[<span class="hljs-number">2</span>]
-            }
+        logger.debug <span class="hljs-string">"AWS.S3.download"</span>, options
 
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) =&gt;</pre></div>
         
@@ -418,14 +404,6 @@ Upload a file to S3.
           <div class='highlight'><pre>    upload: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
         logger.debug <span class="hljs-string">"AWS.S3.upload"</span>, options
 
-        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">1</span>
-            logger.deprecated <span class="hljs-string">"AWS.S3.upload(bucket, key, body, options)"</span>, <span class="hljs-string">"Please use upload(options) passing the named parameters."</span>
-
-            options = <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">2</span> <span class="hljs-keyword">then</span> arguments[<span class="hljs-number">3</span>] <span class="hljs-keyword">else</span> {}
-            options.bucket = arguments[<span class="hljs-number">0</span>]
-            options.key = arguments[<span class="hljs-number">1</span>]
-            options.body = arguments[<span class="hljs-number">2</span>]
-
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) =&gt;</pre></div>
         
       
@@ -518,20 +496,7 @@ Delete object(s) from S3.
 
         
           <div class='highlight'><pre>    delete: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
-        logger.debug <span class="hljs-string">"AWS.S3.delete"</span>, options</pre></div>
-        
-      
-        
-        <p>DEPRECATED! Please use a single <code>options</code> with named parameters {bucket, keys}.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> arguments.length &gt; <span class="hljs-number">1</span>
-            logger.deprecated <span class="hljs-string">"AWS.S3.delete(bucket, keys)"</span>, <span class="hljs-string">"Please use download(options) passing the named parameters."</span>
-
-            options = {
-                bucket: arguments[<span class="hljs-number">0</span>]
-                keys: arguments[<span class="hljs-number">1</span>]
-            }
+        logger.debug <span class="hljs-string">"AWS.S3.delete"</span>, options
 
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise (resolve, reject) =&gt;</pre></div>
         

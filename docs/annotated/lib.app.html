@@ -314,7 +314,7 @@ you call the main <code>expresser.init()</code>.</p>
 <p>##</p>
 
         
-          <div class='highlight'><pre>    init: <span class="hljs-function">-&gt;</span>
+          <div class='highlight'><pre>    init: <span class="hljs-function">=&gt;</span>
         logger.debug <span class="hljs-string">"App.init"</span>
         events.emit <span class="hljs-string">"App.before.init"</span>
 
@@ -360,12 +360,11 @@ to call <code>configure()</code> on your own.
 <p>##</p>
 
         
-          <div class='highlight'><pre>    configure: <span class="hljs-function">-&gt;</span>
+          <div class='highlight'><pre>    configure: <span class="hljs-function">=&gt;</span>
         midBodyParser = <span class="hljs-built_in">require</span> <span class="hljs-string">"body-parser"</span>
         midCookieParser = <span class="hljs-built_in">require</span> <span class="hljs-string">"cookie-parser"</span>
         midCompression = <span class="hljs-built_in">require</span> <span class="hljs-string">"compression"</span>
         midSession = <span class="hljs-built_in">require</span> <span class="hljs-string">"express-session"</span>
-        memoryStore = <span class="hljs-built_in">require</span>(<span class="hljs-string">"memorystore"</span>) midSession
 
         <span class="hljs-keyword">if</span> settings.general.debug <span class="hljs-keyword">or</span> nodeEnv <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span>
             midErrorHandler = <span class="hljs-built_in">require</span> <span class="hljs-string">"errorhandler"</span></pre></div>
@@ -376,13 +375,6 @@ to call <code>configure()</code> on your own.
 
         
           <div class='highlight'><pre>        @expressApp = express()</pre></div>
-        
-      
-        
-        <p>DEPRECATED! The “server” was renamed to “expressApp”.</p>
-
-        
-          <div class='highlight'><pre>        @server = @expressApp</pre></div>
         
       
         
@@ -421,7 +413,19 @@ to call <code>configure()</code> on your own.
             @expressApp.use midCookieParser settings.app.cookie.secret
 
         <span class="hljs-keyword">if</span> settings.app.session.enabled
-            @expressApp.use midSession {store: <span class="hljs-keyword">new</span> memoryStore(), secret: settings.app.session.secret, resave: <span class="hljs-literal">false</span>, saveUninitialized: <span class="hljs-literal">false</span>, cookie: {httpOnly: settings.app.session.httpOnly, maxAge: <span class="hljs-keyword">new</span> Date(Date.now() + (settings.app.session.maxAge * <span class="hljs-number">1000</span>))}}</pre></div>
+            memoryStore = <span class="hljs-built_in">require</span>(<span class="hljs-string">"memorystore"</span>) midSession
+
+            @expressApp.use midSession {
+                store: <span class="hljs-keyword">new</span> memoryStore {checkPeriod: settings.app.session.checkPeriod}
+                secret: settings.app.session.secret
+                resave: <span class="hljs-literal">false</span>
+                saveUninitialized: <span class="hljs-literal">false</span>
+                cookie: {
+                    secure: settings.app.session.secure
+                    httpOnly: settings.app.session.httpOnly
+                    maxAge: <span class="hljs-keyword">new</span> Date(Date.now() + (settings.app.session.maxAge * <span class="hljs-number">1000</span>))
+                }
+            }</pre></div>
         
       
         

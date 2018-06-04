@@ -10,17 +10,17 @@ gtag('config', 'UA-9331973-3');
 </div></div><div class="panel-collapse collapse" id="mongodb_MongoDb__connect_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>connString</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The connection string, for example user:password@hostname/dbname.</span></td></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Additional options to be passed when creating the DB connection object.</span></td></tr></table><h4>Returns<small><span> as</span><span class="label label-info">Promise</span></small></h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>The database connection object.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/mongodb/index.coffee#L50">/plugins/mongodb/index.coffee:50</a>)</span></div><pre class="sourcecode prettyprint .linenums:50">connect: (connString, options) =&gt;
     logger.debug &quot;MongoDb.connect&quot;, connString
 
-    connStringSafe = connString
-    sep = connString.indexOf &quot;@&quot;
-    connStringSafe = connStringSafe.substring sep if sep &gt; 0
-    sep = connString.indexOf &quot;/&quot;
-    connStringSafe = connStringSafe.substring 0, sep if sep &gt; 0
-
     # Tries to connect to the specified database.
     return new Promise (resolve, reject) =&gt;
         if not settings.mongodb.enabled
             notEnabled = logger.notEnabled &quot;MongoDb&quot;
             return reject notEnabled
+
+        connStringSafe = connString
+        sep = connString.indexOf &quot;@&quot;
+        connStringSafe = connStringSafe.substring sep if sep &gt; 0
+        sep = connString.indexOf &quot;/&quot;
+        connStringSafe = connStringSafe.substring 0, sep if sep &gt; 0
 
         result = {connString: connString, connection: null}
 

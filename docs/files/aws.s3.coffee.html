@@ -52,16 +52,6 @@ class S3
     download: (options) =&gt;
         logger.debug &quot;AWS.S3.download&quot;, options
 
-        # DEPRECATED! Please use a single `options` with named parameters {bucket, key, destination}.
-        if arguments.length &gt; 1
-            logger.deprecated &quot;AWS.S3.download(bucket, key, destination)&quot;, &quot;Please use download(options) passing the named parameters.&quot;
-
-            options = {
-                bucket: arguments[0]
-                key: arguments[1]
-                destination: arguments[2]
-            }
-
         return new Promise (resolve, reject) =&gt;
             # Accept uppercased parameters as well, like in the AWS SDK.
             options.bucket = options.Bucket if not options.bucket?
@@ -142,14 +132,6 @@ class S3
     upload: (options) =&gt;
         logger.debug &quot;AWS.S3.upload&quot;, options
 
-        if arguments.length &gt; 1
-            logger.deprecated &quot;AWS.S3.upload(bucket, key, body, options)&quot;, &quot;Please use upload(options) passing the named parameters.&quot;
-
-            options = if arguments.length &gt; 2 then arguments[3] else {}
-            options.bucket = arguments[0]
-            options.key = arguments[1]
-            options.body = arguments[2]
-
         return new Promise (resolve, reject) =&gt;
             # Accept uppercased parameters as well, like in the AWS SDK.
             options.bucket = options.Bucket if not options.bucket?
@@ -218,15 +200,6 @@ class S3
     ###
     delete: (options) -&gt;
         logger.debug &quot;AWS.S3.delete&quot;, options
-
-        # DEPRECATED! Please use a single `options` with named parameters {bucket, keys}.
-        if arguments.length &gt; 1
-            logger.deprecated &quot;AWS.S3.delete(bucket, keys)&quot;, &quot;Please use download(options) passing the named parameters.&quot;
-
-            options = {
-                bucket: arguments[0]
-                keys: arguments[1]
-            }
 
         return new Promise (resolve, reject) =&gt;
             # Accept uppercased parameters as well, like in the AWS SDK.

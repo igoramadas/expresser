@@ -69,7 +69,7 @@ class App
     # configuration, etc. Please note that this will be called automatically if
     # you call the main `expresser.init()`.
     ###
-    init: -&gt;
+    init: =&gt;
         logger.debug &quot;App.init&quot;
         events.emit &quot;App.before.init&quot;
 
@@ -99,21 +99,17 @@ class App
     # to call `configure()` on your own.
     # @private
     ###
-    configure: -&gt;
+    configure: =&gt;
         midBodyParser = require &quot;body-parser&quot;
         midCookieParser = require &quot;cookie-parser&quot;
         midCompression = require &quot;compression&quot;
         midSession = require &quot;express-session&quot;
-        memoryStore = require(&quot;memorystore&quot;) midSession
 
         if settings.general.debug or nodeEnv is &quot;test&quot;
             midErrorHandler = require &quot;errorhandler&quot;
 
         # Create express v4 app.
         @expressApp = express()
-
-        # DEPRECATED! The &quot;server&quot; was renamed to &quot;expressApp&quot;.
-        @server = @expressApp
 
         # BRAKING! Alert if user is still using old ./views default path for views.
         if not fs.existsSync(settings.app.viewPath)
@@ -136,7 +132,19 @@ class App
             @expressApp.use midCookieParser settings.app.cookie.secret
 
         if settings.app.session.enabled
-            @expressApp.use midSession {store: new memoryStore(), secret: settings.app.session.secret, resave: false, saveUninitialized: false, cookie: {httpOnly: settings.app.session.httpOnly, maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))}}
+            memoryStore = require(&quot;memorystore&quot;) midSession
+
+            @expressApp.use midSession {
+                store: new memoryStore {checkPeriod: settings.app.session.checkPeriod}
+                secret: settings.app.session.secret
+                resave: false
+                saveUninitialized: false
+                cookie: {
+                    secure: settings.app.session.secure
+                    httpOnly: settings.app.session.httpOnly
+                    maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))
+                }
+            }
 
         # Use HTTP compression only if enabled on settings.
         if settings.app.compressionEnabled
