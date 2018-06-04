@@ -1,3 +1,6 @@
+// Temporarily disable till coffee-coverage gets compatible with CoffeeScript 2.2+
+return
+
 var coffeeCoverage = require("coffee-coverage")
 var coverageVar = coffeeCoverage.findIstanbulVariable()
 var writeOnExit = coverageVar == null ? true : null
