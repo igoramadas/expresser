@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.3.4
+=====
+* Maintenance release with updated dependencies.
+
 3.3.3
 =====
 * Session now gets instantiated with a proper "checkPeriod".
