@@ -185,7 +185,7 @@ class App
     ###
     # Start the server using HTTP or HTTPS, depending on the settings.
     ###
-    start: ->
+    start: =>
         if @webServer?
             return logger.warn "App.start", "Application has already started (webServer is not null). Abort!"
 
@@ -240,7 +240,7 @@ class App
     ###
     # Kill the underlying HTTP(S) server(s).
     ###
-    kill: ->
+    kill: =>
         events.emit "App.before.kill"
 
         try
@@ -249,7 +249,7 @@ class App
         catch ex
             logger.error "App.kill", ex
 
-        webServer = null
+        @webServer = null
         @redirectorServer = null
 
         events.emit "App.on.kill"
