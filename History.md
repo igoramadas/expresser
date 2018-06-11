@@ -1,9 +1,11 @@
 # Changelog for expresser
 
-3.3.5
+3.4.0
 =====
 * NEW! Session and cookie "secret" setting meged onto settings.app.secret.
-* Fixed issues with Session / Memory Store.
+* BREAKING! Session cookies now secure be default (settings.app.session.secure = true).
+* Fixed issues with Session / Memory Store expiration.
+* Updated dependencies.
 
 3.3.4
 =====

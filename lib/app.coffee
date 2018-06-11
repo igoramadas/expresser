@@ -131,7 +131,7 @@ class App
             settings.app.secret = settings.app.session.secret
 
         if settings.app.cookie.enabled
-            @expressApp.use midCookieParser settings.app.secret
+            @expressApp.use midCookieParser(settings.app.secret)
 
         if settings.app.session.enabled
             memoryStore = require("memorystore") midSession
@@ -143,7 +143,6 @@ class App
                 saveUninitialized: false
                 cookie: {
                     secure: settings.app.session.secure
-                    secret: settings.app.secret
                     httpOnly: settings.app.session.httpOnly
                     maxAge: settings.app.session.maxAge * 1000
                 }

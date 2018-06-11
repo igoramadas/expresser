@@ -1,7 +1,10 @@
 {
     "app": {
         "title": "Expresser Test",
-        "viewPath": "./test/"
+        "viewPath": "./test/",
+        "session": {
+            "secure": false
+        }
     },
     "general": {
         "debug": true
