@@ -122,21 +122,30 @@ class App
         @expressApp.use midBodyParser.json {limit: settings.app.bodyParser.limit}
         @expressApp.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
 
+        # Make sure we're using the correct session / cookie secret!
+        if settings.app.cookie.secret?
+            logger.deprecated "settings.app.cookie.secret", "Please set value on settings.app.secret."
+            settings.app.secret = settings.app.cookie.secret
+        if settings.app.session.secret?
+            logger.deprecated "settings.app.session.secret", "Please set value on settings.app.secret."
+            settings.app.secret = settings.app.session.secret
+
         if settings.app.cookie.enabled
-            @expressApp.use midCookieParser settings.app.cookie.secret
+            @expressApp.use midCookieParser settings.app.secret
 
         if settings.app.session.enabled
             memoryStore = require("memorystore") midSession
 
             @expressApp.use midSession {
                 store: new memoryStore {checkPeriod: settings.app.session.checkPeriod}
-                secret: settings.app.session.secret
+                secret: settings.app.secret
                 resave: false
                 saveUninitialized: false
                 cookie: {
                     secure: settings.app.session.secure
+                    secret: settings.app.secret
                     httpOnly: settings.app.session.httpOnly
-                    maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))
+                    maxAge: settings.app.session.maxAge * 1000
                 }
             }
 

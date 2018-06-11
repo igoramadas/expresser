@@ -38,9 +38,7 @@
         // Cookie options.
         "cookie": {
             // Enable cookies on Express?
-            "enabled": true,
-            // Secret key used for cookie encryption.
-            "secret": "ExpresserSecret"
+            "enabled": true
         },
         // Session options.
         "session": {
@@ -52,10 +50,8 @@
             "httpOnly": true,
             // Max age of session cookies, in seconds, default is 20min.
             "maxAge": 1200,
-            // Secret key used for session encryption.
-            "secret": "ExpresserSecret",
             // Use secure cookies for session management? Needs HTTPS to work!
-            "secure": false
+            "secure": true
         },
         // SSL options to bind server to HTTPS.
         "ssl": {
@@ -74,6 +70,8 @@
             // and self-signed certificates (not recommended on production).
             "rejectUnauthorized": true
         },
+        // Secret key used for session and cookies encryption.
+        "secret": "ExpresserSecret",
         // Path to the public folder used by Express.
         "publicPath": "./public/",
         // Path to the views directory.

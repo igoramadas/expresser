@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+3.3.5
+=====
+* NEW! Session and cookie "secret" setting meged onto settings.app.secret.
+* Fixed issues with Session / Memory Store.
+
 3.3.4
 =====
 * Maintenance release with updated dependencies.
