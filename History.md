@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+3.4.1
+=====
+* NEW! App trustProxy option, default is 1.
+* Removed unecessary files from published package.
+
 3.4.0
 =====
 * NEW! Session saveUninitialized setting, default is false.

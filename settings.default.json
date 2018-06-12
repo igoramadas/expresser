@@ -16,6 +16,8 @@
         "port": 8080,
         // The view engine used by Express. Default is pug.
         "viewEngine": "pug",
+        // Trust proxy for secure cookies etc? Default is 1 (trust).
+        "trustProxy": 1,
         // Body parser module options.
         "bodyParser": {
             // Extended URL encoded?
@@ -50,6 +52,10 @@
             "httpOnly": true,
             // Max age of session cookies, in seconds, default is 20min.
             "maxAge": 1200,
+            // Proxy session cookies? Enabled if using behind a proxy / load balancer.
+            "proxy": true,
+            // Resave session after each request even if unchanged?
+            "resave": false,
             // Save uninitialized sessions to the store?
             "saveUninitialized": false,
             // Use secure cookies for session management? Needs HTTPS to work!

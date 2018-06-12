@@ -105,6 +105,9 @@ class App
         # Create express v4 app.
         @expressApp = express()
 
+        # Trust proxy (mainly for secure cookies)?
+        @expressApp.set "trust proxy", settings.app.trustProxy
+
         # BRAKING! Alert if user is still using old ./views default path for views.
         if not fs.existsSync(settings.app.viewPath)
             logger.warn "Attention!", "Views path not found: #{settings.app.viewPath}", "Note that the default path has changed from ./views/ to ./assets/views/"
@@ -138,9 +141,10 @@ class App
 
             @expressApp.use midSession {
                 store: new memoryStore {checkPeriod: settings.app.session.checkPeriod}
-                secret: settings.app.secret
-                resave: false
+                proxy: settings.app.session.proxy
+                resave: settings.app.session.resave
                 saveUninitialized: settings.app.session.saveUninitialized
+                secret: settings.app.secret
                 ttl: settings.app.session.maxAge * 1000
                 cookie: {
                     secure: settings.app.session.secure
