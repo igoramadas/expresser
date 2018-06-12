@@ -2,7 +2,8 @@
 
 3.4.0
 =====
-* NEW! Session and cookie "secret" setting meged onto settings.app.secret.
+* NEW! Session saveUninitialized setting, default is false.
+* BREAKING! Session and cookie "secret" setting meged onto settings.app.secret.
 * BREAKING! Session cookies now secure be default (settings.app.session.secure = true).
 * Fixed issues with Session / Memory Store expiration.
 * Updated dependencies.
