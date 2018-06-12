@@ -50,6 +50,8 @@
             "httpOnly": true,
             // Max age of session cookies, in seconds, default is 20min.
             "maxAge": 1200,
+            // Save uninitialized sessions to the store?
+            "saveUninitialized": false,
             // Use secure cookies for session management? Needs HTTPS to work!
             "secure": true
         },
