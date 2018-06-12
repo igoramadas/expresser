@@ -431,7 +431,8 @@ to call <code>configure()</code> on your own.
                 store: <span class="hljs-keyword">new</span> memoryStore {checkPeriod: settings.app.session.checkPeriod}
                 secret: settings.app.secret
                 resave: <span class="hljs-literal">false</span>
-                saveUninitialized: <span class="hljs-literal">false</span>
+                saveUninitialized: settings.app.session.saveUninitialized
+                ttl: settings.app.session.maxAge * <span class="hljs-number">1000</span>
                 cookie: {
                     secure: settings.app.session.secure
                     httpOnly: settings.app.session.httpOnly

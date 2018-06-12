@@ -146,7 +146,8 @@ class App
                 store: new memoryStore {checkPeriod: settings.app.session.checkPeriod}
                 secret: settings.app.secret
                 resave: false
-                saveUninitialized: false
+                saveUninitialized: settings.app.session.saveUninitialized
+                ttl: settings.app.session.maxAge * 1000
                 cookie: {
                     secure: settings.app.session.secure
                     httpOnly: settings.app.session.httpOnly

@@ -4,6 +4,7 @@
 coverage/
 docs/
 database/
+guides/
 logs/
 plugins/
 test/
