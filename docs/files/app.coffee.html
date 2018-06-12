@@ -128,21 +128,29 @@ class App
         @expressApp.use midBodyParser.json {limit: settings.app.bodyParser.limit}
         @expressApp.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
 
+        # Make sure we're using the correct session / cookie secret!
+        if settings.app.cookie.secret?
+            logger.deprecated &quot;settings.app.cookie.secret&quot;, &quot;Please set value on settings.app.secret.&quot;
+            settings.app.secret = settings.app.cookie.secret
+        if settings.app.session.secret?
+            logger.deprecated &quot;settings.app.session.secret&quot;, &quot;Please set value on settings.app.secret.&quot;
+            settings.app.secret = settings.app.session.secret
+
         if settings.app.cookie.enabled
-            @expressApp.use midCookieParser settings.app.cookie.secret
+            @expressApp.use midCookieParser(settings.app.secret)
 
         if settings.app.session.enabled
             memoryStore = require(&quot;memorystore&quot;) midSession
 
             @expressApp.use midSession {
                 store: new memoryStore {checkPeriod: settings.app.session.checkPeriod}
-                secret: settings.app.session.secret
+                secret: settings.app.secret
                 resave: false
                 saveUninitialized: false
                 cookie: {
                     secure: settings.app.session.secure
                     httpOnly: settings.app.session.httpOnly
-                    maxAge: new Date(Date.now() + (settings.app.session.maxAge * 1000))
+                    maxAge: settings.app.session.maxAge * 1000
                 }
             }
 
@@ -191,7 +199,7 @@ class App
     ###
     # Start the server using HTTP or HTTPS, depending on the settings.
     ###
-    start: -&gt;
+    start: =&gt;
         if @webServer?
             return logger.warn &quot;App.start&quot;, &quot;Application has already started (webServer is not null). Abort!&quot;
 
@@ -246,7 +254,7 @@ class App
     ###
     # Kill the underlying HTTP(S) server(s).
     ###
-    kill: -&gt;
+    kill: =&gt;
         events.emit &quot;App.before.kill&quot;
 
         try
@@ -255,7 +263,7 @@ class App
         catch ex
             logger.error &quot;App.kill&quot;, ex
 
-        webServer = null
+        @webServer = null
         @redirectorServer = null
 
         events.emit &quot;App.on.kill&quot;

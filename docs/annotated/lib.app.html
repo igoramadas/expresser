@@ -407,23 +407,35 @@ to call <code>configure()</code> on your own.
 
         
           <div class='highlight'><pre>        @expressApp.use midBodyParser.json {limit: settings.app.bodyParser.limit}
-        @expressApp.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
+        @expressApp.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}</pre></div>
+        
+      
+        
+        <p>Make sure we’re using the correct session / cookie secret!</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.app.cookie.secret?
+            logger.deprecated <span class="hljs-string">"settings.app.cookie.secret"</span>, <span class="hljs-string">"Please set value on settings.app.secret."</span>
+            settings.app.secret = settings.app.cookie.secret
+        <span class="hljs-keyword">if</span> settings.app.session.secret?
+            logger.deprecated <span class="hljs-string">"settings.app.session.secret"</span>, <span class="hljs-string">"Please set value on settings.app.secret."</span>
+            settings.app.secret = settings.app.session.secret
 
         <span class="hljs-keyword">if</span> settings.app.cookie.enabled
-            @expressApp.use midCookieParser settings.app.cookie.secret
+            @expressApp.use midCookieParser(settings.app.secret)
 
         <span class="hljs-keyword">if</span> settings.app.session.enabled
             memoryStore = <span class="hljs-built_in">require</span>(<span class="hljs-string">"memorystore"</span>) midSession
 
             @expressApp.use midSession {
                 store: <span class="hljs-keyword">new</span> memoryStore {checkPeriod: settings.app.session.checkPeriod}
-                secret: settings.app.session.secret
+                secret: settings.app.secret
                 resave: <span class="hljs-literal">false</span>
                 saveUninitialized: <span class="hljs-literal">false</span>
                 cookie: {
                     secure: settings.app.session.secure
                     httpOnly: settings.app.session.httpOnly
-                    maxAge: <span class="hljs-keyword">new</span> Date(Date.now() + (settings.app.session.maxAge * <span class="hljs-number">1000</span>))
+                    maxAge: settings.app.session.maxAge * <span class="hljs-number">1000</span>
                 }
             }</pre></div>
         
@@ -514,7 +526,7 @@ Start the server using HTTP or HTTPS, depending on the settings.</p>
 <p>##</p>
 
         
-          <div class='highlight'><pre>    start: <span class="hljs-function">-&gt;</span>
+          <div class='highlight'><pre>    start: <span class="hljs-function">=&gt;</span>
         <span class="hljs-keyword">if</span> @webServer?
             <span class="hljs-keyword">return</span> logger.warn <span class="hljs-string">"App.start"</span>, <span class="hljs-string">"Application has already started (webServer is not null). Abort!"</span>
 
@@ -597,7 +609,7 @@ Kill the underlying HTTP(S) server(s).</p>
 <p>##</p>
 
         
-          <div class='highlight'><pre>    kill: <span class="hljs-function">-&gt;</span>
+          <div class='highlight'><pre>    kill: <span class="hljs-function">=&gt;</span>
         events.emit <span class="hljs-string">"App.before.kill"</span>
 
         <span class="hljs-keyword">try</span>
@@ -606,7 +618,7 @@ Kill the underlying HTTP(S) server(s).</p>
         <span class="hljs-keyword">catch</span> ex
             logger.error <span class="hljs-string">"App.kill"</span>, ex
 
-        webServer = <span class="hljs-literal">null</span>
+        @webServer = <span class="hljs-literal">null</span>
         @redirectorServer = <span class="hljs-literal">null</span>
 
         events.emit <span class="hljs-string">"App.on.kill"</span></pre></div>
