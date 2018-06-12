@@ -31,7 +31,7 @@
         "body-parser": "^1.18.3",
         "chalk": "^2.4.1",
         "coffeescript": "^2.3.1",
-        "compressible": "^2.0.13",
+        "compressible": "^2.0.14",
         "compression": "^1.7.2",
         "cookie-parser": "^1.4.3",
         "csswring": "^6.0.3",
@@ -50,7 +50,7 @@
         "postcss": "^6.0.22",
         "pug": "^2.0.3",
         "stylus": "^0.54.5",
-        "uglify-es": "^3.3.10"
+        "uglify-es": "^3.3.9"
     },
     "devDependencies": {
         "@google-cloud/datastore": "^1.4.0",

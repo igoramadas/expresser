@@ -13,7 +13,7 @@
     },
     "dependencies": {
         "coffeescript": "^2.3.1",
-        "nodemailer": "^4.6.5"
+        "nodemailer": "^4.6.6"
     },
     "repository": {
         "type": "git",
