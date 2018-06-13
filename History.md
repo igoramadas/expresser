@@ -3,6 +3,8 @@
 3.4.1
 =====
 * NEW! App trustProxy option, default is 1.
+* NEW! Session proxy and resave settings.
+* Renamed App "compressionEnabled" setting renamed to "compression".
 * Removed unecessary files from published package.
 
 3.4.0

@@ -154,7 +154,7 @@ class App
             }
 
         # Use HTTP compression only if enabled on settings.
-        if settings.app.compressionEnabled
+        if settings.app.compression
             @expressApp.use midCompression
 
         # Fix connect assets helper context.

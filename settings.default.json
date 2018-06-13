@@ -9,7 +9,7 @@
     // -------------------------------------------------------------------------
     "app": {
         // Enable HTTP compression?
-        "compressionEnabled": false,
+        "compression": false,
         // Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
         "ip": null,
         // Node.js server port.
