@@ -378,6 +378,13 @@ to call <code>configure()</code> on your own.
         
       
         
+        <p>Trust proxy (mainly for secure cookies)?</p>
+
+        
+          <div class='highlight'><pre>        @expressApp.set <span class="hljs-string">"trust proxy"</span>, settings.app.trustProxy</pre></div>
+        
+      
+        
         <p>BRAKING! Alert if user is still using old ./views default path for views.</p>
 
         
@@ -429,9 +436,10 @@ to call <code>configure()</code> on your own.
 
             @expressApp.use midSession {
                 store: <span class="hljs-keyword">new</span> memoryStore {checkPeriod: settings.app.session.checkPeriod}
-                secret: settings.app.secret
-                resave: <span class="hljs-literal">false</span>
+                proxy: settings.app.session.proxy
+                resave: settings.app.session.resave
                 saveUninitialized: settings.app.session.saveUninitialized
+                secret: settings.app.secret
                 ttl: settings.app.session.maxAge * <span class="hljs-number">1000</span>
                 cookie: {
                     secure: settings.app.session.secure
@@ -445,7 +453,7 @@ to call <code>configure()</code> on your own.
         <p>Use HTTP compression only if enabled on settings.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.app.compressionEnabled
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.app.compression
             @expressApp.use midCompression</pre></div>
         
       
