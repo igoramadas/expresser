@@ -100,6 +100,10 @@ class Metrics
     # @param {Object} error Optional error that ocurred while processing the metric.
     ###
     end: (obj, error) ->
+        if not obj?.startTime?
+            logger.error "Metrics.end", "Passed object is invalid"
+            return false
+
         obj.endTime = moment().valueOf()
         obj.duration = obj.endTime - obj.startTime
         obj.error = error
@@ -136,26 +140,29 @@ class Metrics
         emptyIds = []
 
         # Iterate metrics collection.
-        for key, obj of metrics
-            i = obj.length - 1
-            counter = 0
-            keyCounter++
+        try
+            for key, obj of metrics
+                i = obj.length - 1
+                counter = 0
+                keyCounter++
 
-            if obj.length < 1
-                emptyIds.push key
+                if obj.length < 1
+                    emptyIds.push key
 
-            # Iterate requests for the current metrics, last to first.
-            while i >= 0
-                diff = now - obj[i].startTime
-                minutes = diff / 1000 / 60
+                # Iterate requests for the current metrics, last to first.
+                while i >= 0
+                    diff = now - obj[i].startTime
+                    minutes = diff / 1000 / 60
 
-                # Remove if verified as old. Otherwise, force finish the iteration.
-                if minutes > settings.metrics.expireAfter or settings.metrics.expireAfter is 0
-                    obj.pop()
-                    i--
-                    counter++
-                else
-                    i = -1
+                    # Remove if verified as old. Otherwise, force finish the iteration.
+                    if minutes > settings.metrics.expireAfter or settings.metrics.expireAfter is 0
+                        obj.pop()
+                        i--
+                        counter++
+                    else
+                        i = -1
+        catch ex
+            logger.error "Metrics.cleanup", ex
 
         # Delete empty metrics if enabled on settings.
         if settings.metrics.cleanupEmpty and emptyIds.length > 0

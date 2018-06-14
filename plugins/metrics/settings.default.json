@@ -6,7 +6,7 @@
         // Cleanup empty metrics (means calls history has expired so total calls is 0)?
         "cleanupEmpty": true,
         // Cleanup interval, in minutes.
-        "cleanupInterval": 60,
+        "cleanupInterval": 30,
         // Expire metrics data after X minutes.
         "expireAfter": 720,
         // Set the values below if you wish the module to spin up a HTTP server to serve the metrics output.

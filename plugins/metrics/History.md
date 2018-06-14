@@ -1,5 +1,11 @@
 # Changelog for expresser-metrics
 
+3.1.5
+=====
+* Improved resilience on Metrics start / end.
+* Default cleanup interval reduced to 30 minutes.
+* Updated dependencies.
+
 3.1.4
 =====
 * HTTP server start / kill returns false if already / not running.
