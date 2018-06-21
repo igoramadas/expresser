@@ -9,7 +9,7 @@ monitoring systems.</p>
 </div><div></div><div class="showcode"><button class="btn btn-info">Show class code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L22">/plugins/metrics/index.coffee:22</a>)</span></div><pre class="sourcecode prettyprint .linenums:22">class Metrics
     priority: 2</pre><div class="panel panel-info"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_Metrics_ctor_body"><h3 class="panel-title">Constructor<span class="pull-right glyphicon"></span></h3></div><div class="panel-collapse collapse" id="metrics_Metrics_ctor_body"><div class="panel-body"><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table></div></div></div></section><span class="fix-anchor" id="metrics_Metrics__cleanup"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_Metrics__cleanup_body"><h3 class="panel-title">Metrics::cleanup()<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Clean collected metrics by removing data older than X minutes (defined on settings).
 Please note that this runs on s schedule so you shouldn&#39;t need to call it manually, in most cases.</p>
-</div></div><div class="panel-collapse collapse" id="metrics_Metrics__cleanup_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L126">/plugins/metrics/index.coffee:126</a>)</span></div><pre class="sourcecode prettyprint .linenums:126">cleanup: -&gt;
+</div></div><div class="panel-collapse collapse" id="metrics_Metrics__cleanup_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L130">/plugins/metrics/index.coffee:130</a>)</span></div><pre class="sourcecode prettyprint .linenums:130">cleanup: -&gt;
     logger.debug &quot;Metrics.cleanup&quot;
 
     if not settings.metrics.enabled
@@ -22,26 +22,29 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
     emptyIds = []
 
     # Iterate metrics collection.
-    for key, obj of metrics
-        i = obj.length - 1
-        counter = 0
-        keyCounter++
+    try
+        for key, obj of metrics
+            i = obj.length - 1
+            counter = 0
+            keyCounter++
 
-        if obj.length &lt; 1
-            emptyIds.push key
+            if obj.length &lt; 1
+                emptyIds.push key
 
-        # Iterate requests for the current metrics, last to first.
-        while i &gt;= 0
-            diff = now - obj[i].startTime
-            minutes = diff / 1000 / 60
+            # Iterate requests for the current metrics, last to first.
+            while i &gt;= 0
+                diff = now - obj[i].startTime
+                minutes = diff / 1000 / 60
 
-            # Remove if verified as old. Otherwise, force finish the iteration.
-            if minutes &gt; settings.metrics.expireAfter or settings.metrics.expireAfter is 0
-                obj.pop()
-                i--
-                counter++
-            else
-                i = -1
+                # Remove if verified as old. Otherwise, force finish the iteration.
+                if minutes &gt; settings.metrics.expireAfter or settings.metrics.expireAfter is 0
+                    obj.pop()
+                    i--
+                    counter++
+                else
+                    i = -1
+    catch ex
+        logger.error &quot;Metrics.cleanup&quot;, ex
 
     # Delete empty metrics if enabled on settings.
     if settings.metrics.cleanupEmpty and emptyIds.length &gt; 0
@@ -51,6 +54,10 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
     if counter &gt; 0 and keyCounter &gt; 0
         logger.info &quot;Metrics.cleanup&quot;, &quot;Removed #{counter} records from #{keyCounter} keys.&quot;</pre></div></div></div></section><span class="fix-anchor" id="metrics_Metrics__end"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_Metrics__end_body"><h3 class="panel-title">Metrics::end(obj, error)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Ends the counter for the specified metric, with an optional error to be passed along.</p>
 </div></div><div class="panel-collapse collapse" id="metrics_Metrics__end_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>obj</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> The metric object started previsouly on `start`.</span></td></tr><tr><td><span class="method-depth0"></span><code>error</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Optional error that ocurred while processing the metric.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L102">/plugins/metrics/index.coffee:102</a>)</span></div><pre class="sourcecode prettyprint .linenums:102">end: (obj, error) -&gt;
+    if not obj?.startTime?
+        logger.error &quot;Metrics.end&quot;, &quot;Passed object is invalid&quot;
+        return false
+
     obj.endTime = moment().valueOf()
     obj.duration = obj.endTime - obj.startTime
     obj.error = error
@@ -85,7 +92,7 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
 
     events.emit &quot;Metrics.on.init&quot;
     delete @init</pre></div></div></div></section><span class="fix-anchor" id="metrics_Metrics__output"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_Metrics__output_body"><h3 class="panel-title">Metrics::output(options)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Generate the JSON output with all metrics.</p>
-</div></div><div class="panel-collapse collapse" id="metrics_Metrics__output_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Options to filter the output. Available options are same as settings.metrics.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>JSON output with relevant metrics.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L176">/plugins/metrics/index.coffee:176</a>)</span></div><pre class="sourcecode prettyprint .linenums:176">output: (options) =&gt;
+</div></div><div class="panel-collapse collapse" id="metrics_Metrics__output_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>options</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span> Options to filter the output. Available options are same as settings.metrics.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>JSON output with relevant metrics.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L183">/plugins/metrics/index.coffee:183</a>)</span></div><pre class="sourcecode prettyprint .linenums:183">output: (options) =&gt;
     logger.debug &quot;Metrics.output&quot;, options
     utils.system.getInfo()
 
@@ -158,4 +165,4 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
 
     return obj</pre></div></div></div></section><span class="fix-anchor" id="metrics_Metrics__httpServer"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_Metrics__httpServer_body"><h3 class="panel-title">Metrics::httpServer : <a href='../classes/metrics.HttpServer.html#metrics_HttpServer'>HttpServer</a><span class="label label-property">property</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>HTTP server module exposed to other modules.</p>
 </div></div><div class="panel-collapse collapse" id="metrics_Metrics__httpServer_body"><div class="panel-body"><div></div><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L29">/plugins/metrics/index.coffee:29</a>)</span></div><pre class="sourcecode prettyprint .linenums:29">httpServer: require &quot;./httpserver.coffee&quot;</pre></div></div></div></section><span class="fix-anchor" id="metrics_Metrics__summary"></span><section class="private"><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_Metrics__summary_body"><h3 class="panel-title">Metrics::summary<span class="label label-private">private</span><span class="label label-property">property</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Summary helper methods.</p>
-</div></div><div class="panel-collapse collapse" id="metrics_Metrics__summary_body"><div class="panel-body"><div></div><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L226">/plugins/metrics/index.coffee:226</a>)</span></div><pre class="sourcecode prettyprint .linenums:226">summary: {</pre></div></div></div></section></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>
+</div></div><div class="panel-collapse collapse" id="metrics_Metrics__summary_body"><div class="panel-body"><div></div><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L233">/plugins/metrics/index.coffee:233</a>)</span></div><pre class="sourcecode prettyprint .linenums:233">summary: {</pre></div></div></div></section></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>

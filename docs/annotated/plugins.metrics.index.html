@@ -371,6 +371,10 @@ Ends the counter for the specified metric, with an optional error to be passed a
 
         
           <div class='highlight'><pre>    end: <span class="hljs-function"><span class="hljs-params">(obj, error)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?.startTime?
+            logger.error <span class="hljs-string">"Metrics.end"</span>, <span class="hljs-string">"Passed object is invalid"</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+
         obj.endTime = moment().valueOf()
         obj.duration = obj.endTime - obj.startTime
         obj.error = error</pre></div>
@@ -433,34 +437,37 @@ Please note that this runs on s schedule so you shouldn’t need to call it manu
         <p>Iterate metrics collection.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> key, obj <span class="hljs-keyword">of</span> metrics
-            i = obj.length - <span class="hljs-number">1</span>
-            counter = <span class="hljs-number">0</span>
-            keyCounter++
+          <div class='highlight'><pre>        <span class="hljs-keyword">try</span>
+            <span class="hljs-keyword">for</span> key, obj <span class="hljs-keyword">of</span> metrics
+                i = obj.length - <span class="hljs-number">1</span>
+                counter = <span class="hljs-number">0</span>
+                keyCounter++
 
-            <span class="hljs-keyword">if</span> obj.length &lt; <span class="hljs-number">1</span>
-                emptyIds.push key</pre></div>
+                <span class="hljs-keyword">if</span> obj.length &lt; <span class="hljs-number">1</span>
+                    emptyIds.push key</pre></div>
         
       
         
         <p>Iterate requests for the current metrics, last to first.</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-keyword">while</span> i &gt;= <span class="hljs-number">0</span>
-                diff = now - obj[i].startTime
-                minutes = diff / <span class="hljs-number">1000</span> / <span class="hljs-number">60</span></pre></div>
+          <div class='highlight'><pre>                <span class="hljs-keyword">while</span> i &gt;= <span class="hljs-number">0</span>
+                    diff = now - obj[i].startTime
+                    minutes = diff / <span class="hljs-number">1000</span> / <span class="hljs-number">60</span></pre></div>
         
       
         
         <p>Remove if verified as old. Otherwise, force finish the iteration.</p>
 
         
-          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> minutes &gt; settings.metrics.expireAfter <span class="hljs-keyword">or</span> settings.metrics.expireAfter <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
-                    obj.pop()
-                    i--
-                    counter++
-                <span class="hljs-keyword">else</span>
-                    i = <span class="hljs-number">-1</span></pre></div>
+          <div class='highlight'><pre>                    <span class="hljs-keyword">if</span> minutes &gt; settings.metrics.expireAfter <span class="hljs-keyword">or</span> settings.metrics.expireAfter <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+                        obj.pop()
+                        i--
+                        counter++
+                    <span class="hljs-keyword">else</span>
+                        i = <span class="hljs-number">-1</span>
+        <span class="hljs-keyword">catch</span> ex
+            logger.error <span class="hljs-string">"Metrics.cleanup"</span>, ex</pre></div>
         
       
         
