@@ -466,14 +466,10 @@ class App
             if lodash.isString obj
                 msg.message = obj
             else
-                msg.message = obj.message if obj.message?
+                msg.message = obj.message or obj.error_description or obj.error or "Unhandled server error"
                 msg.friendlyMessage = obj.friendlyMessage if obj.friendlyMessage?
                 msg.reason = obj.reason if obj.reason?
                 msg.code = obj.code if obj.code?
-
-            # Nothing taken out of error objec? Return null then.
-            if lodash.keys(msg).length is 0
-                return null
 
             return msg
 
