@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+3.4.2
+=====
+* NEW! The app server timeout can be set on settings.app.timeout.
+* Updated dependencies.
+
 3.4.1
 =====
 * NEW! App trustProxy option, default is 1.
