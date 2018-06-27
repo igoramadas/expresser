@@ -8,16 +8,6 @@
     // APP
     // -------------------------------------------------------------------------
     "app": {
-        // Enable HTTP compression?
-        "compression": false,
-        // Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
-        "ip": null,
-        // Node.js server port.
-        "port": 8080,
-        // The view engine used by Express. Default is pug.
-        "viewEngine": "pug",
-        // Trust proxy for secure cookies etc? Default is 1 (trust).
-        "trustProxy": 1,
         // Body parser module options.
         "bodyParser": {
             // Extended URL encoded?
@@ -25,6 +15,8 @@
             // Default post data limit is set to 10MB by default.
             "limit": "10mb"
         },
+        // Enable HTTP compression?
+        "compression": false,
         // Connect Assets module options.
         "connectAssets": {
             // Build assets? True or false.
@@ -42,6 +34,10 @@
             // Enable cookies on Express?
             "enabled": true
         },
+        // Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
+        "ip": null,
+        // Node.js server port.
+        "port": 8080,
         // Session options.
         "session": {
             // Enable session store? This will use the cookieSession implementation of Express.
@@ -78,16 +74,22 @@
             // and self-signed certificates (not recommended on production).
             "rejectUnauthorized": true
         },
-        // Secret key used for session and cookies encryption.
-        "secret": "ExpresserSecret",
         // Path to the public folder used by Express.
         "publicPath": "./public/",
-        // Path to the views directory.
-        "viewPath": "./assets/views/",
+        // Secret key used for session and cookies encryption.
+        "secret": "ExpresserSecret",
+        // Server request / response timeout, in milliseconds, default is 2 minutes.
+        "timeout": 120000,
         // The app title. This must be set so Expresser can properly identify your app.
         "title": "Expresser",
+        // Trust proxy for secure cookies etc? Default is 1 (trust).
+        "trustProxy": 1,
         // The app's base URL, including http://.
-        "url": "http://github.com/igoramadas/expresser"
+        "url": "http://github.com/igoramadas/expresser",
+        // The view engine used by Express. Default is pug.
+        "viewEngine": "pug",
+        // Path to the views directory.
+        "viewPath": "./assets/views/"
     },
     // DATABASE
     // ----------------------------------------------------------------------

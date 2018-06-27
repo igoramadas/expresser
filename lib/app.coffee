@@ -228,9 +228,11 @@ class App
         # Start the app!
         if settings.app.ip? and settings.app.ip isnt ""
             serverRef.listen settings.app.port, settings.app.ip
+            serverRef.setTimeout settings.app.timeout
             logger.info "App", settings.app.title, "Listening on #{settings.app.ip} port #{settings.app.port}"
         else
             serverRef.listen settings.app.port
+            serverRef.setTimeout settings.app.timeout
             logger.info "App", settings.app.title, "Listening on port #{settings.app.port}"
 
         # Using SSL and redirector port is set? Then create the http server.
