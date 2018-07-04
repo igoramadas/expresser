@@ -61,6 +61,16 @@ describe("App HTTP Tests", function() {
         supertest.get("/testview").expect(200, done)
     })
 
+    it("Renders a plain text", function(done) {
+        this.timeout(5000)
+
+        app.get("/plaintext", function(req, res) {
+            app.renderText(req, res, "hello world")
+        })
+
+        supertest.get("/plaintext").expect(200, done)
+    })
+
     it("Renders a JSON object", function(done) {
         this.timeout(5000)
 
@@ -117,14 +127,20 @@ describe("App HTTP Tests", function() {
 
         app.get("/setsession", function(req, res) {
             req.session.something = "ABC"
-            app.renderJson(req, res, { session: true })
+            app.renderJson(req, res, {
+                session: true
+            })
         })
 
         app.get("/getsession", function(req, res) {
             if (req.session.something == "ABC") {
-                app.renderJson(req, res, { session: true })
+                app.renderJson(req, res, {
+                    session: true
+                })
             } else {
-                app.renderError(req, res, { session: false }, 500)
+                app.renderError(req, res, {
+                    session: false
+                }, 500)
             }
         })
 
