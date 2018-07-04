@@ -383,6 +383,27 @@ class App
         events.emit "App.on.renderView", req, res, view, options
 
     ###
+    # Sends pure text to the client.
+    # @param {Object} req The Express request object, mandatory.
+    # @param {Object} res The Express response object, mandatory.
+    # @param {String} text The text to be rendered, mandatory.
+    ###
+    renderText: (req, res, text) ->
+        logger.debug "App.renderText", req.originalUrl, text
+
+        try
+            # Make sure text is a string!
+            text = text.toString() if not lodash.isString text
+            res.setHeader "content-type", "text/plain"
+            res.send text
+
+        catch ex
+            logger.error "App.renderText", text, ex
+            @renderError req, res, ex
+
+        events.emit "App.on.renderText", req, res, text
+
+    ###
     # Render response as JSON data and send to the client.
     # @param {Object} req The Express request object, mandatory.
     # @param {Object} res The Express response object, mandatory.

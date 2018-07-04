@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.4.3
+=====
+* NEW! App.renderText() to send data as plain text to the client.
+
 3.4.2
 =====
 * NEW! The app server timeout can be set on settings.app.timeout.
