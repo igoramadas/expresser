@@ -577,9 +577,11 @@ Start the server using HTTP or HTTPS, depending on the settings.</p>
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.app.ip? <span class="hljs-keyword">and</span> settings.app.ip <span class="hljs-keyword">isnt</span> <span class="hljs-string">""</span>
             serverRef.listen settings.app.port, settings.app.ip
+            serverRef.setTimeout settings.app.timeout
             logger.info <span class="hljs-string">"App"</span>, settings.app.title, <span class="hljs-string">"Listening on <span class="hljs-subst">#{settings.app.ip}</span> port <span class="hljs-subst">#{settings.app.port}</span>"</span>
         <span class="hljs-keyword">else</span>
             serverRef.listen settings.app.port
+            serverRef.setTimeout settings.app.timeout
             logger.info <span class="hljs-string">"App"</span>, settings.app.title, <span class="hljs-string">"Listening on port <span class="hljs-subst">#{settings.app.port}</span>"</span></pre></div>
         
       
@@ -812,6 +814,36 @@ Render a Pug view and send to the client.
       
         
         <p>##
+Sends pure text to the client.
+@param {Object} req The Express request object, mandatory.
+@param {Object} res The Express response object, mandatory.
+@param {String} text The text to be rendered, mandatory.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    renderText: <span class="hljs-function"><span class="hljs-params">(req, res, text)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"App.renderText"</span>, req.originalUrl, text
+
+        <span class="hljs-keyword">try</span></pre></div>
+        
+      
+        
+        <p>Make sure text is a string!</p>
+
+        
+          <div class='highlight'><pre>            text = text.toString() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString text
+            res.setHeader <span class="hljs-string">"content-type"</span>, <span class="hljs-string">"text/plain"</span>
+            res.send text
+
+        <span class="hljs-keyword">catch</span> ex
+            logger.error <span class="hljs-string">"App.renderText"</span>, text, ex
+            @renderError req, res, ex
+
+        events.emit <span class="hljs-string">"App.on.renderText"</span>, req, res, text</pre></div>
+        
+      
+        
+        <p>##
 Render response as JSON data and send to the client.
 @param {Object} req The Express request object, mandatory.
 @param {Object} res The Express response object, mandatory.
@@ -935,18 +967,10 @@ Sends error response as JSON.
             <span class="hljs-keyword">if</span> lodash.isString obj
                 msg.message = obj
             <span class="hljs-keyword">else</span>
-                msg.message = obj.message <span class="hljs-keyword">if</span> obj.message?
+                msg.message = obj.message <span class="hljs-keyword">or</span> obj.error_description <span class="hljs-keyword">or</span> obj.error <span class="hljs-keyword">or</span> <span class="hljs-string">"Unhandled server error"</span>
                 msg.friendlyMessage = obj.friendlyMessage <span class="hljs-keyword">if</span> obj.friendlyMessage?
                 msg.reason = obj.reason <span class="hljs-keyword">if</span> obj.reason?
-                msg.code = obj.code <span class="hljs-keyword">if</span> obj.code?</pre></div>
-        
-      
-        
-        <p>Nothing taken out of error objec? Return null then.</p>
-
-        
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> lodash.keys(msg).length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>
+                msg.code = obj.code <span class="hljs-keyword">if</span> obj.code?
 
             <span class="hljs-keyword">return</span> msg
 

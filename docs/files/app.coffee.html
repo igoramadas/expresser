@@ -234,9 +234,11 @@ class App
         # Start the app!
         if settings.app.ip? and settings.app.ip isnt &quot;&quot;
             serverRef.listen settings.app.port, settings.app.ip
+            serverRef.setTimeout settings.app.timeout
             logger.info &quot;App&quot;, settings.app.title, &quot;Listening on #{settings.app.ip} port #{settings.app.port}&quot;
         else
             serverRef.listen settings.app.port
+            serverRef.setTimeout settings.app.timeout
             logger.info &quot;App&quot;, settings.app.title, &quot;Listening on port #{settings.app.port}&quot;
 
         # Using SSL and redirector port is set? Then create the http server.
@@ -387,6 +389,27 @@ class App
         events.emit &quot;App.on.renderView&quot;, req, res, view, options
 
     ###
+    # Sends pure text to the client.
+    # @param {Object} req The Express request object, mandatory.
+    # @param {Object} res The Express response object, mandatory.
+    # @param {String} text The text to be rendered, mandatory.
+    ###
+    renderText: (req, res, text) -&gt;
+        logger.debug &quot;App.renderText&quot;, req.originalUrl, text
+
+        try
+            # Make sure text is a string!
+            text = text.toString() if not lodash.isString text
+            res.setHeader &quot;content-type&quot;, &quot;text/plain&quot;
+            res.send text
+
+        catch ex
+            logger.error &quot;App.renderText&quot;, text, ex
+            @renderError req, res, ex
+
+        events.emit &quot;App.on.renderText&quot;, req, res, text
+
+    ###
     # Render response as JSON data and send to the client.
     # @param {Object} req The Express request object, mandatory.
     # @param {Object} res The Express response object, mandatory.
@@ -472,14 +495,10 @@ class App
             if lodash.isString obj
                 msg.message = obj
             else
-                msg.message = obj.message if obj.message?
+                msg.message = obj.message or obj.error_description or obj.error or &quot;Unhandled server error&quot;
                 msg.friendlyMessage = obj.friendlyMessage if obj.friendlyMessage?
                 msg.reason = obj.reason if obj.reason?
                 msg.code = obj.code if obj.code?
-
-            # Nothing taken out of error objec? Return null then.
-            if lodash.keys(msg).length is 0
-                return null
 
             return msg
 
