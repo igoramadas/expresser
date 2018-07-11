@@ -1,0 +1,47 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample test server.",
+        "version": "1.2.3",
+        "title": "Swagger Test",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "email": "apiteam@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "expresser.devv.com",
+    "basePath": "/v2",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/api/getnumber/{number}": {
+            "get": {
+                "summary": "Get a number",
+                "operationId": "getNumber",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "path",
+                    "name": "number",
+                    "description": "Number to get",
+                    "required": true
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Valid number"
+                    }
+                }
+            }
+        }
+    },
+    "externalDocs": {
+        "description": "Find out more about Swagger",
+        "url": "http://swagger.io"
+    }
+}

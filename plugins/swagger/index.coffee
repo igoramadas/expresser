@@ -44,7 +44,13 @@ class Swagger
     # Will load the specs from disk of not set yet.
     ###
     setup: (handlers, options) =>
+        if not handlers?
+            return errors.throw "The handlers argument is mandatory!"
+
+        options = {} if not options?
         server = @expresser.app.expressApp
+
+        logger.debug "Swagger.setup", Object.keys(handlers), options
 
         try
             pkg = require "../../package.json"
@@ -54,7 +60,7 @@ class Swagger
         # Specs not set yet? Try loading from disk.
         if not @specs?
             try
-                filepath = utils.io.getFilePath "swagger.template.json"
+                filepath = utils.io.getFilePath settings.swagger.filename
 
                 # Template swagger file exists, so load it.
                 if filepath?
@@ -79,15 +85,15 @@ class Swagger
             path = path.replace(/\/{/g, "/:").replace(/\}/g, "")
 
             lodash.forOwn pathSpec, (methodSpec, method) =>
-                logger.info "Swagger", method, path, methodSpec.operationId
+                logger.info "Swagger.setup", method, path, methodSpec.operationId
 
-                if !methodSpec
+                if not methodSpec?
                     return errors.throw "Missing method spec for #{method} #{path}"
 
                 handler = handlers[methodSpec.operationId]
 
                 # Handler not found for method?
-                if !handler
+                if not handler?
                     return errors.throw "Missing route handler for #{methodSpec.operationId}"
 
                 methodSpec.parameters = [] if not methodSpec.parameters?
@@ -135,7 +141,7 @@ class Swagger
             req.swagger[scope][name] = parseFloat param
 
         if spec.type == "integer"
-            req.swagger[scope][name] = parseInt param, 10
+            req.swagger[scope][name] = parseInt param
 
         if spec.type == "boolean"
             req.swagger[scope][name] = param

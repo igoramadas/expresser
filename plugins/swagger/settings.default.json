@@ -3,8 +3,8 @@
     "swagger": {
         // Enable the Swagger module?
         "enabled": true,
-        // Filename of swagger template file to load specs from.
-        "filename": "swagger.template.json",
+        // Filename of swagger specs file to load on setup.
+        "filename": "swagger.json",
         // You can also define the template specs directly on the specs key below.
         "specs": null,
         // Auto match the API version with the app's package version?

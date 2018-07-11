@@ -10,7 +10,6 @@ describe("AWS S3 Tests", function() {
     process.setMaxListeners(20)
 
     var settings = require("../lib/settings.coffee")
-    var fs = require("fs")
     var moment = require("moment")
     var aws = null
     var hasKeys = false
