@@ -63,8 +63,7 @@ class Sockets
     ###
     # Bind the Socket.IO object to the Express app. This will also set the counter
     # to increase / decrease when users connects or disconnects from the app.
-    # @param {Object} options Sockets init options.
-    # @param {Object} [options.server] The HTTP(S) server object to bind to.
+    # @param {Object} server The HTTP(S) server object to bind to.
     ###
     bind: (server) =>
         if not settings.sockets.enabled

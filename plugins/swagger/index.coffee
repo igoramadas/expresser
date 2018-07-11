@@ -42,6 +42,9 @@ class Swagger
     ###
     # Setup the swagger routes based on the template file.
     # Will load the specs from disk of not set yet.
+    # @param {Object} handlers The handlers that correspond to the various operationIds of the swagger specs.
+    # @param {Object} options Swagger setup options.
+    # @param {String} [options.version] Force version on the swagger.json output.
     ###
     setup: (handlers, options) =>
         if not handlers?
@@ -110,7 +113,7 @@ class Swagger
     # IMPLEMENTATION
     # --------------------------------------------------------------------------
 
-    # Add parameters to the request swagger object.
+    # Add parameters to the request swagger object. Internal use only.
     castParameter = (req, spec) ->
         name = spec.name
 

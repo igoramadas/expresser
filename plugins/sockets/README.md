@@ -7,11 +7,11 @@ The Sockets module is a wrapper for Socket.IO, handled automatically by the App 
 
 The sample below shows how to emit a test message to all clients, and listen to a "form:submit" event.
 
-    var expresser = require("expresser");
-    
-    expresser.sockets.emit("myevent", {message: "This is a test"});
+    var expresser = require("expresser")
+
+    expresser.sockets.emit("myevent", {message: "This is a test"})
     expresser.sockets.on("form:submit", function(formData) {
-        console.log(formData);
-    });
+        console.log(formData)
+    })
 
 For detailed info on specific features, check the annotated source on /docs folder.
