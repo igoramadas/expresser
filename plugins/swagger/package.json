@@ -1,0 +1,29 @@
+{
+    "name": "expresser-swagger",
+    "version": "1.0.0",
+    "description": "Swagger routes handling for Expresser apps.",
+    "homepage": "http://github.com/igoramadas/expresser",
+    "author": "Igor Ramadas <igor@devv.com>",
+    "license": "Apache-2.0",
+    "subdomain": "expresser-swagger",
+    "main": "index",
+    "domains": [
+        "expresser.devv.com"
+    ],
+    "engines": {
+        "node": "*"
+    },
+    "dependencies": {
+        "coffeescript": "^2.3.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/igoramadas/expresser.git"
+    },
+    "keywords": [
+        "api",
+        "expresser",
+        "openapi",
+        "swagger"
+    ]
+}

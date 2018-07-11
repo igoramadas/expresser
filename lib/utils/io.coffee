@@ -19,14 +19,14 @@ class IOUtils
     # @return {String} The full path to the file if one was found, or null if not found.
     ###
     getFilePath: (filename) ->
-        originalFilename = "./" + filename.toString()
+        originalFilename = filename.toString()
 
         # Check if file exists.
-        hasFile = fs.existsSync filename
+        hasFile = fs.existsSync "./#{filename}"
         return filename if hasFile
 
-        # Try current path...
-        filename = path.resolve __dirname, originalFilename
+        # Try current path.
+        filename = path.resolve process.cwd(), originalFilename
         hasFile = fs.existsSync filename
         return filename if hasFile
 
