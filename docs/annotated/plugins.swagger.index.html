@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>index.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>index.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="lib.app.html">
+                    app.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.errors.html">
+                    errors.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.events.html">
+                    events.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.logger.html">
+                    logger.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.settings.html">
+                    settings.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="lib.utils.html">
+                    utils.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.dynamodb.html">
+                    dynamodb.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.s3.html">
+                    s3.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.aws.sns.html">
+                    sns.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.cron.job.html">
+                    job.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.datastore.html">
+                    datastore.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.gcloud.storage.html">
+                    storage.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-file.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-logentries.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.logger-loggly.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mailer.templates.html">
+                    templates.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.httpserver.html">
+                    httpserver.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.metrics.percentile.html">
+                    percentile.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.mongodb.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.sockets.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="plugins.swagger.index.html">
+                    index.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <h2 id="expresser-swagger">EXPRESSER SWAGGER</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+
+errors = <span class="hljs-literal">null</span>
+events = <span class="hljs-literal">null</span>
+lodash =  <span class="hljs-literal">null</span>
+logger = <span class="hljs-literal">null</span>
+settings = <span class="hljs-literal">null</span>
+utils = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <p>##
+Implement routes based on a swagger template file.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Swagger</span></span>
+    priority: <span class="hljs-number">3</span></pre></div>
+        
+      
+        
+        <p>#
+Swagger specs in JSON format.
+@property
+@type Object</p>
+
+        
+          <div class='highlight'><pre>    specs: <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
+        <h2 id="init">INIT</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>##
+Init the Swagger plugin.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    init: <span class="hljs-function">-&gt;</span>
+        errors = @expresser.errors
+        events = @expresser.events
+        lodash = @expresser.libs.lodash
+        logger = @expresser.logger
+        settings = @expresser.settings
+        utils = @expresser.utils
+
+        logger.debug <span class="hljs-string">"Swagger.init"</span>
+        events.emit <span class="hljs-string">"Swagger.on.init"</span>
+        <span class="hljs-keyword">delete</span> @init</pre></div>
+        
+      
+        
+        <p>##
+Setup the swagger routes based on the template file.
+Will load the specs from disk of not set yet.
+@param {Object} handlers The handlers that correspond to the various operationIds of the swagger specs.
+@param {Object} options Swagger setup options.
+@param {String} [options.version] Force version on the swagger.json output.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    setup: <span class="hljs-function"><span class="hljs-params">(handlers, options)</span> =&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> handlers?
+            <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"The handlers argument is mandatory!"</span>
+
+        options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
+        server = @expresser.app.expressApp
+
+        logger.debug <span class="hljs-string">"Swagger.setup"</span>, Object.keys(handlers), options
+
+        <span class="hljs-keyword">try</span>
+            pkg = <span class="hljs-built_in">require</span> <span class="hljs-string">"../../package.json"</span>
+        <span class="hljs-keyword">catch</span> ex
+            logger.error <span class="hljs-string">"Swagger.setup"</span>, <span class="hljs-string">"Could not load app's package.json"</span>, ex</pre></div>
+        
+      
+        
+        <p>Specs not set yet? Try loading from disk.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @specs?
+            <span class="hljs-keyword">try</span>
+                filepath = utils.io.getFilePath settings.swagger.filename</pre></div>
+        
+      
+        
+        <p>Template swagger file exists, so load it.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> filepath?
+                    @specs = fs.readFileSync filepath, settings.general.encoding
+                    @specs = JSON.parse @specs
+            <span class="hljs-keyword">catch</span> ex
+                logger.error <span class="hljs-string">"Swagger.setup"</span>, filepath, ex</pre></div>
+        
+      
+        
+        <p>Swagger specs mandatory!</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @specs?
+            <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"No swagger specs defined. Please set swagger.specs programatically, or define on the <span class="hljs-subst">#{settings.swagger.filename}</span> file."</span></pre></div>
+        
+      
+        
+        <p>Version was passed as option?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.version?
+            @specs.info.version = options.version</pre></div>
+        
+      
+        
+        <p>Auto match package version?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.swagger.usePackageVersion
+            @specs.info.version = pkg?.version</pre></div>
+        
+      
+        
+        <p>Iterate path specs.</p>
+
+        
+          <div class='highlight'><pre>        lodash.forOwn @specs.paths, <span class="hljs-function"><span class="hljs-params">(pathSpec, path)</span> =&gt;</span>
+            path = path.replace(<span class="hljs-regexp">/\/{/g</span>, <span class="hljs-string">"/:"</span>).replace(<span class="hljs-regexp">/\}/g</span>, <span class="hljs-string">""</span>)
+
+            lodash.forOwn pathSpec, <span class="hljs-function"><span class="hljs-params">(methodSpec, method)</span> =&gt;</span>
+                logger.info <span class="hljs-string">"Swagger.setup"</span>, method, path, methodSpec.operationId
+
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> methodSpec?
+                    <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"Missing method spec for <span class="hljs-subst">#{method}</span> <span class="hljs-subst">#{path}</span>"</span>
+
+                handler = handlers[methodSpec.operationId]</pre></div>
+        
+      
+        
+        <p>Handler not found for method?</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> handler?
+                    <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"Missing route handler for <span class="hljs-subst">#{methodSpec.operationId}</span>"</span>
+
+                methodSpec.parameters = [] <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> methodSpec.parameters?</pre></div>
+        
+      
+        
+        <p>Create route on the app.</p>
+
+        
+          <div class='highlight'><pre>                server[method] path, <span class="hljs-function"><span class="hljs-params">(req, res, next)</span> -&gt;</span>
+                    req.swagger = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> req.swagger?
+                    lodash.forEach methodSpec.parameters, <span class="hljs-function"><span class="hljs-params">(parameterSpec)</span> -&gt;</span> castParameter req, parameterSpec
+                    handler req, res, next</pre></div>
+        
+      
+        
+        <p>Return specs when acessing /swagger.json.</p>
+
+        
+          <div class='highlight'><pre>        server.get <span class="hljs-string">"/swagger.json"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> =&gt;</span> res.json @specs</pre></div>
+        
+      
+        
+        <h2 id="implementation">IMPLEMENTATION</h2>
+
+        
+      
+        
+        
+        
+      
+        
+        <p>Add parameters to the request swagger object. Internal use only.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">castParameter</span> = <span class="hljs-params">(req, spec)</span> -&gt;</span>
+        name = spec.name
+
+        <span class="hljs-keyword">switch</span> spec.<span class="hljs-keyword">in</span>
+            <span class="hljs-keyword">when</span> <span class="hljs-string">"query"</span>
+                scope = <span class="hljs-string">"query"</span>
+            <span class="hljs-keyword">when</span> <span class="hljs-string">"header"</span>
+                scope = <span class="hljs-string">"header"</span>
+            <span class="hljs-keyword">when</span> <span class="hljs-string">"path"</span>
+                scope = <span class="hljs-string">"params"</span></pre></div>
+        
+      
+        
+        <p>Parameter out of scope?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> scope?
+
+        req.swagger[scope] = req.swagger[scope] <span class="hljs-keyword">or</span> {}
+        param = req[scope][name]</pre></div>
+        
+      
+        
+        <p>Parameter not found?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> param?
+
+        <span class="hljs-keyword">if</span> spec.type <span class="hljs-keyword">is</span> <span class="hljs-string">"string"</span>
+            <span class="hljs-keyword">if</span> spec.format <span class="hljs-keyword">is</span> <span class="hljs-string">"date"</span> <span class="hljs-keyword">or</span> spec.format <span class="hljs-keyword">is</span> <span class="hljs-string">"date-time"</span>
+                req.swagger[scope][name] = <span class="hljs-keyword">new</span> Date(param)
+            <span class="hljs-keyword">else</span>
+                req.swagger[scope][name] = param
+
+        <span class="hljs-keyword">if</span> spec.type == <span class="hljs-string">"number"</span>
+            req.swagger[scope][name] = parseFloat param
+
+        <span class="hljs-keyword">if</span> spec.type == <span class="hljs-string">"integer"</span>
+            req.swagger[scope][name] = parseInt param
+
+        <span class="hljs-keyword">if</span> spec.type == <span class="hljs-string">"boolean"</span>
+            req.swagger[scope][name] = param
+
+        <span class="hljs-keyword">if</span> spec.type == <span class="hljs-string">"array"</span>
+            <span class="hljs-keyword">switch</span> spec.collectionFormat
+                <span class="hljs-keyword">when</span> <span class="hljs-string">"csv"</span>
+                    separator = <span class="hljs-string">","</span>
+                <span class="hljs-keyword">when</span> <span class="hljs-string">"ssv"</span>
+                    separator = <span class="hljs-string">" "</span>
+                <span class="hljs-keyword">when</span> <span class="hljs-string">"tsv"</span>
+                    separator = <span class="hljs-string">"\u0009"</span>
+                <span class="hljs-keyword">when</span> <span class="hljs-string">"pipes"</span>
+                    separator = <span class="hljs-string">"|"</span></pre></div>
+        
+      
+        
+        <p>Parameter format not found?</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> separator?</pre></div>
+        
+      
+        
+        <p>Convert array types.</p>
+
+        
+          <div class='highlight'><pre>            req.swagger[scope][name] = param.split separator
+
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span></pre></div>
+        
+      
+        
+        <h2 id="singleton-implementation">Singleton implementation</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>Swagger.getInstance = <span class="hljs-function">-&gt;</span>
+    @instance = <span class="hljs-keyword">new</span> Swagger() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @instance?
+    <span class="hljs-keyword">return</span> @instance
+
+<span class="hljs-built_in">module</span>.exports = exports = Swagger.getInstance()</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
