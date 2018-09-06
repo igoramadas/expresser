@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+3.4.4
+=====
+* Logger console now respects settings.logger.sendTimestamp option.
+* Updated dependencies.
+
 3.4.3
 =====
 * NEW! App.renderText() to send data as plain text to the client.

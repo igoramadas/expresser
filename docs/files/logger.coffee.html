@@ -113,8 +113,6 @@ class Logger
     console: (logType, msg, doNotParse = false) -&gt;
         return if process.env.NODE_ENV is &quot;test&quot; and logType isnt &quot;test&quot;
 
-        timestamp = moment().format &quot;HH:mm:ss.SS&quot;
-
         # Only parse message if doNotClean is false or unset.
         msg = @getMessage msg if not doNotParse
 
@@ -138,8 +136,12 @@ class Logger
 
             styledMsg = chalkStyle msg
 
-        # Log to console and return message.
-        method timestamp, styledMsg
+        # Should log timestamp as well?
+        if settings.logger.sendTimestamp
+            timestamp = moment().format &quot;HH:mm:ss.SS&quot;
+            method timestamp, styledMsg
+        else
+            method styledMsg
 
         return msg
 

@@ -379,9 +379,7 @@ Log to the console.
 
         
           <div class='highlight'><pre>    console: <span class="hljs-function"><span class="hljs-params">(logType, msg, doNotParse = <span class="hljs-literal">false</span>)</span> -&gt;</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> process.env.NODE_ENV <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span> <span class="hljs-keyword">and</span> logType <span class="hljs-keyword">isnt</span> <span class="hljs-string">"test"</span>
-
-        timestamp = moment().format <span class="hljs-string">"HH:mm:ss.SS"</span></pre></div>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> process.env.NODE_ENV <span class="hljs-keyword">is</span> <span class="hljs-string">"test"</span> <span class="hljs-keyword">and</span> logType <span class="hljs-keyword">isnt</span> <span class="hljs-string">"test"</span></pre></div>
         
       
         
@@ -416,10 +414,14 @@ Get styles (text colour, bold, italic etc…) for the correlated log type.</p>
         
       
         
-        <p>Log to console and return message.</p>
+        <p>Should log timestamp as well?</p>
 
         
-          <div class='highlight'><pre>        method timestamp, styledMsg
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settings.logger.sendTimestamp
+            timestamp = moment().format <span class="hljs-string">"HH:mm:ss.SS"</span>
+            method timestamp, styledMsg
+        <span class="hljs-keyword">else</span>
+            method styledMsg
 
         <span class="hljs-keyword">return</span> msg</pre></div>
         
