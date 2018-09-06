@@ -107,8 +107,6 @@ class Logger
     console: (logType, msg, doNotParse = false) ->
         return if process.env.NODE_ENV is "test" and logType isnt "test"
 
-        timestamp = moment().format "HH:mm:ss.SS"
-
         # Only parse message if doNotClean is false or unset.
         msg = @getMessage msg if not doNotParse
 
@@ -134,6 +132,7 @@ class Logger
 
         # Should log timestamp as well?
         if settings.logger.sendTimestamp
+            timestamp = moment().format "HH:mm:ss.SS"
             method timestamp, styledMsg
         else
             method styledMsg
