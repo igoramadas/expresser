@@ -132,8 +132,11 @@ class Logger
 
             styledMsg = chalkStyle msg
 
-        # Log to console and return message.
-        method timestamp, styledMsg
+        # Should log timestamp as well?
+        if settings.logger.sendTimestamp
+            method timestamp, styledMsg
+        else
+            method styledMsg
 
         return msg
 
