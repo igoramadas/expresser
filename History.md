@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.4.5
+=====
+* Improved Logger, it now better handles moments, dates etc.
+
 3.4.4
 =====
 * Logger console now respects settings.logger.sendTimestamp option.

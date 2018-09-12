@@ -293,6 +293,8 @@ class Logger
                             while i < value.length
                                 cleaner value[i], index + 1
                                 i++
+                        else if moment.isMoment value
+                            obj[key] = value.toString()
                         else if lodash.isFunction value
                             obj[key] = funcText
                         else if lodash.isObject value
