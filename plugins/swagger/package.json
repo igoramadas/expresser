@@ -7,23 +7,16 @@
     "license": "Apache-2.0",
     "subdomain": "expresser-swagger",
     "main": "index",
-    "domains": [
-        "expresser.devv.com"
-    ],
+    "domains": ["expresser.devv.com"],
     "engines": {
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.3.1"
+        "coffeescript": "^2.3.2"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": [
-        "api",
-        "expresser",
-        "openapi",
-        "swagger"
-    ]
+    "keywords": ["api", "expresser", "openapi", "swagger"]
 }

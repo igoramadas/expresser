@@ -12,7 +12,7 @@
         "node": "*"
     },
     "dependencies": {
-        "coffeescript": "^2.3.1",
+        "coffeescript": "^2.3.2",
         "request": "^2.87.0"
     },
     "repository": {
