@@ -176,7 +176,7 @@ class Logger
     # @param {Arguments} args Any number of arguments to be parsed and stringified.
     ###
     debug: -&gt;
-        args = Array.prototype.slice.call arguments
+        args = Array.from arguments
         args.unshift &quot;DEBUG&quot;
         msg = @log &quot;debug&quot;, args
         return msg
@@ -186,7 +186,7 @@ class Logger
     # @param {Arguments} args Any number of arguments to be parsed and stringified.
     ###
     info: -&gt;
-        args = Array.prototype.slice.call arguments
+        args = Array.from arguments
         args.unshift &quot;INFO&quot;
         msg = @log &quot;info&quot;, args
         return msg
@@ -196,7 +196,7 @@ class Logger
     # @param {Arguments} args Any number of arguments to be parsed and stringified.
     ###
     warn: -&gt;
-        args = Array.prototype.slice.call arguments
+        args = Array.from arguments
         args.unshift &quot;WARN&quot;
         msg = @log &quot;warn&quot;, args
         events.emit &quot;Logger.on.warn&quot;, msg
@@ -207,7 +207,7 @@ class Logger
     # @param {Arguments} args Any number of arguments to be parsed and stringified.
     ###
     error: -&gt;
-        args = Array.prototype.slice.call arguments
+        args = Array.from arguments
         args.unshift &quot;ERROR&quot;
         msg = @log &quot;error&quot;, args
         events.emit &quot;Logger.on.error&quot;, msg
@@ -218,7 +218,7 @@ class Logger
     # @param {Arguments} args Any number of arguments to be parsed and stringified.
     ###
     critical: -&gt;
-        args = Array.prototype.slice.call arguments
+        args = Array.from arguments
         args.unshift &quot;CRITICAL&quot;
         msg = @log &quot;critical&quot;, args
         events.emit &quot;Logger.on.critical&quot;, msg
@@ -299,6 +299,8 @@ class Logger
                             while i &lt; value.length
                                 cleaner value[i], index + 1
                                 i++
+                        else if moment.isMoment value
+                            obj[key] = value.toString()
                         else if lodash.isFunction value
                             obj[key] = funcText
                         else if lodash.isObject value
