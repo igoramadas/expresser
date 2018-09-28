@@ -91,16 +91,6 @@
         // Path to the views directory.
         "viewPath": "./assets/views/"
     },
-    // DATABASE
-    // ----------------------------------------------------------------------
-    "database": {
-        // Enable database? If `false` the MongoDB database module won't be initialized.
-        "enabled": true,
-        // How many retries before switching to the failover database or aborting a database operation.
-        "maxRetries": 3,
-        // How long between connection retries, in milliseconds. Default is half a second.
-        "retryInterval": 500
-    },
     // EVENTS
     // -------------------------------------------------------------------------
     "events": {

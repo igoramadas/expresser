@@ -170,7 +170,7 @@ class Logger
     # @param {Arguments} args Any number of arguments to be parsed and stringified.
     ###
     debug: ->
-        args = Array.prototype.slice.call arguments
+        args = Array.from arguments
         args.unshift "DEBUG"
         msg = @log "debug", args
         return msg
@@ -180,7 +180,7 @@ class Logger
     # @param {Arguments} args Any number of arguments to be parsed and stringified.
     ###
     info: ->
-        args = Array.prototype.slice.call arguments
+        args = Array.from arguments
         args.unshift "INFO"
         msg = @log "info", args
         return msg
@@ -190,7 +190,7 @@ class Logger
     # @param {Arguments} args Any number of arguments to be parsed and stringified.
     ###
     warn: ->
-        args = Array.prototype.slice.call arguments
+        args = Array.from arguments
         args.unshift "WARN"
         msg = @log "warn", args
         events.emit "Logger.on.warn", msg
@@ -201,7 +201,7 @@ class Logger
     # @param {Arguments} args Any number of arguments to be parsed and stringified.
     ###
     error: ->
-        args = Array.prototype.slice.call arguments
+        args = Array.from arguments
         args.unshift "ERROR"
         msg = @log "error", args
         events.emit "Logger.on.error", msg
@@ -212,7 +212,7 @@ class Logger
     # @param {Arguments} args Any number of arguments to be parsed and stringified.
     ###
     critical: ->
-        args = Array.prototype.slice.call arguments
+        args = Array.from arguments
         args.unshift "CRITICAL"
         msg = @log "critical", args
         events.emit "Logger.on.critical", msg
