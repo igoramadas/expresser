@@ -1,6 +1,7 @@
 sudo: false
 language: node_js
 node_js:
+    - "11.0"
     - "10.12"
     - "8.12"
 services:
