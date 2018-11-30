@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "3.4.5",
+    "version": "3.4.6",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "keywords": [
         "expresser",
@@ -50,7 +50,7 @@
         "postcss": "^7.0.6",
         "pug": "^2.0.3",
         "stylus": "^0.54.5",
-        "uglify-es": "^3.3.9"
+        "uglify-es": "^3.3.10"
     },
     "devDependencies": {
         "@google-cloud/datastore": "^2.0.0",

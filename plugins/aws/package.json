@@ -1,6 +1,6 @@
 {
     "name": "expresser-aws",
-    "version": "3.2.5",
+    "version": "3.2.6",
     "description": "Wrapper for the AWS SDK on Expresser apps.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",

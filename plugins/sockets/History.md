@@ -1,5 +1,9 @@
 # Changelog for expresser-sockets
 
+3.1.1
+=====
+* Maintenance release with updated dependencies.
+
 3.1.0
 =====
 * NEW! Events onConnect to validate and handle socket connections.

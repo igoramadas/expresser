@@ -1,5 +1,9 @@
 # Changelog for expresser-aws
 
+3.2.6
+=====
+* Maintenance release with updated dependencies.
+
 3.2.5
 =====
 * Updated dependencies.
