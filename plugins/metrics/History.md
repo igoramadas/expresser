@@ -1,5 +1,9 @@
 # Changelog for expresser-metrics
 
+3.1.6
+=====
+* Check for invalid metric on getLast (to get last samples).
+
 3.1.5
 =====
 * Improved resilience on Metrics start / end.

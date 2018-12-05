@@ -280,11 +280,19 @@ class Metrics
         # Helper to get summary for last calls.
         ###
         getLast: (value) ->
-            return {
-                startTime: moment(value.startTime).format "MMM Do - HH:mm:ss.SSSS"
-                duration: value.duration
-                data: value.data
-            }
+            if value?.startTime?
+                try
+                    result = {
+                        startTime: moment(value.startTime).format "MMM Do - HH:mm:ss.SSSS"
+                        duration: value.duration
+                        data: value.data
+                    }
+
+                    return result
+                catch ex
+                    logger.error "Metrics.getLast", "Start time #{value.startTime}", ex
+
+            return {data: "Invalid metric"}
     }
 
 # Singleton implementation
