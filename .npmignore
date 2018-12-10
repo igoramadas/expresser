@@ -17,7 +17,7 @@ coffeejsdoc.yaml
 localhost.crt
 localhost.key
 Makefile
-package-lock.json
 publish.sh
 settings.test.json
 settings.test.crypt.json
+CNAME
