@@ -47,7 +47,7 @@ describe("Metrics Tests", function() {
                 counter++
             }
 
-            metrics.end(mt, null)
+            metrics.end(mt, i)
         }
 
         for (i = 0; i < 100; i++) {
@@ -58,7 +58,7 @@ describe("Metrics Tests", function() {
                 phrase += "0"
             }
 
-            metrics.end(mt, null)
+            metrics.end(mt, i)
         }
 
         done()
@@ -110,6 +110,24 @@ describe("Metrics Tests", function() {
 
         if (!output.iteratorString || output.iteratorSum) {
             done("Output should have 'iteratorString' metrics only.")
+        } else {
+            done()
+        }
+    })
+
+    it("Output has min / max / total data calculated", function(done) {
+        var output = metrics.output()
+
+        if (!output.iteratorSum.data) {
+            done("Metrics output has no 'data' property calculated")
+            return
+        }
+
+        var min = output.iteratorSum.data.min || null
+        var max = output.iteratorSum.data.max || null
+
+        if (min != 0 || max != 99) {
+            done("Metrics output expects .data min = 0 and max = 99, but got min " + min + " and max " + max + ".")
         } else {
             done()
         }

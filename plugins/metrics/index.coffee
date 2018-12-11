@@ -62,7 +62,7 @@ class Metrics
     ###
     # Starts the counter for a specific metric. The data is optional.
     # @param {String} id ID of the metric to be started.
-    # @param {Object} data Additional info about the current metric (URL data, for example).
+    # @param {Object} data Additional data about the current metric, must be a number (for example, when fetching users, this can be the number of users returned).
     # @param {Number} expiresIn Optional, metric should expire in these amount of milliseconds if not ended.
     # @return {Object} Returns the metric object to be used later on `end`.
     ###
@@ -242,6 +242,9 @@ class Metrics
             expiredCount = 0
             i = 0
 
+            # Consider we don't have extra data by default.
+            hasData = false
+
             # Iterate logged metrics, and get only if corresponding to the specified interval.
             while i < obj.length
                 diff = now - obj[i].startTime
@@ -249,14 +252,21 @@ class Metrics
 
                 if minutes <= interval
                     values.push obj[i]
+
+                    # Increment error and expired count.
                     errorCount++ if obj[i].error
                     expiredCount++ if obj[i].expired
+
+                    # Check if extra data was passed, if so, set hasData flag.
+                    hasData = true if obj[i].data? and obj[i].data isnt ""
+
                     i++
                 else
                     i = obj.length
 
-            # All we care about is the duration for the relevant requests.
+            # Get relevant durations and data from collection.
             durations = lodash.map values, "duration"
+            data = lodash.map values, "data"
             avg = lodash.mean durations
             avg = 0 if isNaN avg
 
@@ -269,6 +279,14 @@ class Metrics
             result.max = lodash.max(durations) or 0
             result.avg = avg or 0
             result.avg = Math.round result.avg
+
+            # Calculate metrics for passed data.
+            if hasData?
+                result.data = {
+                    min: lodash.min data
+                    max: lodash.max data
+                    total: lodash.sum data
+                }
 
             # Get percentiles based on settings.
             for perc in options.percentiles

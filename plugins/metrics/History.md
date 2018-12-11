@@ -1,5 +1,10 @@
 # Changelog for expresser-metrics
 
+3.2.0
+=====
+* BREAKING! Extra data passed to metrics must be a number and are now calculated on summaries.
+* Updated dependencies.
+
 3.1.6
 =====
 * Check for invalid metric on getLast (to get last samples).
