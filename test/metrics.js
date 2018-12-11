@@ -40,25 +40,26 @@ describe("Metrics Tests", function() {
         var mt, a, b
 
         for (i = 0; i < 100; i++) {
-            mt = metrics.start("iteratorSum", counter)
+            mt = metrics.start("iteratorSum")
             totalCalls++
 
             for (b = 0; b < 100000; b++) {
                 counter++
             }
 
-            metrics.end(mt, i)
+            mt.setData("counter", i)
+            mt.end()
         }
 
         for (i = 0; i < 100; i++) {
-            mt = metrics.start("iteratorString", counter)
+            mt = metrics.start("iteratorString")
             totalCalls++
 
             for (b = 0; b < 10000; b++) {
                 phrase += "0"
             }
 
-            metrics.end(mt, i)
+            metrics.end(mt)
         }
 
         done()
@@ -115,19 +116,19 @@ describe("Metrics Tests", function() {
         }
     })
 
-    it("Output has min / max / total data calculated", function(done) {
+    it("Output iteratorSum has min / max data calculated", function(done) {
         var output = metrics.output()
 
-        if (!output.iteratorSum.data) {
-            done("Metrics output has no 'data' property calculated")
+        if (!output.iteratorSum.last_1min.data || !output.iteratorSum.last_1min.data.counter) {
+            done("Metrics output has no 'data.counter' property calculated")
             return
         }
 
-        var min = output.iteratorSum.data.min || null
-        var max = output.iteratorSum.data.max || null
+        var min = output.iteratorSum.last_1min.data.counter.min
+        var max = output.iteratorSum.last_1min.data.counter.max
 
         if (min != 0 || max != 99) {
-            done("Metrics output expects .data min = 0 and max = 99, but got min " + min + " and max " + max + ".")
+            done("Metrics output expects .data.counter min = 0 and max = 99, but got min " + min + " and max " + max + ".")
         } else {
             done()
         }

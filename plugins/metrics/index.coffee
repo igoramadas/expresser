@@ -56,18 +56,23 @@ class Metrics
         events.emit "Metrics.on.init"
         delete @init
 
-    # COUNTERS
+    # METHODS
     # -------------------------------------------------------------------------
+
+    # Get collected data for the specified metric.
+    # @param {String} id ID of the metric.
+    get: (id) ->
+        return metrics[id]
 
     ###
     # Starts the counter for a specific metric. The data is optional.
     # @param {String} id ID of the metric to be started.
-    # @param {Object} data Additional data about the current metric, must be a number (for example, when fetching users, this can be the number of users returned).
+    # @param {Object} tag Sets a tag / label to the metric, for instance the parameters used on that particular method call.
     # @param {Number} expiresIn Optional, metric should expire in these amount of milliseconds if not ended.
     # @return {Object} Returns the metric object to be used later on `end`.
     ###
-    start: (id, data, expiresIn) ->
-        logger.debug "Metrics.start", obj, data, expiresIn
+    start: (id, tag, expiresIn) ->
+        logger.debug "Metrics.start", obj, tag, expiresIn
 
         if not settings.metrics.enabled
             return logger.notEnabled "Metrics"
@@ -76,8 +81,12 @@ class Metrics
 
         obj = {}
         obj.id = id
-        obj.data = data
+        obj.tag = tag
         obj.startTime = moment().valueOf()
+
+        # Append instance methods.
+        obj.end = @end
+        obj.setData = @setData
 
         # Should the metric expire (value in milliseconds)?
         if expiresIn > 0
@@ -100,13 +109,18 @@ class Metrics
     # @param {Object} error Optional error that ocurred while processing the metric.
     ###
     end: (obj, error) ->
-        if not obj?.startTime?
-            logger.error "Metrics.end", "Passed object is invalid"
-            return false
+        if not obj?
+            obj = this
+        else if not error? and not obj.id and not obj.startTime
+            error = obj
+            obj = this
 
         obj.endTime = moment().valueOf()
         obj.duration = obj.endTime - obj.startTime
-        obj.error = error
+
+        # Only append error if there was one.
+        if error?
+            obj.error = error
 
         # Clear the expiry timeout only if there's one.
         if obj.timeout?
@@ -114,11 +128,24 @@ class Metrics
             delete obj.timeout
 
         logger.debug "Metrics.end", obj
+        return true
 
-    # Get collected data for the specified metric.
-    # @param {String} id ID of the metric.
-    get: (id) ->
-        return metrics[id]
+    ###
+    # Adds extra data / stats to the metric object.
+    # @param {Object} obj The metric object started previsouly on `start`.
+    # @param {String} key The data key or label.
+    # @param {Number} value The data value.
+    ###
+    setData: (obj, key, value) ->
+        if not obj?
+            obj = this
+        else if not value? and not obj.id and not obj.startTime
+            value = key
+            key = obj
+            obj = this
+
+        obj.data = {} if not obj.data?
+        obj.data[key] = value
 
     # CLEANUP
     # -------------------------------------------------------------------------
@@ -243,7 +270,7 @@ class Metrics
             i = 0
 
             # Consider we don't have extra data by default.
-            hasData = false
+            dataKeys = []
 
             # Iterate logged metrics, and get only if corresponding to the specified interval.
             while i < obj.length
@@ -257,8 +284,11 @@ class Metrics
                     errorCount++ if obj[i].error
                     expiredCount++ if obj[i].expired
 
-                    # Check if extra data was passed, if so, set hasData flag.
-                    hasData = true if obj[i].data? and obj[i].data isnt ""
+                    # Check if extra data was passed, if so, append to the dataKeys list.
+                    objData = obj[i].data
+
+                    if objData?
+                        dataKeys = lodash.concat dataKeys, lodash.keys(objData)
 
                     i++
                 else
@@ -280,13 +310,20 @@ class Metrics
             result.avg = avg or 0
             result.avg = Math.round result.avg
 
-            # Calculate metrics for passed data.
-            if hasData?
-                result.data = {
-                    min: lodash.min data
-                    max: lodash.max data
-                    total: lodash.sum data
-                }
+            # Calculate metrics for extra passed data.
+            if dataKeys.length > 0
+                dataKeys = lodash.uniq dataKeys
+
+                result.data = {}
+
+                for key in dataKeys
+                    value = lodash.map data, key
+
+                    result.data[key] = {
+                        min: lodash.min value
+                        max: lodash.max value
+                        total: lodash.sum value
+                    }
 
             # Get percentiles based on settings.
             for perc in options.percentiles
@@ -303,8 +340,11 @@ class Metrics
                     result = {
                         startTime: moment(value.startTime).format "MMM Do - HH:mm:ss.SSSS"
                         duration: value.duration
-                        data: value.data
                     }
+
+                    # Append tag and data, if any.
+                    result.tag = value.tag if value.tag?
+                    result.data = value.data if value.data?
 
                     return result
                 catch ex

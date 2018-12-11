@@ -2,7 +2,8 @@
 
 3.2.0
 =====
-* BREAKING! Extra data passed to metrics must be a number and are now calculated on summaries.
+* NEW! Possible to add extra data to a metric object using setData().
+* BREAKING! Due to new "data" feature above, the old "data" property was renamed to "tag".
 * Updated dependencies.
 
 3.1.6
