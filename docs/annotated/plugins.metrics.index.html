@@ -314,26 +314,35 @@ Init metrics and set up cleanup timer.</p>
         
       
         
-        <h2 id="counters">COUNTERS</h2>
+        <h2 id="methods">METHODS</h2>
 
         
       
         
         
+        
+      
+        
+        <p>Get collected data for the specified metric.
+@param {String} id ID of the metric.</p>
+
+        
+          <div class='highlight'><pre>    get: <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> metrics[id]</pre></div>
         
       
         
         <p>##
 Starts the counter for a specific metric. The data is optional.
 @param {String} id ID of the metric to be started.
-@param {Object} data Additional info about the current metric (URL data, for example).
+@param {Object} tag Sets a tag / label to the metric, for instance the parameters used on that particular method call.
 @param {Number} expiresIn Optional, metric should expire in these amount of milliseconds if not ended.
 @return {Object} Returns the metric object to be used later on <code>end</code>.</p>
 <p>##</p>
 
         
-          <div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(id, data, expiresIn)</span> -&gt;</span>
-        logger.debug <span class="hljs-string">"Metrics.start"</span>, obj, data, expiresIn
+          <div class='highlight'><pre>    start: <span class="hljs-function"><span class="hljs-params">(id, tag, expiresIn)</span> -&gt;</span>
+        logger.debug <span class="hljs-string">"Metrics.start"</span>, obj, tag, expiresIn
 
         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> settings.metrics.enabled
             <span class="hljs-keyword">return</span> logger.notEnabled <span class="hljs-string">"Metrics"</span>
@@ -342,8 +351,16 @@ Starts the counter for a specific metric. The data is optional.
 
         obj = {}
         obj.id = id
-        obj.data = data
+        obj.tag = tag
         obj.startTime = moment().valueOf()</pre></div>
+        
+      
+        
+        <p>Append instance methods.</p>
+
+        
+          <div class='highlight'><pre>        obj.end = @end
+        obj.setData = @setData</pre></div>
         
       
         
@@ -378,13 +395,22 @@ Ends the counter for the specified metric, with an optional error to be passed a
 
         
           <div class='highlight'><pre>    end: <span class="hljs-function"><span class="hljs-params">(obj, error)</span> -&gt;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?.startTime?
-            logger.error <span class="hljs-string">"Metrics.end"</span>, <span class="hljs-string">"Passed object is invalid"</span>
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?
+            obj = <span class="hljs-keyword">this</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> error? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> obj.id <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> obj.startTime
+            error = obj
+            obj = <span class="hljs-keyword">this</span>
 
         obj.endTime = moment().valueOf()
-        obj.duration = obj.endTime - obj.startTime
-        obj.error = error</pre></div>
+        obj.duration = obj.endTime - obj.startTime</pre></div>
+        
+      
+        
+        <p>Only append error if there was one.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> error?
+            obj.error = error</pre></div>
         
       
         
@@ -395,16 +421,29 @@ Ends the counter for the specified metric, with an optional error to be passed a
             clearTimeout obj.timeout
             <span class="hljs-keyword">delete</span> obj.timeout
 
-        logger.debug <span class="hljs-string">"Metrics.end"</span>, obj</pre></div>
+        logger.debug <span class="hljs-string">"Metrics.end"</span>, obj
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span></pre></div>
         
       
         
-        <p>Get collected data for the specified metric.
-@param {String} id ID of the metric.</p>
+        <p>##
+Adds extra data / stats to the metric object.
+@param {Object} obj The metric object started previsouly on <code>start</code>.
+@param {String} key The data key or label.
+@param {Number} value The data value.</p>
+<p>##</p>
 
         
-          <div class='highlight'><pre>    get: <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
-        <span class="hljs-keyword">return</span> metrics[id]</pre></div>
+          <div class='highlight'><pre>    setData: <span class="hljs-function"><span class="hljs-params">(obj, key, value)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?
+            obj = <span class="hljs-keyword">this</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> value? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> obj.id <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> obj.startTime
+            value = key
+            key = obj
+            obj = <span class="hljs-keyword">this</span>
+
+        obj.data = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj.data?
+        obj.data[key] = value</pre></div>
         
       
         
@@ -602,6 +641,13 @@ Generate summary for the specified object and interval.</p>
         
       
         
+        <p>Consider we don’t have extra data by default.</p>
+
+        
+          <div class='highlight'><pre>            dataKeys = []</pre></div>
+        
+      
+        
         <p>Iterate logged metrics, and get only if corresponding to the specified interval.</p>
 
         
@@ -610,19 +656,37 @@ Generate summary for the specified object and interval.</p>
                 minutes = diff / <span class="hljs-number">1000</span> / <span class="hljs-number">60</span>
 
                 <span class="hljs-keyword">if</span> minutes &lt;= interval
-                    values.push obj[i]
-                    errorCount++ <span class="hljs-keyword">if</span> obj[i].error
-                    expiredCount++ <span class="hljs-keyword">if</span> obj[i].expired
+                    values.push obj[i]</pre></div>
+        
+      
+        
+        <p>Increment error and expired count.</p>
+
+        
+          <div class='highlight'><pre>                    errorCount++ <span class="hljs-keyword">if</span> obj[i].error
+                    expiredCount++ <span class="hljs-keyword">if</span> obj[i].expired</pre></div>
+        
+      
+        
+        <p>Check if extra data was passed, if so, append to the dataKeys list.</p>
+
+        
+          <div class='highlight'><pre>                    objData = obj[i].data
+
+                    <span class="hljs-keyword">if</span> objData?
+                        dataKeys = lodash.concat dataKeys, lodash.keys(objData)
+
                     i++
                 <span class="hljs-keyword">else</span>
                     i = obj.length</pre></div>
         
       
         
-        <p>All we care about is the duration for the relevant requests.</p>
+        <p>Get relevant durations and data from collection.</p>
 
         
           <div class='highlight'><pre>            durations = lodash.map values, <span class="hljs-string">"duration"</span>
+            data = lodash.map values, <span class="hljs-string">"data"</span>
             avg = lodash.mean durations
             avg = <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> isNaN avg</pre></div>
         
@@ -642,6 +706,25 @@ Generate summary for the specified object and interval.</p>
         
       
         
+        <p>Calculate metrics for extra passed data.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> dataKeys.length &gt; <span class="hljs-number">0</span>
+                dataKeys = lodash.uniq dataKeys
+
+                result.data = {}
+
+                <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> dataKeys
+                    value = lodash.map data, key
+
+                    result.data[key] = {
+                        min: lodash.min value
+                        max: lodash.max value
+                        total: lodash.sum value
+                    }</pre></div>
+        
+      
+        
         <p>Get percentiles based on settings.</p>
 
         
@@ -658,11 +741,26 @@ Helper to get summary for last calls.</p>
 
         
           <div class='highlight'><pre>        getLast: <span class="hljs-function"><span class="hljs-params">(value)</span> -&gt;</span>
-            <span class="hljs-keyword">return</span> {
-                startTime: moment(value.startTime).format <span class="hljs-string">"MMM Do - HH:mm:ss.SSSS"</span>
-                duration: value.duration
-                data: value.data
-            }
+            <span class="hljs-keyword">if</span> value?.startTime?
+                <span class="hljs-keyword">try</span>
+                    result = {
+                        startTime: moment(value.startTime).format <span class="hljs-string">"MMM Do - HH:mm:ss.SSSS"</span>
+                        duration: value.duration
+                    }</pre></div>
+        
+      
+        
+        <p>Append tag and data, if any.</p>
+
+        
+          <div class='highlight'><pre>                    result.tag = value.tag <span class="hljs-keyword">if</span> value.tag?
+                    result.data = value.data <span class="hljs-keyword">if</span> value.data?
+
+                    <span class="hljs-keyword">return</span> result
+                <span class="hljs-keyword">catch</span> ex
+                    logger.error <span class="hljs-string">"Metrics.getLast"</span>, <span class="hljs-string">"Start time <span class="hljs-subst">#{value.startTime}</span>"</span>, ex
+
+            <span class="hljs-keyword">return</span> {data: <span class="hljs-string">"Invalid metric"</span>}
     }</pre></div>
         
       
