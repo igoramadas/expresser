@@ -1,5 +1,9 @@
 # Changelog for expresser-mailer
 
+3.1.1
+=====
+* Maintenance release, now including a package-lock.json file.
+
 3.1.0
 =====
 * NEW! Templates.parse now can also do circular parsing to change keywords inside keywords.

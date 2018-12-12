@@ -1,5 +1,9 @@
 # Changelog for expresser-logger-file
 
+3.0.3
+=====
+* Maintenance release, now including a package-lock.json file.
+
 3.0.2
 =====
 * Improved log flushing and cleaning.

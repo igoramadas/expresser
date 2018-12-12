@@ -1,13 +1,15 @@
 {
     "name": "expresser-cron",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "description": "Task scheduler plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache-2.0",
     "subdomain": "expresser-cron",
     "main": "index",
-    "domains": ["expresser.devv.com"],
+    "domains": [
+        "expresser.devv.com"
+    ],
     "engines": {
         "node": "*"
     },
@@ -18,5 +20,11 @@
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": ["background worker", "cron", "expresser", "jobs", "task scheduler"]
+    "keywords": [
+        "background worker",
+        "cron",
+        "expresser",
+        "jobs",
+        "task scheduler"
+    ]
 }

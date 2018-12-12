@@ -1,23 +1,34 @@
 {
     "name": "expresser-mailer",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "description": "Email sending plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache-2.0",
     "subdomain": "expresser-mailer",
     "main": "index",
-    "domains": ["expresser.devv.com"],
+    "domains": [
+        "expresser.devv.com"
+    ],
     "engines": {
         "node": "*"
     },
     "dependencies": {
         "coffeescript": "^2.3.2",
-        "nodemailer": "^4.6.8"
+        "nodemailer": "^4.7.0"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": ["email", "expresser", "gmail", "mailgun", "mailer", "mandrill", "sendmail", "smtp"]
+    "keywords": [
+        "email",
+        "expresser",
+        "gmail",
+        "mailgun",
+        "mailer",
+        "mandrill",
+        "sendmail",
+        "smtp"
+    ]
 }

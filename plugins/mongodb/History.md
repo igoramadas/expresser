@@ -1,5 +1,9 @@
 # Changelog for expresser-mongodb
 
+3.0.3
+=====
+* Maintenance release, now including a package-lock.json file.
+
 3.0.2
 =====
 * Critical release, fixed incorrect bindings, module should be working again.

@@ -1,5 +1,9 @@
 # Changelog for expresser-cron
 
+3.1.1
+=====
+* Maintenance release, now including a package-lock.json file.
+
 3.1.0
 =====
 * BREAKING! Job schedules now defined in milliseconds instead of seconds.

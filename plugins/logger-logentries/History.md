@@ -1,5 +1,9 @@
 # Changelog for expresser-logger-logentries
 
+3.1.1
+=====
+* Maintenance release, now including a package-lock.json file.
+
 3.1.0
 =====
 * NEW! Using new LogEntries client.

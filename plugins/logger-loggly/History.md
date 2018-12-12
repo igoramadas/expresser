@@ -1,5 +1,9 @@
 # Changelog for expresser-loggly
 
+3.1.2
+=====
+* Maintenance release, now including a package-lock.json file.
+
 3.1.1
 =====
 * Improved connection handling with Loggly.

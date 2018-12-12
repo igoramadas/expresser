@@ -1,23 +1,32 @@
 {
     "name": "expresser-aws",
-    "version": "3.2.6",
+    "version": "3.2.7",
     "description": "Wrapper for the AWS SDK on Expresser apps.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache-2.0",
     "subdomain": "expresser-aws",
     "main": "index",
-    "domains": ["expresser.devv.com"],
+    "domains": [
+        "expresser.devv.com"
+    ],
     "engines": {
         "node": "*"
     },
     "dependencies": {
-        "aws-sdk": "^2.368.0",
+        "aws-sdk": "^2.374.0",
         "coffeescript": "^2.3.2"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": ["amazon web services", "aws", "dynamodb", "expresser", "s3", "sns"]
+    "keywords": [
+        "amazon web services",
+        "aws",
+        "dynamodb",
+        "expresser",
+        "s3",
+        "sns"
+    ]
 }

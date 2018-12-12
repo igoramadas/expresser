@@ -1,23 +1,31 @@
 {
     "name": "expresser-logger-logentries",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "description": "Logentries plugin for Expresser.",
     "homepage": "http://github.com/igoramadas/expresser",
     "author": "Igor Ramadas <igor@devv.com>",
     "license": "Apache-2.0",
     "subdomain": "expresser-logger-logentries",
     "main": "index",
-    "domains": ["expresser.devv.com"],
+    "domains": [
+        "expresser.devv.com"
+    ],
     "engines": {
         "node": "*"
     },
     "dependencies": {
         "coffeescript": "^2.3.2",
-        "le_node": "^1.7.1"
+        "le_node": "^1.8.0"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
-    "keywords": ["expresser", "logentries", "logger", "logging", "logs"]
+    "keywords": [
+        "expresser",
+        "logentries",
+        "logger",
+        "logging",
+        "logs"
+    ]
 }

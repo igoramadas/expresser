@@ -1,5 +1,9 @@
 # Changelog for expresser-aws
 
+3.2.7
+=====
+* Maintenance release, now including a package-lock.json file.
+
 3.2.6
 =====
 * Maintenance release with updated dependencies.
