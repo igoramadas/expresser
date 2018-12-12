@@ -6,17 +6,24 @@ Plugin to gather and output simple metrics on Expresser apps.
 
 To measure something:
 
-    var metrics = require("expresser-metrics");
-    var mt = metrics.start("metrics-id", data);
+    // Tag can be a label, or any string to differentiate requests of same metric,
+    // for example when requesting users, you can use the tag to define which user.
+    var tag = "myUser"
+    var metrics = require("expresser-metrics")
 
-    // Do something here and there... call stuff..
+    // Start metric of a getUserOrders call.
+    var mt = metrics.start("getUserOrders", tag)
+
+    // Do something here and there, for example get user orders,
+    // and set result as data on the metric object.
+    var orders = getUserOrders(tag)
+    mt.setData("orders", orders)
+
     // Some more code, async, etc... then finally:
 
-    metrics.end(mt, optionalError);
-
-The ID can be any string. But if you want to query the metrics output using
-using string JSON parsers, you should only use valid alphanumerical characters.
-The second argument (data) is optional.
+    mt.end(optionalError)
+    // You can also end the metric using:
+    // metrics.end(mt, optionalError)
 
 ### Metrics cleanup
 
@@ -26,47 +33,48 @@ are customizable on the settings.
 
 If you wish to cleanup manually, simply call:
 
-    var metrics = require("expresser-metrics");
-    metrics.cleanup();
+    var metrics = require("expresser-metrics")
+    metrics.cleanup()
 
 ### Output
 
 To generate a summary about collected metrics, use the built-in output method:
 
-    var metrics = require("expresser-metrics");
-    var output = metrics.output();
+    var metrics = require("expresser-metrics")
+    var output = metrics.output()
 
-    // Some code...
+    // Some more code...
 
-    res.render(output);
+    res.render(output)
 
-By default it will give you the specific metrics for the last 1min, 5min and 30min,
-having the 99, 98 and 95 percentiles. You can change these values on the settings.
+By default it will give you the specific metrics for the last 1min, 5min and 20min,
+having the 99, 95 and 90 percentiles. You can change these values on the settings.
 
 You can also generate the output with your own custom options. For example to get
-metrics for last 5, 20 and 60 minutes, and not showing the percentiles:
+metrics for last 1, 5, 60 and 300 minutes, and not showing the percentiles:
 
     var options = {
-        intervals: [5, 20, 60],
-        percentiles: []
-    };
+        intervals: [1, 5, 60, 300],
+        percentiles: null
+    }
 
-    var metrics = require("expresser-metrics");
-    var output = metrics.output(options);
+    var metrics = require("expresser-metrics")
+    var output = metrics.output(options)
 
 And to get metrics for a specific call only:
 
     function myCall() {
-        var mt = metrics.start("my-call");
+        var mt = metrics.start("my-call")
+
         // Some code, then end metrics somewhere...
     }
 
     var options = {
-        keys: ["my-call"];
-    };
+        keys: ["my-call"]
+    }
 
-    var metrics = require("expresser-metrics");
-    var output = metrics.output(options);
+    var metrics = require("expresser-metrics")
+    var output = metrics.output(options)
 
 ### Metrics HTTP server
 
@@ -82,18 +90,18 @@ by using the `metrics.httpServer.server` object. For example:
 
     // Some code, my app starting...
 
-    var expresser = require("expresser");
-    var metrics = require("expresser-metrics");
+    var expresser = require("expresser")
+    var metrics = require("expresser-metrics")
 
-    expresser.settings.metrics.httpServer.port = 8080;
-    metrics.httpServer.start();
+    expresser.settings.metrics.httpServer.port = 8080
+    metrics.httpServer.start()
 
     // Server started, add a custom route to the metrics http server
-    metrics.httpServer.server.get("/my-route", myRouteCallback);
+    metrics.httpServer.server.get("/my-route", myRouteCallback)
 
     // More custom stuff... now to kill:
 
-    metrics.httpServer.kill();
+    metrics.httpServer.kill()
 
 ---
 

@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.4.7
+=====
+* Now including a package-lock.json file.
+
 3.4.6
 =====
 * Maintenance release with updated dependencies.

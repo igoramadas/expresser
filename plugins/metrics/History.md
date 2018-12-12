@@ -4,6 +4,7 @@
 =====
 * NEW! Possible to add extra data to a metric object using setData().
 * BREAKING! Due to new "data" feature above, the old "data" property was renamed to "tag".
+* Updated default settings for metrics output.
 * Now including a package-lock.json file.
 * Updated dependencies.
 
