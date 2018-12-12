@@ -326,8 +326,9 @@ class Metrics
                     }
 
             # Get percentiles based on settings.
-            for perc in options.percentiles
-                result["p#{perc}"] = percentile.calculate durations, perc
+            if options.percentile?.length > 0
+                for perc in options.percentiles
+                    result["p#{perc}"] = percentile.calculate durations, perc
 
             return result
 

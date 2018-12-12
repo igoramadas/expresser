@@ -55,7 +55,7 @@ metrics for last 1, 5, 60 and 300 minutes, and not showing the percentiles:
 
     var options = {
         intervals: [1, 5, 60, 300],
-        percentiles: null
+        percentiles: []
     }
 
     var metrics = require("expresser-metrics")
