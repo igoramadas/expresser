@@ -16,6 +16,8 @@
             "port": null,
             "path": "/"
         },
+        // Include last samples on generated output? Set to 0 to not include.
+        "includeLastSamples": 3,
         // Intervals to show on the output, in minutes.
         "intervals": [1, 5, 20],
         // Percentiles to include on output. Leave empty to not calculate percentiles.

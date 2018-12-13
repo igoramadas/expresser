@@ -232,7 +232,7 @@ class Metrics
 
         # For each different metric...
         for key in keys
-            if not options?.keys? or options?.keys?.indexOf(key) >= 0
+            if not options.keys? or options?.keys?.indexOf(key) >= 0
                 obj = metrics[key]
 
                 result[key] = {total_calls: obj.length}
@@ -241,13 +241,15 @@ class Metrics
                 for interval in options.intervals
                     result[key]["last_#{interval}min"] = @summary.get options, obj, interval
 
-                # Stats for last 3 calls.
-                samples = []
-                samples.push @summary.getLast(obj[2]) if obj[2]?
-                samples.push @summary.getLast(obj[1]) if obj[1]?
-                samples.push @summary.getLast(obj[0]) if obj[0]?
+                # Include last samples?
+                if options.includeLastSamples > 0
+                    samples = []
 
-                result[key].last_samples = samples
+                    while s < options.includeLastSamples
+                        samples.push @summary.getLast(obj[s]) if obj[s]?
+                        s++
+
+                    result[key].last_samples = samples
 
         logger.debug "Metrics.output", options, result
 
@@ -339,7 +341,7 @@ class Metrics
             if value?.startTime?
                 try
                     result = {
-                        startTime: moment(value.startTime).format "MMM Do - HH:mm:ss.SSSS"
+                        startTime: value.startTime
                         duration: value.duration
                     }
 

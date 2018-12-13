@@ -1,5 +1,10 @@
 # Changelog for expresser-metrics
 
+3.2.1
+=====
+* NEW! Setting includeLastSamples to define how many last samples to include on output.
+* Last samples now show startTime as a timestamp instead of date string.
+
 3.2.0
 =====
 * NEW! Possible to add extra data to a metric object using setData().
