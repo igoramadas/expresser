@@ -244,6 +244,7 @@ class Metrics
                 # Include last samples?
                 if options.includeLastSamples > 0
                     samples = []
+                    s = 0
 
                     while s < options.includeLastSamples
                         samples.push @summary.getLast(obj[s]) if obj[s]?
