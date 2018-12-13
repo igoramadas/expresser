@@ -586,7 +586,7 @@ Generate the JSON output with all metrics.
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> keys
-            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?.keys? <span class="hljs-keyword">or</span> options?.keys?.indexOf(key) &gt;= <span class="hljs-number">0</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.keys? <span class="hljs-keyword">or</span> options?.keys?.indexOf(key) &gt;= <span class="hljs-number">0</span>
                 obj = metrics[key]
 
                 result[key] = {total_calls: obj.length}</pre></div>
@@ -601,15 +601,17 @@ Generate the JSON output with all metrics.
         
       
         
-        <p>Stats for last 3 calls.</p>
+        <p>Include last samples?</p>
 
         
-          <div class='highlight'><pre>                samples = []
-                samples.push @summary.getLast(obj[<span class="hljs-number">2</span>]) <span class="hljs-keyword">if</span> obj[<span class="hljs-number">2</span>]?
-                samples.push @summary.getLast(obj[<span class="hljs-number">1</span>]) <span class="hljs-keyword">if</span> obj[<span class="hljs-number">1</span>]?
-                samples.push @summary.getLast(obj[<span class="hljs-number">0</span>]) <span class="hljs-keyword">if</span> obj[<span class="hljs-number">0</span>]?
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> options.includeLastSamples &gt; <span class="hljs-number">0</span>
+                    samples = []
 
-                result[key].last_samples = samples
+                    <span class="hljs-keyword">while</span> s &lt; options.includeLastSamples
+                        samples.push @summary.getLast(obj[s]) <span class="hljs-keyword">if</span> obj[s]?
+                        s++
+
+                    result[key].last_samples = samples
 
         logger.debug <span class="hljs-string">"Metrics.output"</span>, options, result
 
@@ -728,8 +730,9 @@ Generate summary for the specified object and interval.</p>
         <p>Get percentiles based on settings.</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-keyword">for</span> perc <span class="hljs-keyword">in</span> options.percentiles
-                result[<span class="hljs-string">"p<span class="hljs-subst">#{perc}</span>"</span>] = percentile.calculate durations, perc
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> options.percentile?.length &gt; <span class="hljs-number">0</span>
+                <span class="hljs-keyword">for</span> perc <span class="hljs-keyword">in</span> options.percentiles
+                    result[<span class="hljs-string">"p<span class="hljs-subst">#{perc}</span>"</span>] = percentile.calculate durations, perc
 
             <span class="hljs-keyword">return</span> result</pre></div>
         
@@ -744,7 +747,7 @@ Helper to get summary for last calls.</p>
             <span class="hljs-keyword">if</span> value?.startTime?
                 <span class="hljs-keyword">try</span>
                     result = {
-                        startTime: moment(value.startTime).format <span class="hljs-string">"MMM Do - HH:mm:ss.SSSS"</span>
+                        startTime: value.startTime
                         duration: value.duration
                     }</pre></div>
         

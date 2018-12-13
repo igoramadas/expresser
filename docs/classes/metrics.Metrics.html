@@ -123,7 +123,7 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
 
     # For each different metric...
     for key in keys
-        if not options?.keys? or options?.keys?.indexOf(key) &gt;= 0
+        if not options.keys? or options?.keys?.indexOf(key) &gt;= 0
             obj = metrics[key]
 
             result[key] = {total_calls: obj.length}
@@ -132,13 +132,15 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
             for interval in options.intervals
                 result[key][&quot;last_#{interval}min&quot;] = @summary.get options, obj, interval
 
-            # Stats for last 3 calls.
-            samples = []
-            samples.push @summary.getLast(obj[2]) if obj[2]?
-            samples.push @summary.getLast(obj[1]) if obj[1]?
-            samples.push @summary.getLast(obj[0]) if obj[0]?
+            # Include last samples?
+            if options.includeLastSamples &gt; 0
+                samples = []
 
-            result[key].last_samples = samples
+                while s &lt; options.includeLastSamples
+                    samples.push @summary.getLast(obj[s]) if obj[s]?
+                    s++
+
+                result[key].last_samples = samples
 
     logger.debug &quot;Metrics.output&quot;, options, result
 
@@ -185,4 +187,4 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
 
     return obj</pre></div></div></div></section><span class="fix-anchor" id="metrics_Metrics__httpServer"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_Metrics__httpServer_body"><h3 class="panel-title">Metrics::httpServer : <a href='../classes/metrics.HttpServer.html#metrics_HttpServer'>HttpServer</a><span class="label label-property">property</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>HTTP server module exposed to other modules.</p>
 </div></div><div class="panel-collapse collapse" id="metrics_Metrics__httpServer_body"><div class="panel-body"><div></div><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L29">/plugins/metrics/index.coffee:29</a>)</span></div><pre class="sourcecode prettyprint .linenums:29">httpServer: require &quot;./httpserver.coffee&quot;</pre></div></div></div></section><span class="fix-anchor" id="metrics_Metrics__summary"></span><section class="private"><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#metrics_Metrics__summary_body"><h3 class="panel-title">Metrics::summary<span class="label label-private">private</span><span class="label label-property">property</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Summary helper methods.</p>
-</div></div><div class="panel-collapse collapse" id="metrics_Metrics__summary_body"><div class="panel-body"><div></div><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L260">/plugins/metrics/index.coffee:260</a>)</span></div><pre class="sourcecode prettyprint .linenums:260">summary: {</pre></div></div></div></section></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>
+</div></div><div class="panel-collapse collapse" id="metrics_Metrics__summary_body"><div class="panel-body"><div></div><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//plugins/metrics/index.coffee#L262">/plugins/metrics/index.coffee:262</a>)</span></div><pre class="sourcecode prettyprint .linenums:262">summary: {</pre></div></div></div></section></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>
