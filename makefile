@@ -1,10 +1,12 @@
 ifeq ($(OS),Windows_NT)
+	COFFEEJSDOC:= node_modules/.bin/COFFEEJSDOC.cmd
 	MOCHA:= node_modules/.bin/mocha.cmd
 	MOCHAEXEC:= node_modules/.bin/_mocha
 	DOCCO:= node_modules/.bin/betterdocco.cmd
 	ISTANBUL:= node_modules/istanbul/lib/cli.js
 	TESTPATH:= test/*.js
 else
+	COFFEEJSDOC:= ./node_modules/.bin/coffeejsdoc
 	MOCHA:= ./node_modules/.bin/mocha
 	MOCHAEXEC:= ./node_modules/.bin/_mocha
 	DOCCO:= ./node_modules/.bin/betterdocco
@@ -19,7 +21,7 @@ cover:
 	$(ISTANBUL) cover $(MOCHAEXEC) -- -R spec $(TESTPATH)
 
 docs:
-	coffeejsdoc
+	$(COFFEEJSDOC)
 	$(DOCCO) -o docs/annotated lib/*.coffee plugins/**/*.coffee
 	cp CNAME docs/
 

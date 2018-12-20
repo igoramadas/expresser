@@ -39,8 +39,7 @@ logger.info &quot;App started!&quot;
 app.server.get &quot;/&quot;, (req, res) -&gt; app.renderView req, res, &quot;index&quot;
 
 # Renders output from the Metrics plugin.
-app.server.get &quot;/metrics&quot;, (req, res) -&gt; app.renderJson req, res, metrics.output()
-</code></pre><p>It seems pretty simple, right? Most configuration is done on a <code>settings.json</code> file...</p>
+app.server.get &quot;/metrics&quot;, (req, res) -&gt; app.renderJson req, res, metrics.output()</code></pre><p>It seems pretty simple, right? Most configuration is done on a <code>settings.json</code> file...</p>
 <h3 id="settings">Settings</h3>
 <p>Settings for the app and all modules are loaded by the <code>settings.coffee</code> module. If you wish to customize any of
 these settings, please create a <code>settings.json</code> file on the root of your app folder with the specific keys

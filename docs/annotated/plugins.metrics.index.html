@@ -606,6 +606,7 @@ Generate the JSON output with all metrics.
         
           <div class='highlight'><pre>                <span class="hljs-keyword">if</span> options.includeLastSamples &gt; <span class="hljs-number">0</span>
                     samples = []
+                    s = <span class="hljs-number">0</span>
 
                     <span class="hljs-keyword">while</span> s &lt; options.includeLastSamples
                         samples.push @summary.getLast(obj[s]) <span class="hljs-keyword">if</span> obj[s]?

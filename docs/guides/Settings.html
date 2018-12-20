@@ -15,7 +15,7 @@ and include your own custom settings.</p>
 <li>by using the <code>loadFromJson</code> helper method passing the path to your custom settings file.</li>
 <li>programmatically on your app code by doing <code>settings.some.else = mystuff</code>.</li>
 </ul>
-<p>Please note that when you call the main [url:expresser.init()|<a href="https://expresser.codeplex.com/SourceControl/latest#lib/expresser.coffee">https://expresser.codeplex.com/SourceControl/latest#lib/expresser.coffee</a>], it will automatically look for the {{ settings.json }} file and use it to override your app settings, so you don&#39;t need to do this manually.</p>
+<p>Please note that when you call the main [url:expresser.init()|<a href="https://expresser.codeplex.com/SourceControl/latest#lib/expresser.coffee%5D">https://expresser.codeplex.com/SourceControl/latest#lib/expresser.coffee]</a>, it will automatically look for the {{ settings.json }} file and use it to override your app settings, so you don&#39;t need to do this manually.</p>
 <p>Also remember that the Settings class is singleton: if you update a specific setting somewhere, it will reflect on all other parts of your application.</p>
 <h3 id="per-environment-settings">Per-environment settings</h3>
 <p>You can define specific settings for specific environments by using <code>settings.NODE_ENV.json</code> files.
@@ -35,8 +35,7 @@ expresser.init(settings);
 myApp.init();
 myApp.doSomething();
 
-// Some more app init code here...
-</code></pre><h3 id="appending-custom-settings-to-the-settings-class">Appending custom settings to the Settings class</h3>
+// Some more app init code here...</code></pre><h3 id="appending-custom-settings-to-the-settings-class">Appending custom settings to the Settings class</h3>
 <p>You can add as many custom settings as you want and use the Settings class as the main settings repository
 for your app, as long as you make sure that there are no conflicts between your custom settings keys and
 the ones used by Expresser. For example you could add the following &quot;theme&quot; block to the <code>settings.json</code>:</p>
@@ -46,8 +45,7 @@ the ones used by Expresser. For example you could add the following &quot;theme&
         &quot;location&quot;: &quot;/mytheme/&quot;,
         &quot;colours&quot;: [&quot;green&quot;, &quot;white&quot;, &quot;black&quot;]
     },
-}
-</code></pre><p>The above theme name &quot;MyTheme&quot; for example can be accessed via <code>expresser.settings.theme.name</code>, and colour
+}</code></pre><p>The above theme name &quot;MyTheme&quot; for example can be accessed via <code>expresser.settings.theme.name</code>, and colour
 black is at <code>expresser.settings.theme.colours[2]</code>.</p>
 <h3 id="resetting-to-default-settings">Resetting to default settings</h3>
 <p>The <code>settings.reset()</code> method will create a new instance and reset all settings to their default initial state.

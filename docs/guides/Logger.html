@@ -25,8 +25,7 @@ try {
     logger.error(&quot;MyModule&quot;, ex)
 }
 
-var logLine = logger.info(&quot;All logger methods always return the full parsed string / log line&quot;)
-</code></pre><h3 id="log-types">Log types</h3>
+var logLine = logger.info(&quot;All logger methods always return the full parsed string / log line&quot;)</code></pre><h3 id="log-types">Log types</h3>
 <p>At the moment the Logger offers 4 default log types: info, warn, error and critical. These methods support N number
 of arguments, which will be parsed and transformed to a single log line.</p>
 <h3 id="styling-the-console-logs">Styling the console logs</h3>
@@ -55,11 +54,9 @@ var myErrorFunction = function (transport, error) {
 }
 
 expresser.logger.on(&quot;logSuccess&quot;, mySuccessFunction)
-expresser.logger.on(&quot;logError&quot;, myErrorFunction)
-</code></pre><p>Use <code>expresser.logger.off</code> to stop listeting to these logging events. For example:</p>
+expresser.logger.on(&quot;logError&quot;, myErrorFunction)</code></pre><p>Use <code>expresser.logger.off</code> to stop listeting to these logging events. For example:</p>
 <pre><code>expresser.logger.off(&quot;logSuccess&quot;, mySuccessFunction)
-expresser.logger.off(&quot;logError&quot;, myErrorFunction)
-</code></pre><hr>
+expresser.logger.off(&quot;logError&quot;, myErrorFunction)</code></pre><hr>
 </div></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><script src="http://code.jquery.com/ui/1.9.0/jquery-ui.min.js"></script><script src="../tocify/jquery.tocify.js"></script><script>$(function() {
   $('#toc').tocify({extendPage:false, scrollTo:60});
 });</script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>

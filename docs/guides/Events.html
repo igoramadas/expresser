@@ -18,8 +18,7 @@ logToConsole (message) = function() {console.log &quot;My class says...&quot;, m
 events.on(&quot;MyClass.saySomething&quot;, logToConsole)
 
 // Display &quot;Hey ho let&#39;s go&quot; on the console...
-events.emit(&quot;MyClass.saySomething&quot;, &quot;Hey ho let&#39;s go&quot;)
-</code></pre><p>As this is simply a wrapper around Node.js Events class, you can read more at <a href="https://nodejs.org/api/events.html">https://nodejs.org/api/events.html</a>.</p>
+events.emit(&quot;MyClass.saySomething&quot;, &quot;Hey ho let&#39;s go&quot;)</code></pre><p>As this is simply a wrapper around Node.js Events class, you can read more at <a href="https://nodejs.org/api/events.html">https://nodejs.org/api/events.html</a>.</p>
 <h2 id="default-init-events">Default init events</h2>
 <p>All modules (and official plugins) of Expresser will emit a few default events, in case you want to coordinate
 your app step by step based on module initialization.</p>

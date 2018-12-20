@@ -26,11 +26,9 @@ collections. For example to use the <code>passport</code> middleware, which must
 var passport = require(&quot;passport&quot;)
 expresser.app.prependMiddlewares.push(passport.initialize())
 expresser.app.prependMiddlewares.push(passport.session())
-expresser.init()
-</code></pre><p>And similarly, if you want to register a middleware after the main ones:</p>
+expresser.init()</code></pre><p>And similarly, if you want to register a middleware after the main ones:</p>
 <pre><code>var myCustomMiddleware = require(&quot;some-middleware&quot;)
-expresser.app.appendMiddlewares.push(myCustomMiddleware)
-</code></pre><h2 id="rendering-sending-the-response-to-the-client">Rendering / sending the response to the client</h2>
+expresser.app.appendMiddlewares.push(myCustomMiddleware)</code></pre><h2 id="rendering-sending-the-response-to-the-client">Rendering / sending the response to the client</h2>
 <p>The App module has some helper methods to send the response to the browser using different formats.</p>
 <h4 id="renderview-req-res-view-options-">renderView(req, res, view, options)</h4>
 <p>Renders a Pug view with options. By default Pug views are stored on /views. For example
@@ -40,16 +38,14 @@ var options = {pageTitle: &quot;My Page&quot;, pageUrl: &quot;/testview/some/url
 
 app.server.get(&quot;/testview&quot;, function (req, res) {
     app.renderView(req, res, &quot;testview.pug&quot;, options)
-})
-</code></pre><h4 id="renderjson-req-res-data-">renderJson(req, res, data)</h4>
+})</code></pre><h4 id="renderjson-req-res-data-">renderJson(req, res, data)</h4>
 <p>Sends JSON data to the client. For example:</p>
 <pre><code>var app = expresser.app
 var data = {something: &quot;Here&quot;, code: 123, somethingElse: true}
 
 app.server.get(&quot;/testjson&quot;, function (req, res) {
     app.renderJson(req, res, data)
-})
-</code></pre><h4 id="rendererror-req-res-error-status-500-">renderError(req, res, error, status = 500)</h4>
+})</code></pre><h4 id="rendererror-req-res-error-status-500-">renderError(req, res, error, status = 500)</h4>
 <p>Sends an error to the client as JSON. For example when a procedure fails (access denied or another error):</p>
 <pre><code>var app = expresser.app
 
@@ -63,15 +59,13 @@ app.server.get(&quot;/dosomething&quot;, function (req, res) {
             app.renderError(req, res, ex)
         }
     }
-})
-</code></pre><h4 id="renderimage-req-res-filename-options-">renderImage(req, res, filename, options)</h4>
+})</code></pre><h4 id="renderimage-req-res-filename-options-">renderImage(req, res, filename, options)</h4>
 <p>Renders an image (JPG, GIF, PNG etc...) to the client.</p>
 <pre><code>var app = expresser.app
 
 app.server.get(&quot;/myimage&quot;, function (req, res) {
     app.renderImage(req, res, __dirname + &quot;/myimage.jpg&quot;)
-})
-</code></pre><hr>
+})</code></pre><hr>
 <h2 id="running-with-process-managers-pm2-forever-etc-">Running with process managers (pm2, forever etc)</h2>
 <p>Please note that the paths set on your application settings might not work if you&#39;re using process managers to start your app.</p>
 <hr>
