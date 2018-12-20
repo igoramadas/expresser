@@ -31,6 +31,9 @@
         }
     },
     "metrics": {
+        "aggregatedKeys": {
+            "iteratorAgg": ["iteratorSum", "iteratorString"]
+        },
         "httpServer": {
             "port": 8991
         }

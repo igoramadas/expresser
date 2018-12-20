@@ -231,26 +231,44 @@ class Metrics
                 result[serverKey][f] = serverInfo[f]
 
         # For each different metric...
-        for key in keys
-            if not options.keys? or options?.keys?.indexOf(key) >= 0
-                obj = metrics[key]
+        for key in options.keys
+            obj = metrics[key]
 
-                result[key] = {total_calls: obj.length}
+            result[key] = {total_calls: obj.length}
 
-                # Iterate intervals (for example 1m, 5m and 15m) to get specific stats.
+            # Iterate intervals to get specific stats.
+            for interval in options.intervals
+                result[key]["last_#{interval}min"] = @summary.get options, obj, interval
+
+            # Include last samples?
+            if options.includeLastSamples > 0
+                samples = []
+                s = 0
+
+                while s < options.includeLastSamples
+                    samples.push @summary.getLast(obj[s]) if obj[s]?
+                    s++
+
+                result[key].last_samples = samples
+
+        # Generate aggregated keys on the output?
+        if options.aggregatedKeys?
+            for agKey, subKeys of options.aggregatedKeys
+                obj = []
+
+                for key in subKeys
+                    if metrics[key]?
+                        obj = obj.concat metrics[key]
+                    else
+                        logger.debug "Metrics.output", "Agreggated key #{agKey}", "No metrics for #{key}"
+
+                result[agKey] = {
+                    total_calls: obj.length
+                }
+
+                # Iterate intervals to get specific stats.
                 for interval in options.intervals
-                    result[key]["last_#{interval}min"] = @summary.get options, obj, interval
-
-                # Include last samples?
-                if options.includeLastSamples > 0
-                    samples = []
-                    s = 0
-
-                    while s < options.includeLastSamples
-                        samples.push @summary.getLast(obj[s]) if obj[s]?
-                        s++
-
-                    result[key].last_samples = samples
+                    result[agKey]["last_#{interval}min"] = @summary.get options, obj, interval
 
         logger.debug "Metrics.output", options, result
 

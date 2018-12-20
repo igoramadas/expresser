@@ -33,36 +33,43 @@ describe("Metrics Tests", function() {
     })
 
     it("Measure time to iterate randomly", function(done) {
-        this.timeout(10000)
+        this.timeout(12000)
 
-        var counter = 0
         var phrase = ""
-        var mt, a, b
+        var timeout
+        var i, b
 
         for (i = 0; i < 100; i++) {
-            mt = metrics.start("iteratorSum")
+            var mt = metrics.start("iteratorString")
             totalCalls++
 
-            for (b = 0; b < 100000; b++) {
-                counter++
-            }
-
-            mt.setData("counter", i)
-            mt.end()
-        }
-
-        for (i = 0; i < 100; i++) {
-            mt = metrics.start("iteratorString")
-            totalCalls++
-
-            for (b = 0; b < 10000; b++) {
+            for (b = 0; b < 100; b++) {
                 phrase += "0"
             }
 
-            metrics.end(mt)
+            mt.end()
         }
 
-        done()
+        var createIteratorSum = function(i) {
+            var mt = metrics.start("iteratorSum")
+            totalCalls++
+
+            var cb = function() {
+                mt.setData("counter", i)
+                mt.end()
+
+                if (i == 99) {
+                    done()
+                }
+            }
+
+            timeout = Math.floor(Math.random() * 100)
+            setTimeout(cb, timeout)
+        }
+
+        for (i = 0; i < 100; i++) {
+            createIteratorSum(i)
+        }
     })
 
     it("Expire metrics", function(done) {
@@ -129,6 +136,25 @@ describe("Metrics Tests", function() {
 
         if (min != 0 || max != 99) {
             done("Metrics output expects .data.counter min = 0 and max = 99, but got min " + min + " and max " + max + ".")
+        } else {
+            done()
+        }
+    })
+
+    it("Output has valid aggregated keys for iteratorSum and iteratorString", function(done) {
+        var output = metrics.output()
+
+        var total = output.iteratorAgg.last_1min.calls
+        var max = output.iteratorAgg.last_1min.max
+        var totalNum = output.iteratorSum.last_1min.calls
+        var maxNum = output.iteratorSum.last_1min.max
+        var totalString = output.iteratorString.last_1min.calls
+        var expectedTotal = totalNum + totalString
+
+        if (total != expectedTotal) {
+            done("Metrics aggregated iteratorAgg should have total calls " + expectedTotal + ", but got " + total + ".")
+        } else if (max != maxNum) {
+            done("Metrics aggregated iteratorAgg should have max " + maxNum + ", but got " + max + ".")
         } else {
             done()
         }

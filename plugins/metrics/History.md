@@ -1,5 +1,10 @@
 # Changelog for expresser-metrics
 
+3.3.0
+=====
+* NEW! You can use new setting "aggregatedKeys" to define aggregated keys on output.
+* General tweaks.
+
 3.2.1
 =====
 * NEW! Setting includeLastSamples to define how many last samples to include on output.

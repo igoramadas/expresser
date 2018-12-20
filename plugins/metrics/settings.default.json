@@ -3,6 +3,10 @@
     "metrics": {
         // Enable the Metrics module?
         "enabled": true,
+        // List of aggregated keys that should be generated on the output. For example
+        // to show an aggregated "upserts" for metrics of "users.insert" and "users.update":
+        // "aggregatedKeys": {"upserts": ["users.insert", "users.update"]}
+        "aggregatedKeys": null,
         // Cleanup empty metrics (means calls history has expired so total calls is 0)?
         "cleanupEmpty": true,
         // Cleanup interval, in minutes.

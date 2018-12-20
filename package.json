@@ -60,7 +60,7 @@
         "betterdocco": "^0.8.0",
         "chai": "^4.2.0",
         "coffee-coverage": "^3.0.1",
-        "coffeejsdoc": "^0.9.1",
+        "coffeejsdoc": "^0.9.4",
         "coveralls": "^3.0.2",
         "fs-extra": "^7.0.1",
         "istanbul": "^0.4.5",
