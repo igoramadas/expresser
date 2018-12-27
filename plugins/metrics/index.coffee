@@ -230,26 +230,29 @@ class Metrics
             for f in options.systemMetrics.fields
                 result[serverKey][f] = serverInfo[f]
 
-        # For each different metric...
+        # For each passed metric key...
         for key in options.keys
             obj = metrics[key]
 
-            result[key] = {total_calls: obj.length}
+            if not obj?
+                logger.debug "Metrics.output", "No metrics for '#{key}'"
+            else
+                result[key] = {total_calls: obj.length}
 
-            # Iterate intervals to get specific stats.
-            for interval in options.intervals
-                result[key]["last_#{interval}min"] = @summary.get options, obj, interval
+                # Iterate intervals to get specific stats.
+                for interval in options.intervals
+                    result[key]["last_#{interval}min"] = @summary.get options, obj, interval
 
-            # Include last samples?
-            if options.includeLastSamples > 0
-                samples = []
-                s = 0
+                # Include last samples?
+                if options.includeLastSamples > 0
+                    samples = []
+                    s = 0
 
-                while s < options.includeLastSamples
-                    samples.push @summary.getLast(obj[s]) if obj[s]?
-                    s++
+                    while s < options.includeLastSamples
+                        samples.push @summary.getLast(obj[s]) if obj[s]?
+                        s++
 
-                result[key].last_samples = samples
+                    result[key].last_samples = samples
 
         # Generate aggregated keys on the output?
         if options.aggregatedKeys?
@@ -260,7 +263,7 @@ class Metrics
                     if metrics[key]?
                         obj = obj.concat metrics[key]
                     else
-                        logger.debug "Metrics.output", "Agreggated key #{agKey}", "No metrics for #{key}"
+                        logger.debug "Metrics.output", "Agreggated key #{agKey}", "No metrics for '#{key}'"
 
                 result[agKey] = {
                     total_calls: obj.length
@@ -270,7 +273,7 @@ class Metrics
                 for interval in options.intervals
                     result[agKey]["last_#{interval}min"] = @summary.get options, obj, interval
 
-        logger.debug "Metrics.output", options, result
+        logger.debug "Metrics.output", result
 
         return result
 
