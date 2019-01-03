@@ -2,6 +2,7 @@
 
 3.4.7
 =====
+* System getInfo() util has new property names on "process" information.
 * Now including a package-lock.json file.
 
 3.4.6
