@@ -30,7 +30,7 @@
         // don't want to include server metrics on the metrics output.
         "systemMetrics": {
             "key": "system",
-            "fields": ["loadAvg", "memoryUsage"]
+            "fields": ["loadAvg", "memoryUsage", "process"]
         }
     }
 }

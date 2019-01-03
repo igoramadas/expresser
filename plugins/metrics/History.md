@@ -3,6 +3,7 @@
 3.3.0
 =====
 * NEW! You can use new setting "aggregatedKeys" to define aggregated keys on output.
+* Added "process" memory information to the metrics output.
 * General tweaks.
 
 3.2.1

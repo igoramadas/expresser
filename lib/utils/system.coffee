@@ -28,8 +28,17 @@ class SystemUtils
         result.platform = os.platform() + " " + os.arch() + " " + os.release()
         result.memoryTotal = (os.totalmem() / 1024 / 1024).toFixed(0) + " MB"
         result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100).toFixed(0)
-        result.process = {pid: process.pid, memoryUsage: (process.memoryUsage().rss / 1024 / 1024).toFixed(0) + " MB"}
         result.cpuCores = os.cpus().length
+
+        # Get process memory stats.
+        processMemory = process.memoryUsage()
+
+        result.process = {
+            pid: process.pid
+            memoryUsage: (processMemory.rss / 1024 / 1024).toFixed(0) + " MB"
+            memoryHeapTotal: (processMemory.heapTotal / 1024 / 1024).toFixed(0) + " MB"
+            memoryHeapUsage: (processMemory.heapUsed / 1024 / 1024).toFixed(0) + " MB"
+        }
 
         # Calculate average CPU load.
         lastCpuLoad = @getCpuLoad() if not lastCpuLoad?
