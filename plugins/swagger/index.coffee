@@ -103,9 +103,11 @@ class Swagger
 
                 # Create route on the app.
                 server[method] path, (req, res, next) ->
-                    req.swagger = {} if not req.swagger?
-                    lodash.forEach methodSpec.parameters, (parameterSpec) -> castParameter req, parameterSpec
-                    handler req, res, next
+                    if settings.swagger.castParameters
+                        req.swagger = {} if not req.swagger?
+                        lodash.forEach methodSpec.parameters, (parameterSpec) -> castParameter req, parameterSpec
+
+                    return handler req, res, next
 
         # Return specs when acessing /swagger.json.
         server.get "/swagger.json", (req, res) => res.json @specs

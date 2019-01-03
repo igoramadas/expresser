@@ -3,6 +3,8 @@
     "swagger": {
         // Enable the Swagger module?
         "enabled": true,
+        // Cast parameters to req.swagger?
+        "castParameters": true,
         // Filename of swagger specs file to load on setup.
         "filename": "swagger.json",
         // You can also define the template specs directly on the specs key below.
