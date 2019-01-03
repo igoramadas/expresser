@@ -22,5 +22,21 @@ and teams, and a swagger definition that makes use of the operations
 
     swagger.setup(apiRoutes)
 
+### Cast parameters
+
+By default routes handled by the Swagger module will have a "swagger" property
+with the specified query, header and params. For example:
+
+    getAddress: function(req, res) ->
+       // Show route headers
+       console.dir(req.swagger.header)
+       // Show route query
+       console.dir(req.swagger.query)
+       // Show route named parameters
+       console.dir(req.swagger.params)
+
+If you do not wish to use these, you can avoid the slight processing overhead
+by setting `settings.swagger.castParameters` to false.
+
 Please note that you can change the file name and other parsing options
 on the settings.
