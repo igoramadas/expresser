@@ -236,14 +236,16 @@ class Metrics
             for f in options.systemMetrics.fields
                 result[serverKey][f] = serverInfo[f]
 
-        # For each different metric...
-        for key in keys
-            if not options.keys? or options?.keys?.indexOf(key) &gt;= 0
-                obj = metrics[key]
+        # For each passed metric key...
+        for key in options.keys
+            obj = metrics[key]
 
+            if not obj?
+                logger.debug &quot;Metrics.output&quot;, &quot;No metrics for '#{key}'&quot;
+            else
                 result[key] = {total_calls: obj.length}
 
-                # Iterate intervals (for example 1m, 5m and 15m) to get specific stats.
+                # Iterate intervals to get specific stats.
                 for interval in options.intervals
                     result[key][&quot;last_#{interval}min&quot;] = @summary.get options, obj, interval
 
@@ -258,7 +260,26 @@ class Metrics
 
                     result[key].last_samples = samples
 
-        logger.debug &quot;Metrics.output&quot;, options, result
+        # Generate aggregated keys on the output?
+        if options.aggregatedKeys?
+            for agKey, subKeys of options.aggregatedKeys
+                obj = []
+
+                for key in subKeys
+                    if metrics[key]?
+                        obj = obj.concat metrics[key]
+                    else
+                        logger.debug &quot;Metrics.output&quot;, &quot;Agreggated key #{agKey}&quot;, &quot;No metrics for '#{key}'&quot;
+
+                result[agKey] = {
+                    total_calls: obj.length
+                }
+
+                # Iterate intervals to get specific stats.
+                for interval in options.intervals
+                    result[agKey][&quot;last_#{interval}min&quot;] = @summary.get options, obj, interval
+
+        logger.debug &quot;Metrics.output&quot;, result
 
         return result
 

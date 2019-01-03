@@ -17,8 +17,17 @@ gtag('config', 'UA-9331973-3');
     result.platform = os.platform() + &quot; &quot; + os.arch() + &quot; &quot; + os.release()
     result.memoryTotal = (os.totalmem() / 1024 / 1024).toFixed(0) + &quot; MB&quot;
     result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100).toFixed(0)
-    result.process = {pid: process.pid, memoryUsage: (process.memoryUsage().rss / 1024 / 1024).toFixed(0) + &quot; MB&quot;}
     result.cpuCores = os.cpus().length
+
+    # Get process memory stats.
+    processMemory = process.memoryUsage()
+
+    result.process = {
+        pid: process.pid
+        memoryUsage: (processMemory.rss / 1024 / 1024).toFixed(0) + &quot; MB&quot;
+        memoryHeapTotal: (processMemory.heapTotal / 1024 / 1024).toFixed(0) + &quot; MB&quot;
+        memoryHeapUsage: (processMemory.heapUsed / 1024 / 1024).toFixed(0) + &quot; MB&quot;
+    }
 
     # Calculate average CPU load.
     lastCpuLoad = @getCpuLoad() if not lastCpuLoad?

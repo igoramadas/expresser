@@ -582,18 +582,20 @@ Generate the JSON output with all metrics.
         
       
         
-        <p>For each different metric…</p>
+        <p>For each passed metric key…</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> keys
-            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.keys? <span class="hljs-keyword">or</span> options?.keys?.indexOf(key) &gt;= <span class="hljs-number">0</span>
-                obj = metrics[key]
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> options.keys
+            obj = metrics[key]
 
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?
+                logger.debug <span class="hljs-string">"Metrics.output"</span>, <span class="hljs-string">"No metrics for '<span class="hljs-subst">#{key}</span>'"</span>
+            <span class="hljs-keyword">else</span>
                 result[key] = {total_calls: obj.length}</pre></div>
         
       
         
-        <p>Iterate intervals (for example 1m, 5m and 15m) to get specific stats.</p>
+        <p>Iterate intervals to get specific stats.</p>
 
         
           <div class='highlight'><pre>                <span class="hljs-keyword">for</span> interval <span class="hljs-keyword">in</span> options.intervals
@@ -612,9 +614,36 @@ Generate the JSON output with all metrics.
                         samples.push @summary.getLast(obj[s]) <span class="hljs-keyword">if</span> obj[s]?
                         s++
 
-                    result[key].last_samples = samples
+                    result[key].last_samples = samples</pre></div>
+        
+      
+        
+        <p>Generate aggregated keys on the output?</p>
 
-        logger.debug <span class="hljs-string">"Metrics.output"</span>, options, result
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.aggregatedKeys?
+            <span class="hljs-keyword">for</span> agKey, subKeys <span class="hljs-keyword">of</span> options.aggregatedKeys
+                obj = []
+
+                <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> subKeys
+                    <span class="hljs-keyword">if</span> metrics[key]?
+                        obj = obj.concat metrics[key]
+                    <span class="hljs-keyword">else</span>
+                        logger.debug <span class="hljs-string">"Metrics.output"</span>, <span class="hljs-string">"Agreggated key <span class="hljs-subst">#{agKey}</span>"</span>, <span class="hljs-string">"No metrics for '<span class="hljs-subst">#{key}</span>'"</span>
+
+                result[agKey] = {
+                    total_calls: obj.length
+                }</pre></div>
+        
+      
+        
+        <p>Iterate intervals to get specific stats.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">for</span> interval <span class="hljs-keyword">in</span> options.intervals
+                    result[agKey][<span class="hljs-string">"last_<span class="hljs-subst">#{interval}</span>min"</span>] = @summary.get options, obj, interval
+
+        logger.debug <span class="hljs-string">"Metrics.output"</span>, result
 
         <span class="hljs-keyword">return</span> result</pre></div>
         
