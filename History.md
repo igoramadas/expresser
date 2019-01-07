@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+3.5.0
+=====
+* BREAKING! SystemUtils getInfo() renamed process attributes: memoryUsage to memoryUsed, memoryHeapUsage to memoryHeapUsed
+* Updated dependencies.
+
 3.4.7
 =====
 * System getInfo() util has new property names on "process" information.

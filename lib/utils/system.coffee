@@ -35,9 +35,9 @@ class SystemUtils
 
         result.process = {
             pid: process.pid
-            memoryUsage: (processMemory.rss / 1024 / 1024).toFixed(0) + " MB"
+            memoryUsed: (processMemory.rss / 1024 / 1024).toFixed(0) + " MB"
             memoryHeapTotal: (processMemory.heapTotal / 1024 / 1024).toFixed(0) + " MB"
-            memoryHeapUsage: (processMemory.heapUsed / 1024 / 1024).toFixed(0) + " MB"
+            memoryHeapUsed: (processMemory.heapUsed / 1024 / 1024).toFixed(0) + " MB"
         }
 
         # Calculate average CPU load.
@@ -45,7 +45,6 @@ class SystemUtils
         currentCpuLoad = @getCpuLoad()
         idleDifference = currentCpuLoad.idle - lastCpuLoad.idle
         totalDifference = currentCpuLoad.total - lastCpuLoad.total
-
         result.loadAvg = 100 - ~~(100 * idleDifference / totalDifference)
 
         return result
