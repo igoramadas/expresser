@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "3.4.7",
+    "version": "3.5.0",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "keywords": [
         "expresser",
