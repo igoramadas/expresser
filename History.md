@@ -2,7 +2,8 @@
 
 3.5.0
 =====
-* BREAKING! SystemUtils getInfo() renamed process attributes: memoryUsage to memoryUsed, memoryHeapUsage to memoryHeapUsed
+* BREAKING! SystemUtils getInfo() renamed process attributes: memoryUsage to memoryUsed, memoryHeapUsage to memoryHeapUsed.
+* Improved app.renderError().
 * Updated dependencies.
 
 3.4.7

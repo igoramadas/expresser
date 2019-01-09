@@ -393,7 +393,12 @@ class App
 
         try
             # Make sure text is a string!
-            text = text.toString() if not lodash.isString text
+            if not text?
+                logger.debug "App.renderText", "Called with empty text parameter"
+                text = "Unhandled Server Error (expresser)"
+            else if not lodash.isString text
+                text = text.toString()
+
             res.setHeader "content-type", "text/plain"
             res.send text
 
@@ -478,42 +483,37 @@ class App
     renderError: (req, res, error, status) ->
         logger.debug "App.renderError", req.originalUrl, status, error
 
-        # Status defaults to 500.
+        # Status default status.
         status = error?.statusCode or 500 if not status?
         status = 408 if status is "ETIMEDOUT"
 
-        # Helper to build message out of the error object.
-        getMessage = (obj) ->
-            msg = {}
-
-            if lodash.isString obj
-                msg.message = obj
-            else
-                msg.message = obj.message or obj.error_description or obj.error or "Unhandled server error"
-                msg.friendlyMessage = obj.friendlyMessage if obj.friendlyMessage?
-                msg.reason = obj.reason if obj.reason?
-                msg.code = obj.code if obj.code?
-
-            return msg
-
         try
-            message = getMessage error
-
-            # Error might be encapsulated inside another "error" property.
-            if not mesage? and error.error?
-                message = getMessage error.error
-
+            message = getErrorMessage error
         catch ex
             logger.error "App.renderError", ex
-
-        # Can't figure it out? Just pass error as string then.
-        if not message?
-            message = error.toString()
 
         # Send error JSON to client.
         res.status(status).json {error: message, url: req.originalUrl}
 
         events.emit "App.on.renderError", req, res, error, status
+
+    # Helper to build message out of the error object.
+    getErrorMessage = (obj) ->
+        return "Unhandled server error" if not obj?
+        return obj if lodash.isString obj
+
+        # Error might be wrapped inside a .error attribute.
+        if obj.error? and not obj.message? and not obj.error_description? and not obj.reason?
+            obj = obj.error
+
+        # Build error object.
+        msg = {}
+        msg.message = obj.message or obj.error_description or obj.description or obj.toString()
+        msg.friendlyMessage = obj.friendlyMessage if obj.friendlyMessage?
+        msg.reason = obj.reason if obj.reason?
+        msg.code = obj.code if obj.code?
+
+        return msg
 
 # Singleton implementation
 # -----------------------------------------------------------------------------
