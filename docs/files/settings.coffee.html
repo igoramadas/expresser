@@ -124,10 +124,11 @@ class Settings
     # --------------------------------------------------------------------------
 
     # Helper to encrypt or decrypt settings files. The default encryption key
-    # defined on the `Settings.coffee` file is &quot;ExpresserSettings&quot;, which
-    # you should change to your desired value. You can also set the key
-    # via the EXPRESSER_SETTINGS_CRYPTOKEY environment variable.
-    # The default cipher algorithm is AES 256.
+    # defined on the `Settings.coffee` file is a static string (see below) , which
+    # you should change to your desired value, along with the IV. You can also
+    # set them via the EXPRESSER_SETTINGS_CRYPTOKEY and EXPRESSER_SETTINGS_CRYPTOIV
+    # environment variables. The default cipher algorithm is AES 256.
+    # Failure to encrypt or decrypt will throw an exception.
     # @param {Boolean} encrypt Pass true to encrypt, false to decrypt.
     # @param {String} filename The file to be encrypted or decrypted.
     # @param {Object} options Options to be passed to the cipher.
@@ -137,8 +138,10 @@ class Settings
         env = process.env
 
         options = {} if not options?
-        options = lodash.defaults options, {cipher: &quot;aes256&quot;, key: env[&quot;EXPRESSER_SETTINGS_CRYPTOKEY&quot;]}
-        options.key = &quot;ExpresserSettings&quot; if not options.key? or options.key is &quot;&quot;
+        options = lodash.defaults options, {cipher: &quot;aes256&quot;, key: env[&quot;EXPRESSER_SETTINGS_CRYPTOKEY&quot;], iv: env[&quot;EXPRESSER_SETTINGS_CRYPTOIV&quot;]}
+        options.key = &quot;ExpresserSettingsEncryptionKey32&quot; if not options.key? or options.key is &quot;&quot;
+        options.iv = &quot;8407198407191984&quot; if not options.iv? or options.iv is &quot;&quot;
+
         settingsJson = @loadFromJson filename, false
 
         # Settings file not found or invalid? Stop here.
@@ -175,7 +178,7 @@ class Settings
                                 newValue = &quot;string:&quot;
 
                             # Create cipher amd encrypt data.
-                            c = crypto.createCipher options.cipher, options.key
+                            c = crypto.createCipheriv options.cipher, options.key, options.iv
                             newValue += c.update currentValue.toString(), @general.encoding, &quot;hex&quot;
                             newValue += c.final &quot;hex&quot;
 
@@ -186,7 +189,7 @@ class Settings
                             newValue = &quot;&quot;
 
                             # Create cipher and decrypt.
-                            c = crypto.createDecipher options.cipher, options.key
+                            c = crypto.createDecipheriv options.cipher, options.key, options.iv
                             newValue += c.update arrValue[1], &quot;hex&quot;, @general.encoding
                             newValue += c.final @general.encoding
 
@@ -200,7 +203,12 @@ class Settings
                                 newValue = parseFloat newValue
                     catch ex
                         if @logger.console
-                            console.error &quot;Settings.cryptoHelper&quot;, encrypt, filename, ex, currentValue
+                            console.error &quot;Settings.cryptoHelper&quot;, encrypt, filename, currentValue, ex
+
+                        if encrypt
+                            return errors.throw &quot;cantEncrypt&quot;, &quot;Make sure key and IV are correct for encryption.&quot;
+                        else
+                            return errors.throw &quot;cantDecrypt&quot;, &quot;Make sure key and IV are correct for decryption.&quot;
 
                     # Update settings property value.
                     obj[prop] = newValue

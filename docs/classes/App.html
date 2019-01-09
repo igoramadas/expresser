@@ -259,7 +259,7 @@ you call the main <code>expresser.init()</code>.</p>
         # Make sure text is a string!
         if not text?
             logger.debug &quot;App.renderText&quot;, &quot;Called with empty text parameter&quot;
-            text = &quot;Unhandled Server Error (expresser)&quot;
+            text = &quot;&quot;
         else if not lodash.isString text
             text = text.toString()
 

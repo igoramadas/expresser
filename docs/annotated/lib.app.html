@@ -840,7 +840,7 @@ Sends pure text to the client.
         
           <div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> text?
                 logger.debug <span class="hljs-string">"App.renderText"</span>, <span class="hljs-string">"Called with empty text parameter"</span>
-                text = <span class="hljs-string">"Unhandled Server Error (expresser)"</span>
+                text = <span class="hljs-string">""</span>
             <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString text
                 text = text.toString()
 

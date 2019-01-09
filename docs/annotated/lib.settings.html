@@ -398,10 +398,11 @@ Reset to default settings by clearing values and listeners, and re-calling <code
       
         
         <p>Helper to encrypt or decrypt settings files. The default encryption key
-defined on the <code>Settings.coffee</code> file is “ExpresserSettings”, which
-you should change to your desired value. You can also set the key
-via the EXPRESSER_SETTINGS_CRYPTOKEY environment variable.
-The default cipher algorithm is AES 256.
+defined on the <code>Settings.coffee</code> file is a static string (see below) , which
+you should change to your desired value, along with the IV. You can also
+set them via the EXPRESSER_SETTINGS_CRYPTOKEY and EXPRESSER_SETTINGS_CRYPTOIV
+environment variables. The default cipher algorithm is AES 256.
+Failure to encrypt or decrypt will throw an exception.
 @param {Boolean} encrypt Pass true to encrypt, false to decrypt.
 @param {String} filename The file to be encrypted or decrypted.
 @param {Object} options Options to be passed to the cipher.
@@ -413,8 +414,10 @@ The default cipher algorithm is AES 256.
         env = process.env
 
         options = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options?
-        options = lodash.defaults options, {cipher: <span class="hljs-string">"aes256"</span>, key: env[<span class="hljs-string">"EXPRESSER_SETTINGS_CRYPTOKEY"</span>]}
-        options.key = <span class="hljs-string">"ExpresserSettings"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.key? <span class="hljs-keyword">or</span> options.key <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+        options = lodash.defaults options, {cipher: <span class="hljs-string">"aes256"</span>, key: env[<span class="hljs-string">"EXPRESSER_SETTINGS_CRYPTOKEY"</span>], iv: env[<span class="hljs-string">"EXPRESSER_SETTINGS_CRYPTOIV"</span>]}
+        options.key = <span class="hljs-string">"ExpresserSettingsEncryptionKey32"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.key? <span class="hljs-keyword">or</span> options.key <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+        options.iv = <span class="hljs-string">"8407198407191984"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> options.iv? <span class="hljs-keyword">or</span> options.iv <span class="hljs-keyword">is</span> <span class="hljs-string">""</span>
+
         settingsJson = @loadFromJson filename, <span class="hljs-literal">false</span></pre></div>
         
       
@@ -471,7 +474,7 @@ abort encryption and log to the console.</p>
         <p>Create cipher amd encrypt data.</p>
 
         
-          <div class='highlight'><pre>                            c = crypto.createCipher options.cipher, options.key
+          <div class='highlight'><pre>                            c = crypto.createCipheriv options.cipher, options.key, options.iv
                             newValue += c.update currentValue.toString(), @general.encoding, <span class="hljs-string">"hex"</span>
                             newValue += c.final <span class="hljs-string">"hex"</span>
 
@@ -490,7 +493,7 @@ abort encryption and log to the console.</p>
         <p>Create cipher and decrypt.</p>
 
         
-          <div class='highlight'><pre>                            c = crypto.createDecipher options.cipher, options.key
+          <div class='highlight'><pre>                            c = crypto.createDecipheriv options.cipher, options.key, options.iv
                             newValue += c.update arrValue[<span class="hljs-number">1</span>], <span class="hljs-string">"hex"</span>, @general.encoding
                             newValue += c.final @general.encoding</pre></div>
         
@@ -508,7 +511,12 @@ abort encryption and log to the console.</p>
                                 newValue = parseFloat newValue
                     <span class="hljs-keyword">catch</span> ex
                         <span class="hljs-keyword">if</span> @logger.<span class="hljs-built_in">console</span>
-                            <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Settings.cryptoHelper"</span>, encrypt, filename, ex, currentValue</pre></div>
+                            <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Settings.cryptoHelper"</span>, encrypt, filename, currentValue, ex
+
+                        <span class="hljs-keyword">if</span> encrypt
+                            <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"cantEncrypt"</span>, <span class="hljs-string">"Make sure key and IV are correct for encryption."</span>
+                        <span class="hljs-keyword">else</span>
+                            <span class="hljs-keyword">return</span> errors.<span class="hljs-keyword">throw</span> <span class="hljs-string">"cantDecrypt"</span>, <span class="hljs-string">"Make sure key and IV are correct for decryption."</span></pre></div>
         
       
         
