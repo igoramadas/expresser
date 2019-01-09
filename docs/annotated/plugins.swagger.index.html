@@ -382,9 +382,11 @@ Will load the specs from disk of not set yet.
 
         
           <div class='highlight'><pre>                server[method] path, <span class="hljs-function"><span class="hljs-params">(req, res, next)</span> -&gt;</span>
-                    req.swagger = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> req.swagger?
-                    lodash.forEach methodSpec.parameters, <span class="hljs-function"><span class="hljs-params">(parameterSpec)</span> -&gt;</span> castParameter req, parameterSpec
-                    handler req, res, next</pre></div>
+                    <span class="hljs-keyword">if</span> settings.swagger.castParameters
+                        req.swagger = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> req.swagger?
+                        lodash.forEach methodSpec.parameters, <span class="hljs-function"><span class="hljs-params">(parameterSpec)</span> -&gt;</span> castParameter req, parameterSpec
+
+                    <span class="hljs-keyword">return</span> handler req, res, next</pre></div>
         
       
         

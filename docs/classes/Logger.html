@@ -12,53 +12,7 @@ the same time.</p>
 and <code>obfuscateFields</code> settings. The maximum level deep down the object
 is defined by the <code>maxDepth</code> setting.</p>
 </div></div><div class="panel-collapse collapse" id="Logger__argsCleaner_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments'>Arguments</a></span></td><td><span>Arguments with masked, hidden and obfuscated fields processed.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/logger.coffee#L257">/lib/logger.coffee:257</a>)</span></div><pre class="sourcecode prettyprint .linenums:257">argsCleaner: -&gt;
-    funcText = &quot;[Function]&quot;
-    unreadableText = &quot;[Unreadable]&quot;
-    max = settings.logger.maxDepth - 1
     result = []
-
-    # Recursive cleaning function.
-    cleaner = (obj, index) -&gt;
-        i = 0
-
-        if lodash.isArray obj
-            while i &lt; obj.length
-                if index &gt; max
-                    obj[i] = &quot;...&quot;
-                else if lodash.isFunction obj[i]
-                    obj[i] = funcText
-                else
-                    cleaner obj[i], index + 1
-                i++
-
-        else if lodash.isObject obj
-            for key, value of obj
-                try
-                    if index &gt; max
-                        obj[key] = &quot;...&quot;
-                    else if settings.logger.obfuscateFields?.indexOf(key) &gt;=0
-                        obj[key] = &quot;***&quot;
-                    else if settings.logger.maskFields?[key]?
-                        if lodash.isObject value
-                            maskedValue = value.value or value.text or value.contents or value.data or &quot;&quot;
-                        else
-                            maskedValue = value.toString()
-                        obj[key] = utils.data.maskString maskedValue, &quot;*&quot;, settings.logger.maskFields[key]
-                    else if settings.logger.removeFields?.indexOf(key) &gt;=0
-                        delete obj[key]
-                    else if lodash.isArray value
-                        while i &lt; value.length
-                            cleaner value[i], index + 1
-                            i++
-                    else if moment.isMoment value
-                        obj[key] = value.toString()
-                    else if lodash.isFunction value
-                        obj[key] = funcText
-                    else if lodash.isObject value
-                        cleaner value, index + 1
-                catch ex
-                    delete obj[key]
-                    obj[key] = unreadableText
 
     # Iterate arguments and execute cleaner on objects.
     for argKey, arg of arguments
@@ -69,19 +23,22 @@ is defined by the <code>maxDepth</code> setting.</p>
                         result.push a
                     else if lodash.isObject a
                         cloned = lodash.cloneDeep a
-                        cleaner cloned, 0
+                        argsCleanerRec cloned, 0
                         result.push cloned
                     else if lodash.isFunction a
-                        result.push funcText
+                        result.push &quot;[Function]&quot;
                     else
                         result.push a
             else
                 cloned = lodash.cloneDeep arg
-                cleaner cloned, 0
+                argsCleanerRec cloned, 0
                 result.push cloned
 
         catch ex
             console.warn &quot;Logger.argsCleaner&quot;, argKey, ex
+
+    # Force clear cloned object.
+    cloned = null
 
     return result</pre></div></div></div></section><span class="fix-anchor" id="Logger__console"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Logger__console_body"><h3 class="panel-title">Logger::console(logType, msg, doNotParse)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Log to the console.</p>
 </div></div><div class="panel-collapse collapse" id="Logger__console_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>logType</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The log type (ex: warning, error, info, etc).</span></td></tr><tr><td><span class="method-depth0"></span><code>msg</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The message to be logged, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>doNotParse</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean'>Boolean</a></span></td><td><span> If true, message won't be cleaned using the `argsCleaner` helper.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span>The human readable log sent to the console.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/logger.coffee#L107">/lib/logger.coffee:107</a>)</span></div><pre class="sourcecode prettyprint .linenums:107">console: (logType, msg, doNotParse = false) -&gt;
@@ -141,7 +98,7 @@ is defined by the <code>maxDepth</code> setting.</p>
     msg = @log &quot;error&quot;, args
     events.emit &quot;Logger.on.error&quot;, msg
     return msg</pre></div></div></div></section><span class="fix-anchor" id="Logger__getMessage"></span><section class="private"><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Logger__getMessage_body"><h3 class="panel-title">Logger::getMessage(params)<span class="label label-private">private</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Parses arguments and returns a human readable message to be used for logging.</p>
-</div></div><div class="panel-collapse collapse" id="Logger__getMessage_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>params</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array'>Array</a></span></td><td><span> Arguments or array of parameters to be parsed.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span>The human readable, parsed JSON message.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/logger.coffee#L337">/lib/logger.coffee:337</a>)</span></div><pre class="sourcecode prettyprint .linenums:337">getMessage: (params) -&gt;
+</div></div><div class="panel-collapse collapse" id="Logger__getMessage_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>params</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array'>Array</a></span></td><td><span> Arguments or array of parameters to be parsed.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span>The human readable, parsed JSON message.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/logger.coffee#L338">/lib/logger.coffee:338</a>)</span></div><pre class="sourcecode prettyprint .linenums:338">getMessage: (params) -&gt;
     separator = settings.logger.separator
     separated = []
     args = []
@@ -185,6 +142,9 @@ is defined by the <code>maxDepth</code> setting.</p>
                 stringified = stringified.replace(/(\r\n|\n|\r)/gm, &quot;&quot;).replace(/  +/g, &quot; &quot;);
 
             separated.push stringified
+
+    # Cleanup args after built.
+    args = null
 
     # Append IP address, if `serverIP` is set.
     if settings.logger.sendIP

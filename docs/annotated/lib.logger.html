@@ -599,57 +599,7 @@ is defined by the <code>maxDepth</code> setting.
 
         
           <div class='highlight'><pre>    argsCleaner: <span class="hljs-function">-&gt;</span>
-        funcText = <span class="hljs-string">"[Function]"</span>
-        unreadableText = <span class="hljs-string">"[Unreadable]"</span>
-        max = settings.logger.maxDepth - <span class="hljs-number">1</span>
         result = []</pre></div>
-        
-      
-        
-        <p>Recursive cleaning function.</p>
-
-        
-          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">cleaner</span> = <span class="hljs-params">(obj, index)</span> -&gt;</span>
-            i = <span class="hljs-number">0</span>
-
-            <span class="hljs-keyword">if</span> lodash.isArray obj
-                <span class="hljs-keyword">while</span> i &lt; obj.length
-                    <span class="hljs-keyword">if</span> index &gt; max
-                        obj[i] = <span class="hljs-string">"..."</span>
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction obj[i]
-                        obj[i] = funcText
-                    <span class="hljs-keyword">else</span>
-                        cleaner obj[i], index + <span class="hljs-number">1</span>
-                    i++
-
-            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject obj
-                <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">of</span> obj
-                    <span class="hljs-keyword">try</span>
-                        <span class="hljs-keyword">if</span> index &gt; max
-                            obj[key] = <span class="hljs-string">"..."</span>
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.obfuscateFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
-                            obj[key] = <span class="hljs-string">"***"</span>
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.maskFields?[key]?
-                            <span class="hljs-keyword">if</span> lodash.isObject value
-                                maskedValue = value.value <span class="hljs-keyword">or</span> value.text <span class="hljs-keyword">or</span> value.contents <span class="hljs-keyword">or</span> value.data <span class="hljs-keyword">or</span> <span class="hljs-string">""</span>
-                            <span class="hljs-keyword">else</span>
-                                maskedValue = value.toString()
-                            obj[key] = utils.data.maskString maskedValue, <span class="hljs-string">"*"</span>, settings.logger.maskFields[key]
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.removeFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
-                            <span class="hljs-keyword">delete</span> obj[key]
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isArray value
-                            <span class="hljs-keyword">while</span> i &lt; value.length
-                                cleaner value[i], index + <span class="hljs-number">1</span>
-                                i++
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> moment.isMoment value
-                            obj[key] = value.toString()
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction value
-                            obj[key] = funcText
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject value
-                            cleaner value, index + <span class="hljs-number">1</span>
-                    <span class="hljs-keyword">catch</span> ex
-                        <span class="hljs-keyword">delete</span> obj[key]
-                        obj[key] = unreadableText</pre></div>
         
       
         
@@ -664,21 +614,76 @@ is defined by the <code>maxDepth</code> setting.
                             result.push a
                         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject a
                             cloned = lodash.cloneDeep a
-                            cleaner cloned, <span class="hljs-number">0</span>
+                            argsCleanerRec cloned, <span class="hljs-number">0</span>
                             result.push cloned
                         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction a
-                            result.push funcText
+                            result.push <span class="hljs-string">"[Function]"</span>
                         <span class="hljs-keyword">else</span>
                             result.push a
                 <span class="hljs-keyword">else</span>
                     cloned = lodash.cloneDeep arg
-                    cleaner cloned, <span class="hljs-number">0</span>
+                    argsCleanerRec cloned, <span class="hljs-number">0</span>
                     result.push cloned
 
             <span class="hljs-keyword">catch</span> ex
-                <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Logger.argsCleaner"</span>, argKey, ex
+                <span class="hljs-built_in">console</span>.warn <span class="hljs-string">"Logger.argsCleaner"</span>, argKey, ex</pre></div>
+        
+      
+        
+        <p>Force clear cloned object.</p>
+
+        
+          <div class='highlight'><pre>        cloned = <span class="hljs-literal">null</span>
 
         <span class="hljs-keyword">return</span> result</pre></div>
+        
+      
+        
+        <p>Recursive args cleaning function.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">argsCleanerRec</span> = <span class="hljs-params">(obj, index)</span> -&gt;</span>
+        max = settings.logger.maxDepth - <span class="hljs-number">1</span>
+        i = <span class="hljs-number">0</span>
+
+        <span class="hljs-keyword">if</span> lodash.isArray obj
+            <span class="hljs-keyword">while</span> i &lt; obj.length
+                <span class="hljs-keyword">if</span> index &gt; max
+                    obj[i] = <span class="hljs-string">"..."</span>
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction obj[i]
+                    obj[i] = <span class="hljs-string">"[Function]"</span>
+                <span class="hljs-keyword">else</span>
+                    argsCleanerRec obj[i], index + <span class="hljs-number">1</span>
+                i++
+
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject obj
+            <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">of</span> obj
+                <span class="hljs-keyword">try</span>
+                    <span class="hljs-keyword">if</span> index &gt; max
+                        obj[key] = <span class="hljs-string">"..."</span>
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.obfuscateFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
+                        obj[key] = <span class="hljs-string">"***"</span>
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.maskFields?[key]?
+                        <span class="hljs-keyword">if</span> lodash.isObject value
+                            maskedValue = value.value <span class="hljs-keyword">or</span> value.text <span class="hljs-keyword">or</span> value.contents <span class="hljs-keyword">or</span> value.data <span class="hljs-keyword">or</span> <span class="hljs-string">""</span>
+                        <span class="hljs-keyword">else</span>
+                            maskedValue = value.toString()
+                        obj[key] = utils.data.maskString maskedValue, <span class="hljs-string">"*"</span>, settings.logger.maskFields[key]
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> settings.logger.removeFields?.indexOf(key) &gt;=<span class="hljs-number">0</span>
+                        <span class="hljs-keyword">delete</span> obj[key]
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isArray value
+                        <span class="hljs-keyword">while</span> i &lt; value.length
+                            argsCleanerRec value[i], index + <span class="hljs-number">1</span>
+                            i++
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> moment.isMoment value
+                        obj[key] = value.toString()
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isFunction value
+                        obj[key] = <span class="hljs-string">"[Function]"</span>
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> lodash.isObject value
+                        argsCleanerRec value, index + <span class="hljs-number">1</span>
+                <span class="hljs-keyword">catch</span> ex
+                    <span class="hljs-keyword">delete</span> obj[key]
+                    obj[key] = <span class="hljs-string">"[Unreadable]"</span></pre></div>
         
       
         
@@ -742,6 +747,13 @@ on the <code>removeFields</code> setting won’t be added to the message.</p>
                     stringified = stringified.replace(<span class="hljs-regexp">/(\r\n|\n|\r)/gm</span>, <span class="hljs-string">""</span>).replace(/  +/g, <span class="hljs-string">" "</span>);
 
                 separated.push stringified</pre></div>
+        
+      
+        
+        <p>Cleanup args after built.</p>
+
+        
+          <div class='highlight'><pre>        args = <span class="hljs-literal">null</span></pre></div>
         
       
         

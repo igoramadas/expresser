@@ -24,9 +24,9 @@ gtag('config', 'UA-9331973-3');
 
     result.process = {
         pid: process.pid
-        memoryUsage: (processMemory.rss / 1024 / 1024).toFixed(0) + &quot; MB&quot;
+        memoryUsed: (processMemory.rss / 1024 / 1024).toFixed(0) + &quot; MB&quot;
         memoryHeapTotal: (processMemory.heapTotal / 1024 / 1024).toFixed(0) + &quot; MB&quot;
-        memoryHeapUsage: (processMemory.heapUsed / 1024 / 1024).toFixed(0) + &quot; MB&quot;
+        memoryHeapUsed: (processMemory.heapUsed / 1024 / 1024).toFixed(0) + &quot; MB&quot;
     }
 
     # Calculate average CPU load.
@@ -34,7 +34,6 @@ gtag('config', 'UA-9331973-3');
     currentCpuLoad = @getCpuLoad()
     idleDifference = currentCpuLoad.idle - lastCpuLoad.idle
     totalDifference = currentCpuLoad.total - lastCpuLoad.total
-
     result.loadAvg = 100 - ~~(100 * idleDifference / totalDifference)
 
     return result</pre></div></div></div></section></div></div></div><script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script src="../bootstrap/js/bootstrap.min.js"></script><script src="../google-code-prettify/prettify.js"></script><script src="../script.js"></script><script src="../group-examples.js"></script><a href="https://github.com/igoramadas/expresser"><img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></body></html>

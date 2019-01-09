@@ -838,7 +838,12 @@ Sends pure text to the client.
         <p>Make sure text is a string!</p>
 
         
-          <div class='highlight'><pre>            text = text.toString() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString text
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> text?
+                logger.debug <span class="hljs-string">"App.renderText"</span>, <span class="hljs-string">"Called with empty text parameter"</span>
+                text = <span class="hljs-string">"Unhandled Server Error (expresser)"</span>
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lodash.isString text
+                text = text.toString()
+
             res.setHeader <span class="hljs-string">"content-type"</span>, <span class="hljs-string">"text/plain"</span>
             res.send text
 
@@ -957,51 +962,16 @@ Sends error response as JSON.
         
       
         
-        <p>Status defaults to 500.</p>
+        <p>Status default status.</p>
 
         
           <div class='highlight'><pre>        status = error?.statusCode <span class="hljs-keyword">or</span> <span class="hljs-number">500</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> status?
-        status = <span class="hljs-number">408</span> <span class="hljs-keyword">if</span> status <span class="hljs-keyword">is</span> <span class="hljs-string">"ETIMEDOUT"</span></pre></div>
-        
-      
-        
-        <p>Helper to build message out of the error object.</p>
-
-        
-          <div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">getMessage</span> = <span class="hljs-params">(obj)</span> -&gt;</span>
-            msg = {}
-
-            <span class="hljs-keyword">if</span> lodash.isString obj
-                msg.message = obj
-            <span class="hljs-keyword">else</span>
-                msg.message = obj.message <span class="hljs-keyword">or</span> obj.error_description <span class="hljs-keyword">or</span> obj.error <span class="hljs-keyword">or</span> <span class="hljs-string">"Unhandled server error"</span>
-                msg.friendlyMessage = obj.friendlyMessage <span class="hljs-keyword">if</span> obj.friendlyMessage?
-                msg.reason = obj.reason <span class="hljs-keyword">if</span> obj.reason?
-                msg.code = obj.code <span class="hljs-keyword">if</span> obj.code?
-
-            <span class="hljs-keyword">return</span> msg
+        status = <span class="hljs-number">408</span> <span class="hljs-keyword">if</span> status <span class="hljs-keyword">is</span> <span class="hljs-string">"ETIMEDOUT"</span>
 
         <span class="hljs-keyword">try</span>
-            message = getMessage error</pre></div>
-        
-      
-        
-        <p>Error might be encapsulated inside another “error” property.</p>
-
-        
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> mesage? <span class="hljs-keyword">and</span> error.error?
-                message = getMessage error.error
-
+            message = getErrorMessage error
         <span class="hljs-keyword">catch</span> ex
             logger.error <span class="hljs-string">"App.renderError"</span>, ex</pre></div>
-        
-      
-        
-        <p>Can’t figure it out? Just pass error as string then.</p>
-
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> message?
-            message = error.toString()</pre></div>
         
       
         
@@ -1011,6 +981,36 @@ Sends error response as JSON.
           <div class='highlight'><pre>        res.status(status).json {error: message, url: req.originalUrl}
 
         events.emit <span class="hljs-string">"App.on.renderError"</span>, req, res, error, status</pre></div>
+        
+      
+        
+        <p>Helper to build message out of the error object.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">getErrorMessage</span> = <span class="hljs-params">(obj)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"Unhandled server error"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> obj?
+        <span class="hljs-keyword">return</span> obj <span class="hljs-keyword">if</span> lodash.isString obj</pre></div>
+        
+      
+        
+        <p>Error might be wrapped inside a .error attribute.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> obj.error? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> obj.message? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> obj.error_description? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> obj.reason?
+            obj = obj.error</pre></div>
+        
+      
+        
+        <p>Build error object.</p>
+
+        
+          <div class='highlight'><pre>        msg = {}
+        msg.message = obj.message <span class="hljs-keyword">or</span> obj.error_description <span class="hljs-keyword">or</span> obj.description <span class="hljs-keyword">or</span> obj.toString()
+        msg.friendlyMessage = obj.friendlyMessage <span class="hljs-keyword">if</span> obj.friendlyMessage?
+        msg.reason = obj.reason <span class="hljs-keyword">if</span> obj.reason?
+        msg.code = obj.code <span class="hljs-keyword">if</span> obj.code?
+
+        <span class="hljs-keyword">return</span> msg</pre></div>
         
       
         
