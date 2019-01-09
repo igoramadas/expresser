@@ -7,10 +7,10 @@
         }
     },
     "general": {
-        "debug": true
+        "debug": false
     },
     "logger": {
-        "console": true
+        "console": false
     },
     "mailer": {
         "smtp": {
@@ -43,6 +43,5 @@
     },
     "swagger": {
         "filename": "./test/testswagger.json"
-    },
-    "testingFileWatcher": true
+    }
 }

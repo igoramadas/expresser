@@ -9,7 +9,9 @@
         // Database connection options.
         "options": {
             // Default pool size for connections is 10.
-            "poolSize": 10
+            "poolSize": 10,
+            // Use new URL connection parser by default.
+            "useNewUrlParser": true
         }
     }
 }

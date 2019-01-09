@@ -135,6 +135,7 @@ class Settings
         options = lodash.defaults options, {cipher: "aes256", key: env["EXPRESSER_SETTINGS_CRYPTOKEY"], iv: env["EXPRESSER_SETTINGS_CRYPTOIV"]}
         options.key = "ExpresserSettingsEncryptionKey32" if not options.key? or options.key is ""
         options.iv = "8407198407191984" if not options.iv? or options.iv is ""
+
         settingsJson = @loadFromJson filename, false
 
         # Settings file not found or invalid? Stop here.
@@ -196,8 +197,12 @@ class Settings
                                 newValue = parseFloat newValue
                     catch ex
                         if @logger.console
-                            console.error "Settings.cryptoHelper", encrypt, filename, ex, currentValue
-                        throw ex
+                            console.error "Settings.cryptoHelper", encrypt, filename, currentValue, ex
+
+                        if encrypt
+                            return errors.throw "cantEncrypt", "Make sure key and IV are correct for encryption."
+                        else
+                            return errors.throw "cantDecrypt", "Make sure key and IV are correct for decryption."
 
                     # Update settings property value.
                     obj[prop] = newValue

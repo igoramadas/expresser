@@ -16,6 +16,8 @@ class Errors
         cantDeleteFile: "Could not delete file."
         cantSaveFile: "Could not save file."
         cantUploadFile: "Could not upload file."
+        cantEncrypt: "Coult not encrypt."
+        cantDecrypt: "Coult not decrypt."
         certificatesNotFound: "The specified certificates could not be found."
         domainRequired: "A valid domain is required."
         expressNotInit: "Express app was not initialized yet, please use after app.init()."

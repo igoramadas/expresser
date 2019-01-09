@@ -35,6 +35,8 @@ describe("Settings Tests", function() {
             encoding: "utf8"
         })
 
+        delete originalJson.testingFileWatcher
+
         var newJson = utils.data.minifyJson(originalJson)
 
         var callback = function() {
@@ -63,7 +65,6 @@ describe("Settings Tests", function() {
             } catch (ex) {
                 if (doneCalled) return
                 doneCalled = true
-
                 unwatch()
                 done(ex)
             }
@@ -93,26 +94,30 @@ describe("Settings Tests", function() {
         done()
     })
 
-    it("Fails to decrypt settings with wrong IV", function(done) {
+    it("Fails to decrypt settings with wrong key", function(done) {
         try {
             settings.decrypt(cryptoFilename, {
-                iv: "1234567890123456"
+                key: "12345678901234561234567890123456"
             })
 
-            done("Decryption with wrong IV should have thrown an exception.")
+            done("Decryption with wrong key should have thrown an exception.")
         } catch (ex) {
             done()
         }
     })
 
     it("Decrypt the settings file", function(done) {
-        settings.decrypt(cryptoFilename)
+        try {
+            settings.decrypt(cryptoFilename)
 
-        var decrypted = JSON.parse(
-            fs.readFileSync(cryptoFilename, {
-                encoding: "utf8"
-            })
-        )
+            var decrypted = JSON.parse(
+                fs.readFileSync(cryptoFilename, {
+                    encoding: "utf8"
+                })
+            )
+        } catch (ex) {
+            return done(ex.toString())
+        }
 
         if (decrypted.encrypted) {
             return done("Property 'encrypted' was not unset / deleted.")
