@@ -13,6 +13,9 @@ describe("Settings Tests", function() {
     var fs = require("fs")
     var utils = null
 
+    var filename = "./settings.test.json"
+    var cryptoFilename = "./settings.test.crypt.json"
+
     before(function() {
         settings.loadFromJson("settings.test.json")
 
@@ -27,7 +30,7 @@ describe("Settings Tests", function() {
         this.timeout(10000)
 
         var doneCalled = false
-        var filename = "./settings.test.json"
+
         var originalJson = fs.readFileSync(filename, {
             encoding: "utf8"
         })
@@ -69,54 +72,55 @@ describe("Settings Tests", function() {
         setTimeout(writer, 500)
     })
 
-    it("Encrypt and decrypt settings data", function(done) {
-        this.timeout(10000)
-
-        var filename = "./settings.test.crypt.json"
-        if (process.versions.node.indexOf(".10.") > 0) {
-            var originalJson = fs.readFileSync(filename, {
-                encoding: "utf8"
-            })
-        } else {
-            var originalJson = fs.readFileSync(filename, "utf8")
-        }
-
-        var callback = function(err) {
-            if (err) done(err)
-            else done()
-        }
-
-        if (!settings.encrypt(filename)) {
+    it("Encrypt the settings file", function(done) {
+        if (!settings.encrypt(cryptoFilename)) {
             return callback("Could not encrypt properties of settings.test.json file.")
         }
 
         var encrypted = JSON.parse(
-            fs.readFileSync(filename, {
+            fs.readFileSync(cryptoFilename, {
                 encoding: "utf8"
             })
         )
 
         if (!encrypted.encrypted) {
-            return callback("Property 'encrypted' was not properly set.")
-        } else if (encrypted.app.title == "Expresser Settings Encryption") {
-            return callback("Encryption failed, settings.app.title is still set as 'Expresser'.")
+            return done("Property 'encrypted' was not properly set.")
+        }
+        if (encrypted.app.title == "Expresser Settings Encryption") {
+            return done("Encryption failed, settings.app.title is still set as 'Expresser'.")
         }
 
-        settings.decrypt(filename)
+        done()
+    })
+
+    it("Fails to decrypt settings with wrong IV", function(done) {
+        try {
+            settings.decrypt(cryptoFilename, {
+                iv: "1234567890123456"
+            })
+
+            done("Decryption with wrong IV should have thrown an exception.")
+        } catch (ex) {
+            done()
+        }
+    })
+
+    it("Decrypt the settings file", function(done) {
+        settings.decrypt(cryptoFilename)
 
         var decrypted = JSON.parse(
-            fs.readFileSync(filename, {
+            fs.readFileSync(cryptoFilename, {
                 encoding: "utf8"
             })
         )
 
         if (decrypted.encrypted) {
-            return callback("Property 'encrypted' was not unset / deleted.")
+            return done("Property 'encrypted' was not unset / deleted.")
         }
         if (decrypted.app.title != "Expresser Settings Encryption") {
-            return callback("Decryption failed, settings.app.title is still encrypted.")
+            return done("Decryption failed, settings.app.title is still encrypted.")
         }
 
-        callback()
+        done()
     })
 })

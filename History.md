@@ -3,6 +3,7 @@
 3.5.0
 =====
 * BREAKING! SystemUtils getInfo() renamed process attributes: memoryUsage to memoryUsed, memoryHeapUsage to memoryHeapUsed.
+* Settings (de)encryption now using up-to-date methods - note that your current key might need to be updated.
 * Improved app.renderError().
 * Updated dependencies.
 

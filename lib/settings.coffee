@@ -118,10 +118,11 @@ class Settings
     # --------------------------------------------------------------------------
 
     # Helper to encrypt or decrypt settings files. The default encryption key
-    # defined on the `Settings.coffee` file is "ExpresserSettings", which
-    # you should change to your desired value. You can also set the key
-    # via the EXPRESSER_SETTINGS_CRYPTOKEY environment variable.
-    # The default cipher algorithm is AES 256.
+    # defined on the `Settings.coffee` file is a static string (see below) , which
+    # you should change to your desired value, along with the IV. You can also
+    # set them via the EXPRESSER_SETTINGS_CRYPTOKEY and EXPRESSER_SETTINGS_CRYPTOIV
+    # environment variables. The default cipher algorithm is AES 256.
+    # Failure to encrypt or decrypt will throw an exception.
     # @param {Boolean} encrypt Pass true to encrypt, false to decrypt.
     # @param {String} filename The file to be encrypted or decrypted.
     # @param {Object} options Options to be passed to the cipher.
@@ -131,8 +132,9 @@ class Settings
         env = process.env
 
         options = {} if not options?
-        options = lodash.defaults options, {cipher: "aes256", key: env["EXPRESSER_SETTINGS_CRYPTOKEY"]}
-        options.key = "ExpresserSettings" if not options.key? or options.key is ""
+        options = lodash.defaults options, {cipher: "aes256", key: env["EXPRESSER_SETTINGS_CRYPTOKEY"], iv: env["EXPRESSER_SETTINGS_CRYPTOIV"]}
+        options.key = "ExpresserSettingsEncryptionKey32" if not options.key? or options.key is ""
+        options.iv = "8407198407191984" if not options.iv? or options.iv is ""
         settingsJson = @loadFromJson filename, false
 
         # Settings file not found or invalid? Stop here.
@@ -169,7 +171,7 @@ class Settings
                                 newValue = "string:"
 
                             # Create cipher amd encrypt data.
-                            c = crypto.createCipher options.cipher, options.key
+                            c = crypto.createCipheriv options.cipher, options.key, options.iv
                             newValue += c.update currentValue.toString(), @general.encoding, "hex"
                             newValue += c.final "hex"
 
@@ -180,7 +182,7 @@ class Settings
                             newValue = ""
 
                             # Create cipher and decrypt.
-                            c = crypto.createDecipher options.cipher, options.key
+                            c = crypto.createDecipheriv options.cipher, options.key, options.iv
                             newValue += c.update arrValue[1], "hex", @general.encoding
                             newValue += c.final @general.encoding
 
@@ -195,6 +197,7 @@ class Settings
                     catch ex
                         if @logger.console
                             console.error "Settings.cryptoHelper", encrypt, filename, ex, currentValue
+                        throw ex
 
                     # Update settings property value.
                     obj[prop] = newValue

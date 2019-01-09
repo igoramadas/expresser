@@ -395,7 +395,7 @@ class App
             # Make sure text is a string!
             if not text?
                 logger.debug "App.renderText", "Called with empty text parameter"
-                text = "Unhandled Server Error (expresser)"
+                text = ""
             else if not lodash.isString text
                 text = text.toString()
 
