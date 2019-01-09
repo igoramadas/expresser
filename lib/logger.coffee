@@ -255,53 +255,7 @@ class Logger
     # @private
     ###
     argsCleaner: ->
-        funcText = "[Function]"
-        unreadableText = "[Unreadable]"
-        max = settings.logger.maxDepth - 1
         result = []
-
-        # Recursive cleaning function.
-        cleaner = (obj, index) ->
-            i = 0
-
-            if lodash.isArray obj
-                while i < obj.length
-                    if index > max
-                        obj[i] = "..."
-                    else if lodash.isFunction obj[i]
-                        obj[i] = funcText
-                    else
-                        cleaner obj[i], index + 1
-                    i++
-
-            else if lodash.isObject obj
-                for key, value of obj
-                    try
-                        if index > max
-                            obj[key] = "..."
-                        else if settings.logger.obfuscateFields?.indexOf(key) >=0
-                            obj[key] = "***"
-                        else if settings.logger.maskFields?[key]?
-                            if lodash.isObject value
-                                maskedValue = value.value or value.text or value.contents or value.data or ""
-                            else
-                                maskedValue = value.toString()
-                            obj[key] = utils.data.maskString maskedValue, "*", settings.logger.maskFields[key]
-                        else if settings.logger.removeFields?.indexOf(key) >=0
-                            delete obj[key]
-                        else if lodash.isArray value
-                            while i < value.length
-                                cleaner value[i], index + 1
-                                i++
-                        else if moment.isMoment value
-                            obj[key] = value.toString()
-                        else if lodash.isFunction value
-                            obj[key] = funcText
-                        else if lodash.isObject value
-                            cleaner value, index + 1
-                    catch ex
-                        delete obj[key]
-                        obj[key] = unreadableText
 
         # Iterate arguments and execute cleaner on objects.
         for argKey, arg of arguments
@@ -312,21 +266,68 @@ class Logger
                             result.push a
                         else if lodash.isObject a
                             cloned = lodash.cloneDeep a
-                            cleaner cloned, 0
+                            argsCleanerRec cloned, 0
                             result.push cloned
                         else if lodash.isFunction a
-                            result.push funcText
+                            result.push "[Function]"
                         else
                             result.push a
                 else
                     cloned = lodash.cloneDeep arg
-                    cleaner cloned, 0
+                    argsCleanerRec cloned, 0
                     result.push cloned
 
             catch ex
                 console.warn "Logger.argsCleaner", argKey, ex
 
+        # Force clear cloned object.
+        cloned = null
+
         return result
+
+    # Recursive args cleaning function.
+    argsCleanerRec = (obj, index) ->
+        max = settings.logger.maxDepth - 1
+        i = 0
+
+        if lodash.isArray obj
+            while i < obj.length
+                if index > max
+                    obj[i] = "..."
+                else if lodash.isFunction obj[i]
+                    obj[i] = "[Function]"
+                else
+                    argsCleanerRec obj[i], index + 1
+                i++
+
+        else if lodash.isObject obj
+            for key, value of obj
+                try
+                    if index > max
+                        obj[key] = "..."
+                    else if settings.logger.obfuscateFields?.indexOf(key) >=0
+                        obj[key] = "***"
+                    else if settings.logger.maskFields?[key]?
+                        if lodash.isObject value
+                            maskedValue = value.value or value.text or value.contents or value.data or ""
+                        else
+                            maskedValue = value.toString()
+                        obj[key] = utils.data.maskString maskedValue, "*", settings.logger.maskFields[key]
+                    else if settings.logger.removeFields?.indexOf(key) >=0
+                        delete obj[key]
+                    else if lodash.isArray value
+                        while i < value.length
+                            argsCleanerRec value[i], index + 1
+                            i++
+                    else if moment.isMoment value
+                        obj[key] = value.toString()
+                    else if lodash.isFunction value
+                        obj[key] = "[Function]"
+                    else if lodash.isObject value
+                        argsCleanerRec value, index + 1
+                catch ex
+                    delete obj[key]
+                    obj[key] = "[Unreadable]"
 
     ###
     # Parses arguments and returns a human readable message to be used for logging.
@@ -378,6 +379,9 @@ class Logger
                     stringified = stringified.replace(/(\r\n|\n|\r)/gm, "").replace(/  +/g, " ");
 
                 separated.push stringified
+
+        # Cleanup args after built.
+        args = null
 
         # Append IP address, if `serverIP` is set.
         if settings.logger.sendIP
