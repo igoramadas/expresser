@@ -59,6 +59,15 @@ class Settings
         events.emit "Settings.on.load"
 
     ###
+    # Reset to default settings by clearing values and listeners, and re-calling `load`.
+    ###
+    reset: =>
+        @unwatch()
+        @files = []
+        @instance = new Settings()
+        @instance.load()
+
+    ###
     # Load settings from the specified JSON file.
     # @param {String} filename The filename or full path to the settings file, mandatory.
     # @param {Boolean} extend If true it won't update settings that are already existing, default is false.
@@ -83,19 +92,11 @@ class Settings
                 settingsJson = fs.readFileSync filename, encAscii
                 settingsJson = utils.data.minifyJson settingsJson
 
-            # Helper function to overwrite properties.
-            xtend = (source, target) ->
-                for prop, value of source
-                    if value?.constructor is Object
-                        target[prop] = {} if not target[prop]?
-                        xtend source[prop], target[prop]
-                    else if not extend or not target[prop]?
-                        target[prop] = source[prop]
+            xtend settingsJson, this, extend
 
-            xtend settingsJson, this
-
-        # Add file to the `files` list.
-        @files.push {filename: filename, watching: false} if settingsJson?
+        # Add file to the `files` list, but only if not loaded previously.
+        if settingsJson? and not lodash.find(@files, {filename: filename})?
+            @files.push {filename: filename, watching: false}
 
         if @general.debug and @logger.console and env isnt "test"
             console.log "Settings.loadFromJson", filename
@@ -105,14 +106,14 @@ class Settings
         # Return the JSON representation of the file (or null if not found / empty).
         return settingsJson
 
-    ###
-    # Reset to default settings by clearing values and listeners, and re-calling `load`.
-    ###
-    reset: =>
-        @unwatch()
-        @files = []
-        @instance = new Settings()
-        @instance.load()
+    # Helper function to overwrite properties.
+    xtend = (source, target, extend) ->
+        for prop, value of source
+            if value?.constructor is Object
+                target[prop] = {} if not target[prop]?
+                xtend source[prop], target[prop], extend
+            else if not extend or not target[prop]?
+                target[prop] = source[prop]
 
     # ENCRYPTION
     # --------------------------------------------------------------------------
@@ -259,12 +260,12 @@ class Settings
                 filename = utils.io.getFilePath f.filename
 
                 if filename? and not f.watching
+                    f.watching = true
+
                     fs.watchFile filename, {persistent: true}, (evt, filename) =>
                         @loadFromJson filename
-                        console.log "Settings.watch", f, "Reloaded!" if env isnt "test"
+                        console.log "Settings.watch", f, "Reloaded" if env isnt "test"
                         callback? evt, filename
-
-                f.watching = true
 
         if @general.debug and env isnt "test"
             console.log "Settings.watch", (if callback? then "With callback" else "No callback")
@@ -280,6 +281,7 @@ class Settings
         try
             for f in @files
                 filename = utils.io.getFilePath f.filename
+                f.watching = false
 
                 if filename?
                     if callback?
@@ -287,7 +289,6 @@ class Settings
                     else
                         fs.unwatchFile filename
 
-                f.watching = false
         catch ex
             console.error "Settings.unwatch", ex
 
