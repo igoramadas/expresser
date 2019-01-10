@@ -32,7 +32,7 @@ environment specific settings.</p>
     @loadFromJson &quot;settings.#{env.toString().toLowerCase()}.json&quot;
 
     events.emit &quot;Settings.on.load&quot;</pre></div></div></div></section><span class="fix-anchor" id="Settings__loadFromJson"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Settings__loadFromJson_body"><h3 class="panel-title">Settings::loadFromJson(filename, extend)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Load settings from the specified JSON file.</p>
-</div></div><div class="panel-collapse collapse" id="Settings__loadFromJson_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>filename</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The filename or full path to the settings file, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>extend</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean'>Boolean</a></span></td><td><span> If true it won't update settings that are already existing, default is false.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>Returns the JSON representation of the loaded file, or null if error / empty.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/settings.coffee#L67">/lib/settings.coffee:67</a>)</span></div><pre class="sourcecode prettyprint .linenums:67">loadFromJson: (filename, extend = false) =&gt;
+</div></div><div class="panel-collapse collapse" id="Settings__loadFromJson_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>filename</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String'>String</a></span></td><td><span> The filename or full path to the settings file, mandatory.</span></td></tr><tr><td><span class="method-depth0"></span><code>extend</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean'>Boolean</a></span></td><td><span> If true it won't update settings that are already existing, default is false.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td>(Returns)</td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object'>Object</a></span></td><td><span>Returns the JSON representation of the loaded file, or null if error / empty.</span></td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/settings.coffee#L76">/lib/settings.coffee:76</a>)</span></div><pre class="sourcecode prettyprint .linenums:76">loadFromJson: (filename, extend = false) =&gt;
     env = process.env.NODE_ENV or &quot;development&quot;
 
     filename = utils.io.getFilePath filename
@@ -51,19 +51,11 @@ environment specific settings.</p>
             settingsJson = fs.readFileSync filename, encAscii
             settingsJson = utils.data.minifyJson settingsJson
 
-        # Helper function to overwrite properties.
-        xtend = (source, target) -&gt;
-            for prop, value of source
-                if value?.constructor is Object
-                    target[prop] = {} if not target[prop]?
-                    xtend source[prop], target[prop]
-                else if not extend or not target[prop]?
-                    target[prop] = source[prop]
+        xtend settingsJson, this, extend
 
-        xtend settingsJson, this
-
-    # Add file to the `files` list.
-    @files.push {filename: filename, watching: false} if settingsJson?
+    # Add file to the `files` list, but only if not loaded previously.
+    if settingsJson? and not lodash.find(@files, {filename: filename})?
+        @files.push {filename: filename, watching: false}
 
     if @general.debug and @logger.console and env isnt &quot;test&quot;
         console.log &quot;Settings.loadFromJson&quot;, filename
@@ -72,18 +64,19 @@ environment specific settings.</p>
 
     # Return the JSON representation of the file (or null if not found / empty).
     return settingsJson</pre></div></div></div></section><span class="fix-anchor" id="Settings__reset"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Settings__reset_body"><h3 class="panel-title">Settings::reset()<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Reset to default settings by clearing values and listeners, and re-calling <code>load</code>.</p>
-</div></div><div class="panel-collapse collapse" id="Settings__reset_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/settings.coffee#L111">/lib/settings.coffee:111</a>)</span></div><pre class="sourcecode prettyprint .linenums:111">reset: =&gt;
+</div></div><div class="panel-collapse collapse" id="Settings__reset_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(None)</td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/settings.coffee#L64">/lib/settings.coffee:64</a>)</span></div><pre class="sourcecode prettyprint .linenums:64">reset: =&gt;
     @unwatch()
     @files = []
     @instance = new Settings()
     @instance.load()</pre></div></div></div></section><span class="fix-anchor" id="Settings__unwatch"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Settings__unwatch_body"><h3 class="panel-title">Settings::unwatch(callback)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Unwatch changes on loaded settings files.
 The <code>callback</code> is optional in case you want to stop notifying only for that function.</p>
-</div></div><div class="panel-collapse collapse" id="Settings__unwatch_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>callback</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function'>Function</a>()</span></td><td><span> Optional function to be removed from the file watchers.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/settings.coffee#L277">/lib/settings.coffee:277</a>)</span></div><pre class="sourcecode prettyprint .linenums:277">unwatch: (callback) =&gt;
+</div></div><div class="panel-collapse collapse" id="Settings__unwatch_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>callback</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function'>Function</a>()</span></td><td><span> Optional function to be removed from the file watchers.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/settings.coffee#L278">/lib/settings.coffee:278</a>)</span></div><pre class="sourcecode prettyprint .linenums:278">unwatch: (callback) =&gt;
     env = process.env.NODE_ENV or &quot;development&quot;
 
     try
         for f in @files
             filename = utils.io.getFilePath f.filename
+            f.watching = false
 
             if filename?
                 if callback?
@@ -91,14 +84,13 @@ The <code>callback</code> is optional in case you want to stop notifying only fo
                 else
                     fs.unwatchFile filename
 
-            f.watching = false
     catch ex
         console.error &quot;Settings.unwatch&quot;, ex
 
     if @general.debug and env isnt &quot;test&quot;
         console.log &quot;Settings.unwatch&quot;, (if callback? then &quot;With callback&quot; else &quot;No callback&quot;)</pre></div></div></div></section><span class="fix-anchor" id="Settings__watch"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Settings__watch_body"><h3 class="panel-title">Settings::watch(callback)<span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>Watch loaded settings files for changes by using a file watcher.
 The <code>callback</code> is optional in case you want to notify another module about settings updates.</p>
-</div></div><div class="panel-collapse collapse" id="Settings__watch_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>callback</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function'>Function</a>()</span></td><td><span> Optional function (event, filename) triggered when a settings file gets updated.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/settings.coffee#L248">/lib/settings.coffee:248</a>)</span></div><pre class="sourcecode prettyprint .linenums:248">watch: (callback) =&gt;
+</div></div><div class="panel-collapse collapse" id="Settings__watch_body"><div class="panel-body"><div></div><h4>Parameters</h4><table class="table table-bordered table-condensed table-hover"><tr><th>Name</th><th>Type</th><th>Description</th></tr><tr><td><span class="method-depth0"></span><code>callback</code></td><td><span><a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function'>Function</a>()</span></td><td><span> Optional function (event, filename) triggered when a settings file gets updated.</span></td></tr></table><h4>Returns</h4><table class="table table-bordered table-condensed table-hover"><tr><td>(Nothing)</td></tr></table><div class="showcode"><button class="btn btn-info">Show code</button><span> (defined in<a href="https://github.com/igoramadas/expresser/blob/master//lib/settings.coffee#L249">/lib/settings.coffee:249</a>)</span></div><pre class="sourcecode prettyprint .linenums:249">watch: (callback) =&gt;
     env = process.env.NODE_ENV or &quot;development&quot;
 
     if callback? and not lodash.isFunction callback
@@ -112,12 +104,12 @@ The <code>callback</code> is optional in case you want to notify another module 
             filename = utils.io.getFilePath f.filename
 
             if filename? and not f.watching
+                f.watching = true
+
                 fs.watchFile filename, {persistent: true}, (evt, filename) =&gt;
                     @loadFromJson filename
-                    console.log &quot;Settings.watch&quot;, f, &quot;Reloaded!&quot; if env isnt &quot;test&quot;
+                    console.log &quot;Settings.watch&quot;, f, &quot;Reloaded&quot; if env isnt &quot;test&quot;
                     callback? evt, filename
-
-            f.watching = true
 
     if @general.debug and env isnt &quot;test&quot;
         console.log &quot;Settings.watch&quot;, (if callback? then &quot;With callback&quot; else &quot;No callback&quot;)</pre></div></div></div></section><span class="fix-anchor" id="Settings__files"></span><section><div class="panel panel-success"><div class="panel-heading collapsed" data-toggle="collapse" data-target="#Settings__files_body"><h3 class="panel-title">Settings::files : <a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array'>Array</a><span class="label label-property">property</span><span class="pull-right glyphicon"></span></h3><div class="method-summary"><p>List of loaded settings files.</p>

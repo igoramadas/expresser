@@ -114,7 +114,7 @@ Please note that this runs on s schedule so you shouldn&#39;t need to call it ma
 
     # Add server info to the output?
     if options.systemMetrics?.fields?.length &gt; 0
-        serverInfo = utils.system.getInfo()
+        serverInfo = utils.system.getInfo {labels: options.systemMetrics.includeLabels}
         serverKey = options.systemMetrics.key
         result[serverKey] = {}
 

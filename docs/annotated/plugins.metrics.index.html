@@ -573,7 +573,7 @@ Generate the JSON output with all metrics.
 
         
           <div class='highlight'><pre>        <span class="hljs-keyword">if</span> options.systemMetrics?.fields?.length &gt; <span class="hljs-number">0</span>
-            serverInfo = utils.system.getInfo()
+            serverInfo = utils.system.getInfo {labels: options.systemMetrics.includeLabels}
             serverKey = options.systemMetrics.key
             result[serverKey] = {}
 

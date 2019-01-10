@@ -305,6 +305,19 @@ environment specific settings.</p>
       
         
         <p>##
+Reset to default settings by clearing values and listeners, and re-calling <code>load</code>.</p>
+<p>##</p>
+
+        
+          <div class='highlight'><pre>    reset: <span class="hljs-function">=&gt;</span>
+        @unwatch()
+        @files = []
+        @instance = <span class="hljs-keyword">new</span> Settings()
+        @instance.load()</pre></div>
+        
+      
+        
+        <p>##
 Load settings from the specified JSON file.
 @param {String} filename The filename or full path to the settings file, mandatory.
 @param {Boolean} extend If true it won’t update settings that are already existing, default is false.
@@ -337,29 +350,17 @@ Load settings from the specified JSON file.
                 settingsJson = utils.data.minifyJson settingsJson
             <span class="hljs-keyword">catch</span> ex
                 settingsJson = fs.readFileSync filename, encAscii
-                settingsJson = utils.data.minifyJson settingsJson</pre></div>
+                settingsJson = utils.data.minifyJson settingsJson
+
+            xtend settingsJson, <span class="hljs-keyword">this</span>, extend</pre></div>
         
       
         
-        <p>Helper function to overwrite properties.</p>
+        <p>Add file to the <code>files</code> list, but only if not loaded previously.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function">            <span class="hljs-title">xtend</span> = <span class="hljs-params">(source, target)</span> -&gt;</span>
-                <span class="hljs-keyword">for</span> prop, value <span class="hljs-keyword">of</span> source
-                    <span class="hljs-keyword">if</span> value?.constructor <span class="hljs-keyword">is</span> Object
-                        target[prop] = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> target[prop]?
-                        xtend source[prop], target[prop]
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> extend <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> target[prop]?
-                        target[prop] = source[prop]
-
-            xtend settingsJson, <span class="hljs-keyword">this</span></pre></div>
-        
-      
-        
-        <p>Add file to the <code>files</code> list.</p>
-
-        
-          <div class='highlight'><pre>        @files.push {filename: filename, watching: <span class="hljs-literal">false</span>} <span class="hljs-keyword">if</span> settingsJson?
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> settingsJson? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> lodash.find(@files, {filename: filename})?
+            @files.push {filename: filename, watching: <span class="hljs-literal">false</span>}
 
         <span class="hljs-keyword">if</span> @general.debug <span class="hljs-keyword">and</span> @logger.<span class="hljs-built_in">console</span> <span class="hljs-keyword">and</span> env <span class="hljs-keyword">isnt</span> <span class="hljs-string">"test"</span>
             <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Settings.loadFromJson"</span>, filename
@@ -375,16 +376,16 @@ Load settings from the specified JSON file.
         
       
         
-        <p>##
-Reset to default settings by clearing values and listeners, and re-calling <code>load</code>.</p>
-<p>##</p>
+        <p>Helper function to overwrite properties.</p>
 
         
-          <div class='highlight'><pre>    reset: <span class="hljs-function">=&gt;</span>
-        @unwatch()
-        @files = []
-        @instance = <span class="hljs-keyword">new</span> Settings()
-        @instance.load()</pre></div>
+          <div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">xtend</span> = <span class="hljs-params">(source, target, extend)</span> -&gt;</span>
+        <span class="hljs-keyword">for</span> prop, value <span class="hljs-keyword">of</span> source
+            <span class="hljs-keyword">if</span> value?.constructor <span class="hljs-keyword">is</span> Object
+                target[prop] = {} <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> target[prop]?
+                xtend source[prop], target[prop], extend
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> extend <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> target[prop]?
+                target[prop] = source[prop]</pre></div>
         
       
         
@@ -615,12 +616,12 @@ The <code>callback</code> is optional in case you want to notify another module 
                 filename = utils.io.getFilePath f.filename
 
                 <span class="hljs-keyword">if</span> filename? <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> f.watching
+                    f.watching = <span class="hljs-literal">true</span>
+
                     fs.watchFile filename, {persistent: <span class="hljs-literal">true</span>}, <span class="hljs-function"><span class="hljs-params">(evt, filename)</span> =&gt;</span>
                         @loadFromJson filename
-                        <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Settings.watch"</span>, f, <span class="hljs-string">"Reloaded!"</span> <span class="hljs-keyword">if</span> env <span class="hljs-keyword">isnt</span> <span class="hljs-string">"test"</span>
+                        <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Settings.watch"</span>, f, <span class="hljs-string">"Reloaded"</span> <span class="hljs-keyword">if</span> env <span class="hljs-keyword">isnt</span> <span class="hljs-string">"test"</span>
                         callback? evt, filename
-
-                f.watching = <span class="hljs-literal">true</span>
 
         <span class="hljs-keyword">if</span> @general.debug <span class="hljs-keyword">and</span> env <span class="hljs-keyword">isnt</span> <span class="hljs-string">"test"</span>
             <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Settings.watch"</span>, (<span class="hljs-keyword">if</span> callback? <span class="hljs-keyword">then</span> <span class="hljs-string">"With callback"</span> <span class="hljs-keyword">else</span> <span class="hljs-string">"No callback"</span>)</pre></div>
@@ -640,6 +641,7 @@ The <code>callback</code> is optional in case you want to stop notifying only fo
         <span class="hljs-keyword">try</span>
             <span class="hljs-keyword">for</span> f <span class="hljs-keyword">in</span> @files
                 filename = utils.io.getFilePath f.filename
+                f.watching = <span class="hljs-literal">false</span>
 
                 <span class="hljs-keyword">if</span> filename?
                     <span class="hljs-keyword">if</span> callback?
@@ -647,7 +649,6 @@ The <code>callback</code> is optional in case you want to stop notifying only fo
                     <span class="hljs-keyword">else</span>
                         fs.unwatchFile filename
 
-                f.watching = <span class="hljs-literal">false</span>
         <span class="hljs-keyword">catch</span> ex
             <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Settings.unwatch"</span>, ex
 
