@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.5.1
+=====
+* NEW! Added option to include / exclude labels from system.getInfo() output.
+
 3.5.0
 =====
 * BREAKING! SystemUtils getInfo() renamed process attributes: memoryUsage to memoryUsed, memoryHeapUsage to memoryHeapUsed.

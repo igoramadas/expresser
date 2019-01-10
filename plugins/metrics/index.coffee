@@ -223,7 +223,7 @@ class Metrics
 
         # Add server info to the output?
         if options.systemMetrics?.fields?.length > 0
-            serverInfo = utils.system.getInfo()
+            serverInfo = utils.system.getInfo {labels: options.systemMetrics.includeLabels}
             serverKey = options.systemMetrics.key
             result[serverKey] = {}
 

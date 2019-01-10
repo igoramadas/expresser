@@ -1,5 +1,9 @@
 # Changelog for expresser-metrics
 
+3.3.1
+=====
+* NEW! Possibility to remove labels (%, MB etc) on system metrics output using the includeLabels = false.
+
 3.3.0
 =====
 * NEW! You can use new setting "aggregatedKeys" to define aggregated keys on output.

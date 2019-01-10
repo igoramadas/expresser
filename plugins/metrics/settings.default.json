@@ -30,7 +30,10 @@
         // don't want to include server metrics on the metrics output.
         "systemMetrics": {
             "key": "system",
-            "fields": ["loadAvg", "memoryUsage", "process"]
+            "fields": ["loadAvg", "memoryUsage", "process"],
+            // Set to false if you wish to hide labels from output and have only the numeric values.
+            // Note: memory related metrics are always displayed in Megabytes (MB).
+            "includeLabels": true
         }
     }
 }

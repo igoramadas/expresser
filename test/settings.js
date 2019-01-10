@@ -70,7 +70,7 @@ describe("Settings Tests", function() {
             }
         }
 
-        setTimeout(writer, 500)
+        setTimeout(writer, 800)
     })
 
     it("Encrypt the settings file", function(done) {

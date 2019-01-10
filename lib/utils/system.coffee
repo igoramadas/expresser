@@ -16,9 +16,12 @@ class SystemUtils
 
     ###
     # Return an object with general and health information about the system.
-    # @return {Object} System uptime, hostname, title, platform, memoryTotal, memoryUsage, process, cpuCores and loadAvg.
+    # @param {Object} options Options to define the output.
+    # @option options {Boolean} labels If false, labels won't be added to the output (%, MB, etc). Default is true.
+    # @return {Object} Object with system metrics attached.
     ###
-    getInfo: =>
+    getInfo: (options) =>
+        options = {labels: true} if not options?
         result = {}
 
         # Save parsed OS info to the result object.
@@ -26,8 +29,8 @@ class SystemUtils
         result.hostname = os.hostname()
         result.title = path.basename process.title
         result.platform = os.platform() + " " + os.arch() + " " + os.release()
-        result.memoryTotal = (os.totalmem() / 1024 / 1024).toFixed(0) + " MB"
-        result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100).toFixed(0)
+        result.memoryTotal = (os.totalmem() / 1024 / 1024).toFixed 0
+        result.memoryUsage = 100 - (os.freemem() / os.totalmem() * 100).toFixed 0
         result.cpuCores = os.cpus().length
 
         # Get process memory stats.
@@ -35,9 +38,9 @@ class SystemUtils
 
         result.process = {
             pid: process.pid
-            memoryUsed: (processMemory.rss / 1024 / 1024).toFixed(0) + " MB"
-            memoryHeapTotal: (processMemory.heapTotal / 1024 / 1024).toFixed(0) + " MB"
-            memoryHeapUsed: (processMemory.heapUsed / 1024 / 1024).toFixed(0) + " MB"
+            memoryUsed: (processMemory.rss / 1024 / 1024).toFixed 0
+            memoryHeapTotal: (processMemory.heapTotal / 1024 / 1024).toFixed 0
+            memoryHeapUsed: (processMemory.heapUsed / 1024 / 1024).toFixed 0
         }
 
         # Calculate average CPU load.
@@ -46,6 +49,15 @@ class SystemUtils
         idleDifference = currentCpuLoad.idle - lastCpuLoad.idle
         totalDifference = currentCpuLoad.total - lastCpuLoad.total
         result.loadAvg = 100 - ~~(100 * idleDifference / totalDifference)
+
+        # Add labels to relevant metrics on the output?
+        if options.labels
+            result.loadAvg += "%"
+            result.memoryTotal += " MB"
+            result.memoryUsage += "%"
+            result.process.memoryUsed += " MB"
+            result.process.memoryHeapTotal += " MB"
+            result.process.memoryHeapUsed += " MB"
 
         return result
 
