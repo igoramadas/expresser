@@ -3,6 +3,7 @@
 3.5.1
 =====
 * NEW! Added option to include / exclude labels from system.getInfo() output.
+* Updated dependencies.
 
 3.5.0
 =====
