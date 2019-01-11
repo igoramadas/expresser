@@ -2,7 +2,7 @@
 
 3.3.1
 =====
-* NEW! Possibility to remove labels (%, MB etc) on system metrics output using the includeLabels = false.
+* NEW! Possibility to remove labels (%, MB etc) on system metrics output using the option labels = false.
 
 3.3.0
 =====
