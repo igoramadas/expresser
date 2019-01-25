@@ -307,7 +307,14 @@ Init metrics and set up cleanup timer.</p>
 
         
           <div class='highlight'><pre>        @httpServer.init <span class="hljs-keyword">this</span>
-        @httpServer.start() <span class="hljs-keyword">if</span> settings.metrics.httpServer.port? <span class="hljs-keyword">and</span> settings.metrics.httpServer.autoStart
+        @httpServer.start() <span class="hljs-keyword">if</span> settings.metrics.httpServer.port? <span class="hljs-keyword">and</span> settings.metrics.httpServer.autoStart</pre></div>
+        
+      
+        
+        <p>Force get system info on init to properly count memory and load avg.</p>
+
+        
+          <div class='highlight'><pre>        utils.system.getInfo()
 
         events.emit <span class="hljs-string">"Metrics.on.init"</span>
         <span class="hljs-keyword">delete</span> @init</pre></div>
@@ -546,8 +553,7 @@ Generate the JSON output with all metrics.
 
         
           <div class='highlight'><pre>    output: <span class="hljs-function"><span class="hljs-params">(options)</span> =&gt;</span>
-        logger.debug <span class="hljs-string">"Metrics.output"</span>, options
-        utils.system.getInfo()</pre></div>
+        logger.debug <span class="hljs-string">"Metrics.output"</span>, options</pre></div>
         
       
         

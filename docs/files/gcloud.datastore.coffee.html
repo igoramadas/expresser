@@ -33,7 +33,7 @@ class GCloudDatastore
         settings = parent.expresser.settings
 
         # Create the SNS handler.
-        @ds = @sdk {projectId: settings.app.id}
+        @ds = new @sdk.Datastore {projectId: settings.app.id}
 
         delete @init
 

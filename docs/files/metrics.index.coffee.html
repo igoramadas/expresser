@@ -59,6 +59,9 @@ class Metrics
         @httpServer.init this
         @httpServer.start() if settings.metrics.httpServer.port? and settings.metrics.httpServer.autoStart
 
+        # Force get system info on init to properly count memory and load avg.
+        utils.system.getInfo()
+
         events.emit &quot;Metrics.on.init&quot;
         delete @init
 
@@ -215,7 +218,6 @@ class Metrics
     ###
     output: (options) =&gt;
         logger.debug &quot;Metrics.output&quot;, options
-        utils.system.getInfo()
 
         # Get all metrics keys.
         keys = lodash.keys metrics

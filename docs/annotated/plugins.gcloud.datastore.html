@@ -277,7 +277,7 @@ The datastore object, instantiated automatically on <code>init()</code>.
         <p>Create the SNS handler.</p>
 
         
-          <div class='highlight'><pre>        @ds = @sdk {projectId: settings.app.id}
+          <div class='highlight'><pre>        @ds = <span class="hljs-keyword">new</span> @sdk.Datastore {projectId: settings.app.id}
 
         <span class="hljs-keyword">delete</span> @init</pre></div>
         
