@@ -54,7 +54,7 @@
     },
     "devDependencies": {
         "@google-cloud/datastore": "^3.0.1",
-        "@google-cloud/storage": "^2.4.0",
+        "@google-cloud/storage": "^2.4.1",
         "async_hooks": "^1.0.0",
         "aws-sdk": "^2.395.0",
         "betterdocco": "^0.8.0",

@@ -122,7 +122,7 @@ class App
             @expressApp.use mw for mw in @prependMiddlewares
 
         # Use Express basic handlers.
-        @expressApp.use midBodyParser.json {limit: settings.app.bodyParser.limit}
+        @expressApp.use midBodyParser.json {extended: true, limit: settings.app.bodyParser.limit}
         @expressApp.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}
 
         # Make sure we're using the correct session / cookie secret!
