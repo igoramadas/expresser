@@ -420,7 +420,7 @@ to call <code>configure()</code> on your own.
         <p>Use Express basic handlers.</p>
 
         
-          <div class='highlight'><pre>        @expressApp.use midBodyParser.json {limit: settings.app.bodyParser.limit}
+          <div class='highlight'><pre>        @expressApp.use midBodyParser.json {extended: <span class="hljs-literal">true</span>, limit: settings.app.bodyParser.limit}
         @expressApp.use midBodyParser.urlencoded {extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}</pre></div>
         
       

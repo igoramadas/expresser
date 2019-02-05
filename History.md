@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.5.2
+=====
+* Updated dependencies.
+
 3.5.1
 =====
 * NEW! Added option to include / exclude labels from system.getInfo() output.
