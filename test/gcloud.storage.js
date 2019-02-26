@@ -1,8 +1,10 @@
 // TEST: GOOGLE CLOUD - STORAGE
 
-require("coffeescript/register")
 var env = process.env
 var chai = require("chai")
+var mocha = require("mocha")
+var describe = mocha.describe
+var before = mocha.before
 chai.should()
 
 describe("^Google Cloud Storage Tests", function() {

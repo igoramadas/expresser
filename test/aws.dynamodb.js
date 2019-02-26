@@ -1,8 +1,11 @@
 // TEST: AWS - DynamoDB
 
-require("coffeescript/register")
 var env = process.env
 var chai = require("chai")
+var mocha = require("mocha")
+var describe = mocha.describe
+var before = mocha.before
+var it = mocha.it
 chai.should()
 
 describe("AWS DynamoDB Tests", function() {
@@ -47,8 +50,7 @@ describe("AWS DynamoDB Tests", function() {
                     ReadCapacityUnits: 1,
                     WriteCapacityUnits: 1
                 },
-                KeySchema: [
-                    {
+                KeySchema: [{
                         AttributeName: "year",
                         KeyType: "HASH"
                     },
@@ -57,8 +59,7 @@ describe("AWS DynamoDB Tests", function() {
                         KeyType: "RANGE"
                     }
                 ],
-                AttributeDefinitions: [
-                    {
+                AttributeDefinitions: [{
                         AttributeName: "year",
                         AttributeType: "N"
                     },

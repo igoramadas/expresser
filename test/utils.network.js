@@ -1,9 +1,10 @@
 // TEST: UTILS
 
-require("coffeescript/register")
 var env = process.env
 var chai = require("chai")
-var fs = require("fs")
+var mocha = require("mocha")
+var describe = mocha.describe
+var it = mocha.it
 chai.should()
 
 describe("Utils Network Tests", function() {
