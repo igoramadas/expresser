@@ -1,26 +1,26 @@
 sudo: false
 language: node_js
 node_js:
-    - "11.9"
-    - "10.15"
-    - "8.12"
+  - "11.10"
+  - "10.15"
+  - "8.12"
 services:
-    - mongodb
+  - mongodb
 before_script:
-    - npm install loggly
-    - npm install mongodb
-    - npm install node-logentries
-    - npm install nodemailer
-    - npm install socket.io
-    - npm install coffee-coverage istanbul coveralls
-    - mongo expresser --eval 'db.createUser({user:"travis", pwd:"test", roles:["readWrite"]});'
+  - npm install loggly
+  - npm install mongodb
+  - npm install node-logentries
+  - npm install nodemailer
+  - npm install socket.io
+  - npm install coffee-coverage istanbul coveralls
+  - mongo expresser --eval 'db.createUser({user:"travis", pwd:"test", roles:["readWrite"]});'
 after_success:
-    - "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
+  - "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
 env:
-    - CXX=g++-5
+  - CXX=g++-5
 addons:
-    apt:
-        sources:
-            - ubuntu-toolchain-r-test
-        packages:
-            - g++-5
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-5
