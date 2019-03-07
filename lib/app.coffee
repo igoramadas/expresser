@@ -414,7 +414,7 @@ class App
     # @param {Object} res The Express response object, mandatory.
     # @param {Object} data The JSON data to be sent, mandatory.
     ###
-    renderJson: (req, res, data) ->
+    renderJson: (req, res, data,status) ->
         logger.debug "App.renderJson", req.originalUrl, data
 
         if lodash.isString data
