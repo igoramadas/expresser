@@ -32,7 +32,7 @@
         "chalk": "^2.4.2",
         "coffeescript": "^2.3.2",
         "compressible": "^2.0.16",
-        "compression": "^1.7.3",
+        "compression": "^1.7.4",
         "cookie-parser": "^1.4.4",
         "csswring": "^7.0.0",
         "errorhandler": "^1.5.0",
@@ -54,9 +54,9 @@
     },
     "devDependencies": {
         "@google-cloud/datastore": "^3.1.2",
-        "@google-cloud/storage": "^2.4.2",
+        "@google-cloud/storage": "^2.4.3",
         "async_hooks": "^1.0.0",
-        "aws-sdk": "^2.421.0",
+        "aws-sdk": "^2.424.0",
         "betterdocco": "^0.8.0",
         "chai": "^4.2.0",
         "coffee-coverage": "^3.0.1",
@@ -71,6 +71,6 @@
         "nodemailer": "^5.1.1",
         "socket.io": "^2.2.0",
         "socket.io-client": "^2.2.0",
-        "supertest": "^4.0.0"
+        "supertest": "^4.0.2"
     }
 }
