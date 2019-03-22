@@ -1,5 +1,13 @@
 # Changelog for expresser
 
+4.0.0
+=====
+* TOTALLY NEW EXPRESSER, BUILT FROM SCRATCH WITH TYPESCRIPT!
+*
+
+Legacy versions below...
+===============================================================================
+
 3.5.3
 =====
 * FEATURE-FREEZE ON V3!!! Next Expresser v4 will be written from scratch.

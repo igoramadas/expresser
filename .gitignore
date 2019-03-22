@@ -1,13 +1,6 @@
-.history/
-.idea/
-.vscode/
-.coveralls.yml
 .DS_Store
-build/
+.history/
+.vscode/
 coverage/
-database/
-logs/
 node_modules/
-test/database/
-settings.local.json
 npm-debug.log
