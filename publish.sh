@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+ncu -a
 npm install
 npm update
 npm publish
