@@ -3,7 +3,6 @@
 .history/
 coverage/
 docs/
-plugins/
 src/
 test/
 CNAME

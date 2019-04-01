@@ -1,6 +1,0 @@
-instrumentation:
-    root: lib
-    excludes: ["**/.history/**", "**/lib/app/**", "**/build/**"]
-    default-excludes: true
-    extensions:
-        - .coffee

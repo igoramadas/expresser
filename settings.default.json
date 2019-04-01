@@ -8,40 +8,42 @@
     // APP
     // -------------------------------------------------------------------------
     "app": {
+        // Sets the "Access-Control-Allow-Origin" header. To allow all, set it to "*".
+        "allowOriginHeader": null,
         // Body parser module options.
         "bodyParser": {
+            "enabled": true,
             // Extended URL encoded?
             "extended": true,
             // Default post data limit is set to 10MB by default.
             "limit": "10mb"
         },
         // Enable HTTP compression?
-        "compression": false,
-        // Connect Assets module options.
-        "connectAssets": {
-            // Build assets? True or false.
-            "build": true,
-            // Build directory is assets/build by default.
-            "buildDir": "assets/build",
-            // Minify JS and CSS builds? True or false.
-            "compress": true,
-            "gzip": true,
-            // Default paths for assets, in order of preference. Relative to the app root!
-            "paths": ["assets/js", "assets/css"]
+        "compression": {
+            "enabled": false,
+            // Level of compression, from 0 (fast) to 9 (more compression).
+            "level": 6
         },
         // Cookie options.
         "cookie": {
-            // Enable cookies on Express?
-            "enabled": true
+            "enabled": false
+        },
+        // Emit events for different occasions.
+        "events": {
+            // Emit an event for "render".
+            "render": false
         },
         // Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
         "ip": null,
         // Node.js server port.
         "port": 8080,
+        // Path to the public static folder used by Express. Set to null to not configure the static folder.
+        "publicPath": "./public/",
+        // Secret key used for session and cookies encryption.
+        "secret": "ExpresserSecret",
         // Session options.
         "session": {
-            // Enable session store? This will use the cookieSession implementation of Express.
-            "enabled": true,
+            "enabled": false,
             // Interval in milliseconds to check for expired sessions, default is 5 minutes.
             "checkPeriod": 300000,
             // Set HttpOnly flag on session cookies?
@@ -55,114 +57,46 @@
             // Save uninitialized sessions to the store?
             "saveUninitialized": false,
             // Use secure cookies for session management? Needs HTTPS to work!
-            "secure": true
+            "secure": false
         },
         // SSL options to bind server to HTTPS.
         "ssl": {
             // Is SSL enabled? Please note that you must specify the path to the
-            // certificate files under the `Path` settings.
+            // certificate files below.
             "enabled": false,
             // Path to the SSL key file.
             "keyFile": null,
             // Path to the SSL certificate file.
             "certFile": null,
-            // Create a redirector server to redirect requests from HTTP to HTTPS.
-            // This is the port number of the HTTP redirector server. Leave 0, blank
-            // or null to disable this feature.
-            "redirectorPort": 0,
             // Set to false to ignore SSL / TLS certificate warnings and accept expired
             // and self-signed certificates (not recommended on production).
             "rejectUnauthorized": true
         },
-        // Path to the public folder used by Express.
-        "publicPath": "./public/",
-        // Secret key used for session and cookies encryption.
-        "secret": "ExpresserSecret",
         // Server request / response timeout, in milliseconds, default is 2 minutes.
         "timeout": 120000,
         // The app title. This must be set so Expresser can properly identify your app.
         "title": "Expresser",
         // Trust proxy for secure cookies etc? Default is 1 (trust).
         "trustProxy": 1,
-        // The app's base URL, including http://.
+        // The app's base URL, including http(s)://.
         "url": "http://github.com/igoramadas/expresser",
-        // The view engine used by Express. Default is pug.
-        "viewEngine": "pug",
+        // The view engine used by Express, for example "pug".. Leave null to not use a view engine.
+        "viewEngine": null,
+        // Default view options to be passed to the Express renderer.
+        "viewOptions": {
+            "layout": false
+        },
         // Path to the views directory.
         "viewPath": "./assets/views/"
     },
-    // EVENTS
-    // -------------------------------------------------------------------------
-    "events": {
-        // Enable central event dispatcher? Please note that if you disable it some
-        // inter-module features will not work, although it won't give you exceptions on errors.
-        "enabled": true
-    },
-    // FIREWALL
-    // -------------------------------------------------------------------------
-    "firewall": {
-        // Built-in firewall is disable by default.
-        "enabled": false
-    },
-    // GENERAL
-    // -------------------------------------------------------------------------
     "general": {
-        // Enable or disable debugging messages. Should be false on production environments.
+        // Enable app wide debugging?
         "debug": false,
-        // Default encoding to be used on IO and web requests.
-        "encoding": "utf8",
-        // How long (seconds) should files read from disk stay in cache?
-        "ioCacheTimeout": 30
+        // Default encoding is UTF8.
+        "encoding": "utf8"
     },
-    // LOGGER
-    // -------------------------------------------------------------------------
     "logger": {
-        // Compact log ouputs so they fit in a single line per log call?
-        "compact": true,
-        // Output logs to the console? True or false.
-        "console": true,
-        // Unless you have very specific reasons, leave enabled always true otherwise nothing will be logged.
-        "enabled": true,
-        // Define which log levels should be enabled. For example if you only want to log warnings and errors,
-        // set this value to ["warn", "error"].
-        "levels": ["info", "warn", "error", "critical"],
-        // Maximum depth to parse deep down an object (for performance reasons, default is 6).
-        "maxDepth": 6,
-        // List of user defined properties to be masked. Difference from obfuscate setting above is that the length will be
-        // the same and last characters of the value will not be masked out (for example, leave last 4 digits of phone numbers).
-        "maskFields": {
-            "token": 3,
-            "mobile": 4,
-            "phone": 4
-        },
-        // List of properties to be obfuscated with the static value "***". This is useful to hide passwords, secret keys, etc.
-        // Values separated by comma, case insensitive.
-        "obfuscateFields": "password,passwordhash,passwordencrypted,accesstoken,access_token,refreshtoken,refresh_token,auth,recaptcha,securityToken,incomingToken,privateKey",
-        // List of properties to be removed. This is used to take out specific data from logs (functions for example).
-        // Values separated by comma.
-        "removeFields": null,
-        // If `sendIP` is true, the IP address of the machine will be added to logs events.
-        // Useful when you have different instances of the app running on different services.
-        "sendIP": true,
-        // If `sendTimestamp` is true, a timestamp will be added to logs events.
-        // Please note that Loggly and Logentries already have a timestamp, so in these
-        // cases you can leave this value set to false.
-        "sendTimestamp": true,
-        // Default separator for arguments logged to file and transports.
-        "separator": " | ",
-        // Colours and styles of logs sent to the console (using the Chalk module).
-        // For more info see https://github.com/chalk/chalk
-        // To disable, please set to false.
-        "styles": {
-            "debug": ["gray"],
-            "info": ["white"],
-            "warn": ["yellow"],
-            "error": ["red"],
-            "critical": ["red", "bold"],
-            "deprecated": ["yellow", "bold"]
-        },
-        // Set `uncaughtException` to true to bind the logger to the `uncaughtException`
-        // event on the process and log all uncaught expcetions as errors.
-        "uncaughtException": true
+        // Max depth of sub properties to be logged for JSON objects.
+        "maxDepth:": 6
     }
 }
