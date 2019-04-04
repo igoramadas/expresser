@@ -549,5 +549,5 @@ class App {
     }
 }
 
-// Exports singleton.
+// Exports...
 export = App.Instance

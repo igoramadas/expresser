@@ -92,5 +92,5 @@ class Logger {
     }
 }
 
-// Exports singleton.
+// Exports...
 export = Logger
