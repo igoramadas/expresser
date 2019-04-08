@@ -16,11 +16,12 @@ test-cover:
 
 cover:
 	tsc
-	$(ISTANBUL) $(MOCHAEXEC) --exit -R spec ./test/*.js
+	@NODE_ENV=test $(ISTANBUL) $(MOCHAEXEC) --exit -R spec ./test/*.js
 
 docs:
 	$(TYPEDOC)
 	cp CNAME docs/
+	cp .nojekyll docs/
 
 clean:
 	rm -rf ./node_modules

@@ -8,7 +8,8 @@
         "moduleResolution": "node",
         "noUnusedParameters": true,
         "noUnusedLocals": true,
-        "declaration": true
+        "declaration": true,
+        "removeComments": true
     },
     "typedocOptions": {
         "excludeExternals": true,
