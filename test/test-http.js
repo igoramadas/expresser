@@ -29,6 +29,7 @@ describe("App Main Tests", function() {
         settings.app.compression.enabled = false
         settings.app.cookie.enabled = false
         settings.app.session.enabled = false
+        settings.app.events.render = true
         settings.app.viewPath = "./test/"
     })
 
@@ -97,16 +98,24 @@ describe("App Main Tests", function() {
     })
 
     it("Renders an empty text", function(done) {
-        app.get("/plaintext", function(req, res) {
+        app.get("/emptytext", function(req, res) {
             app.renderText(req, res, null)
         })
 
-        supertest.get("/plaintext").expect(200, done)
+        supertest.get("/emptytext").expect(200, done)
     })
 
-    it("Renders a JSON object", function(done) {
+    it("Renders number as text", function(done) {
+        app.get("/numbertext", function(req, res) {
+            app.renderText(req, res, 123)
+        })
+
+        supertest.get("/numbertext").expect(200, done)
+    })
+
+    it("Renders a simple JSON object", function(done) {
         app.get("/testjson", function(req, res) {
-            var j = {
+            let j = {
                 string: "some value",
                 boolean: true,
                 int: 123,
@@ -118,6 +127,50 @@ describe("App Main Tests", function() {
 
         supertest
             .get("/testjson")
+            .expect("Content-Type", /json/)
+            .expect(200, done)
+    })
+
+    it("Renders a complex JSON object with allow origin header", function(done) {
+        settings.app.allowOriginHeader = true
+
+        app.get("/complexjson", function(req, res) {
+            let j = {
+                string: "some value",
+                boolean: true,
+                int: 123,
+                date: new Date()
+            }
+
+            let inner = {
+                something: {
+                    inside: [1, false, j],
+                    more: {
+                        deep: {
+                            inside: {
+                                obj: {
+                                    hello: {
+                                        there: 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                func: function() {
+                    return false
+                }
+            }
+
+            let final = {
+                inner: inner
+            }
+
+            app.renderJson(req, res, final)
+        })
+
+        supertest
+            .get("/complexjson")
             .expect("Content-Type", /json/)
             .expect(200, done)
     })
@@ -163,7 +216,9 @@ describe("App Main Tests", function() {
             .expect(200, done)
     })
 
-    it("Try rendering an invalid JSON", function(done) {
+    it("Try rendering an invalid JSON, and disable event render", function(done) {
+        settings.app.events.render = false
+
         app.get("/invalidjson", function(req, res) {
             app.renderJson(req, res, "invalid JSON / lalala")
         })

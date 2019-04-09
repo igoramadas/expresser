@@ -63,13 +63,12 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<h1 id="expresser">Expresser</h1>
-				<p>A Node.js framework with web server, events, logging and other common utilities, built on top of Express.js.</p>
-				<p><a href="https://travis-ci.org/igoramadas/expresser"><img src="https://travis-ci.org/igoramadas/expresser.png?branch=master" alt="Build Status"></a>
-				<a href="https://coveralls.io/github/igoramadas/expresser?branch=master"><img src="https://coveralls.io/repos/github/igoramadas/expresser/badge.svg?branch=master" alt="Coverage Status"></a></p>
-				<h3 id="why-expresser-">Why Expresser?</h3>
-				<p>The idea of Expresser is to aggregate common modules and utilities into a single package, making it damn easy
-					to start and streamline your new Node.js application. Developed with CoffeeScript v2, it has full support for all
-				the new features of ES6, including async / await.</p>
+				<p><a href="https://travis-ci.org/igoramadas/expresser"><img src="https://img.shields.io/travis/igoramadas/expresser.svg?style=flat-square" alt="Build Status"></a>
+				<a href="https://coveralls.io/github/igoramadas/expresser?branch=master"><img src="https://img.shields.io/coveralls/github/igoramadas/expresser.svg?style=flat-square" alt="Coverage Status"></a></p>
+				<p>A Node.js framework built on top of Express.</p>
+				<h2 id="why-expresser-">Why Expresser?</h2>
+				<p>Building on top of Express with added logging, utilities and extra plugins. The idea of Expresser is to aggregate
+				all these common modules and utilities into a single package, making it damn easy to create your new Node.js app.</p>
 				<h3 id="use-expresser-if-">Use Expresser if...</h3>
 				<ul>
 					<li>You&#39;re new to Node.js web apps</li>
@@ -78,119 +77,15 @@
 				</ul>
 				<h3 id="look-elsewhere-if-">Look elsewhere if...</h3>
 				<ul>
-					<li>You hate CoffeeScript</li>
 					<li>You hate Express.js</li>
-					<li>You need ultimate performance and as little overhead as possible (in this case you should not be using many external packages anyways)</li>
+					<li>You hate TypeScript</li>
+					<li>You need ultimate performance and as little overhead as possible</li>
 				</ul>
-				<h3 id="example-app">Example app</h3>
-				<pre><code>expresser = require <span class="hljs-string">"expresser"</span>
-logger = expresser.logger
-metrics = require <span class="hljs-string">"expresser-metrics"</span><span class="hljs-built_in">
-settings </span>= expresser.settings
-app = expresser.app
-
-<span class="hljs-comment"># Init the Expresser framework</span>
-expresser.init()
-logger.<span class="hljs-builtin-name">info</span> <span class="hljs-string">"App started!"</span>
-
-<span class="hljs-comment"># Renders the index.pug view from /views folder</span>
-app.server.<span class="hljs-builtin-name">get</span> <span class="hljs-string">"/"</span>, (req, res) -&gt; app.renderView req, res, <span class="hljs-string">"index"</span>
-
-<span class="hljs-comment"># Renders output from the Metrics plugin.</span>
-app.server.<span class="hljs-builtin-name">get</span> <span class="hljs-string">"/metrics"</span>, (req, res) -&gt; app.renderJson req, res, metrics.output()</code></pre><p>It seems pretty simple, right? Most configuration is done on a <code>settings.json</code> file...</p>
-				<h3 id="settings">Settings</h3>
-				<p>Settings for the app and all modules are loaded by the <code>settings.coffee</code> module. If you wish to customize any of
-					these settings, please create a <code>settings.json</code> file on the root of your app folder with the specific keys
-				and values. For more info please head to <a href="https://github.com/igoramadas/expresser/blob/master/docs/settings.md">https://github.com/igoramadas/expresser/blob/master/docs/settings.md</a>.</p>
-				<h1 id="main-modules">Main modules</h1>
-				<p>Now to the main modules...</p>
-				<h3 id="app">App</h3>
-				<ul>
-					<li>Pre-configured Express web server.</li>
-					<li><a href="https://expresser.devv.com/guides/App.html">https://expresser.devv.com/guides/App.html</a></li>
-				</ul>
-				<h3 id="events">Events</h3>
-				<ul>
-					<li>Central events dispatcher.</li>
-					<li><a href="https://expresser.devv.com/guides/Events.html">https://expresser.devv.com/guides/Events.html</a></li>
-				</ul>
-				<h3 id="logger">Logger</h3>
-				<ul>
-					<li>Application logging.</li>
-					<li><a href="https://expresser.devv.com/guides/Logger.html">https://expresser.devv.com/guides/Logger.html</a></li>
-				</ul>
-				<h3 id="settings">Settings</h3>
-				<ul>
-					<li>Settings wrapper.</li>
-					<li><a href="https://expresser.devv.com/guides/Settings.html">https://expresser.devv.com/guides/Settings.html</a></li>
-				</ul>
-				<h3 id="utils">Utils</h3>
-				<ul>
-					<li>General utilities and helper methods.</li>
-					<li><a href="https://expresser.devv.com/guides/Utils.html">https://expresser.devv.com/guides/Utils.html</a></li>
-				</ul>
-				<h1 id="plugins">Plugins</h1>
-				<p>And the official plugins...</p>
-				<h3 id="aws">AWS</h3>
-				<ul>
-					<li>Wrapper around some of the AWS SDK features.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/aws">https://github.com/igoramadas/expresser/tree/master/plugins/aws</a></li>
-				</ul>
-				<h3 id="cron">Cron</h3>
-				<ul>
-					<li>Configurable cron for scheduled tasks using JSON files.</li>
-					<li>Supports multiple files and multiple modules.</li>
-					<li>Supports managing scheduled tasks programatically.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/cron">https://github.com/igoramadas/expresser/tree/master/plugins/cron</a></li>
-				</ul>
-				<h3 id="database-mongodb">Database: MongoDB</h3>
-				<ul>
-					<li>MongoDB database wrapper.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/database-mongodb">https://github.com/igoramadas/expresser/tree/master/plugins/database-mongodb</a></li>
-				</ul>
-				<h3 id="downloader">Downloader</h3>
-				<ul>
-					<li>Configurable download manager supporting standard web protocols.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/downloader">https://github.com/igoramadas/expresser/tree/master/plugins/downloader</a></li>
-				</ul>
-				<h3 id="google-cloud">Google Cloud</h3>
-				<ul>
-					<li>Wrapper around some of the Google Cloud SDK features.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/gcloud">https://github.com/igoramadas/expresser/tree/master/plugins/gcloud</a></li>
-				</ul>
-				<h3 id="logger-file">Logger: File</h3>
-				<ul>
-					<li>Local file driver for the Logger module.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/logger-file">https://github.com/igoramadas/expresser/tree/master/plugins/logger-file</a></li>
-				</ul>
-				<h3 id="logger-logentries">Logger: Logentries</h3>
-				<ul>
-					<li>Logentries (<a href="http://logentries.com">http://logentries.com</a>) driver for the Logger module.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/logger-logentries">https://github.com/igoramadas/expresser/tree/master/plugins/logger-logentries</a></li>
-				</ul>
-				<h3 id="logger-loggly">Logger: Loggly</h3>
-				<ul>
-					<li>Loggly (<a href="http://loggly.com">http://loggly.com</a>) for the Logger module.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/logger-loggly">https://github.com/igoramadas/expresser/tree/master/plugins/logger-loggly</a></li>
-				</ul>
-				<h3 id="mailer">Mailer</h3>
-				<ul>
-					<li>Wrapper around Nodemailer, with support for SMTP and a bunch of email services.</li>
-					<li>Supports email templates and keywords parsing.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/mailer">https://github.com/igoramadas/expresser/tree/master/plugins/mailer</a></li>
-				</ul>
-				<h3 id="metrics">Metrics</h3>
-				<ul>
-					<li>Generate and report metrics for your application.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/metrics">https://github.com/igoramadas/expresser/tree/master/plugins/metrics</a></li>
-				</ul>
-				<h3 id="sockets">Sockets</h3>
-				<ul>
-					<li>Wrapper for the Socket.IO module.</li>
-					<li><a href="https://github.com/igoramadas/expresser/tree/master/plugins/sockets">https://github.com/igoramadas/expresser/tree/master/plugins/sockets</a></li>
-				</ul>
-				<h1 id="need-help-">Need help?</h1>
-				<p>Can&#39;t find what you&#39;re looking for? Need help? Then post on the Issue Tracker: <a href="https://github.com/igoramadas/expresser/issues">https://github.com/igoramadas/expresser/issues</a></p>
+				<h2 id="new-version-4">New version 4</h2>
+				<p>Expresser is being rebuilt! CoffeeScript gives way to TypeScript. All-in-one gives way to only-what-you-need.
+				More info coming soon...</p>
+				<h2 id="api-documentation">API documentation</h2>
+				<p>You can browse the full API documentation at <a href="https://expresser.devv.com">https://expresser.devv.com</a>.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">

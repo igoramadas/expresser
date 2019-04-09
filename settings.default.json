@@ -97,6 +97,19 @@
     },
     "logger": {
         // Max depth of sub properties to be logged for JSON objects.
-        "maxDepth:": 6
+        "maxDepth:": 6,
+        // List of user defined properties to be masked. Difference from obfuscate setting above is that the length will be
+        // the same and last characters of the value will not be masked out (for example, leave last 4 digits of phone numbers).
+        "maskFields": {
+            "token": 3,
+            "mobile": 4,
+            "phone": 4
+        },
+        // List of properties to be obfuscated with the static value "***". This is useful to hide passwords, secret keys, etc.
+        // Values separated by comma, case insensitive.
+        "obfuscateFields": "password,passwordhash,accesstoken,access_token,refreshtoken,refresh_token,auth,recaptcha,privatekey",
+        // List of properties to be removed. This is used to take out specific data from logs (functions for example).
+        // Values separated by comma.
+        "removeFields": null
     }
 }

@@ -1,33 +1,57 @@
+// Expresser: app.ts
+
 import EventEmitter = require("eventemitter3")
 import express = require("express")
 import {Http2SecureServer, Http2Server} from "http2"
 
+/** @hidden */
 const _ = require("lodash")
+/** @hidden */
 const fs = require("fs")
+/** @hidden */
 const http = require("http")
+/** @hidden */
 const https = require("https")
+/** @hidden */
 const jaul = require("jaul")
+/** @hidden */
 const logger = require("anyhow")
+/** @hidden */
 const path = require("path")
+/** @hidden */
 const settings = require("setmeup").settings
 
+/** Middleware definitions to be be passed on app [[init]]. */
 interface MiddlewareDefs {
+    /** Single or array of middlewares to be prepended. */
     prepend: any | any[]
+    /** Single or array of middlewares to be appended. */
     append: any | any[]
 }
 
+/** Main App class. */
 class App {
     private static _instance: App
+    /** @hidden */
     static get Instance() {
         return this._instance || (this._instance = new this())
     }
 
-    /**
-     * Returns a new fresh instance of the App module.
-     */
+    /** Returns a new fresh instance of the App module. */
     newInstance(): App {
         return new App()
     }
+
+    /** Default App constructor. */
+    constructor() {
+        if (!logger.isReady) {
+            logger.setup()
+            logger.preprocessor = require("./logger").clean
+        }
+    }
+
+    // PROPERTIES
+    // --------------------------------------------------------------------------
 
     /** Express application. */
     expressApp: express.Application
@@ -38,20 +62,12 @@ class App {
     /** Event emitter. */
     events: EventEmitter = new EventEmitter()
 
-    /**
-     * Default App constructor.
-     */
-    constructor() {
-        if (!logger.isReady) {
-            logger.setup()
-        }
-    }
-
     // MAIN METHODS
     // --------------------------------------------------------------------------
 
     /**
-     * Init the application.
+     * Init the app module and start the HTTP(S) server.
+     * @param middlewares List of middlewares to be appended / prepended.
      */
     init(middlewares?: MiddlewareDefs) {
         let mw
@@ -403,7 +419,9 @@ class App {
             res.setHeader("content-type", "text/plain")
             res.send(text)
         } catch (ex) {
+            /* istanbul ignore next */
             logger.error("App.renderText", text, ex)
+            /* istanbul ignore next */
             this.renderError(req, res, ex)
         }
 
@@ -423,13 +441,14 @@ class App {
             try {
                 data = JSON.parse(data)
             } catch (ex) {
+                logger.error("App.renderJson", ex)
                 return this.renderError(req, res, ex, 500)
             }
         }
 
         // Remove methods from JSON before rendering.
         var cleanJson = function(obj, depth) {
-            if (depth > settings.logger.maxDepth) {
+            if (depth >= settings.logger.maxDepth) {
                 return
             }
 
@@ -523,22 +542,24 @@ class App {
 
             if (_.isString(error)) {
                 message = error
-            }
+            } else {
+                message = {}
+                message.message = error.message || error.error_description || error.description || error.toString()
 
-            message.message = error.message || error.error_description || error.description || error.toString()
-
-            if (error.friendlyMessage) {
-                message.friendlyMessage = error.friendlyMessage
-            }
-            if (error.reason) {
-                message.reason = error.reason
-            }
-            if (error.code) {
-                message.code = error.code
-            } else if (error.status) {
-                message.code = error.status
+                if (error.friendlyMessage) {
+                    message.friendlyMessage = error.friendlyMessage
+                }
+                if (error.reason) {
+                    message.reason = error.reason
+                }
+                if (error.code) {
+                    message.code = error.code
+                } else if (error.status) {
+                    message.code = error.status
+                }
             }
         } catch (ex) {
+            /* istanbul ignore next */
             logger.error("App.renderError", ex)
         }
 
