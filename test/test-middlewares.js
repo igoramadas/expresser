@@ -17,7 +17,7 @@ describe("App Middleware Tests", function() {
     let supertest = null
 
     before(async function() {
-        let port = await getPort(8000)
+        let port = await getPort(8004)
         let logger = require("anyhow")
         logger.setup("none")
 
@@ -26,19 +26,58 @@ describe("App Middleware Tests", function() {
         settings = setmeup.settings
         settings.app.port = port
         settings.app.ssl.enabled = false
-        settings.app.compression.enabled = false
+        settings.app.compression.enabled = true
         settings.app.cookie.enabled = true
         settings.app.session.enabled = true
         settings.app.viewPath = "./test/"
-
-        app.init()
-        supertest = require("supertest").agent(app.expressApp)
     })
 
     after(function() {
         if (app && app.kill) {
             app.kill()
         }
+    })
+
+    it("Init HTTP server with custom middlewares", function() {
+        let prepend = function(req, res, next) {
+            if (req.path == "/prepend") {
+                res.json({
+                    ok: true
+                })
+            }
+            next()
+        }
+
+        let append = function(req, res, next) {
+            if (req.path == "/append") {
+                res.json({
+                    ok: true
+                })
+            }
+            next()
+        }
+
+        let middlewares = {
+            prepend: prepend,
+            append: append
+        }
+
+        app.init(middlewares)
+        supertest = require("supertest").agent(app.expressApp)
+    })
+
+    it("Test prepended middleware on route /prepend", function(done) {
+        supertest
+            .get("/prepend")
+            .expect("Content-Type", /json/)
+            .expect(200, done)
+    })
+
+    it("Test appended middleware on route /append", function(done) {
+        supertest
+            .get("/append")
+            .expect("Content-Type", /json/)
+            .expect(200, done)
     })
 
     it("Set and read request session", function(done) {

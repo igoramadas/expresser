@@ -31,10 +31,13 @@ publish:
 	npm publish
 
 update:
+	rm -rf node_modules/jaul
+	rm -rf node_modules/anyhow
+	rm -rf node_modules/setmeup
 	ncu -u
 	npm install
-	npm link anyhow
 	npm link jaul
+	npm link anyhow
 	npm link setmeup
 
 .PHONY: test

@@ -11,11 +11,13 @@ let it = mocha.it
 chai.should()
 
 describe("App Logger Tests", function() {
+    let _ = require("lodash")
     let logger
     let setmeup
 
     before(async function() {
         setmeup = require("setmeup")
+        setmeup.load()
         settings = setmeup.settings
         settings.logger.removeFields = ["username"]
 
@@ -30,16 +32,19 @@ describe("App Logger Tests", function() {
                 something: {
                     very: {
                         deep: {
-                            inside: {
-                                here: {
-                                    one: {
-                                        more: true
-                                    }
-                                }
-                            }
+                            inside: true
                         }
                     }
                 }
+            },
+            someString: "abcd",
+            someNumber: 123,
+            someError: new Error("Inner error"),
+            someArray: [{
+                innerArray: []
+            }],
+            someFunction: () => {
+                return true
             }
         }
 
@@ -48,45 +53,71 @@ describe("App Logger Tests", function() {
         }
 
         let err = new Error("There was an error")
-        let longArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, err, func, innerObject]
+        let longArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, "abc", true, false, err, func, innerObject]
 
-        logger.getMessage(null, {}, "A", 1, err, func, innerObject, longArray, [err, func, innerObject, longArray])
+        let msg = logger.getMessage(1, "A", new Date(), null, err, func, innerObject, longArray, [err, func, innerObject, longArray])
 
         done()
     })
 
-    it("Maks fields (token and mobile)", function(done) {
-        let toMask = {
-            token: "ABC123",
+    it("Maks fields (mobile)", function(done) {
+        let msg = logger.getMessage({
+            mobile: "123456789"
+        })
+        if (msg.indexOf("123456789") >= 0) {
+            return done("The mobile was not obfuscated.")
+        }
+
+        msg = logger.getMessage({
             mobile: {
-                value: "017612345678"
+                value: "123456789"
             }
+        })
+        if (msg.indexOf("123456789") >= 0) {
+            return done("The mobile (value) was not obfuscated.")
         }
 
-        let msg = logger.getMessage(toMask)
-
-        if (msg.token == "ABC123" || msg.mobile == "017612345678") {
-            done("The token and/or mobile were not properly masked.")
-        } else {
-            done()
+        msg = logger.getMessage({
+            mobile: {
+                text: "123456789"
+            }
+        })
+        if (msg.indexOf("123456789") >= 0) {
+            return done("The mobile (text) was not obfuscated.")
         }
+
+        msg = logger.getMessage({
+            mobile: {
+                data: "123456789"
+            }
+        })
+        if (msg.indexOf("123456789") >= 0) {
+            return done("The mobile (data) was not obfuscated.")
+        }
+
+        let obj = {}
+        obj.toString = function() {
+            return "123456789"
+        }
+
+        msg = logger.getMessage({
+            mobile: obj
+        })
+        if (msg.indexOf("123456789") >= 0) {
+            return done("The mobile (data) was not obfuscated.")
+        }
+
+        done()
     })
 
     it("Obfuscate sensitive fields (password and accesstoken)", function(done) {
-        let toObfuscate = {
-            password: "mypassword",
-            accesstoken: {
-                value: "123"
-            }
+        let msg = logger.getMessage({
+            password: "mypassword"
+        })
+        if (msg.indexOf("mypassword") >= 0) {
+            return done("The password was not obfuscated.")
         }
-
-        let msg = logger.getMessage(toObfuscate)
-
-        if (msg.password == "mypassword" || msg.accesstoken) {
-            done("The password and/or accesstoken were not obfuscated.")
-        } else {
-            done()
-        }
+        done()
     })
 
     it("Remove fields (username)", function(done) {

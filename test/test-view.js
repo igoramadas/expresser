@@ -17,7 +17,7 @@ describe("App Main Tests", function() {
     let supertest = null
 
     before(async function() {
-        let port = await getPort(8002)
+        let port = await getPort(8005)
         let logger = require("anyhow")
         logger.setup("none")
 

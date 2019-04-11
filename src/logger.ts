@@ -9,35 +9,44 @@ const settings = require("setmeup").settings
 
 /** Logger helper class to configure the Anyhow logging module. */
 class Logger {
+    /** Recursive arguments cleaner. */
     static argsCleaner(obj, index) {
         const max = settings.logger.maxDepth
 
+        // Argument is array?
         if (_.isArray(obj)) {
             for (let i = 0; i < obj.length; i++) {
                 if (index >= max) {
                     obj[i] = "..."
                 } else if (_.isFunction(obj[i])) {
-                    /* istanbul ignore next */
                     obj[i] = "[Function]"
                 } else {
                     Logger.argsCleaner(obj[i], index + 1)
                 }
             }
-        } else if (_.isObject(obj)) {
-            Object.keys(obj).forEach(function(key) {
+        }
+        // Remove error stack traces depending on settings.
+        else if (_.isError(obj) && obj.stack && !settings.logger.errorStack) {
+            obj._logNoStack = true
+        }
+        // Arg is an object? Then recurisvely clean its sub properties.
+        else if (_.isObject(obj)) {
+            let keys = _.keys(obj)
+
+            for (let key of keys) {
                 let value = obj[key]
 
                 try {
-                    if (index > max) {
+                    if (index >= max) {
                         obj[key] = "..."
                     } else if (settings.logger.obfuscateFields && settings.logger.obfuscateFields.indexOf(key) >= 0) {
                         obj[key] = "****"
                     } else if (settings.logger.maskFields && settings.logger.maskFields[key]) {
                         let maskedValue
 
-                        /* istanbul ignore if */
+                        // Actual value might be hidden inside a value, text or data sub-property.
                         if (_.isObject(value)) {
-                            maskedValue = value.value || value.text || value.contents || value.data || "*"
+                            maskedValue = value.value || value.text || value.data || value.toString()
                         } else {
                             maskedValue = value.toString()
                         }
@@ -54,40 +63,24 @@ class Logger {
                     } else if (_.isObject(value)) {
                         Logger.argsCleaner(value, index + 1)
                     }
+
+                    // Set the _logNoStack flag depending on settings.
+                    if (_.isError(value) && value.stack && !settings.logger.errorStack) {
+                        value._logNoStack = true
+                    }
                 } catch (ex) {
                     /* istanbul ignore next */
                     delete obj[key]
                     /* istanbul ignore next */
                     obj[key] = "[Unreadable]"
                 }
-            })
+            }
         }
     }
 
-    static clean(args: any[]) {
-        const result = []
-
-        // Iterate array and execute cleaner on objects.
-        for (let a of args) {
-            try {
-                if (_.isError(a)) {
-                    result.push(a)
-                } else if (_.isObject(a)) {
-                    Logger.argsCleaner(a, 0)
-                    result.push(a)
-                } else if (_.isFunction(a)) {
-                    /* istanbul ignore next */
-                    result.push("[Function]")
-                } else {
-                    result.push(a)
-                }
-            } catch (ex) {
-                /* istanbul ignore next */
-                console.warn("Logger.argsCleaner", a, ex)
-            }
-        }
-
-        return result
+    /** Used as a preprocessor for the Anyhow logger. */
+    static clean(args: any[]): any {
+        Logger.argsCleaner(args, 0)
     }
 }
 

@@ -16,7 +16,7 @@ declare class App {
     static readonly Instance: App;
     /** Returns a new fresh instance of the App module. */
     newInstance(): App;
-    /** Default App constructor. */
+    /** Default App constructor. Binds the [[Logger]] clean by default for logging. */
     constructor();
     /** Express application. */
     expressApp: express.Application;

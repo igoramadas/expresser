@@ -10,14 +10,14 @@ let it = mocha.it
 
 chai.should()
 
-describe("App Main Tests", function() {
+describe("App HTTP Tests", function() {
     let app = null
     let setmeup = null
     let settings = null
     let supertest = null
 
     before(async function() {
-        let port = await getPort(8000)
+        let port = await getPort(8002)
         let logger = require("anyhow")
         logger.setup("none")
 
@@ -61,184 +61,65 @@ describe("App Main Tests", function() {
         }
     })
 
-    it("Init HTTP server with custom middlewares", function() {
-        let prepend = function(req, res, next) {
-            if (req.path == "/prepend") {
-                res.json({
-                    ok: true
-                })
-            }
-            next()
-        }
-
-        let append = function(req, res, next) {
-            if (req.path == "/append") {
-                res.json({
-                    ok: true
-                })
-            }
-            next()
-        }
-
-        let middlewares = {
-            prepend: prepend,
-            append: append
-        }
-
-        app.init(middlewares)
+    it("Init HTTP server", function() {
+        app.init()
         supertest = require("supertest").agent(app.expressApp)
     })
 
-    it("Renders a plain text", function(done) {
-        app.get("/plaintext", function(req, res) {
-            app.renderText(req, res, "Hello world!")
+    it("Request get", function(done) {
+        app.get("/get", function(req, res) {
+            res.send("ok")
         })
 
-        supertest.get("/plaintext").expect(200, done)
+        supertest.get("/get").expect(200, done)
     })
 
-    it("Renders an empty text", function(done) {
-        app.get("/emptytext", function(req, res) {
-            app.renderText(req, res, null)
+    it("Request post", function(done) {
+        app.post("/post", function(req, res) {
+            res.send("ok")
         })
 
-        supertest.get("/emptytext").expect(200, done)
+        supertest.post("/post").expect(200, done)
     })
 
-    it("Renders number as text", function(done) {
-        app.get("/numbertext", function(req, res) {
-            app.renderText(req, res, 123)
+    it("Request patch", function(done) {
+        app.patch("/patch", function(req, res) {
+            res.send("ok")
         })
 
-        supertest.get("/numbertext").expect(200, done)
+        supertest.patch("/patch").expect(200, done)
     })
 
-    it("Renders a simple JSON object", function(done) {
-        app.get("/testjson", function(req, res) {
-            let j = {
-                string: "some value",
-                boolean: true,
-                int: 123,
-                date: new Date()
-            }
-
-            app.renderJson(req, res, j)
+    it("Request put", function(done) {
+        app.put("/put", function(req, res) {
+            res.send("ok")
         })
 
-        supertest
-            .get("/testjson")
-            .expect("Content-Type", /json/)
-            .expect(200, done)
+        supertest.put("/put").expect(200, done)
     })
 
-    it("Renders a complex JSON object with allow origin header", function(done) {
-        settings.app.allowOriginHeader = true
-
-        app.get("/complexjson", function(req, res) {
-            let j = {
-                string: "some value",
-                boolean: true,
-                int: 123,
-                date: new Date()
-            }
-
-            let inner = {
-                something: {
-                    inside: [1, false, j],
-                    more: {
-                        deep: {
-                            inside: {
-                                obj: {
-                                    hello: {
-                                        there: 1
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                func: function() {
-                    return false
-                }
-            }
-
-            let final = {
-                inner: inner
-            }
-
-            app.renderJson(req, res, final)
+    it("Request delete", function(done) {
+        app.delete("/delete", function(req, res) {
+            res.send("ok")
         })
 
-        supertest
-            .get("/complexjson")
-            .expect("Content-Type", /json/)
-            .expect(200, done)
+        supertest.delete("/delete").expect(200, done)
     })
 
-    it("Renders an error with status 500", function(done) {
-        app.get("/testerror", function(req, res) {
-            var e = {
-                somerror: new Error("Access was denied"),
-                timestamp: new Date().getTime()
-            }
-
-            app.renderError(req, res, e, 500)
-        })
-
-        supertest
-            .get("/testerror")
-            .expect("Content-Type", /json/)
-            .expect(500, done)
-    })
-
-    it("Renders a JPG image", function(done) {
-        app.get("/testjpg", function(req, res) {
-            app.renderImage(req, res, __dirname + "/testimage.jpg")
-        })
-
-        supertest
-            .get("/testjpg")
-            .expect("Content-Type", /image/)
-            .expect(200, done)
-    })
-
-    it("Test prepended middleware on route /prepend", function(done) {
-        supertest
-            .get("/prepend")
-            .expect("Content-Type", /json/)
-            .expect(200, done)
-    })
-
-    it("Test appended middleware on route /append", function(done) {
-        supertest
-            .get("/append")
-            .expect("Content-Type", /json/)
-            .expect(200, done)
-    })
-
-    it("Try rendering an invalid JSON, and disable event render", function(done) {
-        settings.app.events.render = false
-
-        app.get("/invalidjson", function(req, res) {
-            app.renderJson(req, res, "invalid JSON / lalala")
-        })
-
-        supertest.get("/invalidjson").expect(500, done)
-    })
-
-    it("Lists all registered routes on the server", function(done) {
-        done()
-        let routes = app.listRoutes()
-        let simpleRoutes = app.listRoutes(true)
-
-        if (simpleRoutes.length == routes.length) {
-            done()
-        } else {
-            done("The getRoutes should return same length for when `asString` is true or false.")
-        }
-    })
-
-    it("Kills the server", function() {
+    it("Kills the server", function(done) {
+        app.events.once("kill", done)
         app.kill()
+    })
+
+    it("Restart the server", function(done) {
+        this.timeout(5000)
+
+        let killer = function() {
+            app.start()
+            done()
+        }
+
+        app.events.on("start", killer)
+        app.start()
     })
 })

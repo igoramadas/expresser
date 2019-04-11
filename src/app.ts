@@ -42,10 +42,14 @@ class App {
         return new App()
     }
 
-    /** Default App constructor. */
+    /** Default App constructor. Binds the [[Logger]] clean by default for logging. */
     constructor() {
         if (!logger.isReady) {
+            /* istanbul ignore next */
             logger.setup()
+        }
+
+        if (!logger.preprocessor) {
             logger.preprocessor = require("./logger").clean
         }
     }
@@ -114,6 +118,7 @@ class App {
                 this.expressApp.use(midBodyParser.json({extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}))
                 this.expressApp.use(midBodyParser.urlencoded({extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}))
             } catch (ex) {
+                /* istanbul ignore next */
                 logger.warn("App.init", "Can't load 'body-parser' module.")
             }
         }
@@ -124,7 +129,9 @@ class App {
                 const midCookieParser = require("cookie-parser")
                 this.expressApp.use(midCookieParser(settings.app.secret))
             } catch (ex) {
+                /* istanbul ignore next */
                 ex.friendlyMessage = "Can't load 'cookie-parser' module."
+                /* istanbul ignore next */
                 logger.error("App.init", ex)
             }
         }
@@ -151,7 +158,9 @@ class App {
                     })
                 )
             } catch (ex) {
+                /* istanbul ignore next */
                 ex.friendlyMessage = "Can't load 'express-session' and 'memorystore' modules."
+                /* istanbul ignore next */
                 logger.error("App.init", ex)
             }
         }
@@ -162,7 +171,9 @@ class App {
                 const midCompression = require("compression")
                 this.expressApp.use(midCompression())
             } catch (ex) {
+                /* istanbul ignore next */
                 ex.friendlyMessage = "Can't load 'compression' module."
+                /* istanbul ignore next */
                 logger.error("App.init", ex)
             }
         }
@@ -213,7 +224,8 @@ class App {
      */
     start(): Http2Server | Http2SecureServer {
         if (this.server) {
-            return logger.warn("App.start", "Server is already running, aborting start().")
+            logger.warn("App.start", "Server is already running, abort start.")
+            return this.server
         }
 
         let serverRef
@@ -224,14 +236,10 @@ class App {
 
             // Certificate files were found? Proceed, otherwise alert the user and throw an error.
             if (sslKeyFile && sslCertFile) {
-                if (fs.existsSync(sslKeyFile) && fs.existsSync(sslCertFile)) {
-                    const sslKey = fs.readFileSync(sslKeyFile, {encoding: settings.general.encoding})
-                    const sslCert = fs.readFileSync(sslCertFile, {encoding: settings.general.encoding})
-                    const sslOptions = {key: sslKey, cert: sslCert}
-                    serverRef = https.createServer(sslOptions, this.expressApp)
-                } else {
-                    throw new Error("Certificate not found, please check paths defined on settings.app.ssl.")
-                }
+                const sslKey = fs.readFileSync(sslKeyFile, {encoding: settings.general.encoding})
+                const sslCert = fs.readFileSync(sslCertFile, {encoding: settings.general.encoding})
+                const sslOptions = {key: sslKey, cert: sslCert}
+                serverRef = https.createServer(sslOptions, this.expressApp)
             } else {
                 throw new Error("Invalid certificate filename, please check paths defined on settings.app.ssl.")
             }
@@ -250,7 +258,9 @@ class App {
             }
         }
 
+        /* istanbul ignore next */
         let listenError = err => {
+            /* istanbul ignore next */
             logger.error("App.start", "Can't start", err)
         }
 
@@ -272,16 +282,18 @@ class App {
      * Kill the underlying HTTP(S) server(s).
      */
     kill(): void {
+        if (!this.server) {
+            logger.warn("App.kill", "Server was not running")
+            return
+        }
+
         try {
-            if (this.server) {
-                this.server.close()
-            }
+            this.server.close()
+            this.server = null
+            this.events.emit("kill")
         } catch (ex) {
             logger.error("App.kill", ex)
         }
-
-        this.server = null
-        this.events.emit("kill")
     }
 
     // BRIDGED METHODS
@@ -392,7 +404,9 @@ class App {
             // Send rendered view to client.
             res.render(view, options)
         } catch (ex) {
+            /* istanbul ignore next */
             logger.error("App.renderView", view, ex)
+            /* istanbul ignore next */
             this.renderError(req, res, ex)
         }
 
@@ -527,15 +541,21 @@ class App {
         let message
         logger.debug("App.renderError", req.originalUrl, status, error)
 
-        // Status default status.
-        if (status == null) {
-            status = (error != null ? error.statusCode : undefined) || 500
+        /* istanbul ignore next */
+        if (typeof error == "undefined" || error == null) {
+            error = "Unknown error"
+            logger.warn("App.renderError", "Called with null error")
         }
-        if (status === "ETIMEDOUT") {
+
+        // Status default statuses.
+        if (status == null) {
+            status = error.statusCode ? error.statusCode : 500
+        } else if (status === "ETIMEDOUT") {
             status = 408
         }
 
         try {
+            // Error inside another .error property?
             if (error.error && !error.message && !error.error_description && !error.reason) {
                 error = error.error
             }
@@ -544,7 +564,13 @@ class App {
                 message = error
             } else {
                 message = {}
-                message.message = error.message || error.error_description || error.description || error.toString()
+                message.message = error.message || error.error_description || error.description
+
+                // No message found? Just use the default .toString() then.
+                /* istanbul ignore next */
+                if (!message.message) {
+                    message = error.toString()
+                }
 
                 if (error.friendlyMessage) {
                     message.friendlyMessage = error.friendlyMessage
