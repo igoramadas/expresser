@@ -23,8 +23,7 @@
     },
     "scripts": {
         "docs": "make docs",
-        "cover": "make test-cover",
-        "test": "make test"
+        "test": "make test-cover"
     },
     "dependencies": {
         "anyhow": "^0.9.2",
