@@ -112,8 +112,6 @@ describe("App HTTP Tests", function() {
     })
 
     it("Restart the server", function(done) {
-        this.timeout(5000)
-
         let killer = function() {
             app.start()
             done()

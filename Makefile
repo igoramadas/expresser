@@ -10,8 +10,7 @@ test:
 
 test-cover:
 	echo TRAVIS_JOB_ID $(TRAVIS_JOB_ID)
-	@NODE_ENV=test $(ISTANBUL) \
-	$(MOCHAEXEC) --exit --report lcovonly -R spec --timeout 4000 && \
+	@NODE_ENV=test $(ISTANBUL) $(MOCHAEXEC) --exit --report lcovonly -R spec --timeout 4000 && \
 	cat ./coverage/lcov.info | $(COVERALLS) || true
 
 cover:
