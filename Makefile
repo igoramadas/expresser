@@ -9,6 +9,7 @@ test:
 	@NODE_ENV=test $(MOCHA) --trace-warnings --exit -u tdd -R spec
 
 test-cover:
+	tsc
 	echo TRAVIS_JOB_ID $(TRAVIS_JOB_ID)
 	@NODE_ENV=test $(ISTANBUL) $(MOCHAEXEC) --exit --report lcovonly -R spec && \
 	cat ./coverage/lcov.info | $(COVERALLS) || true
