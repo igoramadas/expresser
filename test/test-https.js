@@ -63,7 +63,7 @@ describe("App HTTPS Tests", function() {
     })
 
     it("Kills the server", function(done) {
-        app.events.once("kill", done)
+        app.once("kill", done)
         app.kill()
     })
 

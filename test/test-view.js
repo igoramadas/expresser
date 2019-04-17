@@ -53,6 +53,7 @@ describe("App Main Tests", function() {
         settings.app.events.render = true
 
         let callback = () => {
+            app.off("renderView", callback)
             done()
         }
 
@@ -60,7 +61,7 @@ describe("App Main Tests", function() {
             app.renderView(req, res, "testview.pug")
         })
 
-        app.events.once("renderView", callback)
+        app.on("renderView", callback)
         supertest.get("/emitrender").expect(200).end(function() {})
     })
 })

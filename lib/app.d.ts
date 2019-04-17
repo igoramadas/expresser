@@ -25,17 +25,38 @@ declare class App {
     /** Event emitter. */
     events: EventEmitter;
     /**
+     * Bind callback to event. Shortcut to `events.on()`.
+     * @param eventName The name of the event.
+     * @param callback Callback function.
+     */
+    on(eventName: string, callback: EventEmitter.ListenerFn): void;
+    /**
+     * Bind callback to event that will be triggered only once. Shortcut to `events.once()`.
+     * @param eventName The name of the event.
+     * @param callback Callback function.
+     */
+    once(eventName: string, callback: EventEmitter.ListenerFn): void;
+    /**
+     * Unbind callback from event. Shortcut to `events.off()`.
+     * @param eventName The name of the event.
+     * @param callback Callback function.
+     */
+    off(eventName: string, callback: EventEmitter.ListenerFn): void;
+    /**
      * Init the app module and start the HTTP(S) server.
      * @param middlewares List of middlewares to be appended / prepended.
+     * @event init
      */
     init(middlewares?: MiddlewareDefs): void;
     /**
      * Start the HTTP(S) server.
      * @returns The HTTP(S) server created by Express.
+     * @event start
      */
     start(): Http2Server | Http2SecureServer;
     /**
      * Kill the underlying HTTP(S) server(s).
+     * @event kill
      */
     kill(): void;
     /**
@@ -92,13 +113,15 @@ declare class App {
      * @param res The Express response object.
      * @param view The view filename.
      * @param options Options passed to the view, optional.
+     * @event renderView
      */
-    renderView(req: express.Request, res: express.Response, view: string, options?: any): void;
+    renderView: (req: express.Request, res: express.Response, view: string, options?: any) => void;
     /**
      * Sends pure text to the client.
      * @param req The Express request object.
      * @param res The Express response object.
      * @param text The text to be rendered, mandatory.
+     * @event renderText
      */
     renderText: (req: express.Request, res: express.Response, text: any) => void;
     /**
@@ -106,6 +129,7 @@ declare class App {
      * @param req The Express request object.
      * @param res The Express response object.
      * @param data The JSON data to be sent.
+     * @event renderJson
      */
     renderJson: (req: express.Request, res: express.Response, data: any) => void;
     /**
@@ -114,6 +138,7 @@ declare class App {
      * @param res The Express response object.
      * @param filename The full path to the image file.
      * @param options Options passed to the image renderer, for example the "mimetype".
+     * @event renderImage
      */
     renderImage: (req: express.Request, res: express.Response, filename: string, options?: any) => void;
     /**
@@ -122,6 +147,7 @@ declare class App {
      * @param res The Express response object.
      * @param error The error object or message to be sent to the client.
      * @param status The response status code, optional, default is 500.
+     * @event renderError
      */
     renderError: (req: express.Request, res: express.Response, error: any, status?: string | number) => void;
 }
