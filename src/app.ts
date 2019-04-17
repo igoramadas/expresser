@@ -49,9 +49,12 @@ class App {
             logger.setup()
         }
 
+        // Set preprocessor, if not set yet.
         if (!logger.preprocessor) {
             logger.preprocessor = require("./logger").clean
         }
+
+        logger.errorStack = settings.logger.errorStack
     }
 
     // PROPERTIES
@@ -292,6 +295,7 @@ class App {
             this.server = null
             this.events.emit("kill")
         } catch (ex) {
+            /* istanbul ignore next */
             logger.error("App.kill", ex)
         }
     }
@@ -389,7 +393,7 @@ class App {
      * @param view The view filename.
      * @param options Options passed to the view, optional.
      */
-    renderView(req: express.Request, res: express.Response, view: string, options?: any): void {
+    renderView = (req: express.Request, res: express.Response, view: string, options?: any) => {
         logger.debug("App.renderView", req.originalUrl, view, options)
 
         try {
@@ -410,7 +414,9 @@ class App {
             this.renderError(req, res, ex)
         }
 
-        if (settings.app.events.render) this.events.emit("renderView", req, res, view, options)
+        if (settings.app.events.render) {
+            this.events.emit("renderView", req, res, view, options)
+        }
     }
 
     /**
@@ -439,7 +445,9 @@ class App {
             this.renderError(req, res, ex)
         }
 
-        if (settings.app.events.render) this.events.emit("renderText", req, res, text)
+        if (settings.app.events.render) {
+            this.events.emit("renderText", req, res, text)
+        }
     }
 
     /**
@@ -494,7 +502,9 @@ class App {
         // Send JSON response.
         res.json(data)
 
-        if (settings.app.events.render) this.events.emit("renderJson", req, res, data)
+        if (settings.app.events.render) {
+            this.events.emit("renderJson", req, res, data)
+        }
     }
 
     /**
@@ -527,7 +537,9 @@ class App {
         res.type(mimetype)
         res.sendFile(filename)
 
-        if (settings.app.events.render) this.events.emit("renderImage", req, res, filename, options)
+        if (settings.app.events.render) {
+            this.events.emit("renderImage", req, res, filename, options)
+        }
     }
 
     /**
@@ -592,7 +604,9 @@ class App {
         // Send error JSON to client.
         res.status(status as number).json({error: message, url: req.originalUrl})
 
-        if (settings.app.events.render) this.events.emit("renderError", req, res, error, status)
+        if (settings.app.events.render) {
+            this.events.emit("renderError", req, res, error, status)
+        }
     }
 }
 

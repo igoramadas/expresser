@@ -39,6 +39,7 @@ update:
 	npm link jaul
 	npm link anyhow
 	npm link setmeup
+	tsc
 
 .PHONY: test
 .PHONY: docs

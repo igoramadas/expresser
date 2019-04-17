@@ -48,4 +48,19 @@ describe("App Main Tests", function() {
 
         supertest.get("/testview").expect(200, done)
     })
+
+    it("Enable renderView event", function(done) {
+        settings.app.events.render = true
+
+        let callback = () => {
+            done()
+        }
+
+        app.get("/emitrender", function(req, res) {
+            app.renderView(req, res, "testview.pug")
+        })
+
+        app.events.once("renderView", callback)
+        supertest.get("/emitrender").expect(200).end(function() {})
+    })
 })

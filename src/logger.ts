@@ -25,10 +25,6 @@ class Logger {
                 }
             }
         }
-        // Remove error stack traces depending on settings.
-        else if (_.isError(obj) && obj.stack && !settings.logger.errorStack) {
-            obj._logNoStack = true
-        }
         // Arg is an object? Then recurisvely clean its sub properties.
         else if (_.isObject(obj)) {
             let keys = _.keys(obj)
@@ -62,11 +58,6 @@ class Logger {
                         obj[key] = "[Function]"
                     } else if (_.isObject(value)) {
                         Logger.argsCleaner(value, index + 1)
-                    }
-
-                    // Set the _logNoStack flag depending on settings.
-                    if (_.isError(value) && value.stack && !settings.logger.errorStack) {
-                        value._logNoStack = true
                     }
                 } catch (ex) {
                     /* istanbul ignore next */

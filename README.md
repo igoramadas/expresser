@@ -1,7 +1,7 @@
 # Expresser
 
-[![Build Status](https://img.shields.io/travis/igoramadas/expresser.svg?style=flat-square)](https://travis-ci.org/igoramadas/expresser)
-[![Coverage Status](https://img.shields.io/coveralls/github/igoramadas/expresser.svg?style=flat-square)](https://coveralls.io/github/igoramadas/expresser?branch=master)
+[![Build Status](https://img.shields.io/travis/igoramadas/expresser.svg)](https://travis-ci.org/igoramadas/expresser)
+[![Coverage Status](https://img.shields.io/coveralls/github/igoramadas/expresser.svg)](https://coveralls.io/github/igoramadas/expresser?branch=master)
 
 A Node.js framework built on top of Express.
 

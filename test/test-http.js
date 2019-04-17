@@ -66,6 +66,14 @@ describe("App HTTP Tests", function() {
         supertest = require("supertest").agent(app.expressApp)
     })
 
+    it("Request all", function(done) {
+        app.get("/all", function(req, res) {
+            res.send("ok")
+        })
+
+        supertest.get("/all").expect(200, done)
+    })
+
     it("Request get", function(done) {
         app.get("/get", function(req, res) {
             res.send("ok")
