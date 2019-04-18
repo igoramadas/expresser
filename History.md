@@ -2,11 +2,12 @@
 
 4.0.0
 =====
-* TOTALLY NEW EXPRESSER, BUILT FROM SCRATCH WITH TYPESCRIPT!
-*
+* A NEW EXPRESSER, BUILT FROM SCRATCH WITH TYPESCRIPT!
+* Migration docs: https://github.com/igoramadas/expresser/wiki/Migration-from-v3-to-v4
 
+========================
 Legacy versions below...
-===============================================================================
+========================
 
 3.5.3
 =====

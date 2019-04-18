@@ -1,0 +1,10 @@
+.DS_Store
+.travis.yml
+.nojekyll
+.history/
+coverage/
+docs/
+src/
+test/
+Makefile
+tsconfig.json

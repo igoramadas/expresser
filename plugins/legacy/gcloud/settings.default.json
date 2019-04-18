@@ -1,7 +1,0 @@
-// EXPRESSER GOOGLE CLOUD SETTINGS
-{
-    "gcloud": {
-        // Enable the Google Cloud plugin?
-        "enabled": true
-    }
-}

@@ -42,7 +42,7 @@ class App {
         return new App()
     }
 
-    /** Default App constructor. Binds the [[Logger]] clean by default for logging. */
+    /** Default App constructor. */
     constructor() {
         if (!logger.isReady) {
             /* istanbul ignore next */

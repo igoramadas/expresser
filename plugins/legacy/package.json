@@ -1,0 +1,48 @@
+{
+    "name": "expresser-legacy",
+    "version": "3.6.0",
+    "description": "Legacy adapter to make Expresser v3 apps work with v4.",
+    "keywords": [
+        "adapter",
+        "expresser",
+        "express",
+        "legacy"
+    ],
+    "author": "Igor Ramadas <igor@devv.com>",
+    "homepage": "https://expresser.devv.com",
+    "subdomain": "expresser",
+    "license": "MIT",
+    "main": "index",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/igoramadas/expresser.git"
+    },
+    "engines": {
+        "node": ">= 10.0.0"
+    },
+    "scripts": {
+        "docs": "make docs"
+    },
+    "dependencies": {
+        "body-parser": "^1.18.3",
+        "coffeescript": "^2.4.1",
+        "compression": "^1.7.4",
+        "cookie-parser": "^1.4.4",
+        "connect-assets": "^6.0.0",
+        "express-session": "^1.16.1",
+        "memorystore": "^1.6.1",
+        "pug": "^2.0.3",
+        "stylus": "^0.54.5"
+    },
+    "devDependencies": {
+        "expresser": "^4.0.0",
+        "expresser-aws": "^3.2.7",
+        "expresser-cron": "^3.1.1",
+        "expresser-mailer": "^3.1.1",
+        "expresser-metrics": "^3.3.1",
+        "expresser-swagger": "^1.1.0"
+    },
+    "peerDependencies": {
+        "expresser": "^4.0.0"
+    }
+}
