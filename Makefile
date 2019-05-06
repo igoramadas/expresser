@@ -36,6 +36,7 @@ update:
 	rm -rf node_modules/setmeup
 	ncu -u
 	npm install
+	npm update
 	npm link jaul
 	npm link anyhow
 	npm link setmeup

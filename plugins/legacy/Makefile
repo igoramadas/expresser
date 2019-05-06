@@ -14,6 +14,7 @@ publish:
 update:
 	ncu -u
 	npm install
+	npm update
 
 .PHONY: test
 .PHONY: docs
