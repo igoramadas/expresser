@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+3.5.4
+=====
+* Updated dependencies.
+
 3.5.3
 =====
 * FEATURE-FREEZE ON V3!!! Next Expresser v4 will be written from scratch.
