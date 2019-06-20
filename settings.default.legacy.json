@@ -8,8 +8,6 @@
     // APP
     // -------------------------------------------------------------------------
     "app": {
-
-
         // Connect Assets module options.
         "connectAssets": {
             // Build assets? True or false.
@@ -22,11 +20,6 @@
             // Default paths for assets, in order of preference. Relative to the app root!
             "paths": ["assets/js", "assets/css"]
         },
-
-
-
-
-
     },
     // EVENTS
     // -------------------------------------------------------------------------
@@ -34,12 +27,6 @@
         // Enable central event dispatcher? Please note that if you disable it some
         // inter-module features will not work, although it won't give you exceptions on errors.
         "enabled": true
-    },
-    // FIREWALL
-    // -------------------------------------------------------------------------
-    "firewall": {
-        // Built-in firewall is disable by default.
-        "enabled": false
     },
     // GENERAL
     // -------------------------------------------------------------------------
