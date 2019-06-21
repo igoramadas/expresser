@@ -5,7 +5,7 @@ const _ = require("lodash")
 /** @hidden */
 const jaul = require("jaul")
 /** @hidden */
-const settings = require("setmeup").settings
+let settings = require("setmeup").settings
 
 /** Logger helper class to configure the Anyhow logging module. */
 class Logger {

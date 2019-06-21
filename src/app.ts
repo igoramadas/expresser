@@ -19,7 +19,9 @@ const logger = require("anyhow")
 /** @hidden */
 const path = require("path")
 /** @hidden */
-const settings = require("setmeup").settings
+const setmeup = require("setmeup")
+/** @hidden */
+let settings
 
 /** Middleware definitions to be be passed on app [[init]]. */
 interface MiddlewareDefs {
@@ -49,11 +51,17 @@ class App {
             logger.setup()
         }
 
+        // Load default settings.
+        if (!setmeup.settings.app || !setmeup.settings.logger) {
+            setmeup.load(__dirname + "/../settings.default.json")
+        }
+
         // Set preprocessor, if not set yet.
         if (!logger.preprocessor) {
             logger.preprocessor = require("./logger").clean
         }
 
+        settings = setmeup.settings
         logger.errorStack = settings.logger.errorStack
     }
 
