@@ -30,6 +30,7 @@ clean:
 publish:
 	tsc --removeComments
 	npm publish
+	tsc
 
 update:
 	rm -f package-lock.json
