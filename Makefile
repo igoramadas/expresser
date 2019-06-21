@@ -25,22 +25,16 @@ docs:
 
 clean:
 	rm -rf ./node_modules
+	rm -f package-lock.json
 
 publish:
 	tsc --removeComments
 	npm publish
 
 update:
-	rm -rf node_modules/jaul
-	rm -rf node_modules/anyhow
-	rm -rf node_modules/setmeup
+	rm -f package-lock.json
 	ncu -u
 	npm install
-	npm update
-	npm link jaul
-	npm link anyhow
-	npm link setmeup
 	tsc
 
-.PHONY: test
-.PHONY: docs
+.PHONY: docs test

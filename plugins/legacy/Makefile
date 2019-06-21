@@ -7,14 +7,14 @@ docs:
 
 clean:
 	rm -rf ./node_modules
+	rm -f package-lock.json
 
 publish:
 	npm publish
 
 update:
+	rm -f package-lock.json
 	ncu -u
 	npm install
-	npm update
 
-.PHONY: test
-.PHONY: docs
+.PHONY: docs test
