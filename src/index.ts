@@ -13,7 +13,7 @@ try {
 /** Exposes relevant modules. */
 let index = {
     /** [[App]] exposed as .app */
-    app: require("./data"),
+    app: require("./app"),
     /** Library version */
     version: version
 }
