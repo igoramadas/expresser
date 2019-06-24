@@ -54,13 +54,7 @@ class App {
         // Load default settings.
         setmeup.load(__dirname + "/../settings.default.json", {overwrite: false})
 
-        // Set preprocessor, if not set yet.
-        if (!logger.preprocessor) {
-            logger.preprocessor = require("./logger").clean
-        }
-
         settings = setmeup.settings
-        logger.errorStack = settings.logger.errorStack
     }
 
     // PROPERTIES
@@ -115,6 +109,13 @@ class App {
      */
     init(middlewares?: MiddlewareDefs) {
         let mw
+
+        // Set preprocessor, if not set yet.
+        if (!logger.preprocessor) {
+            logger.preprocessor = require("./logger").clean
+        }
+
+        logger.errorStack = settings.logger.errorStack
 
         // Create express v4 app.
         this.expressApp = express()
