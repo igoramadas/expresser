@@ -52,9 +52,7 @@ class App {
         }
 
         // Load default settings.
-        if (!setmeup.settings.app || !setmeup.settings.logger) {
-            setmeup.load(__dirname + "/../settings.default.json")
-        }
+        setmeup.load(__dirname + "/../settings.default.json", {overwrite: false})
 
         // Set preprocessor, if not set yet.
         if (!logger.preprocessor) {
@@ -154,7 +152,7 @@ class App {
         }
 
         // Use body parser?
-        if (settings.app.bodyParser.enabled) {
+        if (settings.app.bodyParser && settings.app.bodyParser.enabled) {
             try {
                 const midBodyParser = require("body-parser")
                 this.expressApp.use(midBodyParser.json({extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}))
@@ -165,8 +163,8 @@ class App {
             }
         }
 
-        // Cookies enabled?
-        if (settings.app.cookie.enabled) {
+        // Cookies enabled? Depends on `cookie-parser` being installed.
+        if (settings.app.cookie && settings.app.cookie.enabled) {
             try {
                 const midCookieParser = require("cookie-parser")
                 this.expressApp.use(midCookieParser(settings.app.secret))
@@ -179,7 +177,7 @@ class App {
         }
 
         // Session enabled?
-        if (settings.app.session.enabled) {
+        if (settings.app.session && settings.app.session.enabled) {
             try {
                 const midSession = require("express-session")
                 const memoryStore = require("memorystore")(midSession)
@@ -208,7 +206,7 @@ class App {
         }
 
         // Use HTTP compression only if enabled on settings.
-        if (settings.app.compression.enabled) {
+        if (settings.app.compression && settings.app.compression.enabled) {
             try {
                 const midCompression = require("compression")
                 this.expressApp.use(midCompression())

@@ -10,7 +10,7 @@
     "app": {
         // Sets the "Access-Control-Allow-Origin" header. To allow all, set it to "*".
         "allowOriginHeader": null,
-        // Body parser module options.
+        // Body parser module options. Depends on the body-parser middleware being installed.
         "bodyParser": {
             "enabled": true,
             // Extended URL encoded?
@@ -18,17 +18,17 @@
             // Default post data limit is set to 10MB by default.
             "limit": "10mb"
         },
-        // Enable HTTP compression?
+        // Enable HTTP compression? Depends on the compression middleware being installed.
         "compression": {
             "enabled": false,
             // Level of compression, from 0 (fast) to 9 (more compression).
             "level": 6
         },
-        // Cookie options.
+        // Cookie options. Depends on the cookie-parser middleware being installed.
         "cookie": {
             "enabled": false
         },
-        // Emit events for different occasions.
+        // Emit events for different methods.
         "events": {
             // Emit an event for "render".
             "render": false
@@ -41,7 +41,7 @@
         "publicPath": "./public/",
         // Secret key used for session and cookies encryption.
         "secret": "ExpresserSecret",
-        // Session options.
+        // Session options.  Depends on the express-session middleware being installed.
         "session": {
             "enabled": false,
             // Interval in milliseconds to check for expired sessions, default is 5 minutes.

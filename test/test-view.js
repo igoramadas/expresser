@@ -10,7 +10,7 @@ let it = mocha.it
 
 chai.should()
 
-describe("App Main Tests", function() {
+describe("App View Tests", function() {
     let app = null
     let setmeup = null
     let settings = null
