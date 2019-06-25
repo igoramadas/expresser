@@ -309,11 +309,12 @@ class App {
         // Start the app!
         if (settings.app.ip) {
             serverRef.listen(settings.app.port, settings.app.ip, listenCb).on("error", listenError)
-            serverRef.setTimeout(settings.app.timeout)
         } else {
             serverRef.listen(settings.app.port, listenCb).on("error", listenError)
-            serverRef.setTimeout(settings.app.timeout, listenCb)
         }
+
+        // Set default timeout.
+        serverRef.timeout = settings.app.timeout
 
         // Emit start event and return HTTP(S) server.
         this.events.emit("start")

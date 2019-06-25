@@ -1,10 +1,15 @@
 # Changelog for expresser
 
+4.0.1
+=====
+* Fixed the timeout behaviour on the app server.
+
 4.0.0
 =====
 * A NEW EXPRESSER, BUILT FROM SCRATCH WITH TYPESCRIPT!
 * Migration docs: https://github.com/igoramadas/expresser/wiki/Migration-from-v3-to-v4
 
+========================
 ========================
 Legacy versions below...
 ========================
