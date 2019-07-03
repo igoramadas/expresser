@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+4.0.2
+=====
+* The Logger preprocessor now clones objects beforing logging.
+
 4.0.1
 =====
 * Fixed the timeout behaviour on the app server.

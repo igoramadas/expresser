@@ -55,7 +55,15 @@ describe("App Logger Tests", function() {
 
         let msg = logger.getMessage(1, "A", new Date(), null, err, func, innerObject, longArray, [err, func, innerObject, longArray])
 
-        done()
+        try {
+            if (innerObject.someFunction()) {
+                return done()
+            }
+
+            return done("The innerObject.someFunction() should return true.")
+        } catch (ex) {
+            return done("The innerObject.someFunction() should still be a function, but was mutated by the Logger.")
+        }
     })
 
     it("Maks fields (mobile)", function(done) {

@@ -71,7 +71,21 @@ class Logger {
 
     /** Used as a preprocessor for the Anyhow logger. */
     static clean(args: any[]): any {
-        Logger.argsCleaner(args, 0)
+        let result = []
+
+        for (let arg of args) {
+            if (_.isObject(arg) || _.isArray(arg)) {
+                let cloned = _.cloneDeep(arg)
+                Logger.argsCleaner(cloned, 0)
+                result.push(cloned)
+            } else if (_.isFunction(arg)) {
+                result.push("[Function]")
+            } else {
+                result.push(arg)
+            }
+        }
+
+        return result
     }
 }
 
