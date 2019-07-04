@@ -74,6 +74,9 @@ class Logger {
         let result = []
 
         for (let arg of args) {
+            // Extract error details from error objects.
+            // Clone objects and arrays before parsing.
+            // Add function text for Functions.
             if (_.isError(arg)) {
                 result.push(arg.toString())
             } else if (_.isObject(arg) || _.isArray(arg)) {
