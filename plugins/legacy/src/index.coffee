@@ -1,5 +1,6 @@
 # EXPRESSER LEGACY
 # -----------------------------------------------------------------------------
+EventEmitter = require("eventemitter3")
 fs = require "fs"
 path = require "path"
 setmeup = require "setmeup"
@@ -18,13 +19,20 @@ class ExpresserLegacy
         else
             expresser.rootPath = path.dirname require.main.filename
 
-        # App is Expresser itself.
-        expresser.app = expresser
+        console.warn expresser.rootPath
+
+        # Append events.
+        expresser.events = new EventEmitter()
+
+        # Load settings.
+        setmeup.load()
+        setmeup.load "#{expresser.rootPath}/settings.default.json"
+        expresser.setmeup = setmeup
+        expresser.settings = setmeup.settings
 
         # Links to new replacement modules.
-        expresser.logger = require("anyhow")
-        expresser.settings = setmeup.settings
-        expresser.utils = require("jaul")
+        expresser.logger = require "anyhow"
+        expresser.utils = require "jaul"
 
         # Errors helper.
         expresser.errors = require "./errors.coffee"
@@ -60,7 +68,7 @@ class ExpresserLegacy
 
                     # Check if there are default settings to be loaded for the plugin.
                     if fs.existsSync pluginSettingsPath
-                        setmeup.load pluginSettingsPath, true
+                        setmeup.load pluginSettingsPath
 
                     # Get options accordingly to plugin name.
                     pluginArr = pluginName.split "-"
@@ -85,13 +93,9 @@ class ExpresserLegacy
             for i in sortedInit
                 i.plugin.init?()
 
-        # Accept invalid certificates?
-        if not expresser.settings.app.ssl.rejectUnauthorized
-            process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-
         # App must be the last thing to be started!
+        expresser.app.expresser = expresser
         expresser.expresser = expresser
-        expresser.init()
 
 # Singleton implementation
 # --------------------------------------------------------------------------

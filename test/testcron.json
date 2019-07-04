@@ -1,0 +1,17 @@
+{
+    "logger.js": [{
+            "id": "cron-seconds",
+            "callback": "clean",
+            "params": [1, 2, 3],
+            "description": "Testing cron on a seconds based interval.",
+            "schedule": 1000
+        },
+        {
+            "id": "cron-disabled",
+            "callback": "clean",
+            "enabled": false,
+            "description": "Testing cron on specific times (disabled).",
+            "schedule": ["07:00:00"]
+        }
+    ]
+}

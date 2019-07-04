@@ -1,0 +1,29 @@
+{
+    "app": {
+        "title": "Expresser Test",
+        "viewPath": "./test/",
+        "session": {
+            "secure": false
+        }
+    },
+    "general": {
+        "debug": false
+    },
+    "logger": {
+        "console": false
+    },
+    "mailer": {
+        "smtp": {
+            "host": "smtp.mailgun.com",
+            "port": 25,
+            "secure": false,
+            "service": "mailgun"
+        },
+        "templates": {
+            "path": "./test/emailtemplates"
+        }
+    },
+    "swagger": {
+        "filename": "./test/testswagger.json"
+    }
+}

@@ -74,7 +74,9 @@ class Logger {
         let result = []
 
         for (let arg of args) {
-            if (_.isObject(arg) || _.isArray(arg)) {
+            if (_.isError(arg)) {
+                result.push(arg.toString())
+            } else if (_.isObject(arg) || _.isArray(arg)) {
                 let cloned = _.cloneDeep(arg)
                 Logger.argsCleaner(cloned, 0)
                 result.push(cloned)

@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+4.0.3
+=====
+* Improved error responses using app.renderError().
+* Fixed mutation issues when logging certain types of errors.
+
 4.0.2
 =====
 * The Logger preprocessor now clones objects beforing logging.

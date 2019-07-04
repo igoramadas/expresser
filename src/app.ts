@@ -607,9 +607,15 @@ class App {
 
         // Status default statuses.
         if (status == null) {
-            status = error.statusCode ? error.statusCode : 500
-        } else if (status === "ETIMEDOUT") {
+            status = error.statusCode || error.status || error.code
+        }
+        if (status == "ETIMEDOUT") {
             status = 408
+        }
+
+        // Error defaults to 500 if not a valid number.
+        if (!_.isNumber(status)) {
+            status = 500
         }
 
         try {
@@ -648,7 +654,7 @@ class App {
         }
 
         // Send error JSON to client.
-        res.status(status as number).json({error: message, url: req.originalUrl})
+        res.status(status as number).json(message)
 
         if (settings.app.events.render) {
             this.events.emit("renderError", req, res, error, status)

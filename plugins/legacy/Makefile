@@ -1,10 +1,3 @@
-TYPEDOC:= ./node_modules/.bin/typedoc
-
-docs:
-	$(TYPEDOC)
-	cp CNAME docs/
-	cp .nojekyll docs/
-
 clean:
 	rm -rf ./node_modules
 	rm -f package-lock.json

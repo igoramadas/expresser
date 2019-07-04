@@ -24,25 +24,24 @@
         "docs": "make docs"
     },
     "dependencies": {
-        "body-parser": "^1.18.3",
+        "body-parser": "^1.19.0",
         "coffeescript": "^2.4.1",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.4",
         "connect-assets": "^6.0.0",
-        "express-session": "^1.16.1",
+        "express-session": "^1.16.2",
         "memorystore": "^1.6.1",
-        "pug": "^2.0.3",
+        "pug": "^2.0.4",
         "stylus": "^0.54.5"
     },
     "devDependencies": {
-        "expresser": "^4.0.0",
+        "expresser": "^4.0.2",
         "expresser-aws": "^3.2.7",
         "expresser-cron": "^3.1.1",
         "expresser-mailer": "^3.1.1",
-        "expresser-metrics": "^3.3.1",
         "expresser-swagger": "^1.1.0"
     },
     "peerDependencies": {
-        "expresser": "^4.0.0"
+        "expresser": "^4.0.2"
     }
 }
