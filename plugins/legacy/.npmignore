@@ -3,9 +3,3 @@
 .nojekyll
 .git/
 .history/
-coverage/
-docs/
-src/
-test/
-Makefile
-tsconfig.json
