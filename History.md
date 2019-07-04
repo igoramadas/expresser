@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+4.0.4
+=====
+* Index is now a dedicated Expresser class.
+
 4.0.3
 =====
 * Improved error responses using app.renderError().

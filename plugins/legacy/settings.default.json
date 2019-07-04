@@ -16,7 +16,23 @@
             "gzip": true,
             // Default paths for assets, in order of preference. Relative to the app root!
             "paths": ["assets/js", "assets/css"]
-        }
+        },
+        // Enable body parser.
+        "bodyParser": {
+            "enabled": true
+        },
+        // Enable cookies.
+        "cookie": {
+            "enabled": true
+        },
+        // Enable sessions.
+        "session": {
+            "enabled": true
+        },
+        // Use PUG.
+        "viewEngine": "pug",
+        // Path to the views directory.
+        "viewPath": "./assets/views/"
     },
     // Defaults encoding to UTF8.
     "general": {

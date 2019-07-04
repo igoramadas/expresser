@@ -1,21 +1,28 @@
 // Expresser: index.ts
 
-/** @hidden */
-let version
+/** Main Expresser class. */
+class Expresser {
+    private static _instance: Expresser
+    /** @hidden */
+    static get Instance() {
+        return this._instance || (this._instance = new this())
+    }
 
-// Get package version.
-try {
-    version = JSON.parse(require("fs").readFileSync(`${__dirname}/../package.json`, {encoding: "utf8"})).version
-} catch (ex) {
-    version = null
-}
+    /** Returns a new fresh instance of the App module. */
+    newInstance(): Expresser {
+        return new Expresser()
+    }
 
-/** Exposes relevant modules. */
-let index = {
+    /** Default App constructor. */
+    constructor() {
+        this.version = JSON.parse(require("fs").readFileSync(`${__dirname}/../package.json`, {encoding: "utf8"})).version
+    }
+
     /** [[App]] exposed as .app */
-    app: require("./app"),
+    app = require("./app")
     /** Library version */
-    version: version
+    version: string
 }
 
-export = index
+// Exports...
+export = Expresser.Instance

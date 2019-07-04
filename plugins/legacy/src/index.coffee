@@ -2,6 +2,7 @@
 # -----------------------------------------------------------------------------
 EventEmitter = require("eventemitter3")
 fs = require "fs"
+lodash = require "lodash"
 path = require "path"
 setmeup = require "setmeup"
 isTest = process.env.NODE_ENV is "test"
@@ -12,14 +13,13 @@ isTest = process.env.NODE_ENV is "test"
 class ExpresserLegacy
     init: (expresser) =>
         expresser = require("expresser") if not expresser?
+        expresser.expresser = expresser
 
         # Set correct root path.
         if isTest
             expresser.rootPath = path.dirname __dirname
         else
             expresser.rootPath = path.dirname require.main.filename
-
-        console.warn expresser.rootPath
 
         # Append events.
         expresser.events = new EventEmitter()
@@ -47,10 +47,6 @@ class ExpresserLegacy
 
         # Holds all loaded plugins.
         expresser.plugins = {}
-
-        process.on "exit", (code) =>
-            appTitle = expresser.settings.app?.title or "app"
-            console.warn "Quitting #{appTitle}...", code
 
         initializers = []
         plugins = fs.readdirSync "#{expresser.rootPath}/node_modules"
@@ -95,7 +91,13 @@ class ExpresserLegacy
 
         # App must be the last thing to be started!
         expresser.app.expresser = expresser
-        expresser.expresser = expresser
+
+        # Use Connect Assets.
+        connectAssetsOptions = lodash.cloneDeep setmeup.settings.app.connectAssets
+        ConnectAssets = (require "connect-assets") connectAssetsOptions
+
+        # Init the Expresser app!
+        expresser.app.init {append: [ConnectAssets]}
 
 # Singleton implementation
 # --------------------------------------------------------------------------

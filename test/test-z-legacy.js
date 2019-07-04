@@ -2,6 +2,7 @@
 
 let env = process.env
 let chai = require("chai")
+let getPort = require("get-port")
 let mocha = require("mocha")
 let moment = require("moment")
 let after = mocha.after
@@ -16,11 +17,18 @@ describe("App Legacy Tests", function() {
     let expresser
     let legacy
     let logger
+    let port
     let settings
-    let app, aws, cron, mailer, swagger
+    let app, aws, cron, mailer, swagger, supertest
 
     before(async function() {
-        require("setmeup").load()
+        port = await getPort(9115)
+
+        let setmeup = require("setmeup")
+        setmeup.load()
+        setmeup.load(__dirname + "/testsettings.json")
+        settings = setmeup.settings
+        settings.app.port = port
 
         logger = require("anyhow")
         logger.setup("none")
@@ -39,9 +47,7 @@ describe("App Legacy Tests", function() {
     it("Init the legacy module with plugins and settings", function(done) {
         legacy.init(expresser)
         expresser.setmeup.load(__dirname + "/testsettings.json")
-
         settings = expresser.settings
-        settings.logger.removeFields = ["username"]
 
         if (expresser.plugins.length == 0) {
             done("No plugins were loaded.")
@@ -49,7 +55,21 @@ describe("App Legacy Tests", function() {
             done("Plugin settings for AWS not loaded.")
         }
 
+        app.init()
+        supertest = require("supertest").agent(app.expressApp)
+
         done()
+    })
+
+    it("Renders a simple PUG template with coffeescript", function(done) {
+        app.get("/testviewcoffee", function(req, res) {
+            app.renderView(req, res, "testviewcoffee.pug")
+        })
+
+        supertest.get("/testviewcoffee").expect(200).end(function(err, res) {
+            console.dir(err)
+            console.dir(res)
+        })
     })
 
     it("Legacy expresser-aws basic tests", async function() {
@@ -143,10 +163,7 @@ describe("App Legacy Tests", function() {
             }
         }
 
-        app.init()
         swagger.setup(handlers)
-
-        let supertest = require("supertest").agent(app.expressApp)
         supertest.get("/swagger.json").expect(200, done)
     })
 })

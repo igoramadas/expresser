@@ -2,8 +2,12 @@
     "app": {
         "title": "Expresser Test",
         "viewPath": "./test/",
+        "publicPath": "./test/",
         "session": {
             "secure": false
+        },
+        "connectAssets": {
+            "paths": ["test", "./test/"]
         }
     },
     "general": {
