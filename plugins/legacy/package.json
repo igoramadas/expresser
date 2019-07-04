@@ -35,13 +35,13 @@
         "stylus": "^0.54.5"
     },
     "devDependencies": {
-        "expresser": "^4.0.2",
+        "expresser": "^4.0.3",
         "expresser-aws": "^3.2.7",
         "expresser-cron": "^3.1.1",
         "expresser-mailer": "^3.1.1",
         "expresser-swagger": "^1.1.0"
     },
     "peerDependencies": {
-        "expresser": "^4.0.2"
+        "expresser": "^4.0.3"
     }
 }
