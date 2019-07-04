@@ -11,7 +11,7 @@ isTest = process.env.NODE_ENV is "test"
 # Adapter to make Expresser v3 apps compatible with v4.
 ###
 class ExpresserLegacy
-    init: (expresser) =>
+    init: (expresser, useDefaultSettings) =>
         expresser = require("expresser") if not expresser?
         expresser.expresser = expresser
 
@@ -26,7 +26,7 @@ class ExpresserLegacy
 
         # Load settings.
         setmeup.load()
-        setmeup.load "#{expresser.rootPath}/settings.default.json"
+        setmeup.load "#{expresser.rootPath}/settings.default.json", {overwrite: useDefaultSettings}
         expresser.setmeup = setmeup
         expresser.settings = setmeup.settings
 
@@ -91,6 +91,10 @@ class ExpresserLegacy
 
         # App must be the last thing to be started!
         expresser.app.expresser = expresser
+
+        # Fix coffeescript on mincer.
+        mincer = require "mincer"
+        mincer.Template.libs.coffee = require "coffeescript"
 
         # Use Connect Assets.
         connectAssetsOptions = lodash.cloneDeep setmeup.settings.app.connectAssets

@@ -45,7 +45,7 @@ describe("App Legacy Tests", function() {
     })
 
     it("Init the legacy module with plugins and settings", function(done) {
-        legacy.init(expresser)
+        legacy.init(expresser, false)
         expresser.setmeup.load(__dirname + "/testsettings.json")
         settings = expresser.settings
 
@@ -59,17 +59,6 @@ describe("App Legacy Tests", function() {
         supertest = require("supertest").agent(app.expressApp)
 
         done()
-    })
-
-    it("Renders a simple PUG template with coffeescript", function(done) {
-        app.get("/testviewcoffee", function(req, res) {
-            app.renderView(req, res, "testviewcoffee.pug")
-        })
-
-        supertest.get("/testviewcoffee").expect(200).end(function(err, res) {
-            console.dir(err)
-            console.dir(res)
-        })
     })
 
     it("Legacy expresser-aws basic tests", async function() {

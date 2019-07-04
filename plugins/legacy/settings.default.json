@@ -33,9 +33,5 @@
         "viewEngine": "pug",
         // Path to the views directory.
         "viewPath": "./assets/views/"
-    },
-    // Defaults encoding to UTF8.
-    "general": {
-        "encoding": "utf8"
     }
 }
