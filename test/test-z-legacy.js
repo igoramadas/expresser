@@ -54,11 +54,6 @@ describe("App Legacy Tests", function() {
 
     it("Legacy expresser-aws basic tests", async function() {
         this.timeout(10000)
-
-        if (!env["AWS_ACCESS_KEY_ID"] || !env["AWS_SECRET_ACCESS_KEY"]) {
-            throw new Error("AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY not defined.")
-        }
-
         aws = expresser.plugins.aws
 
         uploadTimestamp = moment().unix()
