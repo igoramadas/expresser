@@ -3,6 +3,7 @@
 4.0.4
 =====
 * Index is now a dedicated Expresser class.
+* Updated dependencies.
 
 4.0.3
 =====
