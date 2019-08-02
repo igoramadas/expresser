@@ -12,6 +12,7 @@ isTest = process.env.NODE_ENV is "test"
 ###
 class ExpresserLegacy
     init: (expresser, useDefaultSettings) =>
+        useDefaultSettings = false if not useDefaultSettings?
         expresser = require("expresser") if not expresser?
         expresser.expresser = expresser
 
@@ -55,7 +56,7 @@ class ExpresserLegacy
         for p in plugins
             pluginId = p.substring(p.lastIndexOf("/") + 1)
 
-            if pluginId.substring(0, 10) is "expresser-"
+            if pluginId isnt "expresser-legacy" and pluginId.substring(0, 10) is "expresser-"
                 pluginName = pluginId.replace "expresser-", ""
 
                 # Check if plugin was already attached.
@@ -64,7 +65,7 @@ class ExpresserLegacy
 
                     # Check if there are default settings to be loaded for the plugin.
                     if fs.existsSync pluginSettingsPath
-                        setmeup.load pluginSettingsPath
+                        setmeup.load pluginSettingsPath, {overwrite: useDefaultSettings}
 
                     # Get options accordingly to plugin name.
                     pluginArr = pluginName.split "-"

@@ -1,6 +1,6 @@
 {
     "name": "expresser-legacy",
-    "version": "3.6.1",
+    "version": "3.6.2",
     "description": "Legacy adapter to make Expresser v3 apps work with v4.",
     "keywords": [
         "adapter",
@@ -28,20 +28,20 @@
         "coffeescript": "^2.4.1",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.4",
-        "connect-assets": "^6.0.0",
+        "connect-assets": "^6.0.1",
         "express-session": "^1.16.2",
         "memorystore": "^1.6.1",
         "pug": "^2.0.4",
         "stylus": "^0.54.5"
     },
     "devDependencies": {
-        "expresser": "^4.0.3",
+        "expresser": "^4.0.4",
         "expresser-aws": "^3.2.7",
         "expresser-cron": "^3.1.1",
         "expresser-mailer": "^3.1.1",
         "expresser-swagger": "^1.1.0"
     },
     "peerDependencies": {
-        "expresser": "^4.0.3"
+        "expresser": "^4.0.4"
     }
 }

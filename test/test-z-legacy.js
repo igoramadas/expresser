@@ -84,7 +84,7 @@ describe("App Legacy Tests", function() {
         cron = expresser.plugins.cron
 
         cron.load("test/testcron.json", {
-            basePath: "../../../lib/",
+            basePath: "../../../../lib/",
             autoStart: false
         })
 
