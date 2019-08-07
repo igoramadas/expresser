@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+4.0.5
+=====
+* Fixed app.renderError(), should always return a JSON now.
+* Updated dependencies.
+
 4.0.4
 =====
 * Index is now a dedicated Expresser class.

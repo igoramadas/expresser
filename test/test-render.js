@@ -163,6 +163,23 @@ describe("App Render Tests", function() {
             .expect(401, done)
     })
 
+    it("Renders an error from string", function(done) {
+        app.get("/testerrorstring", function(req, res) {
+            app.renderError(req, res, "This should be a JSON")
+        })
+
+        let resIsJson = function(res) {
+            console.dir(res.body)
+            res.body.should.have.property("message", "This should be a JSON")
+        }
+
+        supertest
+            .get("/testerrorstring")
+            .expect("Content-Type", /json/)
+            .expect(resIsJson)
+            .end(done)
+    })
+
     it("Renders a timeout error", function(done) {
         app.get("/testerror-timeout", function(req, res) {
             app.renderError(req, res, "Timeout error", "ETIMEDOUT")

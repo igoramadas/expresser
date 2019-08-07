@@ -625,7 +625,7 @@ class App {
             }
 
             if (_.isString(error)) {
-                message = error
+                message = {message: error}
             } else {
                 message = {}
                 message.message = error.message || error.error_description || error.description
@@ -633,7 +633,7 @@ class App {
                 // No message found? Just use the default .toString() then.
                 /* istanbul ignore next */
                 if (!message.message) {
-                    message = error.toString()
+                    message.message = error.toString()
                 }
 
                 if (error.friendlyMessage) {
