@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+4.1.0
+=====
+* Shortcut: "app.ssl=false" == "app.ssl.enabled=false"
+* Updated dependencies.
+
 4.0.5
 =====
 * Fixed app.renderError(), should always return a JSON now.

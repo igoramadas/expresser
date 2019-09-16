@@ -272,7 +272,7 @@ class App {
 
         let serverRef
 
-        if (settings.app.ssl.enabled && settings.app.ssl.keyFile && settings.app.ssl.certFile) {
+        if (settings.app.ssl && settings.app.ssl.enabled && settings.app.ssl.keyFile && settings.app.ssl.certFile) {
             const sslKeyFile = jaul.io.getFilePath(settings.app.ssl.keyFile)
             const sslCertFile = jaul.io.getFilePath(settings.app.ssl.certFile)
 
