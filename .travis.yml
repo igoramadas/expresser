@@ -1,8 +1,8 @@
 sudo: false
 language: node_js
 node_js:
+    - "12.11"
     - "12.10"
-    - "12.9"
     - "10.16"
 after_success:
     - "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
