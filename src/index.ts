@@ -20,6 +20,8 @@ class Expresser {
 
     /** [[App]] exposed as .app */
     app = require("./app")
+    /** [[Routes]] exposed as .routes */
+    routes = require("./routes")
     /** Library version */
     version: string
 }

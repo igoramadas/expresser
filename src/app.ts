@@ -1,26 +1,17 @@
 // Expresser: app.ts
 
-import EventEmitter = require("eventemitter3")
-import express = require("express")
 import {Http2SecureServer, Http2Server} from "http2"
 
-/** @hidden */
-const _ = require("lodash")
-/** @hidden */
-const fs = require("fs")
-/** @hidden */
-const http = require("http")
-/** @hidden */
-const https = require("https")
-/** @hidden */
-const jaul = require("jaul")
-/** @hidden */
-const logger = require("anyhow")
-/** @hidden */
-const path = require("path")
-/** @hidden */
-const setmeup = require("setmeup")
-/** @hidden */
+import _ = require("lodash")
+import EventEmitter = require("eventemitter3")
+import express = require("express")
+import fs = require("fs")
+import http = require("http")
+import https = require("https")
+import jaul = require("jaul")
+import logger = require("anyhow")
+import path = require("path")
+import setmeup = require("setmeup")
 let settings
 
 /** Middleware definitions to be be passed on app [[init]]. */

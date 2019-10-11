@@ -1,7 +1,7 @@
 /// <reference types="node" />
+import { Http2SecureServer, Http2Server } from "http2";
 import EventEmitter = require("eventemitter3");
 import express = require("express");
-import { Http2SecureServer, Http2Server } from "http2";
 /** Middleware definitions to be be passed on app [[init]]. */
 interface MiddlewareDefs {
     /** Single or array of middlewares to be prepended. */

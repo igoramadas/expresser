@@ -112,5 +112,15 @@
         // List of properties to be removed. This is used to take out specific data from logs (functions for example).
         // Values separated by comma.
         "removeFields": null
+    },
+    "routes": {
+        // Default filename of the routes JSON file.
+        "filename": "routes.json",
+        "swagger": {
+            // Expose loaded swagger file on the /swagger.json route.
+            "exposeJson": false,
+            // Default filename of the swagger definitions file.
+            "filename": "swagger.json"
+        }
     }
 }

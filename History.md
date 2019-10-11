@@ -2,7 +2,9 @@
 
 4.1.0
 =====
+* NEW! Routes module to load and manage routes, supports Swagger specs.
 * Shortcut: "app.ssl=false" == "app.ssl.enabled=false"
+* General refactoring.
 * Updated dependencies.
 
 4.0.5

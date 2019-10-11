@@ -1,0 +1,8 @@
+{
+    "/": "getHome",
+
+    "/abc": {
+        "get": "getAbc",
+        "post": "postAbc"
+    }
+}

@@ -9,6 +9,8 @@ declare class Expresser {
     constructor();
     /** [[App]] exposed as .app */
     app: any;
+    /** [[Routes]] exposed as .routes */
+    routes: any;
     /** Library version */
     version: string;
 }
