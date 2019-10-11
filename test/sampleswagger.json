@@ -17,7 +17,7 @@
     "basePath": "/",
     "schemes": ["https"],
     "paths": {
-        "/swagger/abc": {
+        "/swagger/{id}": {
             "get": {
                 "operationId": "getSwaggerAbc",
                 "summary": "Test",
@@ -26,10 +26,66 @@
                 "parameters": [
                     {
                         "in": "query",
-                        "name": "q",
-                        "description": "Test query",
+                        "name": "qs",
+                        "description": "Test query string",
                         "type": "string",
                         "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "qbool",
+                        "description": "Test query boolean",
+                        "type": "boolean",
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "qdate",
+                        "description": "Test query datetime",
+                        "type": "string",
+                        "format": "date",
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "qnum",
+                        "description": "Test query number",
+                        "type": "number",
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "qint",
+                        "description": "Test query integer",
+                        "type": "integer",
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "qarr",
+                        "description": "Test query array",
+                        "type": "array",
+                        "required": false
+                    },
+                    {
+                        "in": "header",
+                        "name": "h",
+                        "description": "Test header",
+                        "type": "number",
+                        "required": false
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Test path ID",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "in": "wrongScope",
+                        "name": "wrong",
+                        "description": "Test wrong scope",
+                        "type": "string"
                     }
                 ],
                 "responses": {

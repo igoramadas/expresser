@@ -141,7 +141,8 @@ describe("App Routes Tests", function() {
     it("Load swagger from default file", function(done) {
         routes.loadSwagger({handlers: handlers})
 
-        supertest.get("/swagger/abc").expect(200, done)
+        supertest.get("/swagger/abc").expect(200)
+        supertest.get("/swagger/abc?qs=string&qnum=1&qbool=true&qnum=5&qint=7&qdate=2010-01-01").expect(200, done)
     })
 
     it("Pass swagger directly via options.specs, with version", function(done) {
