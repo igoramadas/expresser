@@ -62,9 +62,26 @@
                     },
                     {
                         "in": "query",
-                        "name": "qarr",
-                        "description": "Test query array",
+                        "name": "qcsv",
+                        "description": "Test query array CSV",
                         "type": "array",
+                        "collectionFormat": "csv",
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "qpipes",
+                        "description": "Test query array pipes",
+                        "type": "array",
+                        "collectionFormat": "pipes",
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "qsep",
+                        "description": "Test query invalid separator",
+                        "type": "array",
+                        "collectionFormat": "invalid",
                         "required": false
                     },
                     {

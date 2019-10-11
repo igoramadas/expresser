@@ -27,11 +27,6 @@ class Routes {
         return this._instance || (this._instance = new this())
     }
 
-    /** Returns a new fresh instance of the Routes module. */
-    newInstance(): Routes {
-        return new Routes()
-    }
-
     // BASIC IMPLEMENTATION
     // --------------------------------------------------------------------------
 

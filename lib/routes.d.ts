@@ -14,8 +14,6 @@ declare class Routes {
     private static _instance;
     /** @hidden */
     static readonly Instance: Routes;
-    /** Returns a new fresh instance of the Routes module. */
-    newInstance(): Routes;
     /**
      * Load routes from the specified file.
      * @param options Loading options with filename or specs, and handlers.
