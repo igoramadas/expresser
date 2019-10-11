@@ -18,8 +18,8 @@ describe("App Routes Tests", function() {
     let supertest = null
 
     let handlers = {
-        getHome: (req, res) => {
-            res.send("home")
+        getDefault: (req, res) => {
+            res.send("default")
         },
         getAbc: (req, res) => {
             res.send("abc")
@@ -32,6 +32,23 @@ describe("App Routes Tests", function() {
         },
         getSwaggerAbc: (req, res) => {
             res.json({ok: true})
+        }
+    }
+
+    let sampleSpecs = {
+        "/from-specs": "getDefault"
+    }
+
+    let sampleSwaggerSpecs = {
+        info: {
+            title: "Sample Swagger"
+        },
+        paths: {
+            "/from-swagger-specs": {
+                get: {
+                    operationId: "getDefault"
+                }
+            }
         }
     }
 
@@ -75,6 +92,12 @@ describe("App Routes Tests", function() {
         supertest.post("/abc").expect(200, done)
     })
 
+    it("Pass routes directly via options.specs", function(done) {
+        routes.load({handlers: handlers, specs: sampleSpecs})
+
+        supertest.get("/from-specs").expect(200, done)
+    })
+
     it("Fails to load routes from incorrect files", function(done) {
         try {
             routes.load({filename: "notexisting.json"})
@@ -93,6 +116,12 @@ describe("App Routes Tests", function() {
         try {
             routes.load()
             done("Calling load without passing handles should have failed.")
+        } catch (ex) {}
+
+        try {
+            sampleSpecs["/from-specs-invalid"] = "lalala"
+            routes.load({handlers: handlers, specs: sampleSpecs})
+            done("Should have failed to load with invalid lalala handler")
         } catch (ex) {
             done()
         }
@@ -104,7 +133,16 @@ describe("App Routes Tests", function() {
         supertest.get("/swagger/abc").expect(200, done)
     })
 
-    it("Fails to load swagger specs from incorrect files", function(done) {
+    it("Pass swagger directly via options.specs", function(done) {
+        routes.loadSwagger({
+            handlers: handlers,
+            specs: sampleSwaggerSpecs
+        })
+
+        supertest.get("/from-swagger-specs").expect(200, done)
+    })
+
+    it("Fails to load swagger from incorrect files", function(done) {
         try {
             routes.loadSwagger({filename: "notexisting.json"})
             done("Calling loadSwagger with non existing file should have failed.")
@@ -118,10 +156,20 @@ describe("App Routes Tests", function() {
         }
     })
 
-    it("Fails to load swagger specs with missing handlers", function(done) {
+    it("Fails to load swagger with missing handlers", function(done) {
         try {
             routes.loadSwagger()
             done("Calling loadSwagger without passing handles should have failed.")
+        } catch (ex) {}
+
+        try {
+            sampleSwaggerSpecs.paths["/from-specs-invalid"] = {
+                get: {
+                    operationId: "lalala"
+                }
+            }
+            routes.loadSwagger({handlers: handlers, specs: sampleSwaggerSpecs})
+            done("Should have failed to load swagger with invalid lalala handler")
         } catch (ex) {
             done()
         }

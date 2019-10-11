@@ -2,6 +2,8 @@
 interface LoadOptions {
     /** The actual routes implementation. */
     handlers: any;
+    /** The actual routes specs (for either plain routes or swagger). */
+    specs?: any;
     /** The file containing routes to be loaded. */
     filename?: string;
     /** Optional version of the API / routes / swagger. */
@@ -16,7 +18,7 @@ declare class Routes {
     newInstance(): Routes;
     /**
      * Load routes from the specified file.
-     * @param options Loading options with filename and handlers.
+     * @param options Loading options with filename or specs, and handlers.
      */
     load: (options: LoadOptions) => void;
     /**

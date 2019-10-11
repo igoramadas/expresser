@@ -11,6 +11,8 @@ const settings = require("setmeup").settings
 interface LoadOptions {
     /** The actual routes implementation. */
     handlers: any
+    /** The actual routes specs (for either plain routes or swagger). */
+    specs?: any
     /** The file containing routes to be loaded. */
     filename?: string
     /** Optional version of the API / routes / swagger. */
@@ -35,40 +37,46 @@ class Routes {
 
     /**
      * Load routes from the specified file.
-     * @param options Loading options with filename and handlers.
+     * @param options Loading options with filename or specs, and handlers.
      */
     load = (options: LoadOptions) => {
         logger.debug("Routes.load", options.filename, Object.keys(options.handlers))
+        let specs: any
 
         // Check if the handlers were passed.
-        if (options.handlers == null) {
+        if (options == null || options.handlers == null) {
             throw new Error(`Missing options.handlers with the routing functions`)
         }
 
-        // Default filename is taken from settings.
-        if (options.filename == null || options.filename == "") {
-            options.filename = settings.routes.filename
+        // Specs passed directly?
+        if (options.specs) {
+            specs = options.specs
         }
+        // Otherwise load from filename.
+        else {
+            if (options.filename == null || options.filename == "") {
+                options.filename = settings.routes.filename
+            }
 
-        const filename: string = jaul.io.getFilePath(options.filename)
-        let jsonRoutes
+            const filename: string = jaul.io.getFilePath(options.filename)
 
-        // Check if file exists.
-        if (filename == null || !fs.existsSync(filename)) {
-            throw new Error(`File ${options.filename} not found.`)
-        }
+            // Check if file exists.
+            if (filename == null || !fs.existsSync(filename)) {
+                throw new Error(`File ${options.filename} not found.`)
+            }
 
-        // Try loading the routes file.
-        try {
-            jsonRoutes = fs.readFileSync(filename, {encoding: settings.general.encoding}).toString()
-            jsonRoutes = JSON.parse(jsonRoutes)
-        } catch (ex) {
-            logger.error("Routes.load", filename, ex)
-            throw ex
+            // Try loading the routes file.
+            try {
+                specs = fs.readFileSync(filename, {encoding: settings.general.encoding}).toString()
+                specs = JSON.parse(specs)
+            } catch (ex) {
+                logger.error("Routes.load", filename, ex)
+                throw ex
+            }
         }
 
         // Iterate routes and handlers.
-        for (let [route, spec] of Object.entries(jsonRoutes)) {
+        for (let [route, spec] of Object.entries(specs)) {
             if (_.isString(spec)) {
                 spec = {get: spec}
             }
@@ -79,8 +87,10 @@ class Routes {
                 // Make sure method and handler are valid.
                 if (app[method] == null) {
                     logger.error("Routes.load", options.filename, route, `Invalid method: ${method}`)
+                    throw new Error(`Invalid method: ${method}`)
                 } else if (handler == null) {
                     logger.error("Routes.load", options.filename, route, `Invalid handler: ${handlerKey}`)
+                    throw new Error(`Invalid handler: ${handlerKey}`)
                 } else {
                     app[method](route, handler)
                     logger.info("Routes.load", options.filename, route, method, handlerKey)
@@ -98,33 +108,38 @@ class Routes {
      */
     loadSwagger = (options: LoadOptions) => {
         logger.debug("Routes.loadSwagger", options.filename, Object.keys(options.handlers))
+        let specs: any
 
         // Check if the handlers were passed.
-        if (options.handlers == null) {
+        if (options == null || options.handlers == null) {
             throw new Error(`Missing options.handlers with the routing functions`)
         }
 
-        // Default swagger filename is taken from settings.
-        if (options.filename == null || options.filename == "") {
-            options.filename = settings.routes.swagger.filename
+        // Specs passed directly?
+        if (options.specs) {
+            specs = options.specs
         }
+        // Otherwise load from filename.
+        else {
+            if (options.filename == null || options.filename == "") {
+                options.filename = settings.routes.swagger.filename
+            }
 
-        const filename: string = jaul.io.getFilePath(options.filename)
+            const filename: string = jaul.io.getFilePath(options.filename)
 
-        // Check if swagger file exists.
-        if (filename == null || !fs.existsSync(filename)) {
-            throw new Error(`File ${options.filename} not found.`)
-        }
+            // Check if swagger file exists.
+            if (filename == null || !fs.existsSync(filename)) {
+                throw new Error(`File ${options.filename} not found.`)
+            }
 
-        let specs: any
-
-        // Try loading the swagger file.
-        try {
-            specs = fs.readFileSync(filename, {encoding: settings.general.encoding}).toString()
-            specs = JSON.parse(specs)
-        } catch (ex) {
-            logger.error("Routes.loadSwagger", filename, ex)
-            throw ex
+            // Try loading the swagger file.
+            try {
+                specs = fs.readFileSync(filename, {encoding: settings.general.encoding}).toString()
+                specs = JSON.parse(specs)
+            } catch (ex) {
+                logger.error("Routes.loadSwagger", filename, ex)
+                throw ex
+            }
         }
 
         // Version was passed as option?
