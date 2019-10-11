@@ -70,6 +70,14 @@
                     },
                     {
                         "in": "query",
+                        "name": "qssv",
+                        "description": "Test query array SSV",
+                        "type": "array",
+                        "collectionFormat": "ssv",
+                        "required": false
+                    },
+                    {
+                        "in": "query",
                         "name": "qpipes",
                         "description": "Test query array pipes",
                         "type": "array",

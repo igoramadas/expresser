@@ -258,6 +258,7 @@ class Routes {
                 req.swagger[scope][name] = param.split(separator)
             }
         } catch (ex) {
+            /* istanbul ignore next */
             logger.error("Routes.castParameter", spec, ex)
         }
     }
