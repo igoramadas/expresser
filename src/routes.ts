@@ -40,13 +40,14 @@ class Routes {
      * @param options Loading options with filename or specs, and handlers.
      */
     load = (options: LoadOptions) => {
-        logger.debug("Routes.load", options.filename, Object.keys(options.handlers))
         let specs: any
 
         // Check if the handlers were passed.
-        if (options == null || options.handlers == null) {
+        if (!options || !options.handlers) {
             throw new Error(`Missing options.handlers with the routing functions`)
         }
+
+        logger.debug("Routes.load", options.filename, Object.keys(options.handlers))
 
         // Specs passed directly?
         if (options.specs) {
@@ -58,19 +59,18 @@ class Routes {
                 options.filename = settings.routes.filename
             }
 
-            const filename: string = jaul.io.getFilePath(options.filename)
-
-            // Check if file exists.
-            if (filename == null || !fs.existsSync(filename)) {
-                throw new Error(`File ${options.filename} not found.`)
-            }
-
             // Try loading the routes file.
             try {
+                const filename: string = jaul.io.getFilePath(options.filename)
+
+                // Check if file exists.
+                if (filename == null || !fs.existsSync(filename)) {
+                    throw new Error(`File ${options.filename} not found.`)
+                }
                 specs = fs.readFileSync(filename, {encoding: settings.general.encoding}).toString()
                 specs = JSON.parse(specs)
             } catch (ex) {
-                logger.error("Routes.load", filename, ex)
+                logger.error("Routes.load", options.filename, ex)
                 throw ex
             }
         }
@@ -107,13 +107,14 @@ class Routes {
      * @param options Loading options.
      */
     loadSwagger = (options: LoadOptions) => {
-        logger.debug("Routes.loadSwagger", options.filename, Object.keys(options.handlers))
         let specs: any
 
         // Check if the handlers were passed.
-        if (options == null || options.handlers == null) {
+        if (!options || !options.handlers) {
             throw new Error(`Missing options.handlers with the routing functions`)
         }
+
+        logger.debug("Routes.loadSwagger", options.filename, Object.keys(options.handlers))
 
         // Specs passed directly?
         if (options.specs) {
@@ -125,19 +126,19 @@ class Routes {
                 options.filename = settings.routes.swagger.filename
             }
 
-            const filename: string = jaul.io.getFilePath(options.filename)
-
-            // Check if swagger file exists.
-            if (filename == null || !fs.existsSync(filename)) {
-                throw new Error(`File ${options.filename} not found.`)
-            }
-
             // Try loading the swagger file.
             try {
+                const filename: string = jaul.io.getFilePath(options.filename)
+
+                // Check if swagger file exists.
+                if (filename == null || !fs.existsSync(filename)) {
+                    throw new Error(`File ${options.filename} not found.`)
+                }
+
                 specs = fs.readFileSync(filename, {encoding: settings.general.encoding}).toString()
                 specs = JSON.parse(specs)
             } catch (ex) {
-                logger.error("Routes.loadSwagger", filename, ex)
+                logger.error("Routes.loadSwagger", options.filename, ex)
                 throw ex
             }
         }
