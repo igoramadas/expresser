@@ -122,6 +122,12 @@ describe("App Routes Tests", function() {
             sampleSpecs["/from-specs-invalid"] = "lalala"
             routes.load({handlers: handlers, specs: sampleSpecs})
             done("Should have failed to load with invalid lalala handler")
+        } catch (ex) {}
+
+        try {
+            sampleSpecs["/from-specs-invalid"] = {invalidMethod: "lalala"}
+            routes.load({handlers: handlers, specs: sampleSpecs})
+            done("Should have failed to load with invalid method")
         } catch (ex) {
             done()
         }
@@ -133,10 +139,11 @@ describe("App Routes Tests", function() {
         supertest.get("/swagger/abc").expect(200, done)
     })
 
-    it("Pass swagger directly via options.specs", function(done) {
+    it("Pass swagger directly via options.specs, with version", function(done) {
         routes.loadSwagger({
             handlers: handlers,
-            specs: sampleSwaggerSpecs
+            specs: sampleSwaggerSpecs,
+            version: "1.0.0"
         })
 
         supertest.get("/from-swagger-specs").expect(200, done)
@@ -170,6 +177,16 @@ describe("App Routes Tests", function() {
             }
             routes.loadSwagger({handlers: handlers, specs: sampleSwaggerSpecs})
             done("Should have failed to load swagger with invalid lalala handler")
+        } catch (ex) {}
+
+        try {
+            sampleSwaggerSpecs.paths["/from-specs-invalid"] = {
+                wrongMethod: {
+                    operationId: "lalala"
+                }
+            }
+            routes.loadSwagger({handlers: handlers, specs: sampleSwaggerSpecs})
+            done("Should have failed to load swagger with invalid method")
         } catch (ex) {
             done()
         }
