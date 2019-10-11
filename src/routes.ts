@@ -116,14 +116,7 @@ class Routes {
             throw new Error(`File ${options.filename} not found.`)
         }
 
-        let pkg, specs
-
-        // Try loading the package.json file.
-        try {
-            pkg = require(__dirname + "/../../../package.json")
-        } catch (ex) {
-            logger.error("Routes.loadSwagger", "Could not load app's main package.json", ex)
-        }
+        let specs: any
 
         // Try loading the swagger file.
         try {
@@ -137,8 +130,6 @@ class Routes {
         // Version was passed as option?
         if (options.version != null) {
             specs.info.version = options.version
-        } else if (specs.info.version == null && pkg) {
-            specs.info.version = pkg.version
         }
 
         // Iterate and parse swagger specs.
@@ -151,8 +142,6 @@ class Routes {
                     throw new Error(`Missing method spec for ${method} ${path}`)
                 }
 
-                logger.info("Swagger.setup", method, path, methodSpec.operationId)
-
                 // Handler not found for method?
                 if (options.handlers[methodSpec.operationId] == null) {
                     throw new Error(`Missing route handler for ${methodSpec.operationId}`)
@@ -162,17 +151,23 @@ class Routes {
                     methodSpec.parameters = []
                 }
 
+                logger.info("Routes.loadSwagger", options.filename, method, path, methodSpec.operationId)
+
                 // Create route on the app.
                 app[method](path, (req, res, next) => {
-                    if (settings.swagger.castParameters) {
+                    try {
                         if (!req.swagger) {
                             req.swagger = {}
                         }
 
-                        _.forEach(methodSpec.parameters, parameterSpec => this.castParameter(req, parameterSpec))
-                    }
+                        for (let parameterSpec of methodSpec.parameters) {
+                            this.castParameter(req, parameterSpec)
+                        }
 
-                    options.handlers[methodSpec.operationId](req, res, next)
+                        options.handlers[methodSpec.operationId](req, res, next)
+                    } catch (ex) {
+                        logger.error("Routes", method, path, methodSpec.operationId, ex)
+                    }
                 })
             }
         }
@@ -187,36 +182,34 @@ class Routes {
      * Add parameters to the request swagger object. Internal use only.
      */
     private castParameter = function(req: any, spec: any) {
-        const {name} = spec
-        let scope, separator
-
-        switch (spec.in) {
-            case "query":
-                scope = "query"
-                break
-            case "header":
-                scope = "header"
-                break
-            case "path":
-                scope = "params"
-                break
-        }
-
-        // Parameter out of scope?
-        if (scope == null) {
-            return
-        }
-
-        req.swagger[scope] = req.swagger[scope] || {}
-        const param = req[scope][name]
-
-        // Parameter not found?
-        if (param == null) {
-            return
-        }
-
-        // Parse specs by type.
         try {
+            const {name} = spec
+            let scope, separator
+
+            switch (spec.in) {
+                case "query":
+                    scope = "query"
+                    break
+                case "header":
+                    scope = "header"
+                    break
+                case "path":
+                    scope = "params"
+                    break
+            }
+
+            // Parameter out of scope?
+            if (scope == null) {
+                return
+            }
+
+            req.swagger[scope] = req.swagger[scope] || {}
+            const param = req[scope][name]
+
+            // Parameter not found?
+            if (param == null) {
+                return
+            }
             if (spec.type == "string") {
                 if (spec.format == "date" || spec.format == "datetime" || spec.format == "date-time") {
                     req.swagger[scope][name] = new Date(param)

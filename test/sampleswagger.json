@@ -1,0 +1,43 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Test Swagger",
+        "description": "Testing Swagger module.",
+        "contact": {
+            "name": "Devv",
+            "email": "noreply@devv.com",
+            "url": "https://www.github.com/igoramadas/expresser"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "expresser.devv.com",
+    "basePath": "/",
+    "schemes": ["https"],
+    "paths": {
+        "/swagger/abc": {
+            "get": {
+                "operationId": "getSwaggerAbc",
+                "summary": "Test",
+                "description": "Test",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "q",
+                        "description": "Test query",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Result"
+                    }
+                }
+            }
+        }
+    }
+}

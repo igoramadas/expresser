@@ -29,6 +29,9 @@ describe("App Routes Tests", function() {
         },
         getDef: (req, res) => {
             res.send("def")
+        },
+        getSwaggerAbc: (req, res) => {
+            res.json({ok: true})
         }
     }
 
@@ -72,11 +75,55 @@ describe("App Routes Tests", function() {
         supertest.post("/abc").expect(200, done)
     })
 
-    it("Load routes from specific file", function(done) {
-        routes.load({handlers: handlers, filename: "sampleroutes.json"})
+    it("Fails to load routes from incorrect files", function(done) {
+        try {
+            routes.load({filename: "notexisting.json"})
+            done("Calling load with non existing file should have failed.")
+        } catch (ex) {
+            try {
+                routes.load({filename: "./test/testview.pug"})
+                done("Calling load passing an invalid JSON file should have failed.")
+            } catch (ex) {
+                done()
+            }
+        }
+    })
 
-        supertest.get("/").expect(200)
-        supertest.get("/abc").expect(200)
-        supertest.post("/abc").expect(200, done)
+    it("Fails to load routes with missing handlers", function(done) {
+        try {
+            routes.load()
+            done("Calling load without passing handles should have failed.")
+        } catch (ex) {
+            done()
+        }
+    })
+
+    it("Load swagger from default file", function(done) {
+        routes.loadSwagger({handlers: handlers})
+
+        supertest.get("/swagger/abc").expect(200, done)
+    })
+
+    it("Fails to load swagger specs from incorrect files", function(done) {
+        try {
+            routes.loadSwagger({filename: "notexisting.json"})
+            done("Calling loadSwagger with non existing file should have failed.")
+        } catch (ex) {
+            try {
+                routes.loadSwagger({filename: "./test/testview.pug"})
+                done("Calling loadSwagger passing an invalid JSON file should have failed.")
+            } catch (ex) {
+                done()
+            }
+        }
+    })
+
+    it("Fails to load swagger specs with missing handlers", function(done) {
+        try {
+            routes.loadSwagger()
+            done("Calling loadSwagger without passing handles should have failed.")
+        } catch (ex) {
+            done()
+        }
     })
 })
