@@ -453,6 +453,7 @@ class App {
             this.renderError(req, res, ex)
         }
 
+        /* istanbul ignore if */
         if (settings.app.events.render) {
             this.events.emit("renderView", req, res, view, options, status)
         }
@@ -491,6 +492,7 @@ class App {
             this.renderError(req, res, ex)
         }
 
+        /* istanbul ignore if */
         if (settings.app.events.render) {
             this.events.emit("renderText", req, res, text, status)
         }
@@ -555,6 +557,7 @@ class App {
         // Send JSON response.
         res.json(data)
 
+        /* istanbul ignore if */
         if (settings.app.events.render) {
             this.events.emit("renderJson", req, res, data, status)
         }
@@ -591,6 +594,7 @@ class App {
         res.type(mimetype)
         res.sendFile(filename)
 
+        /* istanbul ignore if */
         if (settings.app.events.render) {
             this.events.emit("renderImage", req, res, filename, options)
         }
@@ -665,6 +669,7 @@ class App {
         // Send error JSON to client.
         res.status(status as number).json(message)
 
+        /* istanbul ignore if */
         if (settings.app.events.render) {
             this.events.emit("renderError", req, res, error, status)
         }

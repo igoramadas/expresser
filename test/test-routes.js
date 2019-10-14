@@ -171,6 +171,21 @@ describe("App Routes Tests", function() {
         }
     })
 
+    it("Fails to load swagger with missing path specs", function(done) {
+        try {
+            let invalidSwagger = {
+                paths: {
+                    "/missing-method": null
+                }
+            }
+
+            routes.loadSwagger({handlers: handlers, specs: invalidSwagger})
+            done("Loading invalid swagger with missing method spec should have failed.")
+        } catch (ex) {
+            done()
+        }
+    })
+
     it("Fails to load swagger with missing handlers", function(done) {
         try {
             routes.loadSwagger()
