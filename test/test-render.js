@@ -50,12 +50,12 @@ describe("App Render Tests", function() {
         supertest.get("/plaintext").expect(200, done)
     })
 
-    it("Renders an empty text", function(done) {
+    it("Renders an empty text, passing status 404", function(done) {
         app.get("/emptytext", function(req, res) {
-            app.renderText(req, res, null)
+            app.renderText(req, res, null, 404)
         })
 
-        supertest.get("/emptytext").expect(200, done)
+        supertest.get("/emptytext").expect(404, done)
     })
 
     it("Renders number as text", function(done) {
@@ -84,7 +84,7 @@ describe("App Render Tests", function() {
             .expect(200, done)
     })
 
-    it("Renders a complex JSON object with allow origin header", function(done) {
+    it("Renders a complex JSON object with allow origin header, status 202", function(done) {
         settings.app.allowOriginHeader = true
 
         app.get("/complexjson", function(req, res) {
@@ -110,9 +110,11 @@ describe("App Render Tests", function() {
                         }
                     }
                 },
-                arr: [function() {
-                    return false
-                }]
+                arr: [
+                    function() {
+                        return false
+                    }
+                ]
             }
 
             let final = {
@@ -122,13 +124,13 @@ describe("App Render Tests", function() {
                 }
             }
 
-            app.renderJson(req, res, final)
+            app.renderJson(req, res, final, 202)
         })
 
         supertest
             .get("/complexjson")
             .expect("Content-Type", /json/)
-            .expect(200, done)
+            .expect(202, done)
     })
 
     it("Renders an error", function(done) {

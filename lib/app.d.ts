@@ -113,25 +113,28 @@ declare class App {
      * @param res The Express response object.
      * @param view The view filename.
      * @param options Options passed to the view, optional.
+     * @param status Optional status code, defaults to 200.
      * @event renderView
      */
-    renderView: (req: express.Request, res: express.Response, view: string, options?: any) => void;
+    renderView: (req: express.Request, res: express.Response, view: string, options?: any, status?: number) => void;
     /**
      * Sends pure text to the client.
      * @param req The Express request object.
      * @param res The Express response object.
      * @param text The text to be rendered, mandatory.
+     * @param status Optional status code, defaults to 200.
      * @event renderText
      */
-    renderText: (req: express.Request, res: express.Response, text: any) => void;
+    renderText: (req: express.Request, res: express.Response, text: any, status?: number) => void;
     /**
      * Render response as JSON data and send to the client.
      * @param req The Express request object.
      * @param res The Express response object.
      * @param data The JSON data to be sent.
+     * @param status Optional status code, defaults to 200.
      * @event renderJson
      */
-    renderJson: (req: express.Request, res: express.Response, data: any) => void;
+    renderJson: (req: express.Request, res: express.Response, data: any, status?: number) => void;
     /**
      * Render an image from the speficied file, and send to the client.
      * @param req The Express request object.

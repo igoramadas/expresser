@@ -3,6 +3,7 @@
 4.1.0
 =====
 * NEW! Routes module to load and manage routes, supports Swagger specs.
+* NEW! All app render methods now accept a status code as last parameter.
 * Shortcut: "app.ssl=false" == "app.ssl.enabled=false"
 * General refactoring.
 * Updated dependencies.

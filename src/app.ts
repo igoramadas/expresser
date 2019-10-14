@@ -424,9 +424,10 @@ class App {
      * @param res The Express response object.
      * @param view The view filename.
      * @param options Options passed to the view, optional.
+     * @param status Optional status code, defaults to 200.
      * @event renderView
      */
-    renderView = (req: express.Request, res: express.Response, view: string, options?: any) => {
+    renderView = (req: express.Request, res: express.Response, view: string, options?: any, status?: number) => {
         logger.debug("App.renderView", req.originalUrl, view, options)
 
         try {
@@ -436,6 +437,11 @@ class App {
 
             if (options.title == null) {
                 options.title = settings.app.title
+            }
+
+            // A specific status code was passed?
+            if (status) {
+                res.status(status)
             }
 
             // Send rendered view to client.
@@ -448,7 +454,7 @@ class App {
         }
 
         if (settings.app.events.render) {
-            this.events.emit("renderView", req, res, view, options)
+            this.events.emit("renderView", req, res, view, options, status)
         }
     }
 
@@ -457,9 +463,10 @@ class App {
      * @param req The Express request object.
      * @param res The Express response object.
      * @param text The text to be rendered, mandatory.
+     * @param status Optional status code, defaults to 200.
      * @event renderText
      */
-    renderText = (req: express.Request, res: express.Response, text: any) => {
+    renderText = (req: express.Request, res: express.Response, text: any, status?: number) => {
         logger.debug("App.renderText", req.originalUrl, text)
 
         try {
@@ -468,6 +475,11 @@ class App {
                 text = ""
             } else if (!_.isString(text)) {
                 text = text.toString()
+            }
+
+            // A specific status code was passed?
+            if (status) {
+                res.status(status)
             }
 
             res.setHeader("content-type", "text/plain")
@@ -480,7 +492,7 @@ class App {
         }
 
         if (settings.app.events.render) {
-            this.events.emit("renderText", req, res, text)
+            this.events.emit("renderText", req, res, text, status)
         }
     }
 
@@ -489,9 +501,10 @@ class App {
      * @param req The Express request object.
      * @param res The Express response object.
      * @param data The JSON data to be sent.
+     * @param status Optional status code, defaults to 200.
      * @event renderJson
      */
-    renderJson = (req: express.Request, res: express.Response, data: any) => {
+    renderJson = (req: express.Request, res: express.Response, data: any, status?: number) => {
         logger.debug("App.renderJson", req.originalUrl, data)
 
         if (_.isString(data)) {
@@ -529,6 +542,11 @@ class App {
 
         cleanJson(data, 0)
 
+        // A specific status code was passed?
+        if (status) {
+            res.status(status)
+        }
+
         // Add Access-Control-Allow-Origin if set.
         if (settings.app.allowOriginHeader) {
             res.setHeader("Access-Control-Allow-Origin", settings.app.allowOriginHeader)
@@ -538,7 +556,7 @@ class App {
         res.json(data)
 
         if (settings.app.events.render) {
-            this.events.emit("renderJson", req, res, data)
+            this.events.emit("renderJson", req, res, data, status)
         }
     }
 
