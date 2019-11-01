@@ -12,13 +12,14 @@ chai.should()
 
 describe("App HTTPS Tests", function() {
     let app = null
+    let logger = null
     let setmeup = null
     let settings = null
     let supertest = null
 
     before(async function() {
         let port = await getPort(8003)
-        let logger = require("anyhow")
+        logger = require("anyhow")
         logger.setup("none")
 
         app = require("../lib/app").newInstance()
@@ -45,6 +46,14 @@ describe("App HTTPS Tests", function() {
     it("Init HTTPS server on 127.0.0.1", function() {
         app.init()
         supertest = require("supertest").agent(app.expressApp)
+    })
+
+    it("Debug was enabled on the logger", function(done) {
+        if (logger.levels.indexOf("debug") < 0) {
+            done("Logger should have debug on the enabled levels")
+        } else {
+            done()
+        }
     })
 
     it("Renders a JSON object via HTTPS", function(done) {

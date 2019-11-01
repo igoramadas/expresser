@@ -101,6 +101,11 @@ class App {
     init(middlewares?: MiddlewareDefs) {
         let mw
 
+        // Debug enabled?
+        if (settings.general.debug && logger.levels.indexOf("debug") < 0) {
+            logger.levels.push("debug")
+        }
+
         // Set preprocessor, if not set yet.
         if (!logger.preprocessor) {
             logger.preprocessor = require("./logger").clean
