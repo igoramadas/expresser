@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+4.1.1
+=====
+* Defining settings.general.debug = true should also add "debug" to the Anyhow logger levels.
+* Updated dependencies.
+
 4.1.0
 =====
 * NEW! Routes module to load and manage routes, supports Swagger specs.
