@@ -13,7 +13,7 @@ interface LoadOptions {
 declare class Routes {
     private static _instance;
     /** @hidden */
-    static readonly Instance: Routes;
+    static get Instance(): Routes;
     /**
      * Load routes from the specified file.
      * @param options Loading options with filename or specs, and handlers.

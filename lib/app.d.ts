@@ -13,7 +13,7 @@ interface MiddlewareDefs {
 declare class App {
     private static _instance;
     /** @hidden */
-    static readonly Instance: App;
+    static get Instance(): App;
     /** Returns a new fresh instance of the App module. */
     newInstance(): App;
     /** Default App constructor. */
@@ -116,7 +116,7 @@ declare class App {
      * @param status Optional status code, defaults to 200.
      * @event renderView
      */
-    renderView: (req: express.Request, res: express.Response, view: string, options?: any, status?: number) => void;
+    renderView: (req: express.Request<import("express-serve-static-core").ParamsDictionary>, res: express.Response, view: string, options?: any, status?: number) => void;
     /**
      * Sends pure text to the client.
      * @param req The Express request object.
@@ -125,7 +125,7 @@ declare class App {
      * @param status Optional status code, defaults to 200.
      * @event renderText
      */
-    renderText: (req: express.Request, res: express.Response, text: any, status?: number) => void;
+    renderText: (req: express.Request<import("express-serve-static-core").ParamsDictionary>, res: express.Response, text: any, status?: number) => void;
     /**
      * Render response as JSON data and send to the client.
      * @param req The Express request object.
@@ -134,7 +134,7 @@ declare class App {
      * @param status Optional status code, defaults to 200.
      * @event renderJson
      */
-    renderJson: (req: express.Request, res: express.Response, data: any, status?: number) => void;
+    renderJson: (req: express.Request<import("express-serve-static-core").ParamsDictionary>, res: express.Response, data: any, status?: number) => void;
     /**
      * Render an image from the speficied file, and send to the client.
      * @param req The Express request object.
@@ -143,7 +143,7 @@ declare class App {
      * @param options Options passed to the image renderer, for example the "mimetype".
      * @event renderImage
      */
-    renderImage: (req: express.Request, res: express.Response, filename: string, options?: any) => void;
+    renderImage: (req: express.Request<import("express-serve-static-core").ParamsDictionary>, res: express.Response, filename: string, options?: any) => void;
     /**
      * Sends error response as JSON.
      * @param req The Express request object.
@@ -152,7 +152,7 @@ declare class App {
      * @param status The response status code, optional, default is 500.
      * @event renderError
      */
-    renderError: (req: express.Request, res: express.Response, error: any, status?: string | number) => void;
+    renderError: (req: express.Request<import("express-serve-static-core").ParamsDictionary>, res: express.Response, error: any, status?: string | number) => void;
 }
 declare const _default: App;
 export = _default;

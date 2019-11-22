@@ -2,7 +2,7 @@
 declare class Expresser {
     private static _instance;
     /** @hidden */
-    static readonly Instance: Expresser;
+    static get Instance(): Expresser;
     /** Returns a new fresh instance of the App module. */
     newInstance(): Expresser;
     /** Default App constructor. */
