@@ -1,7 +1,7 @@
 sudo: false
 language: node_js
 node_js:
-    - "13.5"
+    - "13.6"
     - "12.14"
     - "10.16"
 after_success:

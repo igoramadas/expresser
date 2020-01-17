@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+4.1.2
+=====
+* Updated dependencies.
+
 4.1.1
 =====
 * Defining settings.general.debug = true should also add "debug" to the Anyhow logger levels.
