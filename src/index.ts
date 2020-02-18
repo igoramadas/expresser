@@ -1,3 +1,6 @@
+import {App} from "./app"
+import {Routes} from "./routes"
+
 // Expresser: index.ts
 
 /** Main Expresser class. */
@@ -19,9 +22,9 @@ class Expresser {
     }
 
     /** [[App]] exposed as .app */
-    app = require("./app")
+    app: App = App.Instance
     /** [[Routes]] exposed as .routes */
-    routes = require("./routes")
+    routes: Routes = Routes.Instance
     /** Library version */
     version: string
 }

@@ -6,17 +6,17 @@ TYPEDOC:= ./node_modules/.bin/typedoc
 TSC:= ./node_modules/.bin/tsc
 
 test:
-	tsc
+	$(TSC)
 	@NODE_ENV=test $(MOCHA) --trace-warnings --exit -u tdd -R spec
 
 test-cover:
-	tsc
+	$(TSC)
 	echo TRAVIS_JOB_ID $(TRAVIS_JOB_ID)
 	@NODE_ENV=test $(ISTANBUL) $(MOCHAEXEC) --exit --report lcovonly -R spec && \
 	cat ./coverage/lcov.info | $(COVERALLS) || true
 
 cover:
-	tsc
+	$(TSC)
 	@NODE_ENV=test $(ISTANBUL) $(MOCHAEXEC) --exit -R spec ./test/*.js
 
 docs:

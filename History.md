@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+4.2.0
+=====
+* TypeScript types are now exported with the library.
+
 4.1.2
 =====
 * Updated dependencies.

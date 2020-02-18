@@ -1,7 +1,7 @@
 // Expresser: routes.ts
 
+import app from "./app"
 import _ = require("lodash")
-import app = require("./app")
 import fs = require("fs")
 import jaul = require("jaul")
 import logger = require("anyhow")
@@ -20,7 +20,7 @@ interface LoadOptions {
 }
 
 /** Routes class (based on plain JSON or Swagger). */
-class Routes {
+export class Routes {
     private static _instance: Routes
     /** @hidden */
     static get Instance() {
@@ -264,4 +264,4 @@ class Routes {
 }
 
 // Exports...
-export = Routes.Instance
+export default Routes.Instance

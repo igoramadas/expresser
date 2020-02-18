@@ -23,7 +23,7 @@ interface MiddlewareDefs {
 }
 
 /** Main App class. */
-class App {
+export class App {
     private static _instance: App
     /** @hidden */
     static get Instance() {
@@ -68,7 +68,7 @@ class App {
      * @param eventName The name of the event.
      * @param callback Callback function.
      */
-    on(eventName: string, callback: EventEmitter.ListenerFn): void {
+    on = (eventName: string, callback: EventEmitter.ListenerFn): void => {
         this.events.on(eventName, callback)
     }
 
@@ -77,7 +77,7 @@ class App {
      * @param eventName The name of the event.
      * @param callback Callback function.
      */
-    once(eventName: string, callback: EventEmitter.ListenerFn): void {
+    once = (eventName: string, callback: EventEmitter.ListenerFn): void => {
         this.events.on(eventName, callback)
     }
 
@@ -86,7 +86,7 @@ class App {
      * @param eventName The name of the event.
      * @param callback Callback function.
      */
-    off(eventName: string, callback: EventEmitter.ListenerFn): void {
+    off = (eventName: string, callback: EventEmitter.ListenerFn): void => {
         this.events.off(eventName, callback)
     }
 
@@ -260,7 +260,7 @@ class App {
      * @returns The HTTP(S) server created by Express.
      * @event start
      */
-    start(): Http2Server | Http2SecureServer {
+    start = (): Http2Server | Http2SecureServer => {
         if (this.server) {
             logger.warn("App.start", "Server is already running, abort start.")
             return this.server
@@ -297,7 +297,7 @@ class App {
         }
 
         /* istanbul ignore next */
-        let listenError = err => {
+        let listenError = (err) => {
             /* istanbul ignore next */
             logger.error("App.start", "Can't start", err)
         }
@@ -321,7 +321,7 @@ class App {
      * Kill the underlying HTTP(S) server(s).
      * @event kill
      */
-    kill(): void {
+    kill = (): void => {
         if (!this.server) {
             logger.warn("App.kill", "Server was not running")
             return
@@ -342,72 +342,65 @@ class App {
 
     /**
      * Shortcut to express ".all()".
-     * @param reqPath The path for which the middleware function is invoked.
-     * @param callbacks Single, array or series of middlewares.
+     * @param args Arguments passed to Express.
      */
-    all(reqPath: string | RegExp | any[], ...callbacks: any[]) {
-        logger.debug("App.all", reqPath, ...callbacks)
-        return this.expressApp.all.apply(this.expressApp, arguments)
+    all = (...args: any[]) => {
+        logger.debug("App.all", args[1], args[2])
+        return this.expressApp.all.apply(this.expressApp, args)
     }
 
     /**
      * Shortcut to express ".get()".
-     * @param reqPath The path for which the middleware function is invoked.
-     * @param callbacks Single, array or series of middlewares.
+     * @param args Arguments passed to Express.
      */
-    get(reqPath: string | RegExp | any[], ...callbacks: any[]) {
-        logger.debug("App.get", reqPath, ...callbacks)
-        return this.expressApp.get.apply(this.expressApp, arguments)
+    get = (...args: any[]) => {
+        logger.debug("App.get", args[1], args[2])
+        return this.expressApp.get.apply(this.expressApp, args)
     }
 
     /**
      * Shortcut to express ".post()".
-     * @param reqPath The path for which the middleware function is invoked.
-     * @param callbacks Single, array or series of middlewares.
+     * @param args Arguments passed to Express.
      */
-    post(reqPath: string | RegExp | any[], ...callbacks: any[]) {
-        logger.debug("App.post", reqPath, ...callbacks)
-        return this.expressApp.post.apply(this.expressApp, arguments)
+    post = (...args: any[]) => {
+        logger.debug("App.post", args[1], args[2])
+        return this.expressApp.post.apply(this.expressApp, args)
     }
 
     /**
      * Shortcut to express ".put()".
-     * @param reqPath The path for which the middleware function is invoked.
-     * @param callbacks Single, array or series of middlewares.
+     * @param args Arguments passed to Express.
      */
-    put(reqPath: string | RegExp | any[], ...callbacks: any[]) {
-        logger.debug("App.put", reqPath, ...callbacks)
-        return this.expressApp.put.apply(this.expressApp, arguments)
+    put = (...args: any[]) => {
+        logger.debug("App.put", args[1], args[2])
+        return this.expressApp.put.apply(this.expressApp, args)
     }
 
     /**
      * Shortcut to express ".patch()".
-     * @param reqPath The path for which the middleware function is invoked.
-     * @param callbacks Single, array or series of middlewares.
+     * @param args Arguments passed to Express.
      */
-    patch(reqPath: string | RegExp | any[], ...callbacks: any[]) {
-        logger.debug("App.patch", reqPath, ...callbacks)
-        return this.expressApp.patch.apply(this.expressApp, arguments)
+    patch = (...args: any[]) => {
+        logger.debug("App.patch", args[1], args[2])
+        return this.expressApp.patch.apply(this.expressApp, args)
     }
 
     /**
      * Shortcut to express ".delete()".
-     * @param reqPath The path for which the middleware function is invoked.
-     * @param callbacks Single, array or series of middlewares.
+     * @param args Arguments passed to Express.
      */
-    delete(reqPath: string | RegExp | any[], ...callbacks: any[]) {
-        logger.debug("App.delete", reqPath, ...callbacks)
-        return this.expressApp.delete.apply(this.expressApp, arguments)
+    delete(...args: any[]) {
+        logger.debug("App.delete", args[1], args[2])
+        return this.expressApp.delete.apply(this.expressApp, args)
     }
 
     /**
      * Shortcut to express ".use()".
-     * @param reqPath The path for which the middleware function is invoked.
-     * @param callbacks Single, array or series of middlewares.
+     * @param args Arguments passed to Express.
      */
-    use(reqPath?: string, ...callbacks: any[]) {
-        logger.debug("App.use", reqPath, ...callbacks)
-        return this.expressApp.use.apply(this.expressApp, arguments)
+    use(...args: any[]) {
+        logger.debug("App.use", args[1], args[2])
+        return this.expressApp.use.apply(this.expressApp, args)
     }
 
     /**
@@ -417,7 +410,7 @@ class App {
      */
     route(reqPath: string): express.IRoute {
         logger.debug("App.route", reqPath)
-        return this.expressApp.route.apply(this.expressApp, arguments)
+        return this.expressApp.route.apply(this.expressApp, reqPath)
     }
 
     // RENDERING METHODS
@@ -530,7 +523,7 @@ class App {
             }
 
             if (_.isArray(obj)) {
-                return Array.from(obj).map(i => cleanJson(i, depth + 1))
+                return Array.from(obj).map((i) => cleanJson(i, depth + 1))
             } else if (_.isObject(obj)) {
                 return (() => {
                     const result = []
@@ -682,4 +675,4 @@ class App {
 }
 
 // Exports...
-export = App.Instance
+export default App.Instance

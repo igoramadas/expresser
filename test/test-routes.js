@@ -57,8 +57,8 @@ describe("App Routes Tests", function() {
         let logger = require("anyhow")
         logger.setup("none")
 
-        app = require("../lib/app")
-        routes = require("../lib/routes")
+        app = require("../lib/index").app.newInstance()
+        routes = require("../lib/index").routes
         setmeup = require("setmeup")
         settings = setmeup.settings
         settings.app.port = port

@@ -22,7 +22,7 @@ describe("App HTTPS Tests", function() {
         logger = require("anyhow")
         logger.setup("none")
 
-        app = require("../lib/app").newInstance()
+        app = require("../lib/index").app.newInstance()
         setmeup = require("setmeup")
         settings = setmeup.settings
         settings.app.ip = "127.0.0.1"

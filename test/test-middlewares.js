@@ -21,7 +21,7 @@ describe("App Middleware Tests", function() {
         let logger = require("anyhow")
         logger.setup("none")
 
-        app = require("../lib/app").newInstance()
+        app = require("../lib/index").app.newInstance()
         setmeup = require("setmeup")
         settings = setmeup.settings
         settings.app.port = port
