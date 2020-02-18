@@ -6,8 +6,7 @@ publish:
 	npm publish
 
 update:
-	rm -f package-lock.json
 	-ncu -u
-	npm install
+	-npm install
 
 .PHONY: docs test

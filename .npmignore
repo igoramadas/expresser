@@ -9,5 +9,6 @@ plugins/
 src/
 test/
 CNAME
+History.md
 Makefile
 tsconfig.json

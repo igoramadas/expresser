@@ -3,6 +3,7 @@ MOCHA:= ./node_modules/.bin/mocha
 MOCHAEXEC:= ./node_modules/.bin/_mocha
 ISTANBUL:= ./node_modules/.bin/nyc
 TYPEDOC:= ./node_modules/.bin/typedoc
+TSC:= ./node_modules/.bin/tsc
 
 test:
 	tsc
@@ -28,14 +29,11 @@ clean:
 	rm -f package-lock.json
 
 publish:
-	tsc --removeComments
 	npm publish
-	tsc
 
 update:
-	rm -f package-lock.json
 	-ncu -u
-	npm install
-	tsc
+	-npm install
+	$(TSC)
 
 .PHONY: docs test
