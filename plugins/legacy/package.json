@@ -1,6 +1,6 @@
 {
     "name": "expresser-legacy",
-    "version": "3.6.2",
+    "version": "3.6.3",
     "description": "Legacy adapter to make Expresser v3 apps work with v4.",
     "keywords": [
         "adapter",
@@ -19,10 +19,6 @@
     },
     "engines": {
         "node": ">= 10.0.0"
-    },
-    "scripts": {
-        "prepublishOnly": "./node_modules/.bin/tsc --removeComments",
-        "docs": "make docs"
     },
     "dependencies": {
         "body-parser": "^1.19.0",
