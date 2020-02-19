@@ -12,6 +12,7 @@ import jaul = require("jaul")
 import logger = require("anyhow")
 import path = require("path")
 import setmeup = require("setmeup")
+
 let settings
 
 /** Middleware definitions to be be passed on app [[init]]. */
@@ -23,7 +24,7 @@ interface MiddlewareDefs {
 }
 
 /** Main App class. */
-export class App {
+class App {
     private static _instance: App
     /** @hidden */
     static get Instance() {
@@ -98,7 +99,7 @@ export class App {
      * @param middlewares List of middlewares to be appended / prepended.
      * @event init
      */
-    init(middlewares?: MiddlewareDefs) {
+    init = (middlewares?: MiddlewareDefs): void => {
         let mw
 
         // Debug enabled?
@@ -389,7 +390,7 @@ export class App {
      * Shortcut to express ".delete()".
      * @param args Arguments passed to Express.
      */
-    delete(...args: any[]) {
+    delete = (...args: any[]) => {
         logger.debug("App.delete", args[1], args[2])
         return this.expressApp.delete.apply(this.expressApp, args)
     }
@@ -398,7 +399,7 @@ export class App {
      * Shortcut to express ".use()".
      * @param args Arguments passed to Express.
      */
-    use(...args: any[]) {
+    use = (...args: any[]) => {
         logger.debug("App.use", args[1], args[2])
         return this.expressApp.use.apply(this.expressApp, args)
     }
@@ -408,7 +409,7 @@ export class App {
      * @param reqPath The path of the desired route.
      * @returns An instance of a single route for the specified path.
      */
-    route(reqPath: string): express.IRoute {
+    route = (reqPath: string): express.IRoute => {
         logger.debug("App.route", reqPath)
         return this.expressApp.route.apply(this.expressApp, reqPath)
     }
@@ -675,4 +676,4 @@ export class App {
 }
 
 // Exports...
-export default App.Instance
+export = App.Instance

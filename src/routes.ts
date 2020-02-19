@@ -1,7 +1,7 @@
 // Expresser: routes.ts
 
-import app from "./app"
 import _ = require("lodash")
+import app = require("./app")
 import fs = require("fs")
 import jaul = require("jaul")
 import logger = require("anyhow")
@@ -20,7 +20,7 @@ interface LoadOptions {
 }
 
 /** Routes class (based on plain JSON or Swagger). */
-export class Routes {
+class Routes {
     private static _instance: Routes
     /** @hidden */
     static get Instance() {
@@ -34,7 +34,7 @@ export class Routes {
      * Load routes from the specified file.
      * @param options Loading options with filename or specs, and handlers.
      */
-    load = (options: LoadOptions) => {
+    load = (options: LoadOptions): void => {
         let specs: any
 
         // Check if the handlers were passed.
@@ -101,7 +101,7 @@ export class Routes {
      * Load routes from a swagger definition file.
      * @param options Loading options.
      */
-    loadSwagger = (options: LoadOptions) => {
+    loadSwagger = (options: LoadOptions): void => {
         let specs: any
 
         // Check if the handlers were passed.
@@ -264,4 +264,4 @@ export class Routes {
 }
 
 // Exports...
-export default Routes.Instance
+export = Routes.Instance

@@ -1,11 +1,9 @@
 // Expresser: logger.ts
 
-/** @hidden */
-const _ = require("lodash")
-/** @hidden */
-const jaul = require("jaul")
-/** @hidden */
-let settings = require("setmeup").settings
+import _ = require("lodash")
+import jaul = require("jaul")
+
+const settings = require("setmeup").settings
 
 /** Logger helper class to configure the Anyhow logging module. */
 class Logger {
