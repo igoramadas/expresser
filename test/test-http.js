@@ -10,13 +10,13 @@ let it = mocha.it
 
 chai.should()
 
-describe("App HTTP Tests", function() {
+describe("App HTTP Tests", function () {
     let app = null
     let setmeup = null
     let settings = null
     let supertest = null
 
-    before(async function() {
+    before(async function () {
         let port = await getPort(8002)
         let logger = require("anyhow")
         logger.setup("none")
@@ -33,17 +33,17 @@ describe("App HTTP Tests", function() {
         settings.app.viewPath = "./test/"
     })
 
-    after(function() {
+    after(function () {
         if (app && app.kill) {
             app.kill()
         }
     })
 
-    it("Has settings defined", function() {
+    it("Has settings defined", function () {
         settings.should.have.property("app")
     })
 
-    it("Fail to call Express application methods before App init", function(done) {
+    it("Fail to call Express application methods before App init", function (done) {
         let methods = ["get", "post", "listen", "route", "use"]
         let failed = false
 
@@ -61,66 +61,78 @@ describe("App HTTP Tests", function() {
         }
     })
 
-    it("Init HTTP server", function() {
+    it("Init HTTP server", function () {
         app.init()
         supertest = require("supertest").agent(app.expressApp)
     })
 
-    it("Request all", function(done) {
-        app.get("/all", function(req, res) {
+    it("Request set property", function () {
+        app.set("trust proxy", 1)
+    })
+
+    it("Request all", function (done) {
+        app.get("/all", function (req, res) {
             res.send("ok")
         })
 
         supertest.get("/all").expect(200, done)
     })
 
-    it("Request get", function(done) {
-        app.get("/get", function(req, res) {
+    it("Request get", function (done) {
+        app.get("/get", function (req, res) {
             res.send("ok")
         })
 
         supertest.get("/get").expect(200, done)
     })
 
-    it("Request post", function(done) {
-        app.post("/post", function(req, res) {
+    it("Request post", function (done) {
+        app.post("/post", function (req, res) {
             res.send("ok")
         })
 
         supertest.post("/post").expect(200, done)
     })
 
-    it("Request patch", function(done) {
-        app.patch("/patch", function(req, res) {
+    it("Request patch", function (done) {
+        app.patch("/patch", function (req, res) {
             res.send("ok")
         })
 
         supertest.patch("/patch").expect(200, done)
     })
 
-    it("Request put", function(done) {
-        app.put("/put", function(req, res) {
+    it("Request put", function (done) {
+        app.put("/put", function (req, res) {
             res.send("ok")
         })
 
         supertest.put("/put").expect(200, done)
     })
 
-    it("Request delete", function(done) {
-        app.delete("/delete", function(req, res) {
+    it("Request use", function (done) {
+        app.use("/use", function (req, res) {
+            res.send("ok")
+        })
+
+        supertest.get("/use").expect(200, done)
+    })
+
+    it("Request delete", function (done) {
+        app.delete("/delete", function (req, res) {
             res.send("ok")
         })
 
         supertest.delete("/delete").expect(200, done)
     })
 
-    it("Kills the server", function(done) {
+    it("Kills the server", function (done) {
         app.events.once("kill", done)
         app.kill()
     })
 
-    it("Restart the server", function(done) {
-        let killer = function() {
+    it("Restart the server", function (done) {
+        let killer = function () {
             app.start()
             done()
         }

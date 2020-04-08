@@ -233,7 +233,7 @@ class App {
 
         // Log all requests if debug is true.
         if (settings.general.debug) {
-            this.expressApp.use(function(req, res, next) {
+            this.expressApp.use(function (req, res, next) {
                 const {method} = req
                 const {url} = req
                 const ip = jaul.network.getClientIP(req)
@@ -405,6 +405,15 @@ class App {
     }
 
     /**
+     * Shortcut to express ".set()".
+     * @param args Arguments passed to Express.
+     */
+    set = (...args: any[]) => {
+        logger.debug("App.set", args[1], args[2])
+        return this.expressApp.set.apply(this.expressApp, args)
+    }
+
+    /**
      * Shortcut to express ".route()".
      * @param reqPath The path of the desired route.
      * @returns An instance of a single route for the specified path.
@@ -518,7 +527,7 @@ class App {
         }
 
         // Remove methods from JSON before rendering.
-        var cleanJson = function(obj, depth) {
+        var cleanJson = function (obj, depth) {
             if (depth >= settings.logger.maxDepth) {
                 return
             }
@@ -577,10 +586,7 @@ class App {
 
         // Try to figure out the mime type in case it wasn't passed along the options.
         if (!mimetype) {
-            let extname = path
-                .extname(filename)
-                .toLowerCase()
-                .replace(".", "")
+            let extname = path.extname(filename).toLowerCase().replace(".", "")
 
             if (extname == "jpg") {
                 extname = "jpeg"
