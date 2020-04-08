@@ -1,5 +1,8 @@
 // Expresser: index.ts
 
+import {App} from "./app"
+import {Routes} from "./routes"
+
 /** Main Expresser class. */
 class Expresser {
     private static _instance: Expresser
@@ -14,11 +17,11 @@ class Expresser {
     }
 
     /** [[App]] exposed as .app */
-    app = require("./app")
+    app: App = App.Instance
     /** [[Routes]] exposed as .routes */
-    routes = require("./routes")
+    routes: Routes = Routes.Instance
     /** Library version */
-    version = JSON.parse(require("fs").readFileSync(`${__dirname}/../package.json`, {encoding: "utf8"})).version
+    version: string = JSON.parse(require("fs").readFileSync(`${__dirname}/../package.json`, {encoding: "utf8"})).version
 }
 
 // Exports...

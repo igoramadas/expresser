@@ -16,7 +16,7 @@ import setmeup = require("setmeup")
 let settings
 
 /** Middleware definitions to be be passed on app [[init]]. */
-interface MiddlewareDefs {
+export interface MiddlewareDefs {
     /** Single or array of middlewares to be prepended. */
     prepend: any | any[]
     /** Single or array of middlewares to be appended. */
@@ -24,7 +24,7 @@ interface MiddlewareDefs {
 }
 
 /** Main App class. */
-class App {
+export class App {
     private static _instance: App
     /** @hidden */
     static get Instance() {
@@ -682,4 +682,4 @@ class App {
 }
 
 // Exports...
-export = App.Instance
+export default App.Instance

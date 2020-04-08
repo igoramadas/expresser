@@ -1,14 +1,14 @@
 // Expresser: routes.ts
 
+import app from "./app"
 import _ = require("lodash")
-import app = require("./app")
 import fs = require("fs")
 import jaul = require("jaul")
 import logger = require("anyhow")
 const settings = require("setmeup").settings
 
 /** Route loading options. */
-interface LoadOptions {
+export interface LoadOptions {
     /** The actual routes implementation. */
     handlers: any
     /** The actual routes specs (for either plain routes or swagger). */
@@ -20,7 +20,7 @@ interface LoadOptions {
 }
 
 /** Routes class (based on plain JSON or Swagger). */
-class Routes {
+export class Routes {
     private static _instance: Routes
     /** @hidden */
     static get Instance() {
@@ -194,7 +194,7 @@ class Routes {
     /**
      * Add parameters to the request swagger object. Internal use only.
      */
-    private castParameter = function(req: any, spec: any) {
+    private castParameter = function (req: any, spec: any) {
         try {
             const {name} = spec
             let scope, separator
@@ -264,4 +264,4 @@ class Routes {
 }
 
 // Exports...
-export = Routes.Instance
+export default Routes.Instance

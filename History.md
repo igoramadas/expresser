@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+4.2.1
+=====
+* New app.set() shortcut.
+* Updated dependencies.
+
 4.2.0
 =====
 * TypeScript types are now exported with the library.
