@@ -5,6 +5,9 @@ ISTANBUL:= ./node_modules/.bin/nyc
 TYPEDOC:= ./node_modules/.bin/typedoc
 TSC:= ./node_modules/.bin/tsc
 
+build:
+	$(TSC)
+
 test:
 	$(TSC)
 	@NODE_ENV=test $(MOCHA) --trace-warnings --exit -u tdd -R spec
