@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+4.2.2
+=====
+* Updated dependencies.
+
 4.2.1
 =====
 * New app.set() shortcut.
