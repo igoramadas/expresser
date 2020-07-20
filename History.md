@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+4.2.3
+=====
+* Force status codes as number on app.renderError().
+* Updated dependencies.
+
 4.2.2
 =====
 * Updated dependencies.
