@@ -632,8 +632,10 @@ export class App {
         }
 
         // Error defaults to 500 if not a valid number.
-        if (!_.isNumber(status)) {
+        if (isNaN(status as number)) {
             status = 500
+        } else {
+            status = parseInt(status as string)
         }
 
         try {
