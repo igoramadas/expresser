@@ -153,8 +153,10 @@ export class App {
         if (settings.app.bodyParser && settings.app.bodyParser.enabled) {
             try {
                 const midBodyParser = require("body-parser")
-                this.expressApp.use(midBodyParser.json({extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}))
-                this.expressApp.use(midBodyParser.urlencoded({extended: settings.app.bodyParser.extended, limit: settings.app.bodyParser.limit}))
+                this.expressApp.use(midBodyParser.raw({limit: settings.app.bodyParser.rawLimit, type: settings.app.bodyParser.rawTypes}))
+                this.expressApp.use(midBodyParser.json({limit: settings.app.bodyParser.limit}))
+                this.expressApp.use(midBodyParser.text({limit: settings.app.bodyParser.limit}))
+                this.expressApp.use(midBodyParser.urlencoded({limit: settings.app.bodyParser.limit, extended: settings.app.bodyParser.extended}))
             } catch (ex) {
                 /* istanbul ignore next */
                 logger.warn("App.init", "Can't load 'body-parser' module.")

@@ -86,12 +86,66 @@ describe("App HTTP Tests", function () {
         supertest.get("/get").expect(200, done)
     })
 
-    it("Request post", function (done) {
-        app.post("/post", function (req, res) {
+    it("Request post json", function (done) {
+        app.post("/post-json", function (req, res) {
             res.send("ok")
+
+            if (req.body && req.body.hello == 123) {
+                done()
+            } else {
+                done(`Request body does not have hello=123`)
+            }
         })
 
-        supertest.post("/post").expect(200, done)
+        supertest
+            .post("/post-json")
+            .send({hello: 123})
+            .expect(200)
+            .end((err) => {
+                if (err) done(err)
+            })
+    })
+
+    it("Request post text", function (done) {
+        app.post("/post-text", function (req, res) {
+            res.send("ok")
+
+            if (req.body && req.body == "Hello world") {
+                done()
+            } else {
+                done(`Request body should be "Hello world"`)
+            }
+        })
+
+        supertest
+            .post("/post-text")
+            .set({"Content-Type": "text/plain"})
+            .send("Hello world")
+            .expect(200)
+            .end((err) => {
+                if (err) done(err)
+            })
+    })
+
+    it("Request post octet", function (done) {
+        app.post("/post-octet", function (req, res) {
+            res.send("ok")
+
+            if (req.body && req.body == "101010") {
+                done()
+            } else {
+                done(`Request body should be "101010"`)
+            }
+        })
+
+        supertest
+            .post("/post-octet")
+            .set({"Content-Type": "application/octet-stream"})
+            .send("101010")
+            .expect(200)
+            .end((err) => {
+                if (err) done(err)
+            })
     })
 
     it("Request patch", function (done) {
