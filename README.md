@@ -22,15 +22,6 @@ all these common modules and utilities into a single package, making it damn eas
 * You hate TypeScript
 * You need ultimate performance and as little overhead as possible
 
-## Major breaking changes on v4
-
-Expresser is being rebuilt! CoffeeScript gives way to TypeScript. All-in-one gives way to only-what-you-need.
-Apps using Expresser v3.x.x will most certaiinly need to be updated.
-
-To make the upgrade-path easier, you might use the expresser-legacy module while
-you change your app's code to use the recommended replacement features.
-More info here: https://github.com/igoramadas/expresser/wiki/Migration-from-v3-to-v4
-
 ## API documentation
 
 You can browse the full API documentation at https://expresser.devv.com.

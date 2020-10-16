@@ -1,5 +1,12 @@
 # Changelog for expresser
 
+4.3.0
+=====
+* NEW! Added raw and text body parsers.
+* DEPRECATED! The legacy plugin for v3 is not officially deprecated.
+* Some refactoring here and there.
+* Updated dependencies.
+
 4.2.4
 =====
 * Updated dependencies.
