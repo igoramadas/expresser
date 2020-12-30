@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+4.3.1
+=====
+* Updated dependencies.
+
 4.3.0
 =====
 * NEW! Added raw and text body parsers.
