@@ -1,8 +1,7 @@
 // Expresser: logger.ts
 
-import _ = require("lodash")
+import {isArray, isError, isFunction, isObject} from "./utils"
 import jaul = require("jaul")
-
 const settings = require("setmeup").settings
 
 /** Logger helper class to configure the Anyhow logging module. */
@@ -12,11 +11,11 @@ class Logger {
         const max = settings.logger.maxDepth
 
         // Argument is array?
-        if (_.isArray(obj)) {
+        if (isArray(obj)) {
             for (let i = 0; i < obj.length; i++) {
                 if (index >= max) {
                     obj[i] = "..."
-                } else if (_.isFunction(obj[i])) {
+                } else if (isFunction(obj[i])) {
                     obj[i] = "[Function]"
                 } else {
                     Logger.argsCleaner(obj[i], index + 1)
@@ -24,8 +23,8 @@ class Logger {
             }
         }
         // Arg is an object? Then recurisvely clean its sub properties.
-        else if (_.isObject(obj)) {
-            let keys = _.keys(obj)
+        else if (isObject(obj)) {
+            let keys = Object.keys(obj)
 
             for (let key of keys) {
                 let value = obj[key]
@@ -39,7 +38,7 @@ class Logger {
                         let maskedValue
 
                         // Actual value might be hidden inside a value, text or data sub-property.
-                        if (_.isObject(value)) {
+                        if (isObject(value)) {
                             maskedValue = value.value || value.text || value.data || value.toString()
                         } else {
                             maskedValue = value.toString()
@@ -48,13 +47,13 @@ class Logger {
                         obj[key] = jaul.data.maskString(maskedValue, "*", settings.logger.maskFields[key])
                     } else if (settings.logger.removeFields && settings.logger.removeFields.indexOf(key) >= 0) {
                         delete obj[key]
-                    } else if (_.isArray(value)) {
+                    } else if (isArray(value)) {
                         for (let i = 0; i < value.length; i++) {
                             Logger.argsCleaner(value[i], index + 1)
                         }
-                    } else if (_.isFunction(value)) {
+                    } else if (isFunction(value)) {
                         obj[key] = "[Function]"
-                    } else if (_.isObject(value)) {
+                    } else if (isObject(value)) {
                         Logger.argsCleaner(value, index + 1)
                     }
                 } catch (ex) {
@@ -75,13 +74,13 @@ class Logger {
             // Extract error details from error objects.
             // Clone objects and arrays before parsing.
             // Add function text for Functions.
-            if (_.isError(arg)) {
+            if (isError(arg)) {
                 result.push(arg.toString())
-            } else if (_.isObject(arg) || _.isArray(arg)) {
-                let cloned = _.cloneDeep(arg)
+            } else if (isObject(arg) || isArray(arg)) {
+                let cloned = JSON.parse(JSON.stringify(arg, null, 0))
                 Logger.argsCleaner(cloned, 0)
                 result.push(cloned)
-            } else if (_.isFunction(arg)) {
+            } else if (isFunction(arg)) {
                 result.push("[Function]")
             } else {
                 result.push(arg)

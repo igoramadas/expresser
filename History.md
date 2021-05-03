@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+4.4.0
+=====
+* Removed the "moment" dependency.
+* Updated dependencies.
+
 4.3.2
 =====
 * Updated dependencies.

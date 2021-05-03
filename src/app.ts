@@ -1,8 +1,7 @@
 // Expresser: app.ts
 
 import {Http2SecureServer, Http2Server} from "http2"
-
-import _ = require("lodash")
+import {isArray, isFunction, isObject, isString} from "./utils"
 import EventEmitter = require("eventemitter3")
 import express = require("express")
 import fs = require("fs")
@@ -12,7 +11,6 @@ import jaul = require("jaul")
 import logger = require("anyhow")
 import path = require("path")
 import setmeup = require("setmeup")
-
 let settings
 
 /** Middleware definitions to be be passed on app [[init]]. */
@@ -120,10 +118,10 @@ export class App {
         middlewares = middlewares || {append: [], prepend: []}
 
         // Make sure passed middlewares are array based.
-        if (middlewares.prepend && !_.isArray(middlewares.prepend)) {
+        if (middlewares.prepend && !isArray(middlewares.prepend)) {
             middlewares.prepend = [middlewares.prepend]
         }
-        if (middlewares.append && !_.isArray(middlewares.append)) {
+        if (middlewares.append && !isArray(middlewares.append)) {
             middlewares.append = [middlewares.append]
         }
 
@@ -484,7 +482,7 @@ export class App {
             if (text == null) {
                 logger.debug("App.renderText", "Called with empty text parameter")
                 text = ""
-            } else if (!_.isString(text)) {
+            } else if (!isString(text)) {
                 text = text.toString()
             }
 
@@ -519,7 +517,7 @@ export class App {
     renderJson = (req: express.Request, res: express.Response, data: any, status?: number) => {
         logger.debug("App.renderJson", req.originalUrl, data)
 
-        if (_.isString(data)) {
+        if (isString(data)) {
             try {
                 data = JSON.parse(data)
             } catch (ex) {
@@ -534,14 +532,14 @@ export class App {
                 return
             }
 
-            if (_.isArray(obj)) {
+            if (isArray(obj)) {
                 return Array.from(obj).map((i) => cleanJson(i, depth + 1))
-            } else if (_.isObject(obj)) {
+            } else if (isObject(obj)) {
                 return (() => {
                     const result = []
                     for (let k in obj) {
                         const v = obj[k]
-                        if (_.isFunction(v)) {
+                        if (isFunction(v)) {
                             result.push(delete obj[k])
                         } else {
                             result.push(cleanJson(v, depth + 1))
@@ -646,7 +644,7 @@ export class App {
                 error = error.error
             }
 
-            if (_.isString(error)) {
+            if (isString(error)) {
                 message = {message: error}
             } else {
                 message = {}

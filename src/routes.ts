@@ -1,7 +1,6 @@
 // Expresser: routes.ts
 
 import app from "./app"
-import _ = require("lodash")
 import fs = require("fs")
 import jaul = require("jaul")
 import logger = require("anyhow")
@@ -72,7 +71,7 @@ export class Routes {
 
         // Iterate routes and handlers.
         for (let [route, spec] of Object.entries(specs)) {
-            if (_.isString(spec)) {
+            if (typeof spec == "string") {
                 spec = {get: spec}
             }
 
