@@ -8,12 +8,11 @@ let it = mocha.it
 
 chai.should()
 
-describe("App Logger Tests", function() {
-    let _ = require("lodash")
+describe("App Logger Tests", function () {
     let logger
     let setmeup
 
-    before(async function() {
+    before(async function () {
         setmeup = require("setmeup")
         setmeup.load()
         settings = setmeup.settings
@@ -24,7 +23,7 @@ describe("App Logger Tests", function() {
         logger.preprocessor = require("../lib/logger").clean
     })
 
-    it("General message args cleaning", function(done) {
+    it("General message args cleaning", function (done) {
         let innerObject = {
             more: {
                 something: {
@@ -38,15 +37,17 @@ describe("App Logger Tests", function() {
             someString: "abcd",
             someNumber: 123,
             someError: new Error("Inner error"),
-            someArray: [{
-                innerArray: []
-            }],
+            someArray: [
+                {
+                    innerArray: []
+                }
+            ],
             someFunction: () => {
                 return true
             }
         }
 
-        let func = function() {
+        let func = function () {
             return true
         }
 
@@ -66,7 +67,7 @@ describe("App Logger Tests", function() {
         }
     })
 
-    it("Maks fields (mobile)", function(done) {
+    it("Maks fields (mobile)", function (done) {
         let msg = logger.getMessage({
             mobile: "123456789"
         })
@@ -102,7 +103,7 @@ describe("App Logger Tests", function() {
         }
 
         let obj = {}
-        obj.toString = function() {
+        obj.toString = function () {
             return "123456789"
         }
 
@@ -116,7 +117,7 @@ describe("App Logger Tests", function() {
         done()
     })
 
-    it("Obfuscate sensitive fields (password and accesstoken)", function(done) {
+    it("Obfuscate sensitive fields (password and accesstoken)", function (done) {
         let msg = logger.getMessage({
             password: "mypassword"
         })
@@ -126,7 +127,7 @@ describe("App Logger Tests", function() {
         done()
     })
 
-    it("Remove fields (username)", function(done) {
+    it("Remove fields (username)", function (done) {
         let toRemove = {
             name: "John Doe",
             username: "jdoe"
