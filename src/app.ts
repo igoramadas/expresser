@@ -151,7 +151,9 @@ export class App {
         if (settings.app.bodyParser && settings.app.bodyParser.enabled) {
             try {
                 const midBodyParser = require("body-parser")
-                this.expressApp.use(midBodyParser.raw({limit: settings.app.bodyParser.rawLimit, type: settings.app.bodyParser.rawTypes}))
+                if (settings.app.bodyParser.rawTypes) {
+                    this.expressApp.use(midBodyParser.raw({limit: settings.app.bodyParser.rawLimit, type: settings.app.bodyParser.rawTypes}))
+                }
                 this.expressApp.use(midBodyParser.json({limit: settings.app.bodyParser.limit}))
                 this.expressApp.use(midBodyParser.text({limit: settings.app.bodyParser.limit}))
                 this.expressApp.use(midBodyParser.urlencoded({limit: settings.app.bodyParser.limit, extended: settings.app.bodyParser.extended}))
@@ -250,6 +252,9 @@ export class App {
                 return url
             })
         }
+
+        // Disable the X-Powered-By header.
+        this.expressApp.disable("x-powered-by")
 
         // Dispatch init event, and start the server.
         this.events.emit("init")

@@ -1,5 +1,15 @@
 # Changelog for expresser
 
+4.4.3
+=====
+* Option to disable the raw body-parser by setting rawTypes to null.
+* Updated dependencies.
+
+4.4.1
+=====
+* Disable the X-Powered-By header by default.
+* Updated dependencies.
+
 4.4.0
 =====
 * Removed the "moment" dependency.
