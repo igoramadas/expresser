@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+4.4.4
+=====
+* Updated dependencies.
+
 4.4.3
 =====
 * Option to disable the raw body-parser by setting rawTypes to null.
@@ -26,7 +30,7 @@
 4.3.0
 =====
 * NEW! Added raw and text body parsers.
-* DEPRECATED! The legacy plugin for v3 is not officially deprecated.
+* DEPRECATED! The legacy plugin for v3 is now officially deprecated.
 * Some refactoring here and there.
 * Updated dependencies.
 
