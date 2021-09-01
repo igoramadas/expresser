@@ -401,6 +401,15 @@ export class App {
     }
 
     /**
+     * Shortcut to express ".head()".
+     * @param args Arguments passed to Express.
+     */
+    head = (...args: any[]) => {
+        logger.debug("App.head", args[1], args[2])
+        return this.expressApp.head.apply(this.expressApp, args)
+    }
+
+    /**
      * Shortcut to express ".use()".
      * @param args Arguments passed to Express.
      */
