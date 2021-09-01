@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+4.4.5
+=====
+* New app.head() shortcut.
+* Updated dependencies.
+
 4.4.4
 =====
 * Updated dependencies.
