@@ -101,16 +101,16 @@ export class App {
         let mw
 
         // Debug enabled?
-        if (settings.general.debug && logger.levels.indexOf("debug") < 0) {
-            logger.levels.push("debug")
+        if (settings.general.debug && logger.options.levels.indexOf("debug") < 0) {
+            logger.setOptions({
+                levels: logger.options.levels.concat(["debug"]),
+                preprocessorOptions: {
+                    errorStack: true
+                }
+            })
         }
 
-        // Set preprocessor, if not set yet.
-        if (!logger.preprocessor) {
-            logger.preprocessor = require("./logger").clean
-        }
-
-        logger.errorStack = settings.logger.errorStack
+        logger.setOptions({preprocessors: ["cleanup", "friendlyErrors", "maskSecrets"]})
 
         // Create express v4 app.
         this.expressApp = express()

@@ -1,7 +1,6 @@
 // TEST: HTTP
 
 let chai = require("chai")
-let getPort = require("get-port")
 let mocha = require("mocha")
 let after = mocha.after
 let before = mocha.before
@@ -17,7 +16,7 @@ describe("App HTTP Tests", function () {
     let supertest = null
 
     before(async function () {
-        let port = await getPort(8002)
+        let port = 8002
         let logger = require("anyhow")
         logger.setup("none")
 

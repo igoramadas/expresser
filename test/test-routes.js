@@ -1,7 +1,6 @@
 // TEST: ROUTES
 
 let chai = require("chai")
-let getPort = require("get-port")
 let mocha = require("mocha")
 let after = mocha.after
 let before = mocha.before
@@ -10,7 +9,7 @@ let it = mocha.it
 
 chai.should()
 
-describe("App Routes Tests", function() {
+describe("App Routes Tests", function () {
     let app = null
     let routes = null
     let setmeup = null
@@ -52,8 +51,8 @@ describe("App Routes Tests", function() {
         }
     }
 
-    before(async function() {
-        let port = await getPort(8008)
+    before(async function () {
+        let port = 8008
         let logger = require("anyhow")
         logger.setup("none")
 
@@ -74,17 +73,17 @@ describe("App Routes Tests", function() {
         supertest = require("supertest").agent(app.expressApp)
     })
 
-    after(function() {
+    after(function () {
         if (app && app.kill) {
             app.kill()
         }
     })
 
-    it("Has settings defined", function() {
+    it("Has settings defined", function () {
         settings.should.have.property("routes")
     })
 
-    it("Load routes from default file", function(done) {
+    it("Load routes from default file", function (done) {
         routes.load({handlers: handlers})
 
         supertest.get("/").expect(200)
@@ -92,13 +91,13 @@ describe("App Routes Tests", function() {
         supertest.post("/abc").expect(200, done)
     })
 
-    it("Pass routes directly via options.specs", function(done) {
+    it("Pass routes directly via options.specs", function (done) {
         routes.load({handlers: handlers, specs: sampleSpecs})
 
         supertest.get("/from-specs").expect(200, done)
     })
 
-    it("Fails to load routes from incorrect files", function(done) {
+    it("Fails to load routes from incorrect files", function (done) {
         try {
             routes.load({filename: "notexisting.json", handlers: handlers})
             done("Calling load with non existing file should have failed.")
@@ -112,7 +111,7 @@ describe("App Routes Tests", function() {
         }
     })
 
-    it("Fails to load routes with missing handlers", function(done) {
+    it("Fails to load routes with missing handlers", function (done) {
         try {
             routes.load()
             done("Calling load without passing handles should have failed.")
@@ -138,14 +137,14 @@ describe("App Routes Tests", function() {
         }
     })
 
-    it("Load swagger from default file", function(done) {
+    it("Load swagger from default file", function (done) {
         routes.loadSwagger({handlers: handlers})
 
         supertest.get("/swagger/abc").expect(200)
         supertest.get("/swagger/abc?qs=string&qnum=1&qbool=true&qnum=5&qint=7&qdate=2010-01-01&qcsv=a,1,2&qpipes=a|1&qssv=z&&qsep=lala,lala").expect(200, done)
     })
 
-    it("Pass swagger directly via options.specs, with version, and exposing as swagger.json", function(done) {
+    it("Pass swagger directly via options.specs, with version, and exposing as swagger.json", function (done) {
         settings.routes.swagger.exposeJson = true
 
         routes.loadSwagger({
@@ -157,7 +156,7 @@ describe("App Routes Tests", function() {
         supertest.get("/from-swagger-specs").expect(200, done)
     })
 
-    it("Fails to load swagger from incorrect files", function(done) {
+    it("Fails to load swagger from incorrect files", function (done) {
         try {
             routes.loadSwagger({filename: "notexisting.json", handlers: handlers})
             done("Calling loadSwagger with non existing file should have failed.")
@@ -171,7 +170,7 @@ describe("App Routes Tests", function() {
         }
     })
 
-    it("Fails to load swagger with missing path specs", function(done) {
+    it("Fails to load swagger with missing path specs", function (done) {
         try {
             let invalidSwagger = {
                 paths: {
@@ -186,7 +185,7 @@ describe("App Routes Tests", function() {
         }
     })
 
-    it("Fails to load swagger with missing handlers", function(done) {
+    it("Fails to load swagger with missing handlers", function (done) {
         try {
             routes.loadSwagger()
             done("Calling loadSwagger without passing handles should have failed.")
@@ -220,7 +219,7 @@ describe("App Routes Tests", function() {
         }
     })
 
-    it("Casting invalid parameters", function(done) {
+    it("Casting invalid parameters", function (done) {
         supertest.get("/swagger/abc?qnum=zzz&&qdate=zzz&qbool= ").expect(200, done)
     })
 })

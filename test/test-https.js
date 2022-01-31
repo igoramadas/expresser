@@ -1,7 +1,6 @@
 // TEST: HTTPS
 
 let chai = require("chai")
-let getPort = require("get-port")
 let mocha = require("mocha")
 let after = mocha.after
 let before = mocha.before
@@ -10,15 +9,15 @@ let it = mocha.it
 
 chai.should()
 
-describe("App HTTPS Tests", function() {
+describe("App HTTPS Tests", function () {
     let app = null
     let logger = null
     let setmeup = null
     let settings = null
     let supertest = null
 
-    before(async function() {
-        let port = await getPort(8003)
+    before(async function () {
+        let port = 8003
         logger = require("anyhow")
         logger.setup("none")
 
@@ -37,27 +36,19 @@ describe("App HTTPS Tests", function() {
         settings.general.debug = true
     })
 
-    after(function() {
+    after(function () {
         if (app && app.kill) {
             app.kill()
         }
     })
 
-    it("Init HTTPS server on 127.0.0.1", function() {
+    it("Init HTTPS server on 127.0.0.1", function () {
         app.init()
         supertest = require("supertest").agent(app.expressApp)
     })
 
-    it("Debug was enabled on the logger", function(done) {
-        if (logger.levels.indexOf("debug") < 0) {
-            done("Logger should have debug on the enabled levels")
-        } else {
-            done()
-        }
-    })
-
-    it("Renders a JSON object via HTTPS", function(done) {
-        app.get("/httpsjson", function(req, res) {
+    it("Renders a JSON object via HTTPS", function (done) {
+        app.get("/httpsjson", function (req, res) {
             var j = {
                 encrypted: true
             }
@@ -65,18 +56,15 @@ describe("App HTTPS Tests", function() {
             app.renderJson(req, res, j)
         })
 
-        supertest
-            .get("/httpsjson")
-            .expect("Content-Type", /json/)
-            .expect(200, done)
+        supertest.get("/httpsjson").expect("Content-Type", /json/).expect(200, done)
     })
 
-    it("Kills the server", function(done) {
+    it("Kills the server", function (done) {
         app.once("kill", done)
         app.kill()
     })
 
-    it("Fail to start with invalid certificates", function(done) {
+    it("Fail to start with invalid certificates", function (done) {
         settings.app.ssl.certFile = "invalid.crt"
 
         try {

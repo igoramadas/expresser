@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+4.5.0
+=====
+* Updated dependencies.
+* Removed unnecessary logger cleanup methods.
+
 4.4.7
 =====
 * Updated dependencies.
