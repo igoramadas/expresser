@@ -12,6 +12,7 @@ class Expresser {
     }
 
     /** Returns a new fresh instance of the App module. */
+    /* istanbul ignore next */
     newInstance(): Expresser {
         return new Expresser()
     }
