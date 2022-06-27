@@ -1,5 +1,9 @@
 # Changelog for expresser
 
+4.5.1
+=====
+* Updated dependencies.
+
 4.5.0
 =====
 * Updated dependencies.
