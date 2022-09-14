@@ -21,8 +21,6 @@ class Expresser {
     app: App = App.Instance
     /** [[Routes]] exposed as .routes */
     routes: Routes = Routes.Instance
-    /** Library version */
-    version: string = JSON.parse(require("fs").readFileSync(`${__dirname}/../package.json`, {encoding: "utf8"})).version
 }
 
 // Exports...
