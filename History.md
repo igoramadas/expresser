@@ -1,5 +1,10 @@
 # Changelog for expresser
 
+4.6.0
+=====
+* New "errorHandler" setting to log all failed requests.
+* Updated dependencies.
+
 4.5.1
 =====
 * Updated dependencies.
