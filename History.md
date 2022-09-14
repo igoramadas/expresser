@@ -1,8 +1,9 @@
 # Changelog for expresser
 
-4.6.0
+4.6.1
 =====
 * New "errorHandler" setting to log all failed requests.
+* Fixed regression bug on 4.6.0 (removed from NPM).
 * Updated dependencies.
 
 4.5.1
