@@ -103,14 +103,16 @@ export class App {
         // Debug enabled?
         if (settings.general.debug && logger.options.levels.indexOf("debug") < 0) {
             logger.setOptions({
-                levels: logger.options.levels.concat(["debug"]),
-                preprocessorOptions: {
-                    errorStack: true
-                }
+                levels: logger.options.levels.concat(["debug"])
             })
         }
 
-        logger.setOptions({preprocessors: ["cleanup", "friendlyErrors", "maskSecrets"]})
+        logger.setOptions({
+            preprocessors: ["cleanup", "friendlyErrors", "maskSecrets"],
+            preprocessorOptions: {
+                errorStack: settings.logger.errorStack
+            }
+        })
 
         // Create express v4 app.
         this.expressApp = express()
@@ -236,8 +238,7 @@ export class App {
         // Log all requests if debug is true.
         if (settings.general.debug) {
             this.expressApp.use(function (req, res, next) {
-                const {method} = req
-                const {url} = req
+                const {method, url} = req
                 const ip = jaul.network.getClientIP(req)
                 const msg = `Request from ${ip}`
 
@@ -250,6 +251,15 @@ export class App {
                 }
 
                 return url
+            })
+        }
+
+        // Error handler enabled?
+        if (settings.logger.errorHandler) {
+            this.expressApp.use((err, req, res, next) => {
+                const {method, url} = req
+                logger.error("App", method, url, res.headersSent ? "Headers sent" : "Headers not sent", err)
+                next(err)
             })
         }
 
