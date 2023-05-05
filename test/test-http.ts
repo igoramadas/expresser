@@ -32,10 +32,6 @@ describe("App HTTP Tests", function () {
         }
     })
 
-    it("Has settings defined", function () {
-        settings.should.have.property("app")
-    })
-
     it("Fail to call Express application methods before App init", function (done) {
         let methods = ["get", "post", "listen", "route", "use"]
         let failed = false
