@@ -166,7 +166,15 @@ export class App {
                 this.expressApp.use(midBodyParser.urlencoded({limit: settings.app.bodyParser.limit, extended: settings.app.bodyParser.extended}))
             } catch (ex) {
                 /* istanbul ignore next */
-                logger.warn("App.init", "Can't load 'body-parser' module.")
+                logger.warn("App.init", "Can't load 'body-parser' module")
+            }
+
+            try {
+                const bodyParserErrorHandler = require("express-body-parser-error-handler")
+                this.expressApp.use(bodyParserErrorHandler())
+            } catch (ex) {
+                /* istanbul ignore next */
+                logger.warn("App.init", "Module 'express-body-parser-error-handler' not installed, body-parser might throw ugly exceptions")
             }
         }
 
@@ -177,7 +185,7 @@ export class App {
                 this.expressApp.use(midCookieParser(settings.app.secret))
             } catch (ex) {
                 /* istanbul ignore next */
-                ex.friendlyMessage = "Can't load 'cookie-parser' module."
+                ex.friendlyMessage = "Can't load 'cookie-parser' module"
                 /* istanbul ignore next */
                 logger.error("App.init", ex)
             }
@@ -206,7 +214,7 @@ export class App {
                 )
             } catch (ex) {
                 /* istanbul ignore next */
-                ex.friendlyMessage = "Can't load 'express-session' and 'memorystore' modules."
+                ex.friendlyMessage = "Can't load 'express-session' and 'memorystore' modules"
                 /* istanbul ignore next */
                 logger.error("App.init", ex)
             }
@@ -219,7 +227,7 @@ export class App {
                 this.expressApp.use(midCompression())
             } catch (ex) {
                 /* istanbul ignore next */
-                ex.friendlyMessage = "Can't load 'compression' module."
+                ex.friendlyMessage = "Can't load 'compression' module"
                 /* istanbul ignore next */
                 logger.error("App.init", ex)
             }
@@ -282,7 +290,7 @@ export class App {
      */
     start = (): http.Server | https.Server | http2.Http2Server | http2.Http2SecureServer => {
         if (this.server) {
-            logger.warn("App.start", "Server is already running, abort start.")
+            logger.warn("App.start", "Server is already running, abort start")
             return this.server
         }
 
@@ -305,7 +313,7 @@ export class App {
                     serverRef = https.createServer(sslOptions, this.expressApp)
                 }
             } else {
-                throw new Error("Invalid certificate filename, please check paths defined on settings.app.ssl.")
+                throw new Error("Invalid certificate filename, please check paths defined on settings.app.ssl")
             }
         } else {
             serverRef = settings.app.http2 ? http2.createServer(this.expressApp) : http.createServer(this.expressApp)

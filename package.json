@@ -45,6 +45,7 @@
         "@types/mocha": "^10.0.1",
         "@types/node": "^20.0.0",
         "body-parser": "^1.20.2",
+        "express-body-parser-error-handler": "^1.0.4",
         "chai": "^4.3.7",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.6",
