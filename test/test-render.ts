@@ -152,7 +152,6 @@ describe("App Render Tests", function () {
         })
 
         let resIsJson = function (res) {
-            console.dir(res.body)
             res.body.should.have.property("message", "This should be a JSON")
         }
 

@@ -37,6 +37,8 @@
             // Emit an event for "render".
             "render": false
         },
+        // Enable HTTP2?
+        "http2": false,
         // Node.js server IP. Leaving blank or null will set the server to listen on all addresses.
         "ip": null,
         // Node.js server port.

@@ -1,6 +1,5 @@
 // Expresser: app.ts
 
-import {Http2SecureServer, Http2Server} from "http2"
 import {isArray, isFunction, isObject, isString} from "./utils"
 import EventEmitter from "eventemitter3"
 import express = require("express")
@@ -8,6 +7,7 @@ import fs = require("fs")
 import http = require("http")
 import https = require("https")
 import http2 = require("http2")
+import http2Express = require("http2-express-bridge")
 import jaul = require("jaul")
 import logger = require("anyhow")
 import path = require("path")
@@ -116,7 +116,11 @@ export class App {
         })
 
         // Create express v4 app.
-        this.expressApp = express()
+        if (settings.app.http2) {
+            this.expressApp = express()
+        } else {
+            this.expressApp = http2Express(express)
+        }
 
         middlewares = middlewares || {append: [], prepend: []}
 
@@ -277,7 +281,7 @@ export class App {
      * @returns The HTTP(S) server created by Express.
      * @event start
      */
-    start = (): Http2Server | Http2SecureServer => {
+    start = (): http.Server | https.Server | http2.Http2Server | http2.Http2SecureServer => {
         if (this.server) {
             logger.warn("App.start", "Server is already running, abort start.")
             return this.server

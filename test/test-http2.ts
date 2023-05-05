@@ -3,7 +3,7 @@
 import {after, before, describe, it} from "mocha"
 require("chai").should()
 
-describe("App HTTPS Tests", function () {
+describe("App HTTP2 Tests", function () {
     let app = null
     let logger = null
     let setmeup = null
@@ -11,7 +11,7 @@ describe("App HTTPS Tests", function () {
     let supertest = null
 
     before(async function () {
-        let port = 8003
+        let port = 8004
         logger = require("anyhow")
         logger.setup("none")
 
@@ -20,6 +20,7 @@ describe("App HTTPS Tests", function () {
         settings = setmeup.settings
         settings.app.ip = "127.0.0.1"
         settings.app.port = port
+        settings.app.http2 = true
         settings.app.ssl.enabled = true
         settings.app.ssl.rejectUnauthorized = false
         settings.app.ssl.keyFile = "test/localhost.key"
@@ -36,32 +37,21 @@ describe("App HTTPS Tests", function () {
         }
     })
 
-    it("Init HTTPS server on 127.0.0.1", function () {
+    it("Init HTTP2 server on 127.0.0.1", function () {
         app.init()
         supertest = require("supertest").agent(app.expressApp)
     })
 
-    it("Renders a JSON object via HTTPS", function (done) {
-        app.get("/httpsjson", function (req, res) {
-            app.renderJson(req, res, {https: true})
+    it("Renders a JSON object via HTTP2", function (done) {
+        app.get("/http2json", function (req, res) {
+            app.renderJson(req, res, {http2: true})
         })
 
-        supertest.get("/httpsjson").expect("Content-Type", /json/).expect(200, done)
+        supertest.get("/http2json").expect("Content-Type", /json/).expect(200, done)
     })
 
     it("Kills the server", function (done) {
         app.once("kill", done)
         app.kill()
-    })
-
-    it("Fail to start with invalid certificates", function (done) {
-        settings.app.ssl.certFile = "invalid.crt"
-
-        try {
-            app.start()
-            return done("Starting with non existing certificate should throw an exception.")
-        } catch (ex) {
-            done()
-        }
     })
 })
