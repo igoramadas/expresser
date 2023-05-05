@@ -2,11 +2,12 @@
 
 import {Http2SecureServer, Http2Server} from "http2"
 import {isArray, isFunction, isObject, isString} from "./utils"
-import EventEmitter = require("eventemitter3")
+import EventEmitter from "eventemitter3"
 import express = require("express")
 import fs = require("fs")
 import http = require("http")
 import https = require("https")
+import http2 = require("http2")
 import jaul = require("jaul")
 import logger = require("anyhow")
 import path = require("path")
@@ -282,9 +283,9 @@ export class App {
             return this.server
         }
 
-        let serverRef
+        let serverRef: http.Server | https.Server | http2.Http2Server | http2.Http2SecureServer
 
-        if (settings.app.ssl && settings.app.ssl.enabled && settings.app.ssl.keyFile && settings.app.ssl.certFile) {
+        if (settings.app.ssl?.enabled && settings.app.ssl?.keyFile && settings.app.ssl?.certFile) {
             const sslKeyFile = jaul.io.getFilePath(settings.app.ssl.keyFile)
             const sslCertFile = jaul.io.getFilePath(settings.app.ssl.certFile)
 
@@ -292,13 +293,19 @@ export class App {
             if (sslKeyFile && sslCertFile) {
                 const sslKey = fs.readFileSync(sslKeyFile, {encoding: settings.general.encoding})
                 const sslCert = fs.readFileSync(sslCertFile, {encoding: settings.general.encoding})
-                const sslOptions = {key: sslKey, cert: sslCert}
-                serverRef = https.createServer(sslOptions, this.expressApp)
+                const sslOptions: any = {key: sslKey, cert: sslCert}
+
+                if (settings.app.http2) {
+                    sslOptions.allowHTTP1 = true
+                    serverRef = http2.createSecureServer(sslOptions, this.expressApp as any)
+                } else {
+                    serverRef = https.createServer(sslOptions, this.expressApp)
+                }
             } else {
                 throw new Error("Invalid certificate filename, please check paths defined on settings.app.ssl.")
             }
         } else {
-            serverRef = http.createServer(this.expressApp)
+            serverRef = settings.app.http2 ? http2.createServer(this.expressApp) : http.createServer(this.expressApp)
         }
 
         // Expose the web server.
@@ -326,7 +333,7 @@ export class App {
         }
 
         // Set default timeout.
-        serverRef.timeout = settings.app.timeout
+        serverRef.setTimeout(settings.app.timeout)
 
         // Emit start event and return HTTP(S) server.
         this.events.emit("start")
