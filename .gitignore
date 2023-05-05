@@ -3,5 +3,6 @@
 .vscode/
 coverage/
 lib/
+lib-test/
 node_modules/
 npm-debug.log
