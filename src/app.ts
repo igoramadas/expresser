@@ -155,7 +155,7 @@ export class App {
         }
 
         // Use body parser?
-        if (settings.app.bodyParser && settings.app.bodyParser.enabled) {
+        if (settings.app.bodyParser?.enabled) {
             try {
                 const midBodyParser = require("body-parser")
                 if (settings.app.bodyParser.rawTypes) {
@@ -171,7 +171,7 @@ export class App {
         }
 
         // Cookies enabled? Depends on `cookie-parser` being installed.
-        if (settings.app.cookie && settings.app.cookie.enabled) {
+        if (settings.app.cookie?.enabled) {
             try {
                 const midCookieParser = require("cookie-parser")
                 this.expressApp.use(midCookieParser(settings.app.secret))
@@ -184,7 +184,7 @@ export class App {
         }
 
         // Session enabled?
-        if (settings.app.session && settings.app.session.enabled) {
+        if (settings.app.session?.enabled) {
             try {
                 const midSession = require("express-session")
                 const memoryStore = require("memorystore")(midSession)
@@ -262,8 +262,7 @@ export class App {
         // Error handler enabled?
         if (settings.logger.errorHandler) {
             this.expressApp.use((err, req, res, next) => {
-                const {method, url} = req
-                logger.error("App", method, url, res.headersSent ? "Headers sent" : "Headers not sent", err)
+                logger.error("App", req.method, req.url, res.headersSent ? "Headers sent" : "Headers not sent", err)
                 next(err)
             })
         }

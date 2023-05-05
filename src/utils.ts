@@ -7,6 +7,7 @@
 export const getTag = (value) => {
     const toString = Object.prototype.toString
 
+    /* istanbul ignore if */
     if (value == null) {
         return value === undefined ? "[object Undefined]" : "[object Null]"
     }
