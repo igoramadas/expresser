@@ -1,13 +1,7 @@
 // TEST: HTTPS
 
-let chai = require("chai")
-let mocha = require("mocha")
-let after = mocha.after
-let before = mocha.before
-let describe = mocha.describe
-let it = mocha.it
-
-chai.should()
+import {after, before, describe, it} from "mocha"
+require("chai").should()
 
 describe("App HTTPS Tests", function () {
     let app = null
@@ -21,7 +15,7 @@ describe("App HTTPS Tests", function () {
         logger = require("anyhow")
         logger.setup("none")
 
-        app = require("../lib/index").app.newInstance()
+        app = require("../src/index").app.newInstance()
         setmeup = require("setmeup")
         settings = setmeup.settings
         settings.app.ip = "127.0.0.1"

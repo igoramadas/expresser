@@ -1,13 +1,7 @@
 // TEST: RENDER
 
-let chai = require("chai")
-let mocha = require("mocha")
-let after = mocha.after
-let before = mocha.before
-let describe = mocha.describe
-let it = mocha.it
-
-chai.should()
+import {after, before, describe, it} from "mocha"
+require("chai").should()
 
 describe("App Render Tests", function () {
     let app = null
@@ -20,7 +14,7 @@ describe("App Render Tests", function () {
         let logger = require("anyhow")
         logger.setup("none")
 
-        app = require("../lib/index").app.newInstance()
+        app = require("../src/index").app.newInstance()
         setmeup = require("setmeup")
         settings = setmeup.settings
         settings.app.port = port
@@ -129,7 +123,7 @@ describe("App Render Tests", function () {
     it("Renders an error", function (done) {
         app.get("/testerror", function (req, res) {
             var e = new Error("Some error")
-            e.status = "500"
+            e["status"] = "500"
 
             app.renderError(req, res, e)
         })
@@ -144,7 +138,7 @@ describe("App Render Tests", function () {
                 statusCode: 401
             }
 
-            e.error.code = "DENIED"
+            e.error["code"] = "DENIED"
 
             app.renderError(req, res, e)
         })

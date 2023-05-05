@@ -1,13 +1,7 @@
 // TEST: ROUTES
 
-let chai = require("chai")
-let mocha = require("mocha")
-let after = mocha.after
-let before = mocha.before
-let describe = mocha.describe
-let it = mocha.it
-
-chai.should()
+import {after, before, describe, it} from "mocha"
+require("chai").should()
 
 describe("App Routes Tests", function () {
     let app = null
@@ -18,19 +12,19 @@ describe("App Routes Tests", function () {
 
     let handlers = {
         getDefault: (req, res) => {
-            res.send("default")
+            res.send(req.body)
         },
         getAbc: (req, res) => {
-            res.send("abc")
+            res.send(req.body)
         },
         postAbc: (req, res) => {
-            res.send("post")
+            res.send(req.body)
         },
         getDef: (req, res) => {
-            res.send("def")
+            res.send(req.body)
         },
         getSwaggerAbc: (req, res) => {
-            res.json({ok: true})
+            res.json({ok: req.body})
         }
     }
 
@@ -56,8 +50,8 @@ describe("App Routes Tests", function () {
         let logger = require("anyhow")
         logger.setup("none")
 
-        app = require("../lib/index").app
-        routes = require("../lib/index").routes
+        app = require("../src/index").app
+        routes = require("../src/index").routes
         setmeup = require("setmeup")
         settings = setmeup.settings
         settings.app.port = port
