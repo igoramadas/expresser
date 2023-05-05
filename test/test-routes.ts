@@ -208,6 +208,14 @@ describe("App Routes Tests", function () {
             }
             routes.loadSwagger({handlers: handlers, specs: sampleSwaggerSpecs})
             done("Should have failed to load swagger with invalid method")
+        } catch (ex) {}
+
+        try {
+            sampleSwaggerSpecs.paths["/from-specs-invalid"] = {
+                get: null
+            }
+            routes.loadSwagger({handlers: handlers, specs: sampleSwaggerSpecs})
+            done("Should have failed to load swagger with invalid method")
         } catch (ex) {
             done()
         }

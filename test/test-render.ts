@@ -17,6 +17,7 @@ describe("App Render Tests", function () {
         app = require("../src/index").app.newInstance()
         setmeup = require("setmeup")
         settings = setmeup.settings
+        settings.logger.errorHandler = true
         settings.app.port = port
         settings.app.ssl.enabled = false
         settings.app.compression.enabled = false
@@ -208,6 +209,16 @@ describe("App Render Tests", function () {
         })
 
         supertest.get("/testjpg-options").expect("Content-Type", /image/).expect(200, done)
+    })
+
+    it("Global error handler", function (done) {
+        app.get("/global-error", function (_req, _res, next) {
+            const err = new Error("Failed request")
+            err["status"] = 599
+            next(err)
+        })
+
+        supertest.get("/global-error").expect(599, done)
     })
 
     it("Try rendering an invalid JSON, and disable event render", function (done) {

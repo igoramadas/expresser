@@ -24,6 +24,7 @@ describe("App HTTPS Tests", function () {
         settings.app.ssl.rejectUnauthorized = false
         settings.app.ssl.keyFile = "test/localhost.key"
         settings.app.ssl.certFile = "test/localhost.crt"
+        settings.app.bodyParser.enabled = false
         settings.app.compression.enabled = false
         settings.app.cookie.enabled = false
         settings.app.session.enabled = false

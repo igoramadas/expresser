@@ -11,8 +11,6 @@ describe("App HTTP Tests", function () {
 
     before(async function () {
         let port = 8002
-        let logger = require("anyhow")
-        logger.setup("none")
 
         app = require("../src/index").app.newInstance()
         setmeup = require("setmeup")
