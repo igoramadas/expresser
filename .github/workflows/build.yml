@@ -1,0 +1,26 @@
+name: build
+on: [push]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [16.x, 18.x, 19.x, 20.x]
+        steps:
+            - uses: actions/checkout@v3
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "npm"
+            - run: npm ci
+            - run: npm run build
+            - run: npm run test-coverage
+              env:
+                  GCP_TEST_PROJECT_ID: ${{ secrets.GCP_TEST_PROJECT_ID }}
+                  GCP_TEST_EMAIL: ${{ secrets.GCP_TEST_EMAIL }}
+                  GCP_TEST_KEY: ${{ secrets.GCP_TEST_KEY }}
+            - name: Coveralls
+              uses: coverallsapp/github-action@v2
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
