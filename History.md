@@ -1,5 +1,12 @@
 # Changelog for Expresser
 
+4.7.0
+=====
+* NEW! Support for HTTP2, can be enabled by setting app.http2 to true.
+* Support for the express-body-parser-error-handler module.
+* Code refactoring.
+* Updated dependencies.
+
 4.6.2
 =====
 * Updated dependencies.
