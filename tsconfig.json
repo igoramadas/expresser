@@ -1,15 +1,14 @@
 {
     "compilerOptions": {
         "baseUrl": "",
-        "rootDir": "src",
-        "outDir": "lib",
         "target": "ES2022",
         "module": "CommonJS",
         "moduleResolution": "Node",
         "esModuleInterop": true,
         "noUnusedParameters": true,
         "noUnusedLocals": true,
-        "declaration": true
+        "declaration": true,
+        "skipLibCheck": true
     },
     "typedocOptions": {
         "entryPoints": ["./src/"],
