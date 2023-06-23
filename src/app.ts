@@ -174,7 +174,7 @@ export class App {
                 this.expressApp.use(bodyParserErrorHandler())
             } catch (ex) {
                 /* istanbul ignore next */
-                logger.warn("App.init", "Module 'express-body-parser-error-handler' not installed, body-parser might throw ugly exceptions")
+                logger.debug("App.init", "Module 'express-body-parser-error-handler' not installed, body-parser might throw ugly exceptions")
             }
         }
 
@@ -491,7 +491,7 @@ export class App {
 
             // A specific status code was passed?
             if (status) {
-                res.status(status)
+                res.status(parseInt(status as any))
             }
 
             // Send rendered view to client.
@@ -530,7 +530,7 @@ export class App {
 
             // A specific status code was passed?
             if (status) {
-                res.status(status)
+                res.status(parseInt(status as any))
             }
 
             res.setHeader("content-type", "text/plain")
@@ -596,7 +596,7 @@ export class App {
 
         // A specific status code was passed?
         if (status) {
-            res.status(status)
+            res.status(parseInt(status as any))
         }
 
         // Add Access-Control-Allow-Origin if set.
@@ -676,8 +676,6 @@ export class App {
         // Error defaults to 500 if not a valid number.
         if (isNaN(status as number)) {
             status = 500
-        } else {
-            status = parseInt(status as string)
         }
 
         try {
@@ -716,7 +714,7 @@ export class App {
         }
 
         // Send error JSON to client.
-        res.status(status as number).json(message)
+        res.status(parseInt(status as any)).json(message)
 
         /* istanbul ignore if */
         if (settings.app.events.render) {
