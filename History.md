@@ -1,5 +1,10 @@
 # Changelog for Expresser
 
+4.7.1
+=====
+* Do not warn about the missing express-body-parser-error-handler package.
+* Convert statuses to numbers before sending helper responses.
+
 4.7.0
 =====
 * NEW! Support for HTTP2, can be enabled by setting app.http2 to true.
