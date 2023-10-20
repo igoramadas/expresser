@@ -1,5 +1,10 @@
 # Changelog for Expresser
 
+4.8.0
+=====
+* Handle URI errors if the errorHandler setting is enabled.
+* Updated dependencies.
+
 4.7.1
 =====
 * Do not warn about the missing express-body-parser-error-handler package.

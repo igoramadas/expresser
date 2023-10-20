@@ -271,7 +271,12 @@ export class App {
         if (settings.logger.errorHandler) {
             this.expressApp.use((err, req, res, next) => {
                 logger.error("App", req.method, req.url, res.headersSent ? "Headers sent" : "Headers not sent", err)
-                next(err)
+
+                if (err instanceof URIError) {
+                    res.end()
+                } else {
+                    next(err)
+                }
             })
         }
 
