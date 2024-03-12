@@ -1,5 +1,9 @@
 # Changelog for Expresser
 
+4.8.1
+=====
+* Updated dependencies.
+
 4.8.0
 =====
 * Handle URI errors if the errorHandler setting is enabled.
