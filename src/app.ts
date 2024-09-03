@@ -122,6 +122,15 @@ export class App {
             this.expressApp = http2Express(express)
         }
 
+        // Helper to add a middleware.
+        const addMiddleware = (mw) => {
+            if (!mw) return
+            if (mw.path && mw.handler) {
+                this.expressApp.use(mw.path, mw.handler)
+            } else {
+                this.expressApp.use(mw)
+            }
+        }
         middlewares = middlewares || {append: [], prepend: []}
 
         // Make sure passed middlewares are array based.
@@ -133,12 +142,9 @@ export class App {
         }
 
         // Prepend middlewares?
-        if (middlewares.prepend && middlewares.prepend.length > 0) {
+        if (middlewares?.prepend?.length > 0) {
             for (mw of middlewares.prepend) {
-                if (mw) {
-                    this.expressApp.use(mw)
-                    logger.debug("App.init", "Prepended middleware")
-                }
+                addMiddleware(mw)
             }
         }
 
@@ -239,12 +245,9 @@ export class App {
         }
 
         // Append middlewares?
-        if (middlewares.append && middlewares.append.length > 0) {
+        if (middlewares?.append?.length > 0) {
             for (mw of middlewares.append) {
-                if (mw) {
-                    this.expressApp.use(mw)
-                    logger.debug("App.init", "Appended middleware")
-                }
+                addMiddleware(mw)
             }
         }
 

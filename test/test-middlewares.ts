@@ -41,7 +41,7 @@ describe("App Middleware Tests", function () {
             next()
         }
 
-        let append = function (req, res, next) {
+        let append1 = function (req, res, next) {
             if (req.path == "/append") {
                 res.json({
                     ok: true
@@ -50,9 +50,20 @@ describe("App Middleware Tests", function () {
             next()
         }
 
+        let append2 = {
+            path: "/append",
+            handler: function (req, res, next) {
+                if (!req) return
+                res.json({
+                    ok: true
+                })
+                next()
+            }
+        }
+
         let middlewares = {
             prepend: prepend,
-            append: append
+            append: [append1, append2]
         }
 
         app.init(middlewares)

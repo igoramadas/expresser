@@ -1,5 +1,10 @@
 # Changelog for Expresser
 
+4.8.2
+=====
+* Possibility to set a path and handler on prepend / appended middlewares.
+* Updated dependencies.
+
 4.8.1
 =====
 * Updated dependencies.

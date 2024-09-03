@@ -15,7 +15,6 @@
         "excludeExternals": true,
         "excludePrivate": true,
         "name": "Expresser",
-        "out": "docs",
-        "gaID": "UA-9331973-4"
+        "out": "docs"
     }
 }
