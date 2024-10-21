@@ -1,5 +1,10 @@
 # Changelog for Expresser
 
+4.8.3
+=====
+* Update SetMeUp and other dependencies.
+* Compatible with the APP_ENV environment variable (in addition to NODE_ENV).
+
 4.8.2
 =====
 * Possibility to set a path and handler on prepend / appended middlewares.

@@ -253,7 +253,7 @@ export class App {
 
         // Log all requests if debug is true.
         if (settings.general.debug) {
-            this.expressApp.use(function (req, res, next) {
+            this.expressApp.use((req: any, res: any, next: any) => {
                 const {method, url} = req
                 const ip = jaul.network.getClientIP(req)
                 const msg = `Request from ${ip}`
