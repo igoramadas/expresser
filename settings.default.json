@@ -1,8 +1,8 @@
 // DEFAULT EXPRESSER SETTINGS
 // This file has the default settings for all Expresser modules.
 // If you want to define or override settings, please create a settings.json
-// file, or for specific environments create a settings.NODE_ENV.json with the
-// specific NODE_ENV values. For example settings.production.json.
+// file, or for specific environments create a settings.ENV.json with the
+// specific APP_ENV or NODE_ENV environment values. For example settings.production.json.
 
 {
     // APP
