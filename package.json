@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "4.8.3",
+    "version": "5.0.0",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "keywords": [
         "expresser",
@@ -20,7 +20,7 @@
         "url": "https://github.com/igoramadas/expresser.git"
     },
     "engines": {
-        "node": ">= 16.0"
+        "node": ">= 18.0"
     },
     "scripts": {
         "build": "tsc -p tsconfig-build.json",
@@ -44,7 +44,7 @@
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
         "@types/express": "^5.0.0",
         "@types/mocha": "^10.0.9",
-        "@types/node": "^22.7.7",
+        "@types/node": "^22.7.9",
         "body-parser": "^1.20.3",
         "chai": "^4.5.0",
         "compression": "^1.7.4",

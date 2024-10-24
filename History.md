@@ -1,5 +1,9 @@
 # Changelog for Expresser
 
+5.0.0
+=====
+* BREAKING! Now using Express 5.x.x, more info: https://expressjs.com/en/guide/migrating-5.html
+
 4.8.3
 =====
 * Update SetMeUp and other dependencies.
