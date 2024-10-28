@@ -2,7 +2,8 @@
 
 5.0.0
 =====
-* BREAKING! Now using Express 5.x.x, more info: https://expressjs.com/en/guide/migrating-5.html
+* BREAKING! Now using Express 5.x.x, migration guide: https://expressjs.com/en/guide/migrating-5.html
+* Removed http2-express-bridge.
 
 4.8.3
 =====
