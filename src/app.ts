@@ -7,7 +7,6 @@ import fs = require("fs")
 import http = require("http")
 import https = require("https")
 import http2 = require("http2")
-import http2Express = require("http2-express-bridge")
 import jaul = require("jaul")
 import logger = require("anyhow")
 import path = require("path")
@@ -115,12 +114,7 @@ export class App {
             }
         })
 
-        // Create express v4 app.
-        if (settings.app.http2) {
-            this.expressApp = express()
-        } else {
-            this.expressApp = http2Express(express)
-        }
+        this.expressApp = express()
 
         // Helper to add a middleware.
         const addMiddleware = (mw) => {
