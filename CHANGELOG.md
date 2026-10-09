@@ -4,11 +4,11 @@
 
 - NEW: Native ESM support via package exports, alongside CommonJS.
 - BREAKING: Requires Node.js 22 or newer.
-- Compatible with Anyhow 4, JAUL 2 and SetMeUp 2.
+- Expresser will now track the Express version MAJOR and MINOR versions.
 - Removed the accidental `or` dependency.
+- Session store TTL and compression level now follow the correct settings.
 - Fixed `app.once()`, `app.route()`, and the error handler for routes added after `init()`.
 - Fixed Swagger header parameters.
-- Session store TTL and compression level now follow settings.
 
 ## 5.0.0
 
