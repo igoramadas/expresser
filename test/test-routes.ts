@@ -224,4 +224,12 @@ describe("App Routes Tests", function () {
     it("Casting invalid parameters", function (done) {
         supertest.get("/swagger/abc?qnum=zzz&&qdate=zzz&qbool= ").expect(200, done)
     })
+
+    it("Casts swagger header parameters", function (done) {
+        handlers.getSwaggerAbc = (req, res) => {
+            res.json(req.swagger.header)
+        }
+
+        supertest.get("/swagger/abc").set("h", "15").expect(200, {h: 15}, done)
+    })
 })

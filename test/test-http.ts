@@ -53,8 +53,26 @@ describe("App HTTP Tests", function () {
         supertest = require("supertest").agent(app.expressApp)
     })
 
+    it("Binds a callback once", function () {
+        let count = 0
+
+        app.once("once-test", () => {
+            count++
+        })
+        app.events.emit("once-test")
+        app.events.emit("once-test")
+
+        if (count !== 1) {
+            throw new Error("once listener ran " + count + " times")
+        }
+    })
+
     it("Request set property", function () {
         app.set("trust proxy", 1)
+
+        if (app.get("trust proxy") !== 1) {
+            throw new Error("app.get did not read the Express setting")
+        }
     })
 
     it("Request all", function (done) {
@@ -165,6 +183,14 @@ describe("App HTTP Tests", function () {
         })
 
         supertest.delete("/delete").expect(200, done)
+    })
+
+    it("Registers a single route", function (done) {
+        app.route("/routed/:id").get((req, res) => {
+            res.send(req.params.id)
+        })
+
+        supertest.get("/routed/42").expect(200, "42", done)
     })
 
     it("Kills the server", function (done) {

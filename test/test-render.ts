@@ -212,13 +212,47 @@ describe("App Render Tests", function () {
     })
 
     it("Global error handler", function (done) {
+        const logger = require("anyhow")
+        let logged = false
+        const original = logger.error
+
+        logger.error = (...args) => {
+            if (args.some((arg) => arg && arg.message == "Failed request")) {
+                logged = true
+            }
+
+            return original.apply(logger, args)
+        }
+
         app.get("/global-error", function (_req, _res, next) {
             const err = new Error("Failed request")
             err["status"] = 599
             next(err)
         })
 
-        supertest.get("/global-error").expect(599, done)
+        supertest
+            .get("/global-error")
+            .expect(599)
+            .end((err) => {
+                logger.error = original
+
+                if (err) {
+                    return done(err)
+                }
+                if (!logged) {
+                    return done(new Error("Error handler did not log the failed request"))
+                }
+
+                done()
+            })
+    })
+
+    it("Ends URI errors from the error handler", function (done) {
+        app.get("/uri-error", function (_req, _res, next) {
+            next(new URIError("bad uri"))
+        })
+
+        supertest.get("/uri-error").expect(200, "", done)
     })
 
     it("Try rendering an invalid JSON, and disable event render", function (done) {

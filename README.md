@@ -8,8 +8,7 @@ A Node.js framework built on top of Express.
 
 ## Why Expresser?
 
-Building on top of Express with added logging, utilities and extra plugins. The idea of Expresser is to aggregate
-all these common modules and utilities into a single package, making it damn easy to create your new Node.js app.
+Building on top of Express with added logging, utilities and extra plugins. The idea of Expresser is to aggregate all these common modules and utilities into a single package, making it damn easy to create your new Node.js app.
 
 ### Use Expresser if...
 
@@ -23,6 +22,18 @@ all these common modules and utilities into a single package, making it damn eas
 * You hate TypeScript
 * You need ultimate performance and as little overhead as possible
 
-## API documentation
+## Requirements
 
-You can browse the full API documentation at https://expresser.devv.com.
+Requires Node.js 22 or newer.
+
+CommonJS and ESM imports are supported:
+
+```js
+const expresser = require("expresser")
+```
+
+or
+
+```js
+import expresser from "expresser"
+```
