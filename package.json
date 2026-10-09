@@ -49,11 +49,11 @@
         "test-coverage": "nyc --reporter=lcov npm test"
     },
     "dependencies": {
-        "anyhow": "^3.4.0 || ^4.0.0",
+        "anyhow": "^4.0.0",
         "eventemitter3": "^5.0.4",
         "express": "^5.2.1",
-        "jaul": "^1.7.1 || ^2.0.0",
-        "setmeup": "^1.9.5 || ^2.0.0"
+        "jaul": "^2.0.0",
+        "setmeup": "^2.0.0"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
