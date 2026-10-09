@@ -4,8 +4,8 @@
         "title": "Test Swagger",
         "description": "Testing Swagger module.",
         "contact": {
-            "name": "Devv",
-            "email": "noreply@devv.com",
+            "name": "Hello",
+            "email": "noreply@ramadas.net",
             "url": "https://www.github.com/igoramadas/expresser"
         },
         "license": {
@@ -13,7 +13,7 @@
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         }
     },
-    "host": "expresser.devv.com",
+    "host": "expresser.ramadas.net",
     "basePath": "/",
     "schemes": ["https"],
     "paths": {

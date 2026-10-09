@@ -1,6 +1,6 @@
 {
     "name": "expresser",
-    "version": "5.0.0",
+    "version": "5.2.0",
     "description": "A ready to use Node.js web app wrapper, built on top of Express.",
     "keywords": [
         "expresser",
@@ -9,59 +9,73 @@
         "framework",
         "webapp"
     ],
-    "author": "Igor Ramadas <igor@devv.com>",
-    "homepage": "https://expresser.devv.com",
+    "author": "Igor Ramadas <igor@ramadas.net>",
     "subdomain": "expresser",
     "license": "MIT",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./lib/esm.d.mts",
+                "default": "./lib/esm.mjs"
+            },
+            "require": {
+                "types": "./lib/index.d.ts",
+                "default": "./lib/index.js"
+            }
+        },
+        "./lib/*.js": "./lib/*.js",
+        "./lib/*.d.ts": "./lib/*.d.ts",
+        "./lib/esm.mjs": "./lib/esm.mjs",
+        "./lib/*": "./lib/*.js",
+        "./package.json": "./package.json"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/igoramadas/expresser.git"
     },
     "engines": {
-        "node": ">= 18.0"
+        "bun": ">= 1.3",
+        "node": ">= 22.0"
     },
     "scripts": {
         "build": "tsc -p tsconfig-build.json",
         "build-test": "tsc -p tsconfig-test.json",
-        "clean": "rm -rf ./lib && rm -rf ./lib-test && rm -rf ./coverage && rm -rf ./docs",
-        "prebuild": "npm run clean",
-        "docs": "rm -rf ./docs && typedoc && cp CNAME docs/ && cp .nojekyll docs/",
-        "test": "npm run build-test && mocha ./test/*.ts",
+        "clean": "rm -rf ./lib && rm -rf ./lib-test && rm -rf ./coverage",
+        "prebuild": "rm -rf ./lib ./lib-test",
+        "test": "npm run build && npm run build-test && mocha ./test/*.ts && node ./test/test-esm.mjs",
+        "test-bun": "npm run build && npm run build-test && bun --bun run mocha ./test/*.ts && bun ./test/test-esm.mjs",
         "test-coverage": "nyc --reporter=lcov npm test"
     },
     "dependencies": {
-        "anyhow": "^3.4.0",
-        "eventemitter3": "^5.0.1",
-        "express": "^5.0.1",
-        "jaul": "^1.7.1",
-        "or": "^0.2.0",
-        "setmeup": "^1.9.3"
+        "anyhow": "^3.4.0 || ^4.0.0",
+        "eventemitter3": "^5.0.4",
+        "express": "^5.2.1",
+        "jaul": "^1.7.1 || ^2.0.0",
+        "setmeup": "^1.9.5 || ^2.0.0"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
-        "@types/express": "^5.0.0",
-        "@types/mocha": "^10.0.9",
-        "@types/node": "^22.8.1",
-        "body-parser": "^1.20.3",
+        "@types/express": "^5.0.6",
+        "@types/node": "^26.6.4",
+        "body-parser": "^2.3.0",
         "chai": "^4.5.0",
-        "compression": "^1.7.4",
+        "compression": "^1.8.2",
         "cookie-parser": "^1.4.7",
         "coveralls": "^3.1.1",
-        "express-body-parser-error-handler": "^1.0.7",
-        "express-session": "^1.18.1",
+        "express-body-parser-error-handler": "^1.0.9",
+        "express-session": "^1.19.0",
         "get-port": "<6.0.0",
-        "memorystore": "^1.6.7",
-        "mocha": "^10.7.3",
+        "memorystore": "^1.6.8",
+        "mocha": "^12.0.3",
         "mocha-lcov-reporter": "^1.3.0",
-        "nyc": "^17.1.0",
-        "pug": "^3.0.3",
+        "nyc": "^18.0.0",
+        "pug": "^3.0.4",
         "source-map-support": "^0.5.21",
-        "supertest": "^7.0.0",
-        "ts-node": "^10.9.2",
-        "typedoc": "^0.26.10",
-        "typescript": "^5.6.3"
+        "supertest": "^7.3.1",
+        "tsx": "^4.23.15",
+        "typescript": "^7.0.2"
     },
     "prettier": {
         "trailingComma": "none",
@@ -78,12 +92,15 @@
         "recursive": true,
         "require": [
             "test/mocha.env",
-            "ts-node/register",
+            "tsx/cjs",
             "source-map-support/register"
         ]
     },
     "nyc": {
         "extends": "@istanbuljs/nyc-config-typescript",
+        "include": [
+            "src/**/*"
+        ],
         "temp-dir": "./coverage",
         "reporter": [
             "lcov",

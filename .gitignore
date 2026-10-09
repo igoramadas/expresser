@@ -1,8 +1,9 @@
 .DS_Store
+.env
 .history/
 .vscode/
 coverage/
 lib/
 lib-test/
 node_modules/
-npm-debug.log
+*.log

@@ -2,15 +2,15 @@
 
 import {isArray, isFunction, isObject, isString} from "./utils"
 import EventEmitter from "eventemitter3"
-import express = require("express")
-import fs = require("fs")
-import http = require("http")
-import https = require("https")
-import http2 = require("http2")
-import jaul = require("jaul")
-import logger = require("anyhow")
-import path = require("path")
-import setmeup = require("setmeup")
+import express from "express"
+import fs from "fs"
+import http from "http"
+import https from "https"
+import http2 from "http2"
+import jaul from "jaul"
+import logger from "anyhow"
+import path from "path"
+import setmeup from "setmeup"
 let settings
 
 /** Middleware definitions to be be passed on app [[init]]. */
@@ -77,7 +77,7 @@ export class App {
      * @param callback Callback function.
      */
     once = (eventName: string, callback: EventEmitter.ListenerFn): void => {
-        this.events.on(eventName, callback)
+        this.events.once(eventName, callback)
     }
 
     /**
@@ -199,12 +199,14 @@ export class App {
 
                 this.expressApp.use(
                     midSession({
-                        store: new memoryStore({checkPeriod: settings.app.session.checkPeriod}),
+                        store: new memoryStore({
+                            checkPeriod: settings.app.session.checkPeriod,
+                            ttl: settings.app.session.maxAge * 1000
+                        }),
                         proxy: settings.app.session.proxy,
                         resave: settings.app.session.resave,
                         saveUninitialized: settings.app.session.saveUninitialized,
                         secret: settings.app.secret,
-                        ttl: settings.app.session.maxAge * 1000,
                         cookie: {
                             secure: settings.app.session.secure,
                             httpOnly: settings.app.session.httpOnly,
@@ -224,7 +226,7 @@ export class App {
         if (settings.app.compression && settings.app.compression.enabled) {
             try {
                 const midCompression = require("compression")
-                this.expressApp.use(midCompression())
+                this.expressApp.use(midCompression({level: settings.app.compression.level}))
             } catch (ex) {
                 /* istanbul ignore next */
                 ex.friendlyMessage = "Can't load 'compression' module"
@@ -266,7 +268,7 @@ export class App {
 
         // Error handler enabled?
         if (settings.logger.errorHandler) {
-            this.expressApp.use((err, req, res, next) => {
+            const errorHandler = (err, req, res, next) => {
                 logger.error("App", req.method, req.url, res.headersSent ? "Headers sent" : "Headers not sent", err)
 
                 if (err instanceof URIError) {
@@ -274,7 +276,20 @@ export class App {
                 } else {
                     next(err)
                 }
+            }
+
+            // Routes added after init are appended after this handler, so move it back to the end on each request.
+            this.expressApp.use((_req, _res, next) => {
+                const stack = this.expressApp.router.stack
+                const index = stack.findIndex((layer) => layer.handle === errorHandler)
+
+                if (index >= 0 && index < stack.length - 1) {
+                    stack.push(stack.splice(index, 1)[0])
+                }
+
+                next()
             })
+            this.expressApp.use(errorHandler)
         }
 
         // Disable the X-Powered-By header.
@@ -464,7 +479,7 @@ export class App {
      */
     route = (reqPath: string): express.IRoute => {
         logger.debug("App.route", reqPath)
-        return this.expressApp.route.apply(this.expressApp, reqPath)
+        return this.expressApp.route(reqPath)
     }
 
     // RENDERING METHODS

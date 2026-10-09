@@ -1,20 +1,14 @@
 {
     "compilerOptions": {
-        "baseUrl": "",
-        "target": "ES2022",
-        "module": "CommonJS",
-        "moduleResolution": "Node",
+        "target": "es2025",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "declaration": true,
         "esModuleInterop": true,
         "noUnusedParameters": true,
         "noUnusedLocals": true,
-        "declaration": true,
-        "skipLibCheck": true
-    },
-    "typedocOptions": {
-        "entryPoints": ["./src/"],
-        "excludeExternals": true,
-        "excludePrivate": true,
-        "name": "Expresser",
-        "out": "docs"
+        "skipLibCheck": true,
+        "strict": false,
+        "types": ["node"]
     }
 }

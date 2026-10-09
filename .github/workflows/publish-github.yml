@@ -1,0 +1,68 @@
+name: Publish to GitHub
+on:
+    workflow_dispatch:
+    pull_request:
+        types:
+            - closed
+        branches:
+            - "master"
+
+concurrency:
+    group: publish-github
+    cancel-in-progress: false
+
+jobs:
+    publish:
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            packages: write
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
+                  fetch-depth: 0
+            - name: Check if the version changed
+              id: version
+              run: |
+                  VERSION=$(jq -r .version package.json)
+                  BASE_SHA="${{ github.event.pull_request.base.sha }}"
+                  BASE_VERSION=""
+                  if [[ -n "$BASE_SHA" ]]; then
+                      BASE_VERSION=$(git show "$BASE_SHA:package.json" | jq -r .version)
+                  fi
+                  echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+                  if [[ "$VERSION" == "$BASE_VERSION" ]]; then
+                      echo "new=false" >> "$GITHUB_OUTPUT"
+                      echo "Version $VERSION did not change, nothing to publish."
+                  elif gh release view "v$VERSION" > /dev/null 2>&1; then
+                      echo "new=false" >> "$GITHUB_OUTPUT"
+                      echo "Release v$VERSION already exists, nothing to publish."
+                  else
+                      echo "new=true" >> "$GITHUB_OUTPUT"
+                  fi
+            - uses: actions/setup-node@v7
+              if: steps.version.outputs.new == 'true'
+              with:
+                  node-version: 24.x
+                  cache: "npm"
+                  registry-url: https://npm.pkg.github.com
+                  scope: "@igoramadas"
+            - name: Build package
+              if: steps.version.outputs.new == 'true'
+              run: |
+                  npm ci
+                  npm run build
+            - name: Publish package
+              if: steps.version.outputs.new == 'true'
+              run: |
+                  npm pkg set name=@igoramadas/expresser
+                  npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Create release
+              if: steps.version.outputs.new == 'true'
+              run: gh release create "v${{ steps.version.outputs.version }}" --target "${{ github.event.pull_request.merge_commit_sha || github.sha }}" --title "v${{ steps.version.outputs.version }}" --generate-notes

@@ -1,9 +1,9 @@
 // Expresser: routes.ts
 
 import app from "./app"
-import fs = require("fs")
-import jaul = require("jaul")
-import logger = require("anyhow")
+import fs from "fs"
+import jaul from "jaul"
+import logger from "anyhow"
 const settings = require("setmeup").settings
 
 /** Route loading options. */
@@ -196,17 +196,21 @@ export class Routes {
     private castParameter = function (req: any, spec: any) {
         try {
             const {name} = spec
-            let scope, separator
+            let scope, source, separator
 
             switch (spec.in) {
                 case "query":
                     scope = "query"
+                    source = "query"
                     break
                 case "header":
+                    // req.header() is Express's getter. The map is req.headers.
                     scope = "header"
+                    source = "headers"
                     break
                 case "path":
                     scope = "params"
+                    source = "params"
                     break
             }
 
@@ -216,7 +220,8 @@ export class Routes {
             }
 
             req.swagger[scope] = req.swagger[scope] || {}
-            const param = req[scope][name]
+            const paramName = source == "headers" ? String(name).toLowerCase() : name
+            const param = req[source][paramName]
 
             // Parameter not found?
             if (param == null) {
