@@ -59,9 +59,6 @@ export class App {
     /** Event emitter. */
     events: EventEmitter = new EventEmitter()
 
-    /** Routes added after init. Mounted before the error handler. */
-    private routeRouter: express.Router
-
     // EVENTS
     // --------------------------------------------------------------------------
 
@@ -269,13 +266,9 @@ export class App {
             })
         }
 
-        // Routes registered after init stay ahead of the error handler.
-        this.routeRouter = express.Router()
-        this.expressApp.use(this.routeRouter)
-
         // Error handler enabled?
         if (settings.logger.errorHandler) {
-            this.expressApp.use((err, req, res, next) => {
+            const errorHandler = (err, req, res, next) => {
                 logger.error("App", req.method, req.url, res.headersSent ? "Headers sent" : "Headers not sent", err)
 
                 if (err instanceof URIError) {
@@ -283,7 +276,20 @@ export class App {
                 } else {
                     next(err)
                 }
+            }
+
+            // Routes added after init are appended after this handler, so move it back to the end on each request.
+            this.expressApp.use((_req, _res, next) => {
+                const stack = this.expressApp.router.stack
+                const index = stack.findIndex((layer) => layer.handle === errorHandler)
+
+                if (index >= 0 && index < stack.length - 1) {
+                    stack.push(stack.splice(index, 1)[0])
+                }
+
+                next()
             })
+            this.expressApp.use(errorHandler)
         }
 
         // Disable the X-Powered-By header.
@@ -391,7 +397,7 @@ export class App {
      */
     all = (...args: any[]) => {
         logger.debug("App.all", args[1], args[2])
-        return this.routeRouter.all.apply(this.routeRouter, args)
+        return this.expressApp.all.apply(this.expressApp, args)
     }
 
     /**
@@ -400,13 +406,7 @@ export class App {
      */
     get = (...args: any[]) => {
         logger.debug("App.get", args[1], args[2])
-
-        // A single argument reads an Express setting, same as app.get(name).
-        if (args.length == 1) {
-            return this.expressApp.get(args[0])
-        }
-
-        return this.routeRouter.get.apply(this.routeRouter, args)
+        return this.expressApp.get.apply(this.expressApp, args)
     }
 
     /**
@@ -415,7 +415,7 @@ export class App {
      */
     post = (...args: any[]) => {
         logger.debug("App.post", args[1], args[2])
-        return this.routeRouter.post.apply(this.routeRouter, args)
+        return this.expressApp.post.apply(this.expressApp, args)
     }
 
     /**
@@ -424,7 +424,7 @@ export class App {
      */
     put = (...args: any[]) => {
         logger.debug("App.put", args[1], args[2])
-        return this.routeRouter.put.apply(this.routeRouter, args)
+        return this.expressApp.put.apply(this.expressApp, args)
     }
 
     /**
@@ -433,7 +433,7 @@ export class App {
      */
     patch = (...args: any[]) => {
         logger.debug("App.patch", args[1], args[2])
-        return this.routeRouter.patch.apply(this.routeRouter, args)
+        return this.expressApp.patch.apply(this.expressApp, args)
     }
 
     /**
@@ -442,7 +442,7 @@ export class App {
      */
     delete = (...args: any[]) => {
         logger.debug("App.delete", args[1], args[2])
-        return this.routeRouter.delete.apply(this.routeRouter, args)
+        return this.expressApp.delete.apply(this.expressApp, args)
     }
 
     /**
@@ -451,7 +451,7 @@ export class App {
      */
     head = (...args: any[]) => {
         logger.debug("App.head", args[1], args[2])
-        return this.routeRouter.head.apply(this.routeRouter, args)
+        return this.expressApp.head.apply(this.expressApp, args)
     }
 
     /**
@@ -460,7 +460,7 @@ export class App {
      */
     use = (...args: any[]) => {
         logger.debug("App.use", args[1], args[2])
-        return this.routeRouter.use.apply(this.routeRouter, args)
+        return this.expressApp.use.apply(this.expressApp, args)
     }
 
     /**
@@ -479,7 +479,7 @@ export class App {
      */
     route = (reqPath: string): express.IRoute => {
         logger.debug("App.route", reqPath)
-        return this.routeRouter.route(reqPath)
+        return this.expressApp.route(reqPath)
     }
 
     // RENDERING METHODS

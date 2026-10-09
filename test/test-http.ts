@@ -193,6 +193,64 @@ describe("App HTTP Tests", function () {
         supertest.get("/routed/42").expect(200, "42", done)
     })
 
+    it("Runs param callbacks for routes added after init", function (done) {
+        app.expressApp.param("id", (req, _res, next, id) => {
+            req.params.loaded = id
+            next()
+        })
+        app.get("/params/:id", (req, res) => {
+            res.send(req.params.loaded)
+        })
+
+        supertest.get("/params/42").expect(200, "42", done)
+    })
+
+    it("Returns the Express app from route shortcuts", function () {
+        const chained = app.get("/chain", (_req, res) => res.send("ok"))
+
+        if (typeof chained.set != "function" || typeof chained.disable != "function") {
+            throw new Error("Route shortcut did not return the Express app")
+        }
+
+        chained.set("title", "Expresser")
+    })
+
+    it("Mounts a child Express app", function (done) {
+        const express = require("express")
+        const child = express()
+        let parentAfter = null
+
+        child.use((_req, res, next) => {
+            res.send("child")
+            next()
+        })
+        app.use("/child", child)
+        app.use((req, _res, next) => {
+            if (req.path == "/child") {
+                parentAfter = req.app
+            }
+            next()
+        })
+
+        if (child.parent != app.expressApp || child.mountpath != "/child") {
+            return done(new Error("Child app was not mounted on the Express app"))
+        }
+
+        supertest
+            .get("/child")
+            .expect(200, "child")
+            .end((err) => {
+                if (err) {
+                    return done(err)
+                }
+                if (parentAfter != app.expressApp) {
+                    return done(new Error("Parent app was not restored after the child app"))
+                }
+
+                done()
+            })
+    })
+
     it("Kills the server", function (done) {
         app.events.once("kill", done)
         app.kill()
